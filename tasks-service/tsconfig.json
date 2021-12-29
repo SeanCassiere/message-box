@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist",
+		"baseUrl": "./src",
+		"rootDir": "./src",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"moduleResolution": "node",
+		"module": "commonjs",
+		"target": "es5",
+		"paths": {
+			"#root/*": ["*"]
+		},
+		"skipLibCheck": true,
+		"strict": true,
+		"strictPropertyInitialization": false
+	}
+}

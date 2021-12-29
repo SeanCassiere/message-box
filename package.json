@@ -1,0 +1,22 @@
+{
+  "name": "message-box",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"This project does not have testing set up.\n\"",
+    "prepare": "husky prepare"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^7.0.4"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

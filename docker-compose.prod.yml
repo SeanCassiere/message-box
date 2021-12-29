@@ -1,0 +1,18 @@
+version: "3"
+services:
+  api-gateway:
+    container_name: api-gateway
+    build:
+      target: production
+    command: yarn start
+
+  auth-service:
+    container_name: auth-service
+    build:
+      target: production
+    command: yarn start
+
+  # tasks-service:
+  #   build:
+  #     target: production
+  #   command: node dist/index.js
