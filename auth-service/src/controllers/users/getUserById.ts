@@ -8,31 +8,31 @@ import RoleMapping from "#root/db/entities/RoleMapping";
 import TeamMapping from "#root/db/entities/TeamMapping";
 
 export async function getUserById(req: CustomRequest<{}>, res: Response, next: NextFunction) {
-	const { id } = req.params;
+  const { id } = req.params;
 
-	try {
-		const user = await User.findOneOrFail({ where: { userId: id } });
-		const roleMappings = await RoleMapping.find({ where: { userId: id } });
-		const teamMappings = await TeamMapping.find({ where: { userId: id } });
+  try {
+    const user = await User.findOneOrFail({ where: { userId: id } });
+    const roleMappings = await RoleMapping.find({ where: { userId: id } });
+    const teamMappings = await TeamMapping.find({ where: { userId: id } });
 
-		const roles = roleMappings.map((roleMapping) => roleMapping.roleId);
-		const teams = teamMappings.map((teamMapping) => teamMapping.teamId);
+    const roles = roleMappings.map((roleMapping) => roleMapping.roleId);
+    const teams = teamMappings.map((teamMapping) => teamMapping.teamId);
 
-		return res.json({
-			statusCode: 200,
-			data: formatUserResponseWithRoles({ user, roles, teams }),
-			errors: [],
-		});
-	} catch (error) {
-		return res.json({
-			statusCode: 403,
-			data: null,
-			errors: [
-				{
-					field: "user",
-					message: "User does not exist",
-				},
-			],
-		});
-	}
+    return res.json({
+      statusCode: 200,
+      data: formatUserResponseWithRoles({ user, roles, teams }),
+      errors: [],
+    });
+  } catch (error) {
+    return res.json({
+      statusCode: 403,
+      data: null,
+      errors: [
+        {
+          field: "user",
+          message: "User does not exist",
+        },
+      ],
+    });
+  }
 }

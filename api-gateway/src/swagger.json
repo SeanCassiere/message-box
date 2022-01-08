@@ -1,1598 +1,1701 @@
 {
-	"openapi": "3.0.0",
-	"info": {
-		"title": "MessageBox API Gateway",
-		"description": "API gateway to interact with the MessageBox backend micro-services set.",
-		"termsOfService": "http://swagger.io/terms/",
-		"contact": {
-			"email": "apiteam@swagger.io"
-		},
-		"license": {
-			"name": "Apache 2.0",
-			"url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-		},
-		"version": "1.0.0"
-	},
-	"externalDocs": {
-		"description": "Visit the MessageBox web application",
-		"url": "http://swagger.io"
-	},
-	"servers": [
-		{
-			"url": "http://localhost:4000/api",
-			"description": "Development server",
-			"variables": {}
-		}
-	],
-	"tags": [
-		{
-			"name": "Authentication",
-			"description": "MessageBox authentication-related endpoints"
-		},
-		{
-			"name": "Client",
-			"description": "Endpoints relating to Clients"
-		},
-		{
-			"name": "Role",
-			"description": "Endpoints relating to the user roles"
-		},
-		{
-			"name": "Team",
-			"description": "Endpoints relating to the user teams"
-		},
-		{
-			"name": "User",
-			"description": "Endpoints relating to Users"
-		}
-	],
-	"paths": {
-		"/Authentication/Login": {
-			"post": {
-				"tags": ["Authentication"],
-				"summary": "Sign-in to create an access token",
-				"description": "Sign-in and fetch an access token.",
-				"operationId": "LoginUser",
-				"requestBody": {
-					"description": "Login a user",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"email": {
-										"type": "string",
-										"format": "email",
-										"default": "msc@msc.com"
-									},
-									"password": {
-										"type": "string",
-										"default": "123"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Successfully logged in as a user",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/2FAUsernameAndPasswordLogin"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				},
-				"parameters": []
-			}
-		},
-		"/Authentication/Login/Refresh": {
-			"get": {
-				"tags": ["Authentication"],
-				"summary": "Refresh access token for user",
-				"description": "Generate a new access token for the user based on the cookies.",
-				"operationId": "LoginRefreshUser",
-				"responses": {
-					"200": {
-						"description": "This method will always return with the status code of 200.<br /><br />***access_token*** will be ***null*** if the cookie is not available or expired.",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AccessTokenSchema"
-								}
-							}
-						}
-					}
-				},
-				"parameters": []
-			}
-		},
-		"/Authentication/2FA/Code/Login": {
-			"post": {
-				"tags": ["Authentication"],
-				"summary": "Get access token using 2FA code and the user's id",
-				"description": "Get access token using 2FA code and the user's id",
-				"operationId": "2FACodeLogin",
-				"requestBody": {
-					"description": "Get access token using 2FA code",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"userId": {
-										"type": "string",
-										"format": "uuid"
-									},
-									"code": {
-										"type": "string",
-										"default": "123"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Successfully logged in as a user",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AccessTokenSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				},
-				"parameters": []
-			}
-		},
-		"/Authentication/2FA/Code/ConfirmUser": {
-			"post": {
-				"tags": ["Authentication"],
-				"summary": "Confirm the user's 2FA account status using the code and the user's id",
-				"description": "Confirm the user's 2FA account status using the code and the user's id",
-				"operationId": "2FAValidateAccountCode",
-				"requestBody": {
-					"description": "Get access token using 2FA code",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"userId": {
-										"type": "string",
-										"format": "uuid"
-									},
-									"code": {
-										"type": "string",
-										"default": "123"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Successfully validated the user's 2FA status",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessMessagePair"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				},
-				"parameters": []
-			}
-		},
-		"/Authentication/Logout": {
-			"get": {
-				"tags": ["Authentication"],
-				"summary": "Sign-out route for user",
-				"description": "Sign-out the user and clear cookies.",
-				"operationId": "LogoutUser",
-				"responses": {
-					"200": {
-						"description": "Successfully logged out the user",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessMessagePair"
-								}
-							}
-						}
-					}
-				},
-				"parameters": []
-			}
-		},
-		"/Clients": {
-			"get": {
-				"tags": ["Client"],
-				"summary": "Get all clients",
-				"description": "Get all the clients.",
-				"operationId": "GetAllClients",
-				"parameters": [],
-				"responses": {
-					"200": {
-						"description": "All clients in the system",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/ClientSchema"
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			},
-			"post": {
-				"tags": ["Client"],
-				"summary": "Register a new client and admin user",
-				"description": "Register a new client and register the initial admin user.",
-				"operationId": "CreateClientAndUser",
-				"security": [],
-				"requestBody": {
-					"description": "Client and User information required to create and register a client.",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"client": {
-										"type": "object",
-										"properties": {
-											"clientName": {
-												"type": "string"
-											}
-										}
-									},
-									"user": {
-										"type": "object",
-										"properties": {
-											"email": {
-												"type": "string",
-												"format": "email"
-											},
-											"firstName": {
-												"type": "string"
-											},
-											"lastName": {
-												"type": "string"
-											},
-											"password": {
-												"type": "string"
-											}
-										}
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "successfully registered a new client",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				},
-				"x-codegen-request-body-name": "body",
-				"parameters": []
-			}
-		},
-		"/Clients/Profile": {
-			"get": {
-				"tags": ["Client"],
-				"summary": "Get the logged-in client's profile",
-				"description": "Get the logged-in client's profile.",
-				"operationId": "GetClientProfile",
-				"parameters": [],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Successfully fetched the client profile.",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			}
-		},
-		"/Clients/Roles": {
-			"get": {
-				"tags": ["Client", "Role"],
-				"summary": "Get all roles for logged-in client",
-				"description": "Get all the available roles for the logged-in client.",
-				"operationId": "GetAllRolesForClient",
-				"parameters": [],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "All roles available to the client",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/RoleSchema"
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			},
-			"post": {
-				"tags": ["Client", "Role"],
-				"summary": "Create a new role for the logged-in client",
-				"description": "Create a new role for the logged-in client.",
-				"operationId": "ClientCreateNewRole",
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"requestBody": {
-					"description": "Data required to create a new user role.",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"rootName": {
-										"type": "string"
-									},
-									"viewName": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "successfully create a new role for the client",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/RoleSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				},
-				"x-codegen-request-body-name": "body",
-				"parameters": []
-			}
-		},
-		"/Clients/Teams": {
-			"get": {
-				"tags": ["Client", "Team"],
-				"summary": "Get all teams for logged-in client",
-				"description": "Get all the available teams for the logged-in client.",
-				"operationId": "GetAllTeamsForClient",
-				"parameters": [],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "All teams available to the client",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/TeamSchema"
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			},
-			"post": {
-				"tags": ["Client", "Team"],
-				"summary": "Create a new team for the logged-in client",
-				"description": "Create a new team for the logged-in client.",
-				"operationId": "ClientCreateNewTeam",
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"requestBody": {
-					"description": "Data required to create a new user team.",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"rootName": {
-										"type": "string"
-									},
-									"teamName": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "successfully create a new role for the client",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/RoleSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				},
-				"x-codegen-request-body-name": "body",
-				"parameters": []
-			}
-		},
-		"/Clients/Users": {
-			"get": {
-				"tags": ["Client", "User"],
-				"summary": "Get all users for client",
-				"description": "Get all the users for client.",
-				"operationId": "GetAllUsers",
-				"parameters": [
-					{
-						"name": "search",
-						"in": "query",
-						"description": "Search from firstName, lastName and email",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"name": "page",
-						"in": "query",
-						"description": "Change page based on pageSize",
-						"schema": {
-							"type": "integer"
-						}
-					},
-					{
-						"name": "pageSize",
-						"in": "query",
-						"description": "Return users pageSize",
-						"schema": {
-							"type": "integer"
-						}
-					},
-					{
-						"name": "sortDirection",
-						"in": "query",
-						"description": "Sorting order of the Id",
-						"schema": {
-							"$ref": "#/components/schemas/SortDirection"
-						}
-					},
-					{
-						"name": "roleId",
-						"in": "query",
-						"description": "Specific available user role",
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "All users in the system",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/UserSchema"
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			},
-			"post": {
-				"tags": ["Client"],
-				"summary": "Signed-in user to create new user for client",
-				"description": "Signed-in user to create new user for client.",
-				"operationId": "ClientCreateUser",
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"requestBody": {
-					"description": "Personal data required to register a user.",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"firstName": {
-										"type": "string"
-									},
-									"lastName": {
-										"type": "string"
-									},
-									"email": {
-										"type": "string",
-										"format": "email"
-									},
-									"password": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "successfully registered user",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/UserSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				},
-				"x-codegen-request-body-name": "body",
-				"parameters": []
-			}
-		},
-		"/Roles/{id}": {
-			"get": {
-				"tags": ["Role"],
-				"summary": "Get the specific details by the role id",
-				"description": "Get all the details about the role by the role id.",
-				"operationId": "GetRoleById",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Unique Role ID (UUID)",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Full role details",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/RoleSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			},
-			"put": {
-				"tags": ["Role"],
-				"summary": "Update the role by the id",
-				"description": "Update the role by the id.",
-				"operationId": "UpdateRoleById",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Unique Role ID (UUID)",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"description": "Personal data required to register a user.",
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/RoleSchema"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Full role details",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/RoleSchema"
-								}
-							}
-						}
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					},
-					"403": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			},
-			"delete": {
-				"tags": ["Role"],
-				"summary": "Delete a role by its role ID.",
-				"description": "Delete a role and it's user mappings by the role ID.",
-				"operationId": "DeleteRoleById",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Unique Role ID (UUID)",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Full role details",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessMessagePair"
-								}
-							}
-						}
-					},
-					"403": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			}
-		},
-		"/Teams/{id}": {
-			"get": {
-				"tags": ["Team"],
-				"summary": "Get the specific details by the team id",
-				"description": "Get all the details about the team by the team id.",
-				"operationId": "GetTeamById",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Unique Team ID (UUID)",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Full team details",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/TeamSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			},
-			"put": {
-				"tags": ["Team"],
-				"summary": "Update the team by the id",
-				"description": "Update the team by the id.",
-				"operationId": "UpdateTeamById",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Unique Team ID (UUID)",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"description": "Details required to update a team.",
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TeamSchema"
-							}
-						}
-					},
-					"required": true
-				},
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Full team details",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/TeamSchema"
-								}
-							}
-						}
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					},
-					"403": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			},
-			"delete": {
-				"tags": ["Team"],
-				"summary": "Delete a team by its team ID.",
-				"description": "Delete a team and it's user mappings by the team ID.",
-				"operationId": "DeleteTeamById",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Unique Team ID (UUID)",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Operation status",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessMessagePair"
-								}
-							}
-						}
-					},
-					"403": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			}
-		},
-		"/Users/{id}": {
-			"get": {
-				"tags": ["User"],
-				"summary": "Get user by id",
-				"description": "Get user details by their user id.",
-				"operationId": "GetUserById",
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "User's unique ID (UUID)",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Successfully fetched the user's details",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/UserSchema"
-								}
-							}
-						}
-					},
-					"401": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"403": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				}
-			},
-			"put": {
-				"tags": ["User"],
-				"summary": "Update user by id",
-				"description": "Update the user details by the their ID.",
-				"operationId": "UpdateUserById",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "User's unique ID (UUID)",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"requestBody": {
-					"description": "Updated user details",
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserSchema"
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Successfully updated the user",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/UserSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				}
-			},
-			"delete": {
-				"tags": ["User"],
-				"summary": "Delete user by id",
-				"description": "Delete a user by their user id.<br /><br />The initial delete is a soft delete, which the user being set to inactive and the email being randomized.<br />A second subsequent request will perform a permanent deletion from the database.",
-				"operationId": "DeleteUserById",
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "User's unique ID (UUID)",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Successfully deleted the user",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessMessagePair"
-								}
-							}
-						}
-					},
-					"401": {
-						"$ref": "#/components/responses/BadRequest"
-					},
-					"403": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				}
-			}
-		},
-		"/Users/ConfirmUser": {
-			"post": {
-				"tags": ["User"],
-				"summary": "Confirm the user account using the token sent via email.",
-				"description": "Confirm the user account using the token sent via email.",
-				"operationId": "ConfirmUserWithEmailToken",
-				"parameters": [],
-				"requestBody": {
-					"description": "Body required to change the user's password",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"token": {
-										"type": "string",
-										"format": "uuid"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Successfully changed the user's password",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessMessagePair"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				}
-			}
-		},
-		"/Users/ConfirmUser/ResendConfirmationEmail": {
-			"post": {
-				"tags": ["User"],
-				"summary": "Resend the account confirmation email.",
-				"description": "Resend the account confirmation email.",
-				"operationId": "ResendConfirmationEmail",
-				"parameters": [],
-				"requestBody": {
-					"description": "Body required to change the user's password",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"email": {
-										"type": "string",
-										"format": "email",
-										"default": "msc@msc.com"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Successfully resent the account confirmation email",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessMessagePair"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				}
-			}
-		},
-		"/Users/ResetPassword/RequestEmail": {
-			"post": {
-				"tags": ["User"],
-				"summary": "Request an email to reset the user password.",
-				"description": "Request an email to reset the user password.",
-				"operationId": "RequestPasswordResetWithEmail",
-				"parameters": [],
-				"requestBody": {
-					"description": "Body required to change the user's password",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"email": {
-										"type": "string",
-										"format": "email",
-										"default": "msc@msc.com"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Successfully changed the user's password",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessMessagePair"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				}
-			}
-		},
-		"/Users/ResetPassword/With2FA": {
-			"post": {
-				"tags": ["User"],
-				"summary": "Change the user's password using the 2FA code.",
-				"description": "Change the user's password using the 2FA code.",
-				"operationId": "ChangePasswordWith2FA",
-				"parameters": [],
-				"requestBody": {
-					"description": "Body required to change the user's password",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"email": {
-										"type": "string",
-										"format": "email",
-										"default": "msc@msc.com"
-									},
-									"password": {
-										"type": "string",
-										"default": "123"
-									},
-									"code": {
-										"type": "string",
-										"default": "123456"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Successfully changed the user's password",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessMessagePair"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				}
-			}
-		},
-		"/Users/ResetPassword/WithToken": {
-			"post": {
-				"tags": ["User"],
-				"summary": "Change the user's password using a token.",
-				"description": "Change the user's password using a token.",
-				"operationId": "ChangePasswordWithToken",
-				"parameters": [],
-				"requestBody": {
-					"description": "Body required to change the user's password",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"token": {
-										"type": "string",
-										"format": "uuid"
-									},
-									"password": {
-										"type": "string",
-										"default": "123"
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Successfully changed the user's password",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessMessagePair"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				}
-			}
-		},
-		"/Users/Profile": {
-			"get": {
-				"tags": ["User"],
-				"summary": "Get the logged-in user's details.",
-				"description": "Get the logged-in user's details.",
-				"operationId": "GetLoggedInUserProfile",
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "Logged-in user profile details",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/UserSchema"
-								}
-							}
-						}
-					},
-					"401": {
-						"$ref": "#/components/responses/UnauthorizedError"
-					}
-				},
-				"x-codegen-request-body-name": "body"
-			},
-			"put": {
-				"tags": ["User"],
-				"summary": "Update user the logged-in user profile",
-				"description": "Update the logged-in user.",
-				"operationId": "UpdateLoggedInUserProfile",
-				"parameters": [],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
-				"requestBody": {
-					"description": "Updated user details",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"email": {
-										"type": "string",
-										"format": "email"
-									},
-									"firstName": {
-										"type": "string"
-									},
-									"lastName": {
-										"type": "string"
-									},
-									"roles": {
-										"type": "array",
-										"items": {
-											"type": "string",
-											"format": "uuid"
-										}
-									}
-								}
-							}
-						}
-					},
-					"required": true
-				},
-				"responses": {
-					"200": {
-						"description": "Successfully updated the user",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/UserSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"$ref": "#/components/responses/BadRequest"
-					}
-				}
-			}
-		}
-	},
-	"components": {
-		"responses": {
-			"NotFound": {
-				"description": "Not found",
-				"content": {
-					"application/json": {
-						"schema": {
-							"type": "object",
-							"properties": {
-								"message": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
-			},
-			"UnauthorizedError": {
-				"description": "Access token is missing or invalid",
-				"content": {
-					"application/json": {
-						"schema": {
-							"type": "object",
-							"properties": {
-								"message": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
-			},
-			"BadRequest": {
-				"description": "Failed validation on the server",
-				"content": {
-					"application/json": {
-						"schema": {
-							"$ref": "#/components/schemas/FieldValidationError"
-						}
-					}
-				}
-			}
-		},
-		"schemas": {
-			"FieldValidationError": {
-				"type": "object",
-				"properties": {
-					"data": {
-						"type": "object",
-						"nullable": true
-					},
-					"errors": {
-						"type": "array",
-						"nullable": true,
-						"items": {
-							"type": "object",
-							"properties": {
-								"message": {
-									"type": "string"
-								},
-								"propertyPath": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
-			},
-			"SortDirection": {
-				"type": "string",
-				"enum": ["ASC", "DESC"]
-			},
-			"SuccessMessagePair": {
-				"type": "object",
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"default": true
-					},
-					"message": {
-						"type": "string",
-						"default": "Status of the request/operation"
-					}
-				}
-			},
-			"2FAUsernameAndPasswordLogin": {
-				"type": "object",
-				"properties": {
-					"next": {
-						"type": "string",
-						"default": "Next endpoint to be accessed based on the user's 2fa status"
-					},
-					"userId": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"twoFactorAuthenticationCodeCreator": {
-						"type": "object",
-						"nullable": true,
-						"properties": {
-							"base32": {
-								"type": "string",
-								"default": "Base32 encoded secret"
-							},
-							"otpauth_url": {
-								"type": "string",
-								"default": "URL to the QR code"
-							}
-						}
-					}
-				}
-			},
-			"AccessTokenSchema": {
-				"type": "object",
-				"properties": {
-					"message": {
-						"type": "string",
-						"default": "Message on the operation status"
-					},
-					"access_token": {
-						"type": "string",
-						"default": "JWT Bearer Access Token"
-					},
-					"expiresIn": {
-						"type": "number",
-						"default": 6000
-					}
-				}
-			},
-			"UserSchema": {
-				"type": "object",
-				"properties": {
-					"userId": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"email": {
-						"type": "string",
-						"format": "email"
-					},
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"roles": {
-						"type": "array",
-						"items": {
-							"type": "string",
-							"format": "uuid"
-						}
-					},
-					"isActive": {
-						"type": "boolean",
-						"default": false
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				}
-			},
-			"ClientSchema": {
-				"type": "object",
-				"properties": {
-					"clientId": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"name": {
-						"type": "string"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				}
-			},
-			"RoleSchema": {
-				"type": "object",
-				"properties": {
-					"roleId": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"rootName": {
-						"type": "string"
-					},
-					"viewName": {
-						"type": "string"
-					},
-					"isUserDeletable": {
-						"type": "boolean",
-						"default": false
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				}
-			},
-			"TeamSchema": {
-				"type": "object",
-				"properties": {
-					"teamId": {
-						"type": "string",
-						"format": "uuid"
-					},
-					"rootName": {
-						"type": "string"
-					},
-					"teamName": {
-						"type": "string"
-					},
-					"isUserDeletable": {
-						"type": "boolean",
-						"default": false
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				}
-			}
-		},
-		"securitySchemes": {
-			"bearerAuth": {
-				"type": "http",
-				"scheme": "bearer",
-				"bearerFormat": "JWT"
-			}
-		},
-		"links": {},
-		"callbacks": {}
-	},
-	"security": []
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MessageBox API Gateway",
+    "description": "API gateway to interact with the MessageBox backend micro-services set.",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Visit the MessageBox web application",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000/api",
+      "description": "Development server",
+      "variables": {}
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "MessageBox authentication-related endpoints"
+    },
+    {
+      "name": "Client",
+      "description": "Endpoints relating to Clients"
+    },
+    {
+      "name": "Role",
+      "description": "Endpoints relating to the user roles"
+    },
+    {
+      "name": "Team",
+      "description": "Endpoints relating to the user teams"
+    },
+    {
+      "name": "User",
+      "description": "Endpoints relating to Users"
+    }
+  ],
+  "paths": {
+    "/Authentication/Login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Sign-in to create an access token",
+        "description": "Sign-in and fetch an access token.",
+        "operationId": "LoginUser",
+        "requestBody": {
+          "description": "Login a user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "default": "msc@msc.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "default": "123"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully logged in as a user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/2FAUsernameAndPasswordLogin"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/Authentication/Login/Refresh": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Refresh access token for user",
+        "description": "Generate a new access token for the user based on the cookies.",
+        "operationId": "LoginRefreshUser",
+        "responses": {
+          "200": {
+            "description": "This method will always return with the status code of 200.<br /><br />***access_token*** will be ***null*** if the cookie is not available or expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenSchema"
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/Authentication/2FA/Code/Login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Get access token using 2FA code and the user's id",
+        "description": "Get access token using 2FA code and the user's id",
+        "operationId": "2FACodeLogin",
+        "requestBody": {
+          "description": "Get access token using 2FA code",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "code": {
+                    "type": "string",
+                    "default": "123"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully logged in as a user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/Authentication/2FA/Code/ConfirmUser": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Confirm the user's 2FA account status using the code and the user's id",
+        "description": "Confirm the user's 2FA account status using the code and the user's id",
+        "operationId": "2FAValidateAccountCode",
+        "requestBody": {
+          "description": "Get access token using 2FA code",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "code": {
+                    "type": "string",
+                    "default": "123"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully validated the user's 2FA status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/Authentication/Logout": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Sign-out route for user",
+        "description": "Sign-out the user and clear cookies.",
+        "operationId": "LogoutUser",
+        "responses": {
+          "200": {
+            "description": "Successfully logged out the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/Clients": {
+      "get": {
+        "tags": ["Client"],
+        "summary": "Get all clients",
+        "description": "Get all the clients.",
+        "operationId": "GetAllClients",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "All clients in the system",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClientSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "post": {
+        "tags": ["Client"],
+        "summary": "Register a new client and admin user",
+        "description": "Register a new client and register the initial admin user.",
+        "operationId": "CreateClientAndUser",
+        "security": [],
+        "requestBody": {
+          "description": "Client and User information required to create and register a client.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "client": {
+                    "type": "object",
+                    "properties": {
+                      "clientName": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      },
+                      "firstName": {
+                        "type": "string"
+                      },
+                      "lastName": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully registered a new client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "x-codegen-request-body-name": "body",
+        "parameters": []
+      }
+    },
+    "/Clients/Profile": {
+      "get": {
+        "tags": ["Client"],
+        "summary": "Get the logged-in client's profile",
+        "description": "Get the logged-in client's profile.",
+        "operationId": "GetClientProfile",
+        "parameters": [],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched the client profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/Clients/Roles": {
+      "get": {
+        "tags": ["Client", "Role"],
+        "summary": "Get all roles for logged-in client",
+        "description": "Get all the available roles for the logged-in client.",
+        "operationId": "GetAllRolesForClient",
+        "parameters": [],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All roles available to the client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "post": {
+        "tags": ["Client", "Role"],
+        "summary": "Create a new role for the logged-in client",
+        "description": "Create a new role for the logged-in client.",
+        "operationId": "ClientCreateNewRole",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Data required to create a new user role.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rootName": {
+                    "type": "string"
+                  },
+                  "viewName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully create a new role for the client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "x-codegen-request-body-name": "body",
+        "parameters": []
+      }
+    },
+    "/Clients/Teams": {
+      "get": {
+        "tags": ["Client", "Team"],
+        "summary": "Get all teams for logged-in client",
+        "description": "Get all the available teams for the logged-in client.",
+        "operationId": "GetAllTeamsForClient",
+        "parameters": [],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All teams available to the client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeamSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "post": {
+        "tags": ["Client", "Team"],
+        "summary": "Create a new team for the logged-in client",
+        "description": "Create a new team for the logged-in client.",
+        "operationId": "ClientCreateNewTeam",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Data required to create a new user team.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rootName": {
+                    "type": "string"
+                  },
+                  "teamName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully create a new role for the client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "x-codegen-request-body-name": "body",
+        "parameters": []
+      }
+    },
+    "/Clients/Users": {
+      "get": {
+        "tags": ["Client", "User"],
+        "summary": "Get all users for client",
+        "description": "Get all the users for client.",
+        "operationId": "GetAllUsers",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search from firstName, lastName and email",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Change page based on pageSize",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Return users pageSize",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sorting order of the Id",
+            "schema": {
+              "$ref": "#/components/schemas/SortDirection"
+            }
+          },
+          {
+            "name": "roleId",
+            "in": "query",
+            "description": "Specific available user role",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All users in the system",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "post": {
+        "tags": ["Client"],
+        "summary": "Signed-in user to create new user for client",
+        "description": "Signed-in user to create new user for client.",
+        "operationId": "ClientCreateUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Personal data required to register a user.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully registered user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "x-codegen-request-body-name": "body",
+        "parameters": []
+      }
+    },
+    "/Roles/{id}": {
+      "get": {
+        "tags": ["Role"],
+        "summary": "Get the specific details by the role id",
+        "description": "Get all the details about the role by the role id.",
+        "operationId": "GetRoleById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique Role ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full role details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "put": {
+        "tags": ["Role"],
+        "summary": "Update the role by the id",
+        "description": "Update the role by the id.",
+        "operationId": "UpdateRoleById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique Role ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Personal data required to register a user.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full role details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "delete": {
+        "tags": ["Role"],
+        "summary": "Delete a role by its role ID.",
+        "description": "Delete a role and it's user mappings by the role ID.",
+        "operationId": "DeleteRoleById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique Role ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full role details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/Teams/{id}": {
+      "get": {
+        "tags": ["Team"],
+        "summary": "Get the specific details by the team id",
+        "description": "Get all the details about the team by the team id.",
+        "operationId": "GetTeamById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique Team ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full team details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "put": {
+        "tags": ["Team"],
+        "summary": "Update the team by the id",
+        "description": "Update the team by the id.",
+        "operationId": "UpdateTeamById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique Team ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Details required to update a team.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full team details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "delete": {
+        "tags": ["Team"],
+        "summary": "Delete a team by its team ID.",
+        "description": "Delete a team and it's user mappings by the team ID.",
+        "operationId": "DeleteTeamById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique Team ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/Users/{id}": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get user by id",
+        "description": "Get user details by their user id.",
+        "operationId": "GetUserById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User's unique ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched the user's details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "403": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "put": {
+        "tags": ["User"],
+        "summary": "Update user by id",
+        "description": "Update the user details by the their ID.",
+        "operationId": "UpdateUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User's unique ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Updated user details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["User"],
+        "summary": "Delete user by id",
+        "description": "Delete a user by their user id.<br /><br />The initial delete is a soft delete, which the user being set to inactive and the email being randomized.<br />A second subsequent request will perform a permanent deletion from the database.",
+        "operationId": "DeleteUserById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User's unique ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "403": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/Users/{id}/ChangePassword": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Change user's password",
+        "description": "Change a user's password.",
+        "operationId": "ChangeUserPasswordById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User's unique ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "New password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/Users/ConfirmUser": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Confirm the user account using the token sent via email.",
+        "description": "Confirm the user account using the token sent via email.",
+        "operationId": "ConfirmUserWithEmailToken",
+        "parameters": [],
+        "requestBody": {
+          "description": "Body required to change the user's password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully changed the user's password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/Users/ConfirmUser/ResendConfirmationEmail": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Resend the account confirmation email.",
+        "description": "Resend the account confirmation email.",
+        "operationId": "ResendConfirmationEmail",
+        "parameters": [],
+        "requestBody": {
+          "description": "Body required to change the user's password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "default": "msc@msc.com"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully resent the account confirmation email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/Users/ResetPassword/RequestEmail": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Request an email to reset the user password.",
+        "description": "Request an email to reset the user password.",
+        "operationId": "RequestPasswordResetWithEmail",
+        "parameters": [],
+        "requestBody": {
+          "description": "Body required to change the user's password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "default": "msc@msc.com"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully changed the user's password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/Users/ResetPassword/With2FA": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Change the user's password using the 2FA code.",
+        "description": "Change the user's password using the 2FA code.",
+        "operationId": "ChangePasswordWith2FA",
+        "parameters": [],
+        "requestBody": {
+          "description": "Body required to change the user's password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "default": "msc@msc.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "default": "123"
+                  },
+                  "code": {
+                    "type": "string",
+                    "default": "123456"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully changed the user's password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/Users/ResetPassword/WithToken": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Change the user's password using a token.",
+        "description": "Change the user's password using a token.",
+        "operationId": "ChangePasswordWithToken",
+        "parameters": [],
+        "requestBody": {
+          "description": "Body required to change the user's password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "password": {
+                    "type": "string",
+                    "default": "123"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully changed the user's password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/Users/Profile": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get the logged-in user's details.",
+        "description": "Get the logged-in user's details.",
+        "operationId": "GetLoggedInUserProfile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged-in user profile details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "put": {
+        "tags": ["User"],
+        "summary": "Update user the logged-in user profile",
+        "description": "Update the logged-in user.",
+        "operationId": "UpdateLoggedInUserProfile",
+        "parameters": [],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Updated user details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/Users/Profile/ChangePassword": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Change the logged-in user's password",
+        "description": "Change the logged-in user's password.",
+        "operationId": "ChangeLoggedInUserPassword",
+        "parameters": [],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Change password details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "NotFound": {
+        "description": "Not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Failed validation on the server",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/FieldValidationError"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "FieldValidationError": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "propertyPath": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "SortDirection": {
+        "type": "string",
+        "enum": ["ASC", "DESC"]
+      },
+      "SuccessMessagePair": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "message": {
+            "type": "string",
+            "default": "Status of the request/operation"
+          }
+        }
+      },
+      "2FAUsernameAndPasswordLogin": {
+        "type": "object",
+        "properties": {
+          "next": {
+            "type": "string",
+            "default": "Next endpoint to be accessed based on the user's 2fa status"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "twoFactorAuthenticationCodeCreator": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "base32": {
+                "type": "string",
+                "default": "Base32 encoded secret"
+              },
+              "otpauth_url": {
+                "type": "string",
+                "default": "URL to the QR code"
+              }
+            }
+          }
+        }
+      },
+      "AccessTokenSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "default": "Message on the operation status"
+          },
+          "access_token": {
+            "type": "string",
+            "default": "JWT Bearer Access Token"
+          },
+          "expiresIn": {
+            "type": "number",
+            "default": 6000
+          }
+        }
+      },
+      "UserSchema": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ClientSchema": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RoleSchema": {
+        "type": "object",
+        "properties": {
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rootName": {
+            "type": "string"
+          },
+          "viewName": {
+            "type": "string"
+          },
+          "isUserDeletable": {
+            "type": "boolean",
+            "default": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TeamSchema": {
+        "type": "object",
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rootName": {
+            "type": "string"
+          },
+          "teamName": {
+            "type": "string"
+          },
+          "isUserDeletable": {
+            "type": "boolean",
+            "default": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "links": {},
+    "callbacks": {}
+  },
+  "security": []
 }

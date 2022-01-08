@@ -1,13 +1,13 @@
 export function generatePasswordResetRequestTemplate({
-	token,
-	host,
-	path,
+  token,
+  host,
+  path,
 }: {
-	token: string;
-	host: string;
-	path: string;
+  token: string;
+  host: string;
+  path: string;
 }) {
-	const body = `
+  const body = `
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width" /><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta name="x-apple-disable-message-reformatting" />
 <title></title>
 <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700" rel="stylesheet" />
@@ -115,5 +115,5 @@ export function generatePasswordResetRequestTemplate({
 
   `;
 
-	return body;
+  return body;
 }

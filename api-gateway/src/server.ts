@@ -24,13 +24,13 @@ expressApp.use(express.json());
 expressApp.use(morgan("tiny"));
 
 expressApp.get("/docs/swagger.json", (_, res) => {
-	return res.status(200).send(swaggerDocument);
+  return res.status(200).send(swaggerDocument);
 });
 
 const swaggerOptions = {
-	swaggerOptions: {
-		url: `/docs/swagger.json`,
-	},
+  swaggerOptions: {
+    url: `/docs/swagger.json`,
+  },
 };
 expressApp.use("/docs", swaggerUI.serveFiles(undefined, swaggerOptions), swaggerUI.setup(undefined, swaggerOptions));
 
@@ -41,13 +41,13 @@ expressApp.use("/Api/Roles", roleRouter);
 expressApp.use("/Api/Teams", teamRouter);
 
 expressApp.get("/.well-known/jwks.json", async (_, res) => {
-	try {
-		const request = await axios.get(`http://auth-service:4000/.well-known/jwks.json`);
+  try {
+    const request = await axios.get(`http://auth-service:4000/.well-known/jwks.json`);
 
-		res.json(request.data);
-	} catch (error) {
-		return res.status(500).json(error);
-	}
+    res.json(request.data);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
 });
 
 export default expressApp;

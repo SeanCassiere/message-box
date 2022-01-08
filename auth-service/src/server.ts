@@ -37,6 +37,8 @@ import { getTeamById } from "./controllers/teams/getTeamById";
 import { createTeamForClient } from "./controllers/teams/createTeamForClient";
 import { updateTeamById } from "./controllers/teams/updateTeamById";
 import { deleteTeamById } from "./controllers/teams/deleteTeamById";
+import { changePasswordForUser } from "./controllers/users/changePasswordForUser";
+import { changePasswordByUserId } from "./controllers/users/changePasswordByUserId";
 
 const expressApp = express();
 
@@ -59,6 +61,8 @@ expressApp.post("/users/confirmUserAccountByToken", confirmUserAccountByToken);
 expressApp.post("/users/requestPasswordByEmail", requestPasswordByEmail);
 expressApp.post("/users/resetPasswordByToken", resetPasswordByToken);
 expressApp.post("/users/resendConfirmationEmail", resendConfirmationEmail);
+expressApp.post("/users/changePasswordForUser", changePasswordForUser);
+expressApp.post("/users/changePasswordByUserId", changePasswordByUserId);
 
 expressApp.get("/clients/getAllClients", getAllClients);
 expressApp.post("/clients/getClientById", getClientById);
