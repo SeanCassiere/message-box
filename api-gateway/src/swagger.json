@@ -1454,7 +1454,7 @@
               }
             }
           },
-          "400": {
+          "403": {
             "$ref": "#/components/responses/BadRequest"
           }
         }

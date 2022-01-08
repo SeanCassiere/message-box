@@ -85,7 +85,7 @@ export async function changePasswordForUser(req: Request, res: Response, next: N
     return res.json({
       statusCode: 500,
       data: null,
-      errors: [{ field: "service", message: "Something went wrong" }],
+      errors: [{ field: "service", message: "Something went wrong with changePasswordForUser" }],
     });
   }
 }

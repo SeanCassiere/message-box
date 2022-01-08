@@ -45,6 +45,27 @@ const getUserByIdController = async (req: CustomRequest<{}>, res: express.Respon
 
 userRouter.route("/Profile").get(validateToken, getUserByIdController).put(validateToken, updateUserByIdController);
 
+userRouter.route("/Profile/ChangePassword").post(validateToken, async (req: CustomRequest<{}>, res) => {
+  try {
+    const { data: response } = await client.post("/users/changePasswordForUser", {
+      variables: {
+        host: process.env.FRONTEND_HOST,
+        clientId: req.auth?.message_box_clientId,
+        userId: req.auth?.message_box_userId,
+      },
+      body: { ...req.body },
+    });
+
+    if (response.statusCode !== 200) {
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
+    }
+
+    return res.json({ ...response.data });
+  } catch (error) {
+    return res.status(500).json({ message: "auth-service /users /changePasswordForUser network error" });
+  }
+});
+
 userRouter
   .route("/:id")
   .get(validateToken, getUserByIdController)
@@ -163,27 +184,6 @@ userRouter.route("/ConfirmUser/ResendConfirmationEmail").post(async (req, res) =
     return res.json({ ...response.data });
   } catch (error) {
     return res.status(500).json({ message: "auth-service /users /confirmUserAccountByToken network error" });
-  }
-});
-
-userRouter.route("/ChangePassword").post(validateToken, async (req: CustomRequest<{}>, res) => {
-  try {
-    const { data: response } = await client.post("/users/changePasswordForUser", {
-      variables: {
-        host: process.env.FRONTEND_HOST,
-        clientId: req.auth?.message_box_clientId,
-        userId: req.auth?.message_box_userId,
-      },
-      body: { ...req.body },
-    });
-
-    if (response.statusCode !== 200) {
-      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
-    }
-
-    return res.json({ ...response.data });
-  } catch (error) {
-    return res.status(500).json({ message: "auth-service /users /changePasswordWith2FA network error" });
   }
 });
 
