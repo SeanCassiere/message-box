@@ -656,8 +656,8 @@
     "/Roles/{id}": {
       "get": {
         "tags": ["Role"],
-        "summary": "Get the specific details by the role id",
-        "description": "Get all the details about the role by the role id.",
+        "summary": "Get the specific details by the role ID",
+        "description": "Get all the details about the role by the role ID.",
         "operationId": "GetRoleById",
         "parameters": [
           {
@@ -697,8 +697,8 @@
       },
       "put": {
         "tags": ["Role"],
-        "summary": "Update the role by the id",
-        "description": "Update the role by the id.",
+        "summary": "Update the role by the ID",
+        "description": "Update the role by the ID.",
         "operationId": "UpdateRoleById",
         "parameters": [
           {
@@ -892,11 +892,95 @@
         "x-codegen-request-body-name": "body"
       }
     },
+    "/Tasks/{id}": {
+      "get": {
+        "tags": ["Task"],
+        "summary": "Get a task by it's task ID",
+        "description": "Get a task by it's task ID.",
+        "operationId": "GetTaskById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique Team ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full task details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "delete": {
+        "tags": ["Task"],
+        "summary": "Delete a task by it's task ID.",
+        "description": "Delete a task and it's user mappings by the task ID.",
+        "operationId": "DeleteTaskById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique Team ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
     "/Teams/{id}": {
       "get": {
         "tags": ["Team"],
-        "summary": "Get the specific details by the team id",
-        "description": "Get all the details about the team by the team id.",
+        "summary": "Get the specific details by the team ID",
+        "description": "Get all the details about the team by the team ID.",
         "operationId": "GetTeamById",
         "parameters": [
           {
@@ -936,8 +1020,8 @@
       },
       "put": {
         "tags": ["Team"],
-        "summary": "Update the team by the id",
-        "description": "Update the team by the id.",
+        "summary": "Update the team by the team ID",
+        "description": "Update the team by the ID.",
         "operationId": "UpdateTeamById",
         "parameters": [
           {
@@ -1031,8 +1115,8 @@
     "/Users/{id}": {
       "get": {
         "tags": ["User"],
-        "summary": "Get user by id",
-        "description": "Get user details by their user id.",
+        "summary": "Get user by the user ID",
+        "description": "Get user details by their user ID.",
         "operationId": "GetUserById",
         "security": [
           {
@@ -1071,7 +1155,7 @@
       },
       "put": {
         "tags": ["User"],
-        "summary": "Update user by id",
+        "summary": "Update user by the user ID",
         "description": "Update the user details by the their ID.",
         "operationId": "UpdateUserById",
         "parameters": [
@@ -1119,8 +1203,8 @@
       },
       "delete": {
         "tags": ["User"],
-        "summary": "Delete user by id",
-        "description": "Delete a user by their user id.<br /><br />The initial delete is a soft delete, which the user being set to inactive and the email being randomized.<br />A second subsequent request will perform a permanent deletion from the database.",
+        "summary": "Delete user by the user ID",
+        "description": "Delete a user by their user ID.<br /><br />The initial delete is a soft delete, which the user being set to inactive and the email being randomized.<br />A second subsequent request will perform a permanent deletion from the database.",
         "operationId": "DeleteUserById",
         "security": [
           {
