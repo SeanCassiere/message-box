@@ -4,6 +4,7 @@ import morgan from "morgan";
 
 import { getAllTasksForUser } from "./controllers/tasks/getAllTasksForUser";
 import { createTaskForUser } from "./controllers/tasks/createTaskForUser";
+import { getTaskById } from "./controllers/tasks/getTaskById";
 
 const expressApp = express();
 
@@ -16,5 +17,6 @@ expressApp.use(morgan("dev"));
  */
 expressApp.post("/tasks/getAllTasksForUser", getAllTasksForUser);
 expressApp.post("/tasks/createTaskForUser", createTaskForUser);
+expressApp.post("/tasks/getTaskById", getTaskById);
 
 export default expressApp;
