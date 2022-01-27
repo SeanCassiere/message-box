@@ -10,7 +10,7 @@ services:
       target: base
     depends_on:
       - auth-service
-      - tasks-service
+      - application-data-service
     ports:
       - "4000:5000"
     volumes:
@@ -21,7 +21,7 @@ services:
     container_name: auth-service
     build:
       context: ./auth-service
-      dockerfile: "./auth-service/Dockerfile"
+      dockerfile: "Dockerfile"
       target: base
     volumes:
       - ./auth-service:/opt/app
@@ -43,28 +43,28 @@ services:
     ports:
       - "7200:5432"
 
-  # tasks-service:
-  #   container_name: tasks-service
-  #   build:
-  #     context: ./tasks-service
-  #     dockerfile: "./tasks-service/Dockerfile"
-  #     target: base
-  #   volumes:
-  #     - ./tasks-service:/opt/app
-  #   depends_on:
-  #     - tasks-service-db
-  #   ports:
-  #     - "7101:4000"
-  #   command: yarn watch
+  application-data-service:
+    container_name: application-data-service
+    build:
+      context: ./application-data-service
+      dockerfile: "Dockerfile"
+      target: base
+    volumes:
+      - ./application-data-service:/opt/app
+    depends_on:
+      - application-data-service-db
+    ports:
+      - "7101:4000"
+    command: yarn watch
 
-  # tasks-service-db:
-  #   image: postgres
-  #   user: postgres
-  #   environment:
-  #     POSTGRES_DB: tasks-service-db
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #   volumes:
-  #     - ./pgdata/tasks-service:/var/lib/postgresql/data/
-  #   ports:
-  #     - "7201:5432"
+  application-data-service-db:
+    image: postgres
+    user: postgres
+    environment:
+      POSTGRES_DB: application-data-service-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./pgdata/application-data-service:/var/lib/postgresql/data/
+    ports:
+      - "7201:5432"

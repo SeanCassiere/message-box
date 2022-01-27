@@ -12,7 +12,7 @@ services:
       target: production
     command: yarn start
 
-  # tasks-service:
-  #   build:
-  #     target: production
-  #   command: node dist/index.js
+  application-data-service:
+    build:
+      target: production
+    command: node dist/index.js
