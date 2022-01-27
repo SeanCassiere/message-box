@@ -1,6 +1,9 @@
 import dotenv from "dotenv-safe";
 import { Connection, createConnection } from "typeorm";
 
+import Task from "./entities/Task";
+import TaskShareMapping from "./entities/TaskShareMappings";
+
 dotenv.config();
 
 let connection: Connection;
@@ -11,7 +14,7 @@ export async function initConnection(retries = 5) {
   while (retries) {
     try {
       connection = await createConnection({
-        entities: [],
+        entities: [Task, TaskShareMapping],
         type: "postgres",
         url: process.env.APPLICATION_DATA_SERVICE_DB_URL,
         synchronize: true,

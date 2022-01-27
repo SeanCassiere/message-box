@@ -1,0 +1,79 @@
+import { Request, Response } from "express";
+import * as yup from "yup";
+
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import Task from "#root/db/entities/Task";
+import TaskShareMapping from "#root/db/entities/TaskShareMappings";
+import { formatTaskResponseWithUsers } from "#root/utils/formatResponses";
+
+const validationSchema = yup.object().shape({
+  variables: yup.object().shape({
+    clientId: yup.string().required("ClientId is required"),
+    userId: yup.string().required("UserId is required"),
+  }),
+  body: yup.object().shape({
+    ownerId: yup.string().required("Task must have an owner"),
+    title: yup.string().required("Title is required"),
+    content: yup.string(),
+    bgColor: yup.string(),
+    dueDate: yup.date().required("Due date is required"),
+    sharedWith: yup.array().of(yup.string()),
+  }),
+});
+
+export async function createTaskForUser(req: Request, res: Response) {
+  const checkErrors = await validateYupSchema(validationSchema, req.body);
+  if (checkErrors && checkErrors.length > 0) {
+    return res.json({
+      statusCode: 400,
+      data: null,
+      pagination: null,
+      errors: checkErrors,
+    });
+  }
+
+  const variables = req.body.variables;
+  const body = req.body.body;
+
+  try {
+    // save the task
+    const task: Task = Task.create({
+      ownerId: body.ownerId,
+      title: body.title,
+      dueDate: body.dueDate,
+      clientId: variables.clientId,
+    });
+    if (body.content) {
+      task.content = body.content;
+    }
+    if (body.bgColor) {
+      task.bgColor = body.bgColor;
+    }
+    await task.save();
+
+    // save the task share mappings
+    const userIds = [];
+    if (body.sharedWith && body.sharedWith.length > 0) {
+      for (const userId of body.sharedWith) {
+        const mapping = await TaskShareMapping.create({
+          taskId: task.taskId,
+          userId,
+        }).save();
+        userIds.push(mapping.userId);
+      }
+    }
+
+    return res.json({
+      statusCode: 200,
+      data: formatTaskResponseWithUsers({ task, userIds }),
+      errors: [],
+      pagination: null,
+    });
+  } catch (error) {
+    return res.json({
+      statusCode: 500,
+      data: null,
+      errors: [{ field: "service", message: "Something in POST /tasks" }],
+    });
+  }
+}
