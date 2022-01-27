@@ -38,6 +38,10 @@
       "description": "Endpoints relating to the user roles"
     },
     {
+      "name": "Task",
+      "description": "Endpoints relating to the user tasks"
+    },
+    {
       "name": "Team",
       "description": "Endpoints relating to the user teams"
     },
@@ -776,6 +780,109 @@
             }
           },
           "403": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/Tasks": {
+      "get": {
+        "tags": ["Task"],
+        "summary": "Get all the tasks for a user",
+        "description": "Get all the tasks for a user",
+        "operationId": "GetTasks",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "description": "Owner ID (UUID)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "description": "Client ID (UUID)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "for",
+            "in": "query",
+            "description": "***Today, Overdue, Tomorrow***",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All the tasks for a user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "post": {
+        "tags": ["Task"],
+        "summary": "Create a new task",
+        "description": "Create a new task for a user",
+        "operationId": "CreateTask",
+        "parameters": [],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "New task details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "All the tasks for a user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskSchema"
+                }
+              }
+            }
+          },
+          "400": {
             "$ref": "#/components/responses/BadRequest"
           },
           "401": {
@@ -1654,6 +1761,48 @@
             "type": "string"
           },
           "isUserDeletable": {
+            "type": "boolean",
+            "default": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TaskSchema": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "sharedWith": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "bgColor": {
+            "type": "string",
+            "default": "#009688"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isCompleted": {
             "type": "boolean",
             "default": false
           },

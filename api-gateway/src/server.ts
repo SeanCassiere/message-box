@@ -13,6 +13,7 @@ import userRouter from "./routes/user.routes";
 import clientRouter from "./routes/client.routes";
 import roleRouter from "./routes/roles.routes";
 import teamRouter from "./routes/teams.routes";
+import tasksRouter from "./routes/task.routes";
 
 const expressApp = express();
 
@@ -39,6 +40,7 @@ expressApp.use("/Api/Users", userRouter);
 expressApp.use("/Api/Clients", clientRouter);
 expressApp.use("/Api/Roles", roleRouter);
 expressApp.use("/Api/Teams", teamRouter);
+expressApp.use("/Api/Tasks", tasksRouter);
 
 expressApp.get("/.well-known/jwks.json", async (_, res) => {
   try {
