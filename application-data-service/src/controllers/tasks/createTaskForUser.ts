@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import * as yup from "yup";
+import axios from "axios";
 
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import Task from "#root/db/entities/Task";
 import TaskShareMapping from "#root/db/entities/TaskShareMappings";
 import { formatTaskResponseWithUsers } from "#root/utils/formatResponses";
+import { AUTH_SERVICE_URI } from "#root/utils/constants";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -35,6 +37,21 @@ export async function createTaskForUser(req: Request, res: Response) {
   const variables = req.body.variables;
   const body = req.body.body;
 
+  let clientUserIds: string[] = [];
+  try {
+    const { data } = await axios.post(`${AUTH_SERVICE_URI}/clients/getAllUserIdsForClient`, {
+      variables: {
+        clientId: variables.clientId,
+      },
+    });
+
+    clientUserIds = data;
+  } catch (error) {
+    console.error(
+      `POST /clients/createTaskForUser -> ${AUTH_SERVICE_URI}/clients/getAllUserIdsForClient\ncould not fetch the user ids for this client`
+    );
+  }
+
   try {
     // save the task
     const task: Task = Task.create({
@@ -55,11 +72,13 @@ export async function createTaskForUser(req: Request, res: Response) {
     const userIds = [];
     if (body.sharedWith && body.sharedWith.length > 0) {
       for (const userId of body.sharedWith) {
-        const mapping = await TaskShareMapping.create({
-          taskId: task.taskId,
-          userId,
-        }).save();
-        userIds.push(mapping.userId);
+        if (clientUserIds.includes(userId)) {
+          const mapping = await TaskShareMapping.create({
+            taskId: task.taskId,
+            userId,
+          }).save();
+          userIds.push(mapping.userId);
+        }
       }
     }
 
