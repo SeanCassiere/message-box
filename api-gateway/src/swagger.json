@@ -31,23 +31,23 @@
     },
     {
       "name": "Client",
-      "description": "Endpoints relating to Clients"
+      "description": "endpoints relating to Clients"
     },
     {
       "name": "Role",
-      "description": "Endpoints relating to the user roles"
+      "description": "endpoints relating to the user roles"
     },
     {
       "name": "Task",
-      "description": "Endpoints relating to the user tasks"
+      "description": "endpoints relating to the user tasks"
     },
     {
       "name": "Team",
-      "description": "Endpoints relating to the user teams"
+      "description": "endpoints relating to the user teams"
     },
     {
       "name": "User",
-      "description": "Endpoints relating to Users"
+      "description": "endpoints relating to Users"
     }
   ],
   "paths": {
@@ -657,7 +657,7 @@
       "get": {
         "tags": ["Role"],
         "summary": "Get the specific details by the role ID",
-        "description": "Get all the details about the role by the role ID.",
+        "description": "Get all the details about the role by the role ID",
         "operationId": "GetRoleById",
         "parameters": [
           {
@@ -698,7 +698,7 @@
       "put": {
         "tags": ["Role"],
         "summary": "Update the role by the ID",
-        "description": "Update the role by the ID.",
+        "description": "Update the role by the ID",
         "operationId": "UpdateRoleById",
         "parameters": [
           {
@@ -749,8 +749,8 @@
       },
       "delete": {
         "tags": ["Role"],
-        "summary": "Delete a role by its role ID.",
-        "description": "Delete a role and it's user mappings by the role ID.",
+        "summary": "Delete a role by its role ID",
+        "description": "Delete a role and it's user mappings by the role ID",
         "operationId": "DeleteRoleById",
         "parameters": [
           {
@@ -873,7 +873,7 @@
         },
         "responses": {
           "200": {
-            "description": "All the tasks for a user",
+            "description": "Newly created task",
             "content": {
               "application/json": {
                 "schema": {
@@ -896,7 +896,7 @@
       "get": {
         "tags": ["Task"],
         "summary": "Get a task by it's task ID",
-        "description": "Get a task by it's task ID.",
+        "description": "Get a task by it's task ID",
         "operationId": "GetTaskById",
         "parameters": [
           {
@@ -934,10 +934,62 @@
         },
         "x-codegen-request-body-name": "body"
       },
+      "put": {
+        "tags": ["Task"],
+        "summary": "Update task by it's task ID",
+        "description": "Update task by it's task ID",
+        "operationId": "UpdateTaskById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique Team ID (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Update task details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated task details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
       "delete": {
         "tags": ["Task"],
-        "summary": "Delete a task by it's task ID.",
-        "description": "Delete a task and it's user mappings by the task ID.",
+        "summary": "Delete a task by it's task ID",
+        "description": "Delete a task and it's user mappings by the task ID",
         "operationId": "DeleteTaskById",
         "parameters": [
           {
@@ -980,7 +1032,7 @@
       "get": {
         "tags": ["Team"],
         "summary": "Get the specific details by the team ID",
-        "description": "Get all the details about the team by the team ID.",
+        "description": "Get all the details about the team by the team ID",
         "operationId": "GetTeamById",
         "parameters": [
           {
@@ -1021,7 +1073,7 @@
       "put": {
         "tags": ["Team"],
         "summary": "Update the team by the team ID",
-        "description": "Update the team by the ID.",
+        "description": "Update the team by the ID",
         "operationId": "UpdateTeamById",
         "parameters": [
           {
@@ -1072,8 +1124,8 @@
       },
       "delete": {
         "tags": ["Team"],
-        "summary": "Delete a team by its team ID.",
-        "description": "Delete a team and it's user mappings by the team ID.",
+        "summary": "Delete a team by its team ID",
+        "description": "Delete a team and it's user mappings by the team ID",
         "operationId": "DeleteTeamById",
         "parameters": [
           {
@@ -1116,7 +1168,7 @@
       "get": {
         "tags": ["User"],
         "summary": "Get user by the user ID",
-        "description": "Get user details by their user ID.",
+        "description": "Get user details by their user ID",
         "operationId": "GetUserById",
         "security": [
           {
@@ -1156,7 +1208,7 @@
       "put": {
         "tags": ["User"],
         "summary": "Update user by the user ID",
-        "description": "Update the user details by the their ID.",
+        "description": "Update the user details by the their ID",
         "operationId": "UpdateUserById",
         "parameters": [
           {
@@ -1204,7 +1256,7 @@
       "delete": {
         "tags": ["User"],
         "summary": "Delete user by the user ID",
-        "description": "Delete a user by their user ID.<br /><br />The initial delete is a soft delete, which the user being set to inactive and the email being randomized.<br />A second subsequent request will perform a permanent deletion from the database.",
+        "description": "Delete a user by their user ID<br /><br />The initial delete is a soft delete, which the user being set to inactive and the email being randomized.<br />A second subsequent request will perform a permanent deletion from the database.",
         "operationId": "DeleteUserById",
         "security": [
           {

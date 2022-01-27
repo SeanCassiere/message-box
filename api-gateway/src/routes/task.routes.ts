@@ -80,6 +80,29 @@ tasksRouter
       return res.status(500).json({ message: "application-data-service /tasks network error" });
     }
   })
+  .put(validateToken, async (req: CustomRequest<{}>, res) => {
+    const taskId = req.params.id;
+    try {
+      const { data } = await client.post("/tasks/deleteTaskById", {
+        variables: {
+          clientId: req.auth!.message_box_clientId,
+          userId: req.auth!.message_box_userId,
+          taskId: taskId,
+        },
+        body: {
+          ...req.body,
+        },
+      });
+
+      if (data.statusCode === 200) {
+        return res.json({ ...data.data });
+      }
+
+      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+    } catch (error) {
+      return res.status(500).json({ message: "application-data-service /tasks network error" });
+    }
+  })
   .delete(validateToken, async (req: CustomRequest<{}>, res) => {
     const taskId = req.params.id;
     try {
