@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"This project does not have testing set up.\n\"",
+    "web-client": "npm start --prefix web-client",
     "prepare": "husky prepare"
   },
   "keywords": [],
