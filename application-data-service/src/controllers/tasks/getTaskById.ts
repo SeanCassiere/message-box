@@ -41,7 +41,7 @@ export async function getTaskById(req: Request, res: Response) {
       });
     }
 
-    const taskShareMappings = await TaskShareMapping.find({ where: { taskId: body.taskId } });
+    const taskShareMappings = await TaskShareMapping.find({ where: { taskId: body.taskId, isActive: true } });
     const userIds = taskShareMappings.map((taskShareMapping) => taskShareMapping.userId);
 
     return res.json({

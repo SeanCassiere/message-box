@@ -33,19 +33,21 @@ export async function getAllTasksForUser(req: Request, res: Response) {
   const returnFormattedTasks = [];
 
   try {
+    // get the owned tasks
     const tasks = await Task.find({ where: { ownerId: body.ownerId, clientId: variables.clientId, isDeleted: false } });
 
     for (const task of tasks) {
-      const taskShares = await TaskShareMapping.find({ where: { taskId: task.taskId } });
+      const taskShares = await TaskShareMapping.find({ where: { taskId: task.taskId, isActive: true } });
       const userIds = taskShares.map((taskShare) => taskShare.userId);
       returnFormattedTasks.push(formatTaskResponseWithUsers({ task, userIds }));
     }
 
+    // get the tasks which were shared with the user. ie: external tasks by other users
     const shareMappings = await TaskShareMapping.find({ where: { userId: body.ownerId, isActive: true } });
     for (const mapping of shareMappings) {
       const task = await Task.findOne({ where: { taskId: mapping.taskId, clientId: variables.clientId } });
       if (task) {
-        const taskShares = await TaskShareMapping.find({ where: { taskId: task.taskId } });
+        const taskShares = await TaskShareMapping.find({ where: { taskId: task.taskId, isActive: true } });
         const userIds = taskShares.map((taskShare) => taskShare.userId);
         returnFormattedTasks.push(formatTaskResponseWithUsers({ task, userIds }));
       }
