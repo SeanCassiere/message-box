@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
 
 @Entity("role_mappings")
-export default class Role extends BaseEntity {
+export default class RoleMapping extends BaseEntity {
   @PrimaryGeneratedColumn("increment", { name: "mapping_id" })
   mappingId: number;
 
