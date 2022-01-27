@@ -11,6 +11,9 @@ export default class TaskShareMapping extends BaseEntity {
   @Column("text", { name: "user_id" })
   userId: string;
 
+  @Column("bool", { name: "is_active", default: true })
+  isActive: boolean;
+
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", name: "created_at" })
   createdAt: Date;
 

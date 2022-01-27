@@ -41,6 +41,16 @@ export async function getAllTasksForUser(req: Request, res: Response) {
       returnFormattedTasks.push(formatTaskResponseWithUsers({ task, userIds }));
     }
 
+    const shareMappings = await TaskShareMapping.find({ where: { userId: body.ownerId, isActive: true } });
+    for (const mapping of shareMappings) {
+      const task = await Task.findOne({ where: { taskId: mapping.taskId, clientId: variables.clientId } });
+      if (task) {
+        const taskShares = await TaskShareMapping.find({ where: { taskId: task.taskId } });
+        const userIds = taskShares.map((taskShare) => taskShare.userId);
+        returnFormattedTasks.push(formatTaskResponseWithUsers({ task, userIds }));
+      }
+    }
+
     return res.json({
       statusCode: 200,
       data: [...returnFormattedTasks],
