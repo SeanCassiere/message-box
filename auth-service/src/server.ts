@@ -40,6 +40,8 @@ import { deleteTeamById } from "./controllers/teams/deleteTeamById";
 import { changePasswordForUser } from "./controllers/users/changePasswordForUser";
 import { changePasswordByUserId } from "./controllers/users/changePasswordByUserId";
 
+import { getAllUserIdsForClient } from "./controllers/clients/getAllUserIdsForClient";
+
 const expressApp = express();
 
 expressApp.use(cors({ origin: (_, cb) => cb(null, true), credentials: true }));
@@ -49,6 +51,13 @@ expressApp.use(morgan("dev"));
 
 expressApp.use(express.static(__dirname + "/../public"));
 
+// private routes
+expressApp.post("/clients/getAllUserIdsForClient", getAllUserIdsForClient);
+
+// public routes
+/**
+ * User routes
+ */
 expressApp.post("/users", getAllUsers as any);
 expressApp.post("/users/createUserForClient", createUserForClient);
 expressApp.post("/users/login", loginUser);
@@ -64,16 +73,25 @@ expressApp.post("/users/resendConfirmationEmail", resendConfirmationEmail);
 expressApp.post("/users/changePasswordForUser", changePasswordForUser);
 expressApp.post("/users/changePasswordByUserId", changePasswordByUserId);
 
+/**
+ * Client routes
+ */
 expressApp.get("/clients/getAllClients", getAllClients);
 expressApp.post("/clients/getClientById", getClientById);
 expressApp.post("/clients/createClientAndUser", createClientAndUser);
 
+/**
+ * Role routes
+ */
 expressApp.post("/roles/getAllRolesForClient", getAllRolesForClient as any);
 expressApp.post("/roles/getRoleById", getRoleById as any);
 expressApp.post("/roles/createRoleForClient", createRoleForClient);
 expressApp.post("/roles/updateRoleById", updateRoleById);
 expressApp.post("/roles/deleteRoleById", deleteRoleById);
 
+/**
+ * Team routes
+ */
 expressApp.post("/teams/getAllTeamsForClient", getAllTeamsForClient as any);
 expressApp.post("/teams/getTeamById", getTeamById as any);
 expressApp.post("/teams/createTeamForClient", createTeamForClient);
