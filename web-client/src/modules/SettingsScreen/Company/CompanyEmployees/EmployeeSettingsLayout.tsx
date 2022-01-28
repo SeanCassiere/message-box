@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -19,124 +20,138 @@ import { client } from "../../../../shared/api/client";
 import { setLookupRoles, setLookupTeams, setLookupUsers } from "../../../../shared/redux/slices/lookup/lookupSlice";
 
 const Layout = () => {
-	const dispatch = useDispatch();
-	const { usersList, rolesList, teamsList } = useSelector(selectLookupListsState);
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
-	const refreshListItems = useCallback(() => {
-		client
-			.get("/Clients/Users")
-			.then((res) => {
-				if (res.status === 200) {
-					dispatch(setLookupUsers(res.data));
-				} else {
-					console.log(res.data);
-				}
-			})
-			.catch((e) => console.log(e));
+  const { usersList, rolesList, teamsList } = useSelector(selectLookupListsState);
 
-		client
-			.get("/Clients/Roles")
-			.then((res) => {
-				if (res.status === 200) {
-					dispatch(setLookupRoles(res.data));
-				} else {
-					console.log(res.data);
-				}
-			})
-			.catch((e) => console.log(e));
+  const refreshListItems = useCallback(() => {
+    client
+      .get("/Clients/Users")
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch(setLookupUsers(res.data));
+        } else {
+          console.log(res.data);
+          enqueueSnackbar("Error: Failed fetching company employees.", { variant: "error" });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        enqueueSnackbar("Error: Failed fetching company employees.", { variant: "error" });
+      });
 
-		client
-			.get("/Clients/Teams")
-			.then((res) => {
-				if (res.status === 200) {
-					dispatch(setLookupTeams(res.data));
-				} else {
-					console.log(res.data);
-				}
-			})
-			.catch((e) => console.log(e));
-	}, [dispatch]);
+    client
+      .get("/Clients/Roles")
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch(setLookupRoles(res.data));
+        } else {
+          console.log(res.data);
+          enqueueSnackbar("Error: Failed fetching company roles.", { variant: "error" });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        enqueueSnackbar("Error: Failed fetching company roles.", { variant: "error" });
+      });
 
-	useEffect(() => {
-		refreshListItems();
-	}, [dispatch, refreshListItems]);
+    client
+      .get("/Clients/Teams")
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch(setLookupTeams(res.data));
+        } else {
+          console.log(res.data);
+          enqueueSnackbar("Error: Failed fetching company teams.", { variant: "error" });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        enqueueSnackbar("Error: Failed fetching company teams.", { variant: "error" });
+      });
+  }, [dispatch, enqueueSnackbar]);
 
-	const fullDataUserList = useMemo(() => {
-		const userListToReturn: IUserProfileWithSortedDetails[] = [];
+  useEffect(() => {
+    refreshListItems();
+  }, [dispatch, refreshListItems]);
 
-		for (const user of usersList) {
-			let rolesForUser: IRoleProfile[] = [];
-			let teamsForUser: ITeamProfile[] = [];
+  const fullDataUserList = useMemo(() => {
+    const userListToReturn: IUserProfileWithSortedDetails[] = [];
 
-			for (let role of user?.roles) {
-				const filteredRole = rolesList.find((r) => r.roleId === role);
+    for (const user of usersList) {
+      let rolesForUser: IRoleProfile[] = [];
+      let teamsForUser: ITeamProfile[] = [];
 
-				if (filteredRole) {
-					rolesForUser.push(filteredRole);
-				}
-			}
+      for (let role of user?.roles) {
+        const filteredRole = rolesList.find((r) => r.roleId === role);
 
-			for (let team of user?.teams) {
-				const filteredTeam = teamsList.find((t) => t.teamId === team);
+        if (filteredRole) {
+          rolesForUser.push(filteredRole);
+        }
+      }
 
-				if (filteredTeam) {
-					teamsForUser.push(filteredTeam);
-				}
-			}
+      for (let team of user?.teams) {
+        const filteredTeam = teamsList.find((t) => t.teamId === team);
 
-			const newUser: IUserProfileWithSortedDetails = { ...user, roleDetails: rolesForUser, teamDetails: teamsForUser };
-			userListToReturn.push(newUser);
-		}
+        if (filteredTeam) {
+          teamsForUser.push(filteredTeam);
+        }
+      }
 
-		return userListToReturn;
-	}, [usersList, rolesList, teamsList]);
+      const newUser: IUserProfileWithSortedDetails = { ...user, roleDetails: rolesForUser, teamDetails: teamsForUser };
+      userListToReturn.push(newUser);
+    }
 
-	const [openEditDrawer, setOpenEditDrawer] = useState(false);
-	const [openEditId, setOpenEditId] = useState<string | null>(null);
+    return userListToReturn;
+  }, [usersList, rolesList, teamsList]);
 
-	const handleOpenNewUserDialog = useCallback(() => {
-		setOpenEditId(null);
-		setOpenEditDrawer(true);
-	}, []);
+  const [openEditDrawer, setOpenEditDrawer] = useState(false);
+  const [openEditId, setOpenEditId] = useState<string | null>(null);
 
-	const handleOpenEditor = useCallback((userId: string) => {
-		setOpenEditId(userId);
-		setOpenEditDrawer(true);
-	}, []);
+  const handleOpenNewUserDialog = useCallback(() => {
+    setOpenEditId(null);
+    setOpenEditDrawer(true);
+  }, []);
 
-	const handleCloseEditor = useCallback(() => {
-		setOpenEditDrawer(false);
-		setOpenEditId(null);
-	}, []);
+  const handleOpenEditor = useCallback((userId: string) => {
+    setOpenEditId(userId);
+    setOpenEditDrawer(true);
+  }, []);
 
-	return (
-		<>
-			<EditUserDialog
-				handleClose={handleCloseEditor}
-				handleRefreshList={refreshListItems}
-				showDialog={openEditDrawer}
-				userId={openEditId}
-			/>
-			<Box>
-				<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: 2 }}>
-					<Box>
-						<Typography variant='h5'>Employees</Typography>
-					</Box>
-					<Box sx={{ display: "inline-flex", columnGap: "1rem" }}>
-						<IconButton color='secondary' aria-label='refresh' onClick={refreshListItems}>
-							<RefreshOutlinedIcon />
-						</IconButton>
-						<Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewUserDialog}>
-							Add
-						</Button>
-					</Box>
-				</Box>
-				<Box>
-					<ViewTable dataList={fullDataUserList} editItemHandler={handleOpenEditor} />
-				</Box>
-			</Box>
-		</>
-	);
+  const handleCloseEditor = useCallback(() => {
+    setOpenEditDrawer(false);
+    setOpenEditId(null);
+  }, []);
+
+  return (
+    <>
+      <EditUserDialog
+        handleClose={handleCloseEditor}
+        handleRefreshList={refreshListItems}
+        showDialog={openEditDrawer}
+        userId={openEditId}
+      />
+      <Box>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: 2 }}>
+          <Box>
+            <Typography variant="h5">Employees</Typography>
+          </Box>
+          <Box sx={{ display: "inline-flex", columnGap: "1rem" }}>
+            <IconButton color="secondary" aria-label="refresh" onClick={refreshListItems}>
+              <RefreshOutlinedIcon />
+            </IconButton>
+            <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewUserDialog}>
+              Add
+            </Button>
+          </Box>
+        </Box>
+        <Box>
+          <ViewTable dataList={fullDataUserList} editItemHandler={handleOpenEditor} />
+        </Box>
+      </Box>
+    </>
+  );
 };
 
 export default Layout;

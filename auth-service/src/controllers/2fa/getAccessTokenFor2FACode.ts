@@ -75,19 +75,19 @@ export async function getAccessTokenFor2FACode(req: Request, res: Response, next
 
     // continue with validation the two-factor code
     secretRecord = findUser2FARecord;
-    const fullUserSecret = JSON.parse(findUser2FARecord.secret) as Secret2FA;
+    const fullUserSecret = JSON.parse(secretRecord.secret) as Secret2FA;
     const isTotpValid = speakeasy.totp.verify({ secret: fullUserSecret.base32, encoding: "base32", token: code });
 
     if (!isTotpValid) {
       return res.json({
-        statusCode: 200,
+        statusCode: 400,
         pagination: null,
         data: {
           message: "2FA Code is invalid",
           accessToken: null,
           expiresIn: 0,
         },
-        errors: [],
+        errors: [{ propertyPath: "code", message: "Two-factor code is invalid" }],
       });
     }
 

@@ -9,6 +9,6 @@ services:
       - "16543:80"
     depends_on:
       - auth-service-db
-      - tasks-service-db
+      - application-data-service-db
     volumes:
       - ./pgdata/pgadmin:/var/lib/pgadmin

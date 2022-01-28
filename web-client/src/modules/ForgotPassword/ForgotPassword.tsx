@@ -2,69 +2,80 @@ import { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
 import { client } from "../../shared/api/client";
 import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
 
 import UserRegistrationForm from "./UserPasswordResetForm";
-import RegistrationSuccessDialog from "./ResetSuccessDialog";
+import ResetSuccessDialog from "./ResetSuccessDialog";
 
 const validationSchema = yup.object().shape({
-	token: yup.string().required("Token is required"),
-	password: yup.string().required("Password is required"),
-	passwordConfirmation: yup.string().oneOf([yup.ref("password"), null], "Passwords must match"),
+  token: yup.string().required("Token is required"),
+  password: yup.string().required("Password is required"),
+  passwordConfirmation: yup.string().oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 
 const ForgotPasswordScreen = () => {
-	const { id } = useParams();
-	const navigate = useNavigate();
-	const [showRegistrationSuccess, setShowRegistrationSuccess] = useState(false);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
-	useEffect(() => {
-		if (!id || id === "") {
-			navigate("/");
-		}
-	}, [id, navigate]);
+  const [showRegistrationSuccess, setShowRegistrationSuccess] = useState(false);
 
-	const formik = useFormik({
-		initialValues: {
-			token: id as string,
-			password: "",
-			passwordConfirmation: "",
-		},
-		validationSchema,
-		onSubmit: (values, { setSubmitting, setErrors }) => {
-			const { passwordConfirmation, ...rest } = values;
-			const payload = {
-				...rest,
-			};
+  useEffect(() => {
+    if (!id || id === "") {
+      navigate("/");
+    }
+  }, [id, navigate]);
 
-			client
-				.post("/Users/ResetPassword/WithToken", payload)
-				.then((res) => {
-					if (res.status === 400) {
-						setErrors(formatErrorsToFormik(res.data.errors));
-					}
+  const formik = useFormik({
+    initialValues: {
+      token: id as string,
+      password: "",
+      passwordConfirmation: "",
+    },
+    validationSchema,
+    onSubmit: (values, { setSubmitting, setErrors }) => {
+      const { passwordConfirmation, ...rest } = values;
+      const payload = {
+        ...rest,
+      };
 
-					if (res.status === 200) {
-						setShowRegistrationSuccess(true);
-					}
-				})
-				.catch((err) => {
-					console.log(err);
-				})
-				.finally(() => {
-					setSubmitting(false);
-				});
-		},
-	});
+      client
+        .post("/Users/ResetPassword/WithToken", payload)
+        .then((res) => {
+          if (res.status === 400) {
+            enqueueSnackbar(`Warning: Input validation failed.`, {
+              variant: "warning",
+              anchorOrigin: { horizontal: "center", vertical: "top" },
+            });
+            setErrors(formatErrorsToFormik(res.data.errors));
+          }
 
-	return (
-		<>
-			<RegistrationSuccessDialog open={showRegistrationSuccess} />
-			<UserRegistrationForm formik={formik} />
-		</>
-	);
+          if (res.status === 200) {
+            setShowRegistrationSuccess(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          enqueueSnackbar(`Error: Could not reset your password.`, {
+            variant: "error",
+            anchorOrigin: { horizontal: "center", vertical: "top" },
+          });
+        })
+        .finally(() => {
+          setSubmitting(false);
+        });
+    },
+  });
+
+  return (
+    <>
+      <ResetSuccessDialog open={showRegistrationSuccess} />
+      <UserRegistrationForm formik={formik} />
+    </>
+  );
 };
 
 export default ForgotPasswordScreen;

@@ -16,67 +16,77 @@ import ConfirmAccountScreen from "../modules/ConfirmAccountScreen/ConfirmAccount
 import SettingsScreen from "../modules/SettingsScreen";
 
 const AppRoutes = () => {
-	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path='/' element={<LoginScreen />} />
-				<Route path='/login' element={<LoginScreen />} />
-				<Route path='/forgot-password/:id' element={<ForgotPasswordScreen />} />
-				<Route path='/confirm-account/:id' element={<ConfirmAccountScreen />} />
-				<Route path='/logout' element={<LogoutScreen />} />
-				<Route
-					path='/sign-up'
-					element={
-						<NoAuthOnlyRoute>
-							<RegisterScreen />
-						</NoAuthOnlyRoute>
-					}
-				/>
-				<Route
-					path='/chat'
-					element={
-						<AuthRoute>
-							<NavigationWrapper>
-								<ChatScreen />
-							</NavigationWrapper>
-						</AuthRoute>
-					}
-				/>
-				<Route
-					path='/tasks'
-					element={
-						<AuthRoute>
-							<NavigationWrapper>
-								<TasksScreen />
-							</NavigationWrapper>
-						</AuthRoute>
-					}
-				/>
-				<Route
-					path='/settings'
-					element={
-						<AuthRoute>
-							<NavigationWrapper>
-								<SettingsScreen />
-							</NavigationWrapper>
-						</AuthRoute>
-					}
-				/>
-				<Route
-					path='/settings/:tab'
-					element={
-						<AuthRoute>
-							<NavigationWrapper>
-								<SettingsScreen />
-							</NavigationWrapper>
-						</AuthRoute>
-					}
-				/>
-				<Route path='/not-found' element={<NotFoundScreen />} />
-				<Route path='*' element={<Navigate to='/not-found' />} />
-			</Routes>
-		</BrowserRouter>
-	);
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginScreen />} />
+        <Route path="/login" element={<LoginScreen />} />
+        <Route path="/forgot-password/:id" element={<ForgotPasswordScreen />} />
+        <Route path="/confirm-account/:id" element={<ConfirmAccountScreen />} />
+        <Route path="/logout" element={<LogoutScreen />} />
+        <Route
+          path="/sign-up"
+          element={
+            <NoAuthOnlyRoute>
+              <RegisterScreen />
+            </NoAuthOnlyRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <AuthRoute>
+              <NavigationWrapper>
+                <ChatScreen />
+              </NavigationWrapper>
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/tasks"
+          element={
+            <AuthRoute>
+              <NavigationWrapper>
+                <TasksScreen />
+              </NavigationWrapper>
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/tasks/:id"
+          element={
+            <AuthRoute>
+              <NavigationWrapper>
+                <TasksScreen />
+              </NavigationWrapper>
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <AuthRoute>
+              <NavigationWrapper>
+                <SettingsScreen />
+              </NavigationWrapper>
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/settings/:tab"
+          element={
+            <AuthRoute>
+              <NavigationWrapper>
+                <SettingsScreen />
+              </NavigationWrapper>
+            </AuthRoute>
+          }
+        />
+        <Route path="/not-found" element={<NotFoundScreen />} />
+        <Route path="*" element={<Navigate to="/not-found" />} />
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 export default AppRoutes;

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -18,104 +19,113 @@ import { client } from "../../../../shared/api/client";
 import { setLookupTeams } from "../../../../shared/redux/slices/lookup/lookupSlice";
 
 const Layout = () => {
-	const dispatch = useDispatch();
-	const { teamsList } = useSelector(selectLookupListsState);
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
-	const refreshListItems = useCallback(() => {
-		client
-			.get("/Clients/Teams")
-			.then((res) => {
-				if (res.status === 200) {
-					dispatch(setLookupTeams(res.data));
-					return;
-				}
+  const { teamsList } = useSelector(selectLookupListsState);
 
-				console.log(res.data);
-			})
-			.catch((e) => console.log(e));
-	}, [dispatch]);
+  const refreshListItems = useCallback(() => {
+    client
+      .get("/Clients/Teams")
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch(setLookupTeams(res.data));
+          return;
+        }
 
-	useEffect(() => {
-		refreshListItems();
-	}, [refreshListItems]);
+        enqueueSnackbar("Error: Failed fetching company teams.", { variant: "error" });
+      })
+      .catch((e) => {
+        console.log(e);
+        enqueueSnackbar("Error: Failed fetching company teams.", { variant: "error" });
+      });
+  }, [dispatch, enqueueSnackbar]);
 
-	const [openEditDrawer, setOpenEditDrawer] = useState(false);
-	const [openEditId, setOpenEditId] = useState<string | null>(null);
+  useEffect(() => {
+    refreshListItems();
+  }, [refreshListItems]);
 
-	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-	const [openDeleteId, setOpenDeleteId] = useState<string | null>(null);
+  const [openEditDrawer, setOpenEditDrawer] = useState(false);
+  const [openEditId, setOpenEditId] = useState<string | null>(null);
 
-	const handleDeleteItem = useCallback(() => {
-		if (openDeleteId) {
-			client
-				.delete(`/Teams/${openDeleteId}`)
-				.then(() => {})
-				.catch((e) => console.log(e))
-				.finally(() => {
-					refreshListItems();
-					setOpenDeleteDialog(false);
-				});
-		}
-	}, [openDeleteId, refreshListItems]);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openDeleteId, setOpenDeleteId] = useState<string | null>(null);
 
-	const handleOpenNewTeamDialog = useCallback(() => {
-		setOpenEditId(null);
-		setOpenEditDrawer(true);
-	}, []);
+  const handleDeleteItem = useCallback(() => {
+    if (openDeleteId) {
+      client
+        .delete(`/Teams/${openDeleteId}`)
+        .then(() => {
+          enqueueSnackbar("Success: Deleted team successfully.", { variant: "success" });
+        })
+        .catch((e) => {
+          enqueueSnackbar("Error: Failed deleting team.", { variant: "error" });
+        })
+        .finally(() => {
+          refreshListItems();
+          setOpenDeleteDialog(false);
+        });
+    }
+  }, [enqueueSnackbar, openDeleteId, refreshListItems]);
 
-	const handleOpenDelete = useCallback((teamId: string) => {
-		setOpenDeleteId(teamId);
-		setOpenDeleteDialog(true);
-	}, []);
+  const handleOpenNewTeamDialog = useCallback(() => {
+    setOpenEditId(null);
+    setOpenEditDrawer(true);
+  }, []);
 
-	const handleCloseDelete = useCallback(() => {
-		setOpenDeleteDialog(false);
-		setOpenEditId(null);
-	}, []);
+  const handleOpenDelete = useCallback((teamId: string) => {
+    setOpenDeleteId(teamId);
+    setOpenDeleteDialog(true);
+  }, []);
 
-	const handleOpenEditor = useCallback((roleId: string) => {
-		setOpenEditId(roleId);
-		setOpenEditDrawer(true);
-	}, []);
+  const handleCloseDelete = useCallback(() => {
+    setOpenDeleteDialog(false);
+    setOpenEditId(null);
+  }, []);
 
-	const handleCloseEditor = useCallback(() => {
-		setOpenEditDrawer(false);
-		setOpenEditId(null);
-	}, []);
+  const handleOpenEditor = useCallback((roleId: string) => {
+    setOpenEditId(roleId);
+    setOpenEditDrawer(true);
+  }, []);
 
-	return (
-		<>
-			<DeleteConfirmationDialog
-				showDialog={openDeleteDialog}
-				handleClose={handleCloseDelete}
-				handleAccept={handleDeleteItem}
-			/>
-			<EditRoleDialog
-				handleClose={handleCloseEditor}
-				handleRefreshList={refreshListItems}
-				showDialog={openEditDrawer}
-				teamId={openEditId}
-			/>
-			<Box>
-				<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: 2 }}>
-					<Box>
-						<Typography variant='h5'>Teams</Typography>
-					</Box>
-					<Box sx={{ display: "inline-flex", columnGap: "1rem" }}>
-						<IconButton color='secondary' aria-label='refresh' onClick={refreshListItems}>
-							<RefreshOutlinedIcon />
-						</IconButton>
-						<Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewTeamDialog}>
-							Add
-						</Button>
-					</Box>
-				</Box>
-				<Box>
-					<ViewTable dataList={teamsList} editItemHandler={handleOpenEditor} deleteItemHandler={handleOpenDelete} />
-				</Box>
-			</Box>
-		</>
-	);
+  const handleCloseEditor = useCallback(() => {
+    setOpenEditDrawer(false);
+    setOpenEditId(null);
+  }, []);
+
+  return (
+    <>
+      <DeleteConfirmationDialog
+        showDialog={openDeleteDialog}
+        handleClose={handleCloseDelete}
+        handleAccept={handleDeleteItem}
+      />
+      <EditRoleDialog
+        handleClose={handleCloseEditor}
+        handleRefreshList={refreshListItems}
+        showDialog={openEditDrawer}
+        teamId={openEditId}
+      />
+      <Box>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: 2 }}>
+          <Box>
+            <Typography variant="h5">Teams</Typography>
+          </Box>
+          <Box sx={{ display: "inline-flex", columnGap: "1rem" }}>
+            <IconButton color="secondary" aria-label="refresh" onClick={refreshListItems}>
+              <RefreshOutlinedIcon />
+            </IconButton>
+            <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewTeamDialog}>
+              Add
+            </Button>
+          </Box>
+        </Box>
+        <Box>
+          <ViewTable dataList={teamsList} editItemHandler={handleOpenEditor} deleteItemHandler={handleOpenDelete} />
+        </Box>
+      </Box>
+    </>
+  );
 };
 
 export default Layout;

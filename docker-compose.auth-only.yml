@@ -1,0 +1,43 @@
+version: "3"
+services:
+  api-gateway:
+    container_name: api-gateway
+    environment:
+      FRONTEND_HOST: http://localhost:3000
+    build:
+      context: ./api-gateway
+      dockerfile: "./api-gateway/Dockerfile"
+      target: base
+    depends_on:
+      - auth-service
+    ports:
+      - "4000:5000"
+    volumes:
+      - ./api-gateway:/opt/app
+    command: yarn watch
+
+  auth-service:
+    container_name: auth-service
+    build:
+      context: ./auth-service
+      dockerfile: "Dockerfile"
+      target: base
+    volumes:
+      - ./auth-service:/opt/app
+    depends_on:
+      - auth-service-db
+    ports:
+      - "7100:4000"
+    command: yarn watch
+
+  auth-service-db:
+    image: postgres
+    user: postgres
+    environment:
+      POSTGRES_DB: auth-service-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./pgdata/auth-service:/var/lib/postgresql/data/
+    ports:
+      - "7200:5432"
