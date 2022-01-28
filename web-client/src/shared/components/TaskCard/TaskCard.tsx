@@ -51,24 +51,29 @@ const TaskCard = (props: Props) => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              mt: 2,
             }}
           >
-            <Typography sx={{ fontSize: 13, mt: 2 }} color="text.secondary">
+            <Typography sx={{ fontSize: 13 }} color="text.secondary">
               {mode === "Today" ? <>Due time: {task.dueDate}</> : <>Due date: {task.dueDate}</>}
             </Typography>
-            <Typography sx={{ fontSize: 13, mt: 2 }} color="text.secondary">
-              <FormGroup>
-                <FormControlLabel
-                  control={<Checkbox checked={task.isCompleted} onChange={() => ({})} />}
-                  label={
-                    <Typography sx={{ fontSize: 13 }} color="text.secondary">
-                      {task.isCompleted ? "Completed" : "Pending"}
-                    </Typography>
-                  }
-                  labelPlacement="start"
-                />
-              </FormGroup>
-            </Typography>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={task.isCompleted}
+                    sx={{ zIndex: 0, borderWidth: "1px" }}
+                    onChange={() => ({})}
+                  />
+                }
+                label={
+                  <Typography component="span" sx={{ fontSize: 13 }} color="text.secondary">
+                    Completed
+                  </Typography>
+                }
+              />
+            </FormGroup>
           </Box>
         </CardContent>
       </Card>

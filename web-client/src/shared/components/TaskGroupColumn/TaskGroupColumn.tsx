@@ -49,6 +49,18 @@ const dummyTasks: ITask[] = [
     isCompleted: true,
     updatedAt: "2022-01-28T04:49:53.319Z",
   },
+  {
+    taskId: "265514e1-35d4-4a20-b9e5-d08b80cf0e9c",
+    ownerId: "b3dc59e5-6628-48e2-806e-be6cb62c3fa1",
+    title: "third some title",
+    content:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit...",
+    sharedWith: [],
+    bgColor: "#2dd4bf",
+    dueDate: "2022-01-28T04:49:53.319Z",
+    isCompleted: true,
+    updatedAt: "2022-01-28T04:49:53.319Z",
+  },
 ];
 
 interface Props {
@@ -101,7 +113,7 @@ const TaskGroupColumn = (props: Props) => {
         }}
       >
         {showCompletedItemsCheckbox && (
-          <Box sx={{ mb: 1, pt: 1, position: "sticky", top: 0, bgcolor: grey[100] }}>
+          <Box sx={{ mb: 1, pt: 1, position: "sticky", top: 0, bgcolor: grey[100], zIndex: 2 }}>
             <FormGroup>
               <FormControlLabel
                 control={<Checkbox size="small" checked={showCompleted} onChange={() => setShowCompleted((i) => !i)} />}
@@ -111,7 +123,7 @@ const TaskGroupColumn = (props: Props) => {
           </Box>
         )}
         {listedTasks.map((task) => (
-          <TaskCard task={task} mode={mode} />
+          <TaskCard key={task.taskId} task={task} mode={mode} />
         ))}
       </Paper>
     </>
