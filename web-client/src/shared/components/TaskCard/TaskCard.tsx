@@ -11,7 +11,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
 import { ITask } from "../../interfaces/Task.interfaces";
-import { truncateTextByLength } from "../../util/general";
+import { markdownToForHtmlInsert, truncateTextByLength } from "../../util/general";
 
 interface Props {
   task: ITask;
@@ -53,7 +53,16 @@ const TaskCard = (props: Props) => {
             {task.title}
           </Typography>
           <Typography sx={{ fontSize: 14, minHeight: "90px" }} color="text.secondary" gutterBottom>
-            {truncateTextByLength(task.content, { maxLength: 240, includesDots: true })}
+            <span
+              style={{ display: "block" }}
+              dangerouslySetInnerHTML={{
+                __html: truncateTextByLength(markdownToForHtmlInsert(task.content), {
+                  maxLength: 100,
+                  includesDots: true,
+                }),
+              }}
+            ></span>
+            {/* {truncateTextByLength(markdownToText(task.content), { maxLength: 240, includesDots: true })} */}
           </Typography>
           <Box
             sx={{

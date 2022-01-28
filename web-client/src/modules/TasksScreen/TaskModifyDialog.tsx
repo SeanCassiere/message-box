@@ -306,7 +306,7 @@ const TaskModifyDialog = (props: Props) => {
                         disabled={isLoading}
                         control={
                           <Switch
-                            checked={formik.values.isCompleted ?? false}
+                            checked={formik.values.isCompleted}
                             id="isCompleted"
                             name="isCompleted"
                             onChange={formik.handleChange}

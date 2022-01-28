@@ -11,9 +11,12 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
+import CircularProgress from "@mui/material/CircularProgress";
+
 import { grey } from "@mui/material/colors";
 import { ITask } from "../../interfaces/Task.interfaces";
 import TaskCard from "../TaskCard/TaskCard";
+import { sortTasksByDateForColumn } from "../../util/general";
 
 interface Props {
   title: string;
@@ -30,6 +33,7 @@ const TaskGroupColumn = (props: Props) => {
 
   const [allTasks, setAllTasks] = useState<ITask[]>([]);
   const [showCompleted, setShowCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const listedTasks = useMemo(() => {
     return allTasks.filter((task) => {
@@ -52,7 +56,8 @@ const TaskGroupColumn = (props: Props) => {
           return;
         }
 
-        setAllTasks(response.data);
+        setAllTasks(sortTasksByDateForColumn(response.data));
+        setIsLoading(false);
       })
       .catch((e) => {
         console.log(`Error searching for ${mode} tasks`);
@@ -104,9 +109,21 @@ const TaskGroupColumn = (props: Props) => {
             </FormGroup>
           </Box>
         )}
-        {listedTasks.map((task) => (
-          <TaskCard key={task.taskId} task={task} mode={mode} />
-        ))}
+        {isLoading && (
+          <Box
+            sx={{
+              flexGrow: 1,
+              color: "#fff",
+              height: "58vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <CircularProgress color="primary" size={50} thickness={4} />
+          </Box>
+        )}
+        {!isLoading && listedTasks.map((task) => <TaskCard key={task.taskId} task={task} mode={mode} />)}
       </Paper>
     </>
   );
