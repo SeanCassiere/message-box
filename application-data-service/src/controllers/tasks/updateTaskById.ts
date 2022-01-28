@@ -48,7 +48,7 @@ export async function updateTaskById(req: Request, res: Response) {
       },
     });
 
-    clientUserIds = data;
+    clientUserIds = data.data;
   } catch (error) {
     console.error(
       `POST /clients/updateTaskById -> ${AUTH_SERVICE_URI}/clients/getAllUserIdsForClient\ncould not fetch the user ids for this client`
@@ -78,7 +78,6 @@ export async function updateTaskById(req: Request, res: Response) {
 
     // get and update the mappings
     let shareMappingHaveChanged = false;
-
     let userIds: string[] = [];
     const taskShareMappings = await TaskShareMapping.find({ where: { taskId: variables.taskId, isActive: true } });
     const taskShareMappingUserIds = taskShareMappings.map((mapping) => mapping.userId);
@@ -115,7 +114,15 @@ export async function updateTaskById(req: Request, res: Response) {
       }
     }
 
-    await Promise.all(savePromises);
+    try {
+      await Promise.all(savePromises);
+    } catch (error) {
+      return res.json({
+        statusCode: 500,
+        data: null,
+        errors: [{ field: "service", message: "Something went wrong in PUT /tasks" }],
+      });
+    }
 
     // if the mappings have changed that to refetch all the user ids
     if (shareMappingHaveChanged) {
@@ -135,7 +142,7 @@ export async function updateTaskById(req: Request, res: Response) {
     return res.json({
       statusCode: 500,
       data: null,
-      errors: [{ field: "service", message: "Something in POST /tasks" }],
+      errors: [{ field: "service", message: "Something in PUT /tasks" }],
     });
   }
 }
