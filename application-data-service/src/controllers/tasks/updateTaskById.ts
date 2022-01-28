@@ -71,7 +71,7 @@ export async function updateTaskById(req: Request, res: Response) {
     task.content = body.content || task.content;
     task.bgColor = body.bgColor || task.bgColor;
     task.dueDate = body.dueDate || task.dueDate;
-    task.isCompleted = body.isCompleted || task.isCompleted;
+    task.isCompleted = body.isCompleted;
 
     const savePromises = [];
     savePromises.push(task.save());
