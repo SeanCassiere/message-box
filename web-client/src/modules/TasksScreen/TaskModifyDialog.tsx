@@ -37,6 +37,7 @@ interface Props {
   handleCloseFunction: () => void;
   taskId: string | null;
   showDialog: boolean;
+  showOwnerAssignee?: boolean;
 }
 
 const validationSchema = yup.object().shape({
@@ -63,7 +64,7 @@ const TaskModifyDialog = (props: Props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { handleCloseFunction, showDialog, taskId } = props;
+  const { handleCloseFunction, showDialog, taskId, showOwnerAssignee } = props;
 
   const { userProfile } = useSelector(selectAppProfileState);
   const { usersList } = useSelector(selectLookupListsState);
@@ -230,32 +231,34 @@ const TaskModifyDialog = (props: Props) => {
           <Grid item xs={12} md={4}>
             <DialogContent sx={{ mt: "5px" }}>
               <Grid container spacing={5}>
+                {showOwnerAssignee && (
+                  <Grid item xs={12} md={12}>
+                    <FormControl variant="standard" sx={{ mt: 2, minWidth: 120 }} fullWidth>
+                      <InputLabel id="taskOwner-label" disabled={isLoading} disableAnimation shrink>
+                        Task owner
+                      </InputLabel>
+                      <Select
+                        labelId="taskOwner-label"
+                        id="ownerId"
+                        name="ownerId"
+                        value={formik.values.ownerId}
+                        onChange={handleSetTaskOwner}
+                        error={formik.touched.ownerId && Boolean(formik.errors.ownerId)}
+                      >
+                        {usersList
+                          .filter((user) => user.isActive)
+                          .map((user) => (
+                            <MenuItem key={`select-root-user-${user.userId}`} value={user.userId}>
+                              {user.firstName + " " + user.lastName}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                      <FormHelperText>{formik.touched.ownerId && formik.errors.ownerId}</FormHelperText>
+                    </FormControl>
+                  </Grid>
+                )}
                 <Grid item xs={12} md={12}>
-                  <FormControl variant="standard" sx={{ mt: 2, minWidth: 120 }} fullWidth>
-                    <InputLabel id="taskOwner-label" disabled={isLoading} disableAnimation shrink>
-                      Task owner
-                    </InputLabel>
-                    <Select
-                      labelId="taskOwner-label"
-                      id="ownerId"
-                      name="ownerId"
-                      value={formik.values.ownerId}
-                      onChange={handleSetTaskOwner}
-                      error={formik.touched.ownerId && Boolean(formik.errors.ownerId)}
-                    >
-                      {usersList
-                        .filter((user) => user.isActive)
-                        .map((user) => (
-                          <MenuItem key={`select-root-user-${user.userId}`} value={user.userId}>
-                            {user.firstName + " " + user.lastName}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                    <FormHelperText>{formik.touched.ownerId && formik.errors.ownerId}</FormHelperText>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={12}>
-                  <FormControl variant="standard" fullWidth>
+                  <FormControl variant="standard" sx={{ mt: showOwnerAssignee ? 0 : 2 }} fullWidth>
                     <MobileDateTimePicker
                       label="Due date"
                       value={Date.parse(formik.values.dueDate)}

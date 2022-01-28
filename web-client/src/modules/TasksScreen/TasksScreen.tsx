@@ -75,6 +75,7 @@ const TasksScreen = () => {
               title="Today"
               ownerId={userProfile?.userId ?? ""}
               countUp={allStateRender}
+              triggerRefresh={handleRefreshAllItems}
               showCompletedItemsCheckbox
             />
           </Grid>
@@ -83,6 +84,7 @@ const TasksScreen = () => {
               mode="Overdue"
               title="Overdue"
               ownerId={userProfile?.userId ?? ""}
+              triggerRefresh={handleRefreshAllItems}
               countUp={allStateRender}
             />
           </Grid>
@@ -92,6 +94,7 @@ const TasksScreen = () => {
               title="Tomorrow"
               ownerId={userProfile?.userId ?? ""}
               countUp={allStateRender}
+              triggerRefresh={handleRefreshAllItems}
               showCompletedItemsCheckbox
             />
           </Grid>

@@ -24,10 +24,11 @@ interface Props {
   mode: "Today" | "Tomorrow" | "Overdue";
   ownerId: string;
   countUp?: number;
+  triggerRefresh: () => void;
 }
 
 const TaskGroupColumn = (props: Props) => {
-  const { title, showCompletedItemsCheckbox, mode, countUp, ownerId } = props;
+  const { title, showCompletedItemsCheckbox, mode, countUp, ownerId, triggerRefresh } = props;
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -123,7 +124,10 @@ const TaskGroupColumn = (props: Props) => {
             <CircularProgress color="primary" size={50} thickness={4} />
           </Box>
         )}
-        {!isLoading && listedTasks.map((task) => <TaskCard key={task.taskId} task={task} mode={mode} />)}
+        {!isLoading &&
+          listedTasks.map((task) => (
+            <TaskCard key={task.taskId} task={task} mode={mode} triggerRefresh={triggerRefresh} />
+          ))}
       </Paper>
     </>
   );
