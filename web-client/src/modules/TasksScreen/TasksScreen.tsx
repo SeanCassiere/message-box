@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -11,35 +12,65 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 
 import TaskGroupColumn from "../../shared/components/TaskGroupColumn/TaskGroupColumn";
+import TaskModifyDialog from "./TaskModifyDialog";
 
 const TasksScreen = () => {
+  const { id } = useParams<{ id: string }>();
+
+  const [isEditTaskDialogOpen, setIsTaskUserDialogOpen] = useState(false);
+  const [openEditTaskId, setOpenEditTaskId] = useState<string | null>(null);
+
+  const handleNewTaskDialog = useCallback(() => {
+    setOpenEditTaskId(null);
+    setIsTaskUserDialogOpen(true);
+  }, []);
+
+  const handleCloseEditor = useCallback(() => {
+    setIsTaskUserDialogOpen(false);
+    setOpenEditTaskId(null);
+  }, []);
+
+  useEffect(() => {
+    if (id && id !== "") {
+      setOpenEditTaskId(id);
+      setIsTaskUserDialogOpen(true);
+    }
+  }, [id]);
+
   return (
-    <Paper sx={{ px: 4, my: 2, py: 4, minHeight: "88vh", maxHeight: "89vh", overflow: "hidden" }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Typography variant="h4" fontWeight={500} component="h1">
-          Tasks
-        </Typography>
-        <Box>
-          <IconButton color="secondary" sx={{ marginRight: 1 }} aria-label="refresh" onClick={() => ({})}>
-            <RefreshOutlinedIcon />
-          </IconButton>
-          <Button disableElevation startIcon={<AddOutlinedIcon />} onClick={() => ({})}>
-            Create new task
-          </Button>
+    <>
+      <TaskModifyDialog
+        taskId={openEditTaskId}
+        showDialog={isEditTaskDialogOpen}
+        handleCloseFunction={handleCloseEditor}
+      />
+      <Paper sx={{ px: 4, my: 2, py: 4, minHeight: "88vh", maxHeight: "89vh", overflow: "hidden" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Typography variant="h4" fontWeight={500} component="h1">
+            Tasks
+          </Typography>
+          <Box>
+            <IconButton color="secondary" sx={{ marginRight: 1 }} aria-label="refresh" onClick={() => ({})}>
+              <RefreshOutlinedIcon />
+            </IconButton>
+            <Button disableElevation startIcon={<AddOutlinedIcon />} onClick={handleNewTaskDialog}>
+              Create new task
+            </Button>
+          </Box>
         </Box>
-      </Box>
-      <Grid sx={{ mt: 0 }} container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <TaskGroupColumn mode="Today" title="Today" showCompletedItemsCheckbox />
+        <Grid sx={{ mt: 0 }} container spacing={3}>
+          <Grid item xs={12} md={4}>
+            <TaskGroupColumn mode="Today" title="Today" showCompletedItemsCheckbox />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TaskGroupColumn mode="Overdue" title="Overdue" />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TaskGroupColumn mode="Tomorrow" title="Tomorrow" showCompletedItemsCheckbox />
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <TaskGroupColumn mode="Overdue" title="Overdue" />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <TaskGroupColumn mode="Tomorrow" title="Tomorrow" showCompletedItemsCheckbox />
-        </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
+    </>
   );
 };
 

@@ -18,7 +18,7 @@ const dummyTasks: ITask[] = [
     ownerId: "19eb2ea6-34f4-4954-8cfa-21043012ba69",
     title: "some title",
     content:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit...",
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit",
     sharedWith: [],
     bgColor: "#2dd4bf",
     dueDate: "2022-01-28T04:49:53.319Z",
@@ -29,8 +29,7 @@ const dummyTasks: ITask[] = [
     taskId: "b16e10a7-4fe4-49be-9d8d-949fed3539c6",
     ownerId: "b3dc59e5-6628-48e2-806e-be6cb62c3fa1",
     title: "second some title",
-    content:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit...",
+    content: "Lorem ipsum dolor sit amet",
     sharedWith: [],
     bgColor: "#2dd4bf",
     dueDate: "2022-01-28T04:49:53.319Z",
@@ -42,7 +41,7 @@ const dummyTasks: ITask[] = [
     ownerId: "b3dc59e5-6628-48e2-806e-be6cb62c3fa1",
     title: "third some title",
     content:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit...",
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit",
     sharedWith: [],
     bgColor: "#2dd4bf",
     dueDate: "2022-01-28T04:49:53.319Z",
@@ -54,7 +53,7 @@ const dummyTasks: ITask[] = [
     ownerId: "b3dc59e5-6628-48e2-806e-be6cb62c3fa1",
     title: "third some title",
     content:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit...",
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit",
     sharedWith: [],
     bgColor: "#2dd4bf",
     dueDate: "2022-01-28T04:49:53.319Z",

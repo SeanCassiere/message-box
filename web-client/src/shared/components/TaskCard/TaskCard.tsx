@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -19,6 +20,14 @@ interface Props {
 
 const TaskCard = (props: Props) => {
   const { task, mode } = props;
+  const navigate = useNavigate();
+
+  const handleTaskClick = useCallback(
+    (navTaskId: string) => {
+      navigate(`/tasks/${navTaskId}`);
+    },
+    [navigate]
+  );
   return (
     <Box
       key={`${task.taskId}`}
@@ -30,7 +39,7 @@ const TaskCard = (props: Props) => {
           boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
         },
       }}
-      onClick={() => console.log(`${task.title}: ${task.taskId}`)}
+      onClick={() => handleTaskClick(task.taskId)}
     >
       <Card
         variant="outlined"
