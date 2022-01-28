@@ -9,3 +9,6 @@ up-prod:
 
 up-debug:
 	docker-compose -f docker-compose.yml -f docker-compose.debug.yml up -d
+
+up-auth:
+	docker-compose -f docker-compose.auth-only.yml up -d
