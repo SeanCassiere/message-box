@@ -82,8 +82,9 @@ tasksRouter
   })
   .put(validateToken, async (req: CustomRequest<{}>, res) => {
     const taskId = req.params.id;
+    console.log("taskId", taskId);
     try {
-      const { data } = await client.post("/tasks/deleteTaskById", {
+      const { data } = await client.post("/tasks/updateTaskById", {
         variables: {
           clientId: req.auth!.message_box_clientId,
           userId: req.auth!.message_box_userId,
