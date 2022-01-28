@@ -1,4 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { useSnackbar } from "notistack";
+
 import { client } from "../../../shared/api/client";
 
 import Box from "@mui/material/Box";
@@ -24,6 +26,8 @@ interface Props {
 const TaskGroupColumn = (props: Props) => {
   const { title, showCompletedItemsCheckbox, mode, countUp, ownerId } = props;
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const [allTasks, setAllTasks] = useState<ITask[]>([]);
   const [showCompleted, setShowCompleted] = useState(false);
 
@@ -40,15 +44,21 @@ const TaskGroupColumn = (props: Props) => {
     const params = new URLSearchParams();
     params.set("for", mode);
     params.set("ownerId", ownerId);
-    client.get("/Tasks", { params }).then((response) => {
-      if (response.status !== 200) {
-        console.log("error searching for tasks");
-        return;
-      }
+    client
+      .get("/Tasks", { params })
+      .then((response) => {
+        if (response.status !== 200) {
+          enqueueSnackbar(`Error searching for ${mode} tasks.`, { variant: "error" });
+          return;
+        }
 
-      setAllTasks(response.data);
-    });
-  }, [mode, ownerId]);
+        setAllTasks(response.data);
+      })
+      .catch((e) => {
+        console.log(`Error searching for ${mode} tasks`);
+        enqueueSnackbar(`Error searching for ${mode} tasks.`, { variant: "error" });
+      });
+  }, [enqueueSnackbar, mode, ownerId]);
 
   useEffect(() => {
     searchForTasks();

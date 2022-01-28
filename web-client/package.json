@@ -25,6 +25,7 @@
     "jwt-decode": "^3.1.2",
     "markdown-draft-js": "^2.4.0",
     "moment": "^2.29.1",
+    "notistack": "^2.0.3",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

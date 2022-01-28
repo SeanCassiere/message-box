@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { useSnackbar } from "notistack";
 
 import { client } from "../../shared/api/client";
 
@@ -60,6 +61,7 @@ const MenuProps = {
 
 const TaskModifyDialog = (props: Props) => {
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const { handleCloseFunction, showDialog, taskId } = props;
 
@@ -83,16 +85,19 @@ const TaskModifyDialog = (props: Props) => {
       client[taskId ? "put" : "post"](taskId ? `/Tasks/${taskId}` : "/Tasks", values)
         .then((res) => {
           if (res.status === 200) {
+            enqueueSnackbar(`Success: Task ${taskId ? "updated" : "created"}.`, { variant: "success" });
             navigate("/tasks");
             handleCloseFunction();
           } else {
             if (res.data.errors) {
+              enqueueSnackbar(`Warning: Input validation failed.`, { variant: "warning" });
               setErrors(formatErrorsToFormik(res.data.errors));
             }
           }
         })
         .catch((e) => {
           console.log(e);
+          enqueueSnackbar(`Error: Could not ${taskId ? "update" : "create"} task.`, { variant: "error" });
         })
         .finally(() => {
           setSubmitting(false);
@@ -161,6 +166,7 @@ const TaskModifyDialog = (props: Props) => {
         })
         .catch((e) => {
           console.log("could not find task" + taskId);
+          enqueueSnackbar(`Error: Could not find task.`, { variant: "error" });
           navigate("/tasks");
           handleCloseFunction();
         })

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { SnackbarProvider } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 
 import DateAdapter from "@mui/lab/AdapterMoment";
@@ -66,7 +67,9 @@ const App = () => {
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <LocalizationProvider dateAdapter={DateAdapter}>
-          <AppRoutes />
+          <SnackbarProvider maxSnack={4} anchorOrigin={{ horizontal: "right", vertical: "bottom" }}>
+            <AppRoutes />
+          </SnackbarProvider>
         </LocalizationProvider>
         {process.env.NODE_ENV === "production" && <ReactQueryDevtools initialIsOpen={false} />}
         {/** only show devtools in development */}
