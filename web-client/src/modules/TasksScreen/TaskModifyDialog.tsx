@@ -1,8 +1,10 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import * as yup from "yup";
 import { useFormik } from "formik";
+
+import { client } from "../../shared/api/client";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -26,6 +28,8 @@ import MobileDateTimePicker from "@mui/lab/MobileDateTimePicker";
 
 import { selectAppProfileState, selectLookupListsState } from "../../shared/redux/store";
 import { IUserProfile } from "../../shared/interfaces/User.interfaces";
+import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
+
 import TaskContentEditor from "./TaskContentEditor";
 
 interface Props {
@@ -62,20 +66,37 @@ const TaskModifyDialog = (props: Props) => {
   const { userProfile } = useSelector(selectAppProfileState);
   const { usersList } = useSelector(selectLookupListsState);
 
+  const [initialContent, setInitialContent] = useState("");
+
   const formik = useFormik({
     initialValues: {
       ownerId: userProfile?.userId,
       title: "",
       content: "",
-      bgColor: "",
+      bgColor: "#2DD4Bf",
       dueDate: new Date().toISOString(),
       isCompleted: false,
       sharedWith: [] as string[],
     },
     validationSchema,
-    onSubmit: (values, { setSubmitting }) => {
-      console.log(values);
-      setSubmitting(false);
+    onSubmit: (values, { setSubmitting, setErrors }) => {
+      client[taskId ? "put" : "post"](taskId ? `/Tasks/${taskId}` : "/Tasks", values)
+        .then((res) => {
+          if (res.status === 200) {
+            navigate("/tasks");
+            handleCloseFunction();
+          } else {
+            if (res.data.errors) {
+              setErrors(formatErrorsToFormik(res.data.errors));
+            }
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        })
+        .finally(() => {
+          setSubmitting(false);
+        });
     },
   });
 
@@ -119,6 +140,42 @@ const TaskModifyDialog = (props: Props) => {
     formik.setFieldValue("content", newContent);
   };
 
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    formik.resetForm();
+    if (taskId) {
+      client
+        .get(`/Tasks/${taskId}`)
+        .then((res) => {
+          if (res.status === 200) {
+            formik.setFieldValue("ownerId", res.data.ownerId);
+            formik.setFieldValue("title", res.data.title);
+            formik.setFieldValue("bgColor", res.data.bgColor);
+            formik.setFieldValue("content", res.data.content);
+            setInitialContent(res.data.content);
+            formik.setFieldValue("dueDate", res.data.dueDate);
+            formik.setFieldValue("isCompleted", res.data.isCompleted);
+            formik.setFieldValue("sharedWith", res.data.sharedWith);
+          }
+        })
+        .catch((e) => {
+          console.log("could not find task" + taskId);
+          navigate("/tasks");
+          handleCloseFunction();
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
+    return () => {
+      setInitialContent("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleCloseFunction, navigate, taskId]);
+
   return (
     <Dialog
       open={showDialog}
@@ -147,6 +204,7 @@ const TaskModifyDialog = (props: Props) => {
                   error={formik.touched.title && Boolean(formik.errors.title)}
                   helperText={formik.touched.title && formik.errors.title}
                   autoFocus
+                  disabled={isLoading}
                 />
               </Grid>
               <Grid item xs={12} md={12} sx={{ px: 3 }}>
@@ -155,7 +213,11 @@ const TaskModifyDialog = (props: Props) => {
                     Content
                   </InputLabel>
                 </Box>
-                <TaskContentEditor initialContent={formik.values.content} onChange={handleContentChange} />
+                <TaskContentEditor
+                  initialContent={initialContent}
+                  onChange={handleContentChange}
+                  disabled={isLoading}
+                />
               </Grid>
             </Grid>
           </Grid>
@@ -164,7 +226,7 @@ const TaskModifyDialog = (props: Props) => {
               <Grid container spacing={5}>
                 <Grid item xs={12} md={12}>
                   <FormControl variant="standard" sx={{ mt: 2, minWidth: 120 }} fullWidth>
-                    <InputLabel id="taskOwner-label" disableAnimation shrink>
+                    <InputLabel id="taskOwner-label" disabled={isLoading} disableAnimation shrink>
                       Task owner
                     </InputLabel>
                     <Select
@@ -193,6 +255,7 @@ const TaskModifyDialog = (props: Props) => {
                       value={Date.parse(formik.values.dueDate)}
                       onChange={handleSetDateChange}
                       renderInput={(params) => <TextField {...params} variant="standard" name="dueDate" />}
+                      disabled={isLoading}
                     />
                     <FormHelperText>{formik.touched.dueDate && formik.errors.dueDate}</FormHelperText>
                   </FormControl>
@@ -212,6 +275,7 @@ const TaskModifyDialog = (props: Props) => {
                       renderValue={renderUserNames}
                       MenuProps={MenuProps}
                       multiple
+                      disabled={isLoading}
                       variant="standard"
                     >
                       {usersList
@@ -233,6 +297,7 @@ const TaskModifyDialog = (props: Props) => {
                       </InputLabel>
                       <FormControlLabel
                         sx={{ mt: 2 }}
+                        disabled={isLoading}
                         control={
                           <Switch
                             checked={formik.values.isCompleted ?? false}

@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { client } from "../../../shared/api/client";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -12,75 +13,47 @@ import { grey } from "@mui/material/colors";
 import { ITask } from "../../interfaces/Task.interfaces";
 import TaskCard from "../TaskCard/TaskCard";
 
-const dummyTasks: ITask[] = [
-  {
-    taskId: "8bf2b5c4-6946-4722-b49a-2059c5c903fe",
-    ownerId: "19eb2ea6-34f4-4954-8cfa-21043012ba69",
-    title: "some title",
-    content:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit",
-    sharedWith: [],
-    bgColor: "#2dd4bf",
-    dueDate: "2022-01-28T04:49:53.319Z",
-    isCompleted: false,
-    updatedAt: "2022-01-28T04:49:53.319Z",
-  },
-  {
-    taskId: "b16e10a7-4fe4-49be-9d8d-949fed3539c6",
-    ownerId: "b3dc59e5-6628-48e2-806e-be6cb62c3fa1",
-    title: "second some title",
-    content: "Lorem ipsum dolor sit amet",
-    sharedWith: [],
-    bgColor: "#2dd4bf",
-    dueDate: "2022-01-28T04:49:53.319Z",
-    isCompleted: false,
-    updatedAt: "2022-01-28T04:49:53.319Z",
-  },
-  {
-    taskId: "c0c23650-d765-47e5-83b0-c105e2845972",
-    ownerId: "b3dc59e5-6628-48e2-806e-be6cb62c3fa1",
-    title: "third some title",
-    content:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit",
-    sharedWith: [],
-    bgColor: "#2dd4bf",
-    dueDate: "2022-01-28T04:49:53.319Z",
-    isCompleted: true,
-    updatedAt: "2022-01-28T04:49:53.319Z",
-  },
-  {
-    taskId: "265514e1-35d4-4a20-b9e5-d08b80cf0e9c",
-    ownerId: "b3dc59e5-6628-48e2-806e-be6cb62c3fa1",
-    title: "third some title",
-    content:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Explicabo molestiae praesentium, quas reiciendis totam tempora mollit",
-    sharedWith: [],
-    bgColor: "#2dd4bf",
-    dueDate: "2022-01-28T04:49:53.319Z",
-    isCompleted: true,
-    updatedAt: "2022-01-28T04:49:53.319Z",
-  },
-];
-
 interface Props {
   title: string;
   showCompletedItemsCheckbox?: true;
   mode: "Today" | "Tomorrow" | "Overdue";
+  ownerId: string;
+  countUp?: number;
 }
 
 const TaskGroupColumn = (props: Props) => {
-  const { title, showCompletedItemsCheckbox, mode } = props;
+  const { title, showCompletedItemsCheckbox, mode, countUp, ownerId } = props;
 
+  const [allTasks, setAllTasks] = useState<ITask[]>([]);
   const [showCompleted, setShowCompleted] = useState(false);
 
   const listedTasks = useMemo(() => {
-    return dummyTasks.filter((task) => {
+    return allTasks.filter((task) => {
       if (showCompleted) {
         return true;
       }
       return !task.isCompleted;
     });
-  }, [showCompleted]);
+  }, [allTasks, showCompleted]);
+
+  const searchForTasks = useCallback(() => {
+    const params = new URLSearchParams();
+    params.set("for", mode);
+    params.set("ownerId", ownerId);
+    client.get("/Tasks", { params }).then((response) => {
+      if (response.status !== 200) {
+        console.log("error searching for tasks");
+        return;
+      }
+
+      setAllTasks(response.data);
+    });
+  }, [mode, ownerId]);
+
+  useEffect(() => {
+    searchForTasks();
+  }, [searchForTasks, countUp]);
+
   return (
     <>
       <Typography variant="h5" component="h3" sx={{ marginTop: "1em" }}>

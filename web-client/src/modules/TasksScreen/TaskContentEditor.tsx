@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./RichEditor.css";
 import "draft-js/dist/Draft.css";
 
@@ -10,16 +10,21 @@ import Box from "@mui/material/Box";
 interface Props {
   initialContent: string;
   onChange: (content: string) => void;
+  disabled?: boolean;
 }
 
 const TaskContentEditor = (props: Props) => {
-  const { initialContent, onChange } = props;
-  const rawData = markdownToDraft(initialContent);
-  const contentStateFromRaw = convertFromRaw(rawData);
-  const newEditorState = EditorState.createWithContent(contentStateFromRaw);
+  const { initialContent, onChange, disabled } = props;
 
-  const [editorCurrentState, setEditorCurrentState] = useState(newEditorState);
+  const [editorCurrentState, setEditorCurrentState] = useState<EditorState>(EditorState.createEmpty());
   const editorRef = useRef<Editor>(null);
+
+  useEffect(() => {
+    const rawData = markdownToDraft(initialContent);
+    const contentStateFromRaw = convertFromRaw(rawData);
+    const newEditorState = EditorState.createWithContent(contentStateFromRaw);
+    setEditorCurrentState(newEditorState);
+  }, [initialContent]);
 
   function _handleKeyCommand(command: any, editorState: EditorState) {
     const newState = RichUtils.handleKeyCommand(editorState, command);
@@ -108,6 +113,7 @@ const TaskContentEditor = (props: Props) => {
           onChange={handleEditorContentChange}
           ref={editorRef}
           spellCheck={true}
+          readOnly={disabled}
         />
       </div>
     </div>
