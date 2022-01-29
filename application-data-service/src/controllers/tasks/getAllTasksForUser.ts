@@ -12,9 +12,24 @@ const validationSchema = yup.object().shape({
     userId: yup.string().required("UserId is required"),
   }),
   body: yup.object().shape({
-    ownerId: yup.string(),
+    ownerId: yup.string().required("OwnerId is required"),
+    clientDate: yup.date().required("ClientDate is required"),
+    forAudience: yup.string().required("ForAudience is required"),
   }),
 });
+
+function findAudience(audience: string) {
+  switch (audience.toLowerCase()) {
+    case "today":
+      return "today";
+    case "tomorrow":
+      return "tomorrow";
+    case "overdue":
+      return "overdue";
+    default:
+      return "today";
+  }
+}
 
 export async function getAllTasksForUser(req: Request, res: Response) {
   const checkErrors = await validateYupSchema(validationSchema, req.body);
@@ -30,11 +45,67 @@ export async function getAllTasksForUser(req: Request, res: Response) {
   const variables = req.body.variables;
   const body = req.body.body;
 
+  const audience = findAudience(body.forAudience);
+
   const returnFormattedTasks = [];
 
+  console.log("finding for", audience);
   try {
     // get the owned tasks
-    const tasks = await Task.find({ where: { ownerId: body.ownerId, clientId: variables.clientId, isDeleted: false } });
+    const query = Task.createQueryBuilder()
+      .select()
+      .where("owner_id = :ownerId", { ownerId: body.ownerId })
+      .andWhere("client_id = :clientId", { clientId: variables.clientId })
+      .andWhere("is_deleted = :isDeleted", { isDeleted: false });
+
+    // setup the search parameters based on the audience query
+    if (audience === "today") {
+      /**
+       * get all tasks that are after the start of the clientDate
+       */
+      const after = new Date(body.clientDate);
+      after.setUTCHours(0, 0, 0, 1);
+      query.andWhere("due_date >= :after", { after: after.toISOString() });
+
+      /**
+       * get all tasks that are before the end of the clientDate
+       */
+      const before = new Date(body.clientDate);
+      before.setUTCHours(23, 59, 59, 999);
+      query.andWhere("due_date <= :before", { before: before.toISOString() });
+    } else if (audience === "tomorrow") {
+      // get the next day
+      const tomorrow = new Date(body.clientDate);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      /**
+       * get all tasks that are after the start of the clientDate
+       */
+      const after = new Date(tomorrow);
+      after.setUTCHours(0, 0, 0, 1);
+      query.andWhere("due_date >= :after", { after: after.toISOString() });
+
+      /**
+       * get all tasks that are before the end of the clientDate
+       */
+      const before = new Date(tomorrow);
+      before.setUTCHours(23, 59, 59, 999);
+      query.andWhere("due_date <= :before", { before: before.toISOString() });
+    } else if (audience === "overdue") {
+      /**
+       * get all tasks that are after the start of the clientDate
+       */
+      const before = new Date(body.clientDate);
+      before.setUTCHours(0, 0, 0, 1);
+      query.andWhere("due_date <= :before", { before: before.toISOString() });
+
+      /**
+       * get tasks that are not completed
+       */
+      query.andWhere("is_completed = :isCompleted", { isCompleted: false }); // don't return completed tasks
+    }
+
+    const tasks = await query.getMany();
 
     for (const task of tasks) {
       const taskShares = await TaskShareMapping.find({ where: { taskId: task.taskId, isActive: true } });

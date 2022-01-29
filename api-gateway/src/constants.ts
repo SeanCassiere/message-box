@@ -5,10 +5,11 @@ dotenv.config();
 export const AUTH_SERVICE_URI = process.env.AUTH_SERVICE_URI || "http://auth-service:4000";
 export const APP_DATA_SERVICE_URI = process.env.APP_DATA_SERVICE_URI || "http://application-data-service:4000";
 
-export const API_PREFIX = "/api";
+export const API_PREFIX = "/Api";
 
 export const ALLOWED_PUBLIC_PATHS = [
   "/Docs",
+  "/docs",
   `${API_PREFIX}/Authentication/Login`,
   `${API_PREFIX}/Authentication/Refresh`,
   `${API_PREFIX}/Authentication/Login/Refresh`,

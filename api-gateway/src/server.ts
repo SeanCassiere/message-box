@@ -37,13 +37,22 @@ const swaggerOptions = {
 };
 expressApp.use("/docs", swaggerUI.serveFiles(undefined, swaggerOptions), swaggerUI.setup(undefined, swaggerOptions));
 
+expressApp.get("/.well-known/jwks.json", async (_, res) => {
+  try {
+    const request = await axios.get(`http://auth-service:4000/.well-known/jwks.json`);
+
+    res.json(request.data);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
 expressApp.use(
   jwt({
     secret: jwksRsa.expressJwtSecret({
       cache: true,
       cacheMaxAge: 3600,
       rateLimit: true,
-      jwksRequestsPerMinute: 5,
       jwksUri: `${AUTH_SERVICE_URI}/.well-known/jwks.json`,
     }),
     algorithms: ["RS256"],
@@ -57,16 +66,6 @@ expressApp.use("/Api/Clients", clientRouter);
 expressApp.use("/Api/Roles", roleRouter);
 expressApp.use("/Api/Teams", teamRouter);
 expressApp.use("/Api/Tasks", tasksRouter);
-
-expressApp.get("/.well-known/jwks.json", async (_, res) => {
-  try {
-    const request = await axios.get(`http://auth-service:4000/.well-known/jwks.json`);
-
-    res.json(request.data);
-  } catch (error) {
-    return res.status(500).json(error);
-  }
-});
 
 expressApp.use(function (err: Error, req: express.Request, res: express.Response, next: express.NextFunction) {
   if (err.name === "UnauthorizedError") {

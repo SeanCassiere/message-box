@@ -48,6 +48,7 @@ const TaskGroupColumn = (props: Props) => {
   const searchForTasks = useCallback(() => {
     const params = new URLSearchParams();
     params.set("for", mode);
+    params.set("currentDate", new Date().toISOString().substring(0, 10));
     params.set("ownerId", ownerId);
     client
       .get("/Tasks", { params })
