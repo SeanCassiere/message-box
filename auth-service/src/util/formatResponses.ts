@@ -30,6 +30,7 @@ export function formatRoleResponse({ role }: { role: Role }) {
     rootName: role.rootName,
     viewName: role.viewName,
     isUserDeletable: role.isUserDeletable,
+    permissions: role.permissions,
     updatedAt: role.updatedAt,
   };
 }

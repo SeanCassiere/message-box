@@ -14,6 +14,7 @@ import { sendEmail } from "#root/email/sendEmail";
 import { generateEmailConfirmationTemplate } from "#root/email/generateEmailConfirmationTemplate";
 import Team from "#root/db/entities/Team";
 import TeamMapping from "#root/db/entities/TeamMapping";
+import { DEFAULT_PERMISSIONS_MAP } from "#root/util/permissions";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -75,6 +76,7 @@ export async function createClientAndUser(req: Request, res: Response, next: Nex
       clientId: newClient.clientId,
       rootName: "employee",
       viewName: "Employee",
+      permissions: DEFAULT_PERMISSIONS_MAP.employee,
       isUserDeletable: false,
     }).save();
     // admin role
@@ -82,6 +84,7 @@ export async function createClientAndUser(req: Request, res: Response, next: Nex
       clientId: newClient.clientId,
       rootName: "admin",
       viewName: "Administrator",
+      permissions: DEFAULT_PERMISSIONS_MAP.admin,
       isUserDeletable: false,
     }).save();
     // manager role
@@ -89,6 +92,7 @@ export async function createClientAndUser(req: Request, res: Response, next: Nex
       clientId: newClient.clientId,
       rootName: "manager",
       viewName: "Manager",
+      permissions: DEFAULT_PERMISSIONS_MAP.admin,
       isUserDeletable: false,
     }).save();
     // hr role
@@ -96,6 +100,7 @@ export async function createClientAndUser(req: Request, res: Response, next: Nex
       clientId: newClient.clientId,
       rootName: "hr",
       viewName: "Human Resources",
+      permissions: DEFAULT_PERMISSIONS_MAP.hr,
       isUserDeletable: false,
     }).save();
 

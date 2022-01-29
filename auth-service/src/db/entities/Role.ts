@@ -14,6 +14,9 @@ export default class Role extends BaseEntity {
   @Column("text", { name: "view_name" })
   viewName: string;
 
+  @Column("text", { name: "permissions", default: [], array: true })
+  permissions: string[];
+
   @Column("bool", { name: "is_active", default: true })
   isActive: boolean;
 

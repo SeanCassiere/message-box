@@ -4,7 +4,7 @@ import * as yup from "yup";
 import Role from "#root/db/entities/Role";
 import { validateYupSchema } from "#root/util/validateYupSchema";
 import { formatRoleResponse } from "#root/util/formatResponses";
-
+import { ALL_AVAILABLE_ROLE_PERMISSIONS } from "#root/util/permissions";
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
     clientId: yup.string().required("ClientId is required"),
@@ -13,6 +13,7 @@ const validationSchema = yup.object().shape({
   }),
   body: yup.object().shape({
     viewName: yup.string().required("Role view name is required"),
+    permissions: yup.array().of(yup.string().required("Role permissions are required")),
   }),
 });
 
@@ -27,7 +28,7 @@ export async function updateRoleById(req: Request, res: Response, next: NextFunc
   }
 
   const { roleId } = req.body.variables;
-  const { viewName } = req.body.body;
+  const { viewName, permissions } = req.body.body;
 
   try {
     const role = await Role.findOne({ where: { roleId: roleId } });
@@ -41,6 +42,15 @@ export async function updateRoleById(req: Request, res: Response, next: NextFunc
     }
 
     role.viewName = viewName;
+    let saveablePermissions = [];
+    for (const reqPerm of permissions) {
+      const mapDown = ALL_AVAILABLE_ROLE_PERMISSIONS.map((item) => item.key);
+      if (mapDown.includes(reqPerm)) {
+        saveablePermissions.push(reqPerm);
+      }
+    }
+    role.permissions = saveablePermissions;
+
     await role.save();
 
     return res.json({
