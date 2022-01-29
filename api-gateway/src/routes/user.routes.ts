@@ -2,22 +2,23 @@ import express from "express";
 import axios from "axios";
 
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
-import { validateToken } from "#root/middleware/authMiddleware";
+import { AUTH_SERVICE_URI } from "#root/constants";
 
 const userRouter = express.Router();
 
 const client = axios.create({
-  baseURL: "http://auth-service:4000",
+  baseURL: AUTH_SERVICE_URI,
 });
 
-const updateUserByIdController = async (req: CustomRequest<{}>, res: express.Response) => {
-  const { id } = req.params;
-  const userId = id ?? req.auth?.message_box_userId;
+const updateUserByIdController = async (req: express.Request, res: express.Response) => {
+  const request = req as CustomRequest<{}>;
+  const { id } = request.params;
+  const userId = id ?? request.auth?.message_box_userId;
 
   try {
     const { data } = await client.post("/users/updateUserByUserId", {
-      variables: { userId: userId, clientId: req.auth?.message_box_clientId },
-      body: { ...req.body },
+      variables: { userId: userId, clientId: request.auth?.message_box_clientId },
+      body: { ...request.body },
     });
 
     if (data.statusCode !== 200) {
@@ -30,9 +31,10 @@ const updateUserByIdController = async (req: CustomRequest<{}>, res: express.Res
   }
 };
 
-const getUserByIdController = async (req: CustomRequest<{}>, res: express.Response) => {
-  const { id } = req.params;
-  const userId = id ?? req.auth?.message_box_userId;
+const getUserByIdController = async (req: express.Request, res: express.Response) => {
+  const request = req as CustomRequest<{}>;
+  const { id } = request.params;
+  const userId = id ?? request.auth?.message_box_userId;
 
   try {
     const { data } = await client.get(`/users/${userId}`);
@@ -43,17 +45,19 @@ const getUserByIdController = async (req: CustomRequest<{}>, res: express.Respon
   }
 };
 
-userRouter.route("/Profile").get(validateToken, getUserByIdController).put(validateToken, updateUserByIdController);
+userRouter.route("/Profile").get(getUserByIdController).put(updateUserByIdController);
 
-userRouter.route("/Profile/ChangePassword").post(validateToken, async (req: CustomRequest<{}>, res) => {
+userRouter.route("/Profile/ChangePassword").post(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+
   try {
     const { data: response } = await client.post("/users/changePasswordForUser", {
       variables: {
         host: process.env.FRONTEND_HOST,
-        clientId: req.auth?.message_box_clientId,
-        userId: req.auth?.message_box_userId,
+        clientId: request.auth?.message_box_clientId,
+        userId: request.auth?.message_box_userId,
       },
-      body: { ...req.body },
+      body: { ...request.body },
     });
 
     if (response.statusCode !== 200) {
@@ -68,10 +72,11 @@ userRouter.route("/Profile/ChangePassword").post(validateToken, async (req: Cust
 
 userRouter
   .route("/:id")
-  .get(validateToken, getUserByIdController)
-  .put(validateToken, updateUserByIdController)
-  .delete(validateToken, async (req, res) => {
-    const { id } = req.params;
+  .get(getUserByIdController)
+  .put(updateUserByIdController)
+  .delete(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+    const { id } = request.params;
 
     try {
       const { data: response } = await client.post("/users/deleteUserById", { userId: id });
@@ -86,16 +91,17 @@ userRouter
     }
   });
 
-userRouter.route("/:id/ChangePassword").post(validateToken, async (req: CustomRequest<{}>, res) => {
-  const { id } = req.params;
+userRouter.route("/:id/ChangePassword").post(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+  const { id } = request.params;
   try {
     const { data: response } = await client.post("/users/changePasswordByUserId", {
       variables: {
         host: process.env.FRONTEND_HOST,
-        clientId: req.auth?.message_box_clientId,
+        clientId: request.auth?.message_box_clientId,
         userId: id,
       },
-      body: { ...req.body },
+      body: { ...request.body },
     });
 
     if (response.statusCode !== 200) {
@@ -109,10 +115,11 @@ userRouter.route("/:id/ChangePassword").post(validateToken, async (req: CustomRe
 });
 
 userRouter.route("/ResetPassword/With2FA").post(async (req, res) => {
+  const request = req as CustomRequest<{}>;
   try {
     const { data: response } = await client.post("/2fa/changePasswordUsing2FA", {
       variables: { host: process.env.FRONTEND_HOST },
-      body: { ...req.body },
+      body: { ...request.body },
     });
 
     if (response.statusCode !== 200) {
@@ -126,8 +133,9 @@ userRouter.route("/ResetPassword/With2FA").post(async (req, res) => {
 });
 
 userRouter.route("/ResetPassword/WithToken").post(async (req, res) => {
+  const request = req as CustomRequest<{}>;
   try {
-    const { data: response } = await client.post("/users/resetPasswordByToken", { body: { ...req.body } });
+    const { data: response } = await client.post("/users/resetPasswordByToken", { body: { ...request.body } });
 
     if (response.statusCode !== 200) {
       return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
@@ -140,10 +148,11 @@ userRouter.route("/ResetPassword/WithToken").post(async (req, res) => {
 });
 
 userRouter.route("/ResetPassword/RequestEmail").post(async (req, res) => {
+  const request = req as CustomRequest<{}>;
   try {
     const { data: response } = await client.post("/users/requestPasswordByEmail", {
       variables: { host: process.env.FRONTEND_HOST, path: "/forgot-password/" },
-      body: { ...req.body },
+      body: { ...request.body },
     });
 
     if (response.statusCode !== 200) {
@@ -157,8 +166,9 @@ userRouter.route("/ResetPassword/RequestEmail").post(async (req, res) => {
 });
 
 userRouter.route("/ConfirmUser").post(async (req, res) => {
+  const request = req as CustomRequest<{}>;
   try {
-    const { data: response } = await client.post("/users/confirmUserAccountByToken", { body: { ...req.body } });
+    const { data: response } = await client.post("/users/confirmUserAccountByToken", { body: { ...request.body } });
 
     if (response.statusCode !== 200) {
       return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
@@ -171,10 +181,11 @@ userRouter.route("/ConfirmUser").post(async (req, res) => {
 });
 
 userRouter.route("/ConfirmUser/ResendConfirmationEmail").post(async (req, res) => {
+  const request = req as CustomRequest<{}>;
   try {
     const { data: response } = await client.post("/users/resendConfirmationEmail", {
       variables: { host: process.env.FRONTEND_HOST, path: "/confirm-account/" },
-      body: { ...req.body },
+      body: { ...request.body },
     });
 
     if (response.statusCode !== 200) {

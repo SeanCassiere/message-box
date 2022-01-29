@@ -2,23 +2,25 @@ import express from "express";
 import axios from "axios";
 
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
-import { validateToken } from "#root/middleware/authMiddleware";
+import { APP_DATA_SERVICE_URI } from "#root/constants";
 
 const tasksRouter = express.Router();
 
 const client = axios.create({
-  baseURL: "http://application-data-service:4000",
+  baseURL: APP_DATA_SERVICE_URI,
 });
 
 tasksRouter
   .route("/")
-  .get(validateToken, async (req: CustomRequest<{}>, res) => {
-    const ownerId = req.query.ownerId ?? req.auth!.message_box_userId;
+  .get(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
+    const ownerId = request.query.ownerId ?? request.auth!.message_box_userId;
     try {
       const { data } = await client.post("/tasks/getAllTasksForUser", {
         variables: {
-          clientId: req.auth!.message_box_clientId,
-          userId: req.auth!.message_box_userId,
+          clientId: request.auth!.message_box_clientId,
+          userId: request.auth!.message_box_userId,
         },
         body: {
           ownerId: ownerId,
@@ -34,15 +36,17 @@ tasksRouter
       return res.status(500).json({ message: "application-data-service /tasks network error" });
     }
   })
-  .post(validateToken, async (req: CustomRequest<{}>, res) => {
+  .post(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
     try {
       const { data } = await client.post("/tasks/createTaskForUser", {
         variables: {
-          clientId: req.auth!.message_box_clientId,
-          userId: req.auth!.message_box_userId,
+          clientId: request.auth!.message_box_clientId,
+          userId: request.auth!.message_box_userId,
         },
         body: {
-          ...req.body,
+          ...request.body,
         },
       });
 
@@ -58,13 +62,15 @@ tasksRouter
 
 tasksRouter
   .route("/:id")
-  .get(validateToken, async (req: CustomRequest<{}>, res) => {
-    const taskId = req.params.id;
+  .get(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
+    const taskId = request.params.id;
     try {
       const { data } = await client.post("/tasks/getTaskById", {
         variables: {
-          clientId: req.auth!.message_box_clientId,
-          userId: req.auth!.message_box_userId,
+          clientId: request.auth!.message_box_clientId,
+          userId: request.auth!.message_box_userId,
         },
         body: {
           taskId: taskId,
@@ -80,18 +86,20 @@ tasksRouter
       return res.status(500).json({ message: "application-data-service /tasks network error" });
     }
   })
-  .put(validateToken, async (req: CustomRequest<{}>, res) => {
-    const taskId = req.params.id;
+  .put(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
+    const taskId = request.params.id;
     console.log("taskId", taskId);
     try {
       const { data } = await client.post("/tasks/updateTaskById", {
         variables: {
-          clientId: req.auth!.message_box_clientId,
-          userId: req.auth!.message_box_userId,
+          clientId: request.auth!.message_box_clientId,
+          userId: request.auth!.message_box_userId,
           taskId: taskId,
         },
         body: {
-          ...req.body,
+          ...request.body,
         },
       });
 
@@ -104,13 +112,15 @@ tasksRouter
       return res.status(500).json({ message: "application-data-service /tasks network error" });
     }
   })
-  .delete(validateToken, async (req: CustomRequest<{}>, res) => {
-    const taskId = req.params.id;
+  .delete(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
+    const taskId = request.params.id;
     try {
       const { data } = await client.post("/tasks/deleteTaskById", {
         variables: {
-          clientId: req.auth!.message_box_clientId,
-          userId: req.auth!.message_box_userId,
+          clientId: request.auth!.message_box_clientId,
+          userId: request.auth!.message_box_userId,
         },
         body: {
           taskId: taskId,

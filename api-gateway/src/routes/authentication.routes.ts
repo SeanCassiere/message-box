@@ -2,17 +2,19 @@ import express from "express";
 import axios from "axios";
 
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
-import { validateToken } from "#root/middleware/authMiddleware";
+import { AUTH_SERVICE_URI } from "#root/constants";
 
 const authenticationRouter = express.Router();
 
 const client = axios.create({
-  baseURL: "http://auth-service:4000",
+  baseURL: AUTH_SERVICE_URI,
 });
 
-authenticationRouter.route("/Login").post(async (req: CustomRequest<{}>, res) => {
+authenticationRouter.route("/Login").post(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+
   try {
-    const { data } = await client.post("/2fa/emailAndPasswordLogin2FA", { body: req.body });
+    const { data } = await client.post("/2fa/emailAndPasswordLogin2FA", { body: request.body });
 
     if (data.statusCode === 200) {
       if (data.data.key === "/2fa/login") {
@@ -36,9 +38,11 @@ authenticationRouter.route("/Login").post(async (req: CustomRequest<{}>, res) =>
   }
 });
 
-authenticationRouter.route("/2FA/Code/Login").post(async (req: CustomRequest<{}>, res) => {
+authenticationRouter.route("/2FA/Code/Login").post(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+
   try {
-    const { data } = await client.post("/2fa/getAccessTokenFor2FACode", { body: req.body });
+    const { data } = await client.post("/2fa/getAccessTokenFor2FACode", { body: request.body });
 
     if (data.statusCode === 200) {
       return res
@@ -57,9 +61,11 @@ authenticationRouter.route("/2FA/Code/Login").post(async (req: CustomRequest<{}>
   }
 });
 
-authenticationRouter.route("/2FA/Code/ConfirmUser").post(async (req: CustomRequest<{}>, res) => {
+authenticationRouter.route("/2FA/Code/ConfirmUser").post(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+
   try {
-    const { data } = await client.post("/2fa/verifyUser2FAStatus", { body: req.body });
+    const { data } = await client.post("/2fa/verifyUser2FAStatus", { body: request.body });
 
     if (data.statusCode === 200) {
       return res.json(data.data);
@@ -72,7 +78,9 @@ authenticationRouter.route("/2FA/Code/ConfirmUser").post(async (req: CustomReque
 });
 
 authenticationRouter.route("/Login/Refresh").get(async (req, res) => {
-  const cookieToken = req.cookies["mb_refresh_token"];
+  const request = req as CustomRequest<{}>;
+
+  const cookieToken = request.cookies["mb_refresh_token"];
 
   if (cookieToken) {
     try {
@@ -94,9 +102,11 @@ authenticationRouter.route("/Logout").get(async (_, res) => {
   return res.cookie("mb_refresh_token", "expiring now", { expires: new Date(Date.now()) }).json({ success: true });
 });
 
-authenticationRouter.route("/Profile").get(validateToken, async (req: CustomRequest<{}>, res) => {
+authenticationRouter.route("/Profile").get(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+
   try {
-    const { data } = await client.get(`/users/${req.auth?.message_box_userId}`);
+    const { data } = await client.get(`/users/${request.auth?.message_box_userId}`);
 
     return res.status(data.statusCode).json({ ...data.data });
   } catch (error) {
