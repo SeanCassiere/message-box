@@ -14,13 +14,13 @@ clientRouter
   .route("/")
   .get(async (req, res) => {
     try {
-      const { data } = await client.get("/clients/getAllClients");
+      const { data: response } = await client.get("/clients/getAllClients");
 
-      if (data.statusCode === 200) {
-        return res.json([...data.data]);
+      if (response.statusCode === 200) {
+        return res.json([...response.data]);
       }
 
-      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "auth-service /clients network error" });
     }
@@ -29,16 +29,16 @@ clientRouter
     const request = req as CustomRequest<{}>;
 
     try {
-      const { data } = await client.post("/clients/createClientAndUser", {
+      const { data: response } = await client.post("/clients/createClientAndUser", {
         variables: { host: process.env.FRONTEND_HOST, path: "/confirm-account/" },
         body: { ...request.body },
       });
 
-      if (data.statusCode === 200) {
-        return res.json({ ...data.data });
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
       }
 
-      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "auth-service /clients network error" });
     }
@@ -50,11 +50,11 @@ clientRouter
     const request = req as CustomRequest<{}>;
 
     try {
-      const { data } = await client.post(`/users`, {
+      const { data: response } = await client.post(`/users`, {
         clientId: request.auth?.message_box_clientId,
       });
 
-      return res.status(data.statusCode).json([...data.data]);
+      return res.status(response.statusCode).json([...response.data]);
     } catch (error) {
       return res.status(500).json({ message: "auth-service /client network error" });
     }
@@ -63,7 +63,7 @@ clientRouter
     const request = req as CustomRequest<{}>;
 
     try {
-      const { data } = await client.post(`/users/createUserForClient`, {
+      const { data: response } = await client.post(`/users/createUserForClient`, {
         variables: {
           clientId: request.auth?.message_box_clientId,
           host: process.env.FRONTEND_HOST,
@@ -72,11 +72,11 @@ clientRouter
         body: { ...req.body },
       });
 
-      if (data.statusCode === 200) {
-        return res.json({ ...data.data });
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
       }
 
-      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "auth-service /client network error" });
     }
@@ -88,15 +88,15 @@ clientRouter
     const request = req as CustomRequest<{}>;
 
     try {
-      const { data } = await client.post("/roles/getAllRolesForClient", {
+      const { data: response } = await client.post("/roles/getAllRolesForClient", {
         clientId: request.auth?.message_box_clientId,
       });
 
-      if (data.statusCode === 200) {
-        return res.json([...data.data]);
+      if (response.statusCode === 200) {
+        return res.json([...response.data]);
       }
 
-      return res.status(data.statusCode).json({ data: [...data.data], errors: data.errors });
+      return res.status(response.statusCode).json({ data: [...response.data], errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "auth-service /clients network error" });
     }
@@ -105,16 +105,16 @@ clientRouter
     const request = req as CustomRequest<{}>;
 
     try {
-      const { data } = await client.post("/roles/createRoleForClient", {
+      const { data: response } = await client.post("/roles/createRoleForClient", {
         variables: { clientId: request.auth?.message_box_clientId },
         body: { ...req.body },
       });
 
-      if (data.statusCode === 200) {
-        return res.json({ ...data.data });
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
       }
 
-      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "auth-service /client network error" });
     }
@@ -126,15 +126,15 @@ clientRouter
     const request = req as CustomRequest<{}>;
 
     try {
-      const { data } = await client.post("/teams/getAllTeamsForClient", {
+      const { data: response } = await client.post("/teams/getAllTeamsForClient", {
         clientId: request.auth?.message_box_clientId,
       });
 
-      if (data.statusCode === 200) {
-        return res.json([...data.data]);
+      if (response.statusCode === 200) {
+        return res.json([...response.data]);
       }
 
-      return res.status(data.statusCode).json({ data: [...data.data], errors: data.errors });
+      return res.status(response.statusCode).json({ data: [...response.data], errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "auth-service /clients network error" });
     }
@@ -143,16 +143,16 @@ clientRouter
     const request = req as CustomRequest<{}>;
 
     try {
-      const { data } = await client.post("/teams/createTeamForClient", {
+      const { data: response } = await client.post("/teams/createTeamForClient", {
         variables: { clientId: request.auth?.message_box_clientId },
         body: { ...req.body },
       });
 
-      if (data.statusCode === 200) {
-        return res.json({ ...data.data });
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
       }
 
-      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "auth-service /client network error" });
     }
@@ -162,15 +162,15 @@ clientRouter.route("/Profile").get(async (req, res) => {
   const request = req as CustomRequest<{}>;
 
   try {
-    const { data } = await client.post("/clients/getClientById", {
+    const { data: response } = await client.post("/clients/getClientById", {
       variables: { clientId: request.auth?.message_box_clientId, userId: request.auth?.message_box_userId },
     });
 
-    if (data.statusCode === 200) {
-      return res.json({ ...data.data });
+    if (response.statusCode === 200) {
+      return res.json({ ...response.data });
     }
 
-    return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+    return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
   } catch (error) {
     return res.status(500).json({ message: "auth-service /client network error" });
   }

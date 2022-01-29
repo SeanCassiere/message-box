@@ -16,16 +16,16 @@ const updateUserByIdController = async (req: express.Request, res: express.Respo
   const userId = id ?? request.auth?.message_box_userId;
 
   try {
-    const { data } = await client.post("/users/updateUserByUserId", {
+    const { data: response } = await client.post("/users/updateUserByUserId", {
       variables: { userId: userId, clientId: request.auth?.message_box_clientId },
       body: { ...request.body },
     });
 
-    if (data.statusCode !== 200) {
-      return res.status(data.statusCode).json({ data: data.data, errors: data.errors });
+    if (response.statusCode !== 200) {
+      return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
     }
 
-    return res.json({ ...data.data });
+    return res.json({ ...response.data });
   } catch (error) {
     return res.status(500).json({ message: "auth-service /users network error" });
   }
@@ -37,9 +37,9 @@ const getUserByIdController = async (req: express.Request, res: express.Response
   const userId = id ?? request.auth?.message_box_userId;
 
   try {
-    const { data } = await client.get(`/users/${userId}`);
+    const { data: response } = await client.get(`/users/${userId}`);
 
-    return res.status(data.statusCode).json({ ...data.data });
+    return res.status(response.statusCode).json({ ...response.data });
   } catch (error) {
     return res.status(500).json({ message: "auth-service /users network error" });
   }

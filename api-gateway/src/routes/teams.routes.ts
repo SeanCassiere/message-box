@@ -17,9 +17,9 @@ teamRouter
     try {
       const { id } = request.params;
 
-      const { data } = await client.post("/teams/getTeamById", { teamId: id });
+      const { data: response } = await client.post("/teams/getTeamById", { teamId: id });
 
-      return res.status(data.statusCode).json({ ...data.data });
+      return res.status(response.statusCode).json({ ...response.data });
     } catch (error) {
       return res.status(500).json({ message: "auth-service /client network error" });
     }

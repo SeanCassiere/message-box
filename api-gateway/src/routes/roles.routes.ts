@@ -27,9 +27,9 @@ roleRouter
     try {
       const { id } = request.params;
 
-      const { data } = await client.post("/roles/getRoleById", { roleId: id });
+      const { data: response } = await client.post("/roles/getRoleById", { roleId: id });
 
-      return res.status(data.statusCode).json({ ...data.data });
+      return res.status(response.statusCode).json({ ...response.data });
     } catch (error) {
       return res.status(500).json({ message: "auth-service /client network error" });
     }

@@ -20,7 +20,7 @@ tasksRouter
     const forAudience = request.query.for ?? "Today";
 
     try {
-      const { data } = await client.post("/tasks/getAllTasksForUser", {
+      const { data: response } = await client.post("/tasks/getAllTasksForUser", {
         variables: {
           clientId: request.auth!.message_box_clientId,
           userId: request.auth!.message_box_userId,
@@ -32,11 +32,11 @@ tasksRouter
         },
       });
 
-      if (data.statusCode === 200) {
-        return res.json([...data.data]);
+      if (response.statusCode === 200) {
+        return res.json([...response.data]);
       }
 
-      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "application-data-service /tasks network error" });
     }
@@ -45,7 +45,7 @@ tasksRouter
     const request = req as CustomRequest<{}>;
 
     try {
-      const { data } = await client.post("/tasks/createTaskForUser", {
+      const { data: response } = await client.post("/tasks/createTaskForUser", {
         variables: {
           clientId: request.auth!.message_box_clientId,
           userId: request.auth!.message_box_userId,
@@ -55,11 +55,11 @@ tasksRouter
         },
       });
 
-      if (data.statusCode === 200) {
-        return res.json({ ...data.data });
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
       }
 
-      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "application-data-service /tasks network error" });
     }
@@ -72,7 +72,7 @@ tasksRouter
 
     const taskId = request.params.id;
     try {
-      const { data } = await client.post("/tasks/getTaskById", {
+      const { data: response } = await client.post("/tasks/getTaskById", {
         variables: {
           clientId: request.auth!.message_box_clientId,
           userId: request.auth!.message_box_userId,
@@ -82,11 +82,11 @@ tasksRouter
         },
       });
 
-      if (data.statusCode === 200) {
-        return res.json({ ...data.data });
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
       }
 
-      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "application-data-service /tasks network error" });
     }
@@ -97,7 +97,7 @@ tasksRouter
     const taskId = request.params.id;
     console.log("taskId", taskId);
     try {
-      const { data } = await client.post("/tasks/updateTaskById", {
+      const { data: response } = await client.post("/tasks/updateTaskById", {
         variables: {
           clientId: request.auth!.message_box_clientId,
           userId: request.auth!.message_box_userId,
@@ -108,11 +108,11 @@ tasksRouter
         },
       });
 
-      if (data.statusCode === 200) {
-        return res.json({ ...data.data });
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
       }
 
-      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "application-data-service /tasks network error" });
     }
@@ -122,7 +122,7 @@ tasksRouter
 
     const taskId = request.params.id;
     try {
-      const { data } = await client.post("/tasks/deleteTaskById", {
+      const { data: response } = await client.post("/tasks/deleteTaskById", {
         variables: {
           clientId: request.auth!.message_box_clientId,
           userId: request.auth!.message_box_userId,
@@ -132,11 +132,11 @@ tasksRouter
         },
       });
 
-      if (data.statusCode === 200) {
-        return res.json({ ...data.data });
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
       }
 
-      return res.status(data.statusCode).json({ data: { ...data.data }, errors: data.errors });
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "application-data-service /tasks network error" });
     }

@@ -14,25 +14,33 @@ authenticationRouter.route("/Login").post(async (req, res) => {
   const request = req as CustomRequest<{}>;
 
   try {
-    const { data } = await client.post("/2fa/emailAndPasswordLogin2FA", { body: request.body });
+    const { data: response } = await client.post("/2fa/emailAndPasswordLogin2FA", { body: request.body });
 
-    if (data.statusCode === 200) {
-      if (data.data.key === "/2fa/login") {
-        return res
-          .status(200)
-          .json({ next: "/2FA/Code/Login", userId: data.data.userId, twoFactorAuthenticationCodeCreator: null });
+    if (response.statusCode === 200) {
+      if (response.data.key === "/2fa/login") {
+        return res.status(200).json({
+          next: "/Api/Authentication/2FA/Code/Login",
+          userId: response.data.userId,
+          twoFactorAuthenticationCodeCreator: null,
+        });
       }
 
-      if (data.data.key === "/2fa/verify") {
+      if (response.data.key === "/2fa/verify") {
         return res.status(200).json({
-          next: "/2FA/Code/VerifyRegistration",
-          userId: data.data.userId,
-          twoFactorAuthenticationCodeCreator: data.data.secret,
+          next: "/Api/Authentication/2FA/Code/ConfirmUser",
+          userId: response.data.userId,
+          twoFactorAuthenticationCodeCreator: response.data.secret,
         });
       }
     }
+    if (response.statusCode === 400) {
+      return res.status(400).json({
+        data: null,
+        errors: response.errors,
+      });
+    }
 
-    return res.status(data.statusCode).json(data);
+    return res.status(response.statusCode).json(response);
   } catch (error) {
     return res.status(500).json({ message: "auth-service /users network error" });
   }
@@ -42,20 +50,24 @@ authenticationRouter.route("/2FA/Code/Login").post(async (req, res) => {
   const request = req as CustomRequest<{}>;
 
   try {
-    const { data } = await client.post("/2fa/getAccessTokenFor2FACode", { body: request.body });
+    const { data: response } = await client.post("/2fa/getAccessTokenFor2FACode", { body: request.body });
 
-    if (data.statusCode === 200) {
+    if (response.statusCode === 200) {
       return res
         .status(200)
-        .cookie("mb_refresh_token", data.data.refreshToken, {
+        .cookie("mb_refresh_token", response.data.refreshToken, {
           secure: process.env.NODE_ENV === "production",
           httpOnly: true,
           expires: new Date(Date.now() + 18 * 60 * 60 * 1000),
         })
-        .json({ access_token: data.data.accessToken, expiresIn: data.data.expiresIn, message: data.data.message });
+        .json({
+          access_token: response.data.accessToken,
+          expiresIn: response.data.expiresIn,
+          message: response.data.message,
+        });
     }
 
-    return res.status(data.statusCode).json(data);
+    return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
   } catch (error) {
     return res.status(500).json({ message: "auth-service /users network error" });
   }
@@ -65,13 +77,13 @@ authenticationRouter.route("/2FA/Code/ConfirmUser").post(async (req, res) => {
   const request = req as CustomRequest<{}>;
 
   try {
-    const { data } = await client.post("/2fa/verifyUser2FAStatus", { body: request.body });
+    const { data: response } = await client.post("/2fa/verifyUser2FAStatus", { body: request.body });
 
-    if (data.statusCode === 200) {
-      return res.json(data.data);
+    if (response.statusCode === 200) {
+      return res.json(response.data);
     }
 
-    return res.status(data.statusCode).json({ data: data.data, errors: data.errors });
+    return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
   } catch (error) {
     return res.status(500).json({ message: "auth-service /users network error" });
   }
@@ -84,12 +96,12 @@ authenticationRouter.route("/Login/Refresh").get(async (req, res) => {
 
   if (cookieToken) {
     try {
-      const { data } = await client.post("/users/refresh", { cookie: cookieToken });
+      const { data: response } = await client.post("/users/refresh", { cookie: cookieToken });
 
-      if (data.statusCode === 200) {
-        return res.json({ access_token: data.data.accessToken, expiresIn: data.data.expiresIn });
+      if (response.statusCode === 200) {
+        return res.json({ access_token: response.data.accessToken, expiresIn: response.data.expiresIn });
       }
-      return res.status(data.statusCode).json({ data: data.data, errors: data.errors });
+      return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
     } catch (error) {
       return res.status(500).json({ message: "auth-service /users network error" });
     }
@@ -106,9 +118,9 @@ authenticationRouter.route("/Profile").get(async (req, res) => {
   const request = req as CustomRequest<{}>;
 
   try {
-    const { data } = await client.get(`/users/${request.auth?.message_box_userId}`);
+    const { data: response } = await client.get(`/users/${request.auth?.message_box_userId}`);
 
-    return res.status(data.statusCode).json({ ...data.data });
+    return res.status(response.statusCode).json({ ...response.data });
   } catch (error) {
     return res.status(500).json({ message: "auth-service /users network error" });
   }
