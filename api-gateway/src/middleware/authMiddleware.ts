@@ -4,6 +4,13 @@ import jwt from "jsonwebtoken";
 import jwkClient from "jwks-rsa";
 import jwkToPem, { JWK } from "jwk-to-pem";
 
+/**
+ * @deprecated
+ * @param req
+ * @param res
+ * @param next
+ * @returns next()
+ */
 export async function validateToken(req: CustomRequest<{}>, res: Response, next: NextFunction) {
   let token = "";
 
@@ -26,7 +33,7 @@ export async function validateToken(req: CustomRequest<{}>, res: Response, next:
         message_box_clientId: string;
         message_box_userId: string;
       };
-      req.auth = tokenPayload;
+      req.user = tokenPayload;
 
       return next();
     } catch (error) {

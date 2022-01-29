@@ -2,17 +2,19 @@ import express from "express";
 import axios from "axios";
 
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
-import { validateToken } from "#root/middleware/authMiddleware";
+import { AUTH_SERVICE_URI } from "#root/constants";
 
 const roleRouter = express.Router();
 
 const client = axios.create({
-  baseURL: "http://auth-service:4000",
+  baseURL: AUTH_SERVICE_URI,
 });
 
 roleRouter
   .route("/:id")
-  .get(validateToken, async (req: CustomRequest<{}>, res) => {
+  .get(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
     try {
       const { id } = req.params;
 
@@ -23,8 +25,10 @@ roleRouter
       return res.status(500).json({ message: "auth-service /client network error" });
     }
   })
-  .put(validateToken, async (req: CustomRequest<{}>, res) => {
-    const { message_box_clientId, message_box_userId } = req.auth!;
+  .put(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
+    const { message_box_clientId, message_box_userId } = request.auth!;
     const { id } = req.params;
     try {
       const { data: response } = await client.post("/roles/updateRoleById", {
@@ -39,8 +43,10 @@ roleRouter
       return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
     } catch (error) {}
   })
-  .delete(validateToken, async (req: CustomRequest<{}>, res) => {
-    const { message_box_clientId, message_box_userId } = req.auth!;
+  .delete(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
+    const { message_box_clientId, message_box_userId } = request.auth!;
     const { id } = req.params;
     try {
       const { data: response } = await client.post("/roles/deleteRoleById", {

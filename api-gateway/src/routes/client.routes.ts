@@ -2,17 +2,17 @@ import express from "express";
 import axios from "axios";
 
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
-import { validateToken } from "#root/middleware/authMiddleware";
+import { AUTH_SERVICE_URI } from "#root/constants";
 
 const clientRouter = express.Router();
 
 const client = axios.create({
-  baseURL: "http://auth-service:4000",
+  baseURL: AUTH_SERVICE_URI,
 });
 
 clientRouter
   .route("/")
-  .get(async (req: CustomRequest<{}>, res) => {
+  .get(async (req, res) => {
     try {
       const { data } = await client.get("/clients/getAllClients");
 
@@ -25,11 +25,13 @@ clientRouter
       return res.status(500).json({ message: "auth-service /clients network error" });
     }
   })
-  .post(async (req: CustomRequest<{}>, res) => {
+  .post(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
     try {
       const { data } = await client.post("/clients/createClientAndUser", {
         variables: { host: process.env.FRONTEND_HOST, path: "/confirm-account/" },
-        body: { ...req.body },
+        body: { ...request.body },
       });
 
       if (data.statusCode === 200) {
@@ -44,10 +46,12 @@ clientRouter
 
 clientRouter
   .route("/Users")
-  .get(validateToken, async (req: CustomRequest<{}>, res) => {
+  .get(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
     try {
       const { data } = await client.post(`/users`, {
-        clientId: req.auth?.message_box_clientId,
+        clientId: request.auth?.message_box_clientId,
       });
 
       return res.status(data.statusCode).json([...data.data]);
@@ -55,11 +59,13 @@ clientRouter
       return res.status(500).json({ message: "auth-service /client network error" });
     }
   })
-  .post(validateToken, async (req: CustomRequest<{}>, res) => {
+  .post(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
     try {
       const { data } = await client.post(`/users/createUserForClient`, {
         variables: {
-          clientId: req.auth?.message_box_clientId,
+          clientId: request.auth?.message_box_clientId,
           host: process.env.FRONTEND_HOST,
           path: "/confirm-account/",
         },
@@ -78,9 +84,13 @@ clientRouter
 
 clientRouter
   .route("/Roles")
-  .get(validateToken, async (req: CustomRequest<{}>, res) => {
+  .get(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
     try {
-      const { data } = await client.post("/roles/getAllRolesForClient", { clientId: req.auth?.message_box_clientId });
+      const { data } = await client.post("/roles/getAllRolesForClient", {
+        clientId: request.auth?.message_box_clientId,
+      });
 
       if (data.statusCode === 200) {
         return res.json([...data.data]);
@@ -91,10 +101,12 @@ clientRouter
       return res.status(500).json({ message: "auth-service /clients network error" });
     }
   })
-  .post(validateToken, async (req: CustomRequest<{}>, res) => {
+  .post(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
     try {
       const { data } = await client.post("/roles/createRoleForClient", {
-        variables: { clientId: req.auth?.message_box_clientId },
+        variables: { clientId: request.auth?.message_box_clientId },
         body: { ...req.body },
       });
 
@@ -110,9 +122,13 @@ clientRouter
 
 clientRouter
   .route("/Teams")
-  .get(validateToken, async (req: CustomRequest<{}>, res) => {
+  .get(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
     try {
-      const { data } = await client.post("/teams/getAllTeamsForClient", { clientId: req.auth?.message_box_clientId });
+      const { data } = await client.post("/teams/getAllTeamsForClient", {
+        clientId: request.auth?.message_box_clientId,
+      });
 
       if (data.statusCode === 200) {
         return res.json([...data.data]);
@@ -123,10 +139,12 @@ clientRouter
       return res.status(500).json({ message: "auth-service /clients network error" });
     }
   })
-  .post(validateToken, async (req: CustomRequest<{}>, res) => {
+  .post(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
     try {
       const { data } = await client.post("/teams/createTeamForClient", {
-        variables: { clientId: req.auth?.message_box_clientId },
+        variables: { clientId: request.auth?.message_box_clientId },
         body: { ...req.body },
       });
 
@@ -140,10 +158,12 @@ clientRouter
     }
   });
 
-clientRouter.route("/Profile").get(validateToken, async (req: CustomRequest<{}>, res) => {
+clientRouter.route("/Profile").get(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+
   try {
     const { data } = await client.post("/clients/getClientById", {
-      variables: { clientId: req.auth?.message_box_clientId, userId: req.auth?.message_box_userId },
+      variables: { clientId: request.auth?.message_box_clientId, userId: request.auth?.message_box_userId },
     });
 
     if (data.statusCode === 200) {
