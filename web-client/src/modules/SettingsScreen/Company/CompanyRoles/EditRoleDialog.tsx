@@ -113,14 +113,25 @@ const EditUserDialog = (props: IProps) => {
   useEffect(() => {
     setFoundDefaultRole(null);
     formik.resetForm();
-    (async () => {
-      try {
-        const { data } = await client.get("/Roles/Permissions");
-        setLoadedPermissions(data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
+    if (!showDialog) return;
+
+    // fetch the permissions list
+    client
+      .get("/Roles/Permissions")
+      .then((res) => {
+        if (res.status === 200) {
+          setLoadedPermissions(res.data);
+        } else {
+          console.log(res.data);
+          enqueueSnackbar(`Error: Could not fetch the permissions.`, { variant: "error" });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        enqueueSnackbar(`Error: Could not fetch the permissions.`, { variant: "error" });
+      });
+
+    // fetch role data
     if (roleId) {
       client
         .get(`/Roles/${roleId}`)
@@ -154,7 +165,7 @@ const EditUserDialog = (props: IProps) => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roleId, rolesList]);
+  }, [roleId, rolesList, showDialog]);
 
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth>
