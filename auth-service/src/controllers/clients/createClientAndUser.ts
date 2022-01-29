@@ -6,15 +6,16 @@ import Client from "#root/db/entities/Client";
 import Role from "#root/db/entities/Role";
 import RoleMapping from "#root/db/entities/RoleMapping";
 import EmailConfirmations from "#root/db/entities/EmailConfirmations";
+import Team from "#root/db/entities/Team";
+import TeamMapping from "#root/db/entities/TeamMapping";
 
 import { hashPassword } from "#root/util/hashPassword";
 import { validateYupSchema } from "#root/util/validateYupSchema";
 import { formatClientResponse } from "#root/util/formatResponses";
 import { sendEmail } from "#root/email/sendEmail";
 import { generateEmailConfirmationTemplate } from "#root/email/generateEmailConfirmationTemplate";
-import Team from "#root/db/entities/Team";
-import TeamMapping from "#root/db/entities/TeamMapping";
-import { DEFAULT_PERMISSIONS_MAP } from "#root/util/permissions";
+import { DEFAULT_PERMISSIONS_MAP } from "#root/constants/default_permissions";
+import { DEFAULT_ROLES_ARRAY } from "#root/constants/default_roles";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -70,39 +71,21 @@ export async function createClientAndUser(req: Request, res: Response, next: Nex
       name: clientName,
     }).save();
 
+    const rolePromises = [];
     // add the default roles
-    // employee role
-    const employeeRole = await Role.create({
-      clientId: newClient.clientId,
-      rootName: "employee",
-      viewName: "Employee",
-      permissions: DEFAULT_PERMISSIONS_MAP.employee,
-      isUserDeletable: false,
-    }).save();
-    // admin role
-    const adminRole = await Role.create({
-      clientId: newClient.clientId,
-      rootName: "admin",
-      viewName: "Administrator",
-      permissions: DEFAULT_PERMISSIONS_MAP.admin,
-      isUserDeletable: false,
-    }).save();
-    // manager role
-    await Role.create({
-      clientId: newClient.clientId,
-      rootName: "manager",
-      viewName: "Manager",
-      permissions: DEFAULT_PERMISSIONS_MAP.admin,
-      isUserDeletable: false,
-    }).save();
-    // hr role
-    await Role.create({
-      clientId: newClient.clientId,
-      rootName: "hr",
-      viewName: "Human Resources",
-      permissions: DEFAULT_PERMISSIONS_MAP.hr,
-      isUserDeletable: false,
-    }).save();
+    for (const role of DEFAULT_ROLES_ARRAY) {
+      rolePromises.push(
+        Role.create({
+          clientId: newClient.clientId,
+          viewName: role.viewName,
+          rootName: role.rootName,
+          permissions: role.permissions,
+          isUserDeletable: false,
+        }).save()
+      );
+    }
+
+    await Promise.all(rolePromises);
 
     // create the admin user account
     const adminUser = await User.create({
@@ -113,21 +96,27 @@ export async function createClientAndUser(req: Request, res: Response, next: Nex
       lastName: lastName,
     }).save();
 
-    // create role mappings for Admin and Employee
-    await RoleMapping.create({
-      roleId: adminRole.roleId,
-      userId: adminUser.userId,
-    }).save();
-    await RoleMapping.create({
-      roleId: employeeRole.roleId,
-      userId: adminUser.userId,
-    }).save();
+    const adminRole = await Role.findOne({ where: { clientId: newClient.clientId, rootName: "admin" } });
+    const employeeRole = await Role.findOne({ where: { clientId: newClient.clientId, rootName: "employee" } });
+
+    if (adminRole && employeeRole) {
+      // create role mappings for Admin and Employee
+      await RoleMapping.create({
+        roleId: adminRole.roleId,
+        userId: adminUser.userId,
+      }).save();
+      await RoleMapping.create({
+        roleId: employeeRole.roleId,
+        userId: adminUser.userId,
+      }).save();
+    }
 
     // create the default teams
     const companyTeam = await Team.create({
       rootName: "company",
       teamName: "Company",
       clientId: newClient.clientId,
+      isUserDeletable: false,
     }).save();
 
     // create the team mappings

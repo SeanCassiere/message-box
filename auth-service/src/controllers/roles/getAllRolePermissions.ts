@@ -1,6 +1,6 @@
 import { Response, NextFunction, Request } from "express";
 
-import { ALL_AVAILABLE_ROLE_PERMISSIONS } from "#root/util/permissions";
+import { ALL_AVAILABLE_ROLE_PERMISSIONS } from "#root/constants/allPermissions";
 
 export async function getAllRolePermissions(req: Request, res: Response, next: NextFunction) {
   const sortedPermissions = ALL_AVAILABLE_ROLE_PERMISSIONS.sort((a, b) => a.id - b.id);

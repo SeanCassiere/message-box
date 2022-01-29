@@ -4,7 +4,7 @@ import * as yup from "yup";
 import Role from "#root/db/entities/Role";
 import { validateYupSchema } from "#root/util/validateYupSchema";
 import { formatRoleResponse } from "#root/util/formatResponses";
-import { ALL_AVAILABLE_ROLE_PERMISSIONS } from "#root/util/permissions";
+import { ALL_AVAILABLE_ROLE_PERMISSIONS } from "#root/constants/allPermissions";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({

@@ -42,6 +42,8 @@ import { changePasswordForUser } from "./controllers/users/changePasswordForUser
 import { changePasswordByUserId } from "./controllers/users/changePasswordByUserId";
 
 import { getAllUserIdsForClient } from "./controllers/clients/getAllUserIdsForClient";
+import { adminSetDefaultRolePermissions } from "./controllers/roles/adminSetDefaultRolePermissions";
+import { adminSetDefaultRoles } from "./controllers/roles/adminSetDefaultRoles";
 
 const expressApp = express();
 
@@ -54,6 +56,8 @@ expressApp.use(express.static(__dirname + "/../public"));
 
 // private routes
 expressApp.post("/clients/getAllUserIdsForClient", getAllUserIdsForClient);
+expressApp.get("/admin/roles/adminSetDefaultRoles", adminSetDefaultRoles);
+expressApp.get("/admin/roles/adminSetDefaultRolePermissions", adminSetDefaultRolePermissions);
 
 // public routes
 /**
