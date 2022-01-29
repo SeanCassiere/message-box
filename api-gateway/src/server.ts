@@ -17,6 +17,7 @@ import clientRouter from "./routes/client.routes";
 import roleRouter from "./routes/roles.routes";
 import teamRouter from "./routes/teams.routes";
 import tasksRouter from "./routes/task.routes";
+import hiddenRouter from "./routes/hidden.routes";
 
 const expressApp = express();
 
@@ -60,6 +61,14 @@ expressApp.use(
   }).unless({ path: [...ALLOWED_PUBLIC_PATHS] })
 );
 
+/**
+ * @description used to trigger actions in a microservice
+ */
+expressApp.use("/Api/Hidden", hiddenRouter);
+
+/**
+ * @description public application routes
+ */
 expressApp.use("/Api/Authentication", authenticationRouter);
 expressApp.use("/Api/Users", userRouter);
 expressApp.use("/Api/Clients", clientRouter);
