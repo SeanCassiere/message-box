@@ -10,13 +10,22 @@ const client = axios.create({
   baseURL: AUTH_SERVICE_URI,
 });
 
+roleRouter.route("/Permissions").get(async (_, res) => {
+  try {
+    const { data: response } = await client.get("/roles/getAllRolePermissions", {});
+    return res.status(200).json([...response.data]);
+  } catch (error) {
+    return res.status(500).json({ message: "auth-service /role network error" });
+  }
+});
+
 roleRouter
   .route("/:id")
   .get(async (req, res) => {
     const request = req as CustomRequest<{}>;
 
     try {
-      const { id } = req.params;
+      const { id } = request.params;
 
       const { data } = await client.post("/roles/getRoleById", { roleId: id });
 
