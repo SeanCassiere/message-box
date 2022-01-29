@@ -16,6 +16,9 @@ tasksRouter
     const request = req as CustomRequest<{}>;
 
     const ownerId = request.query.ownerId ?? request.auth!.message_box_userId;
+    const clientDate = request.query.currentDate ?? new Date().toISOString().substring(0, 10);
+    const forAudience = request.query.for ?? "Today";
+
     try {
       const { data } = await client.post("/tasks/getAllTasksForUser", {
         variables: {
@@ -24,6 +27,8 @@ tasksRouter
         },
         body: {
           ownerId: ownerId,
+          clientDate: clientDate,
+          forAudience: forAudience,
         },
       });
 

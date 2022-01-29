@@ -53,7 +53,6 @@ expressApp.use(
       cache: true,
       cacheMaxAge: 3600,
       rateLimit: true,
-      jwksRequestsPerMinute: 5,
       jwksUri: `${AUTH_SERVICE_URI}/.well-known/jwks.json`,
     }),
     algorithms: ["RS256"],

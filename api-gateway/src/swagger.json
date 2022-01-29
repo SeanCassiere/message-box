@@ -805,20 +805,25 @@
             }
           },
           {
-            "name": "clientId",
+            "name": "currentDate",
             "in": "query",
-            "description": "Client ID (UUID)",
+            "description": "The current date in `YYYY-MM-DD` format",
             "schema": {
-              "type": "string"
-            }
+              "type": "string",
+              "format": "date",
+              "default": "2022-02-20"
+            },
+            "required": true
           },
           {
             "name": "for",
             "in": "query",
             "description": "***Today, Overdue, Tomorrow***",
             "schema": {
-              "type": "string"
-            }
+              "type": "string",
+              "default": "Today"
+            },
+            "required": true
           }
         ],
         "security": [
