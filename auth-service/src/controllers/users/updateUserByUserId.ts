@@ -7,8 +7,10 @@ import User from "#root/db/entities/User";
 import RoleMapping from "#root/db/entities/RoleMapping";
 import Team from "#root/db/entities/Team";
 import TeamMapping from "#root/db/entities/TeamMapping";
-import { formatUserResponseWithRoles } from "#root/util/formatResponses";
 import Role from "#root/db/entities/Role";
+
+import { formatUserResponseWithRoles } from "#root/util/formatResponses";
+import { returnStringsNotInOriginalArray } from "#root/util/returnArray";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -133,8 +135,4 @@ export async function updateUserByUserId(req: Request, res: Response, next: Next
       errors: [{ propertyPath: "service", message: "Something went wrong with the user updating method" }],
     });
   }
-}
-
-function returnStringsNotInOriginalArray(originalArray: string[], comparisonArray: string[]) {
-  return comparisonArray.filter((string) => !originalArray.includes(string));
 }
