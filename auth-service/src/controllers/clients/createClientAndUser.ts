@@ -6,15 +6,15 @@ import Client from "#root/db/entities/Client";
 import Role from "#root/db/entities/Role";
 import RoleMapping from "#root/db/entities/RoleMapping";
 import EmailConfirmations from "#root/db/entities/EmailConfirmations";
+import Team from "#root/db/entities/Team";
+import TeamMapping from "#root/db/entities/TeamMapping";
 
 import { hashPassword } from "#root/util/hashPassword";
 import { validateYupSchema } from "#root/util/validateYupSchema";
 import { formatClientResponse } from "#root/util/formatResponses";
 import { sendEmail } from "#root/email/sendEmail";
 import { generateEmailConfirmationTemplate } from "#root/email/generateEmailConfirmationTemplate";
-import Team from "#root/db/entities/Team";
-import TeamMapping from "#root/db/entities/TeamMapping";
-import { DEFAULT_PERMISSIONS_MAP } from "#root/util/permissions";
+import { DEFAULT_PERMISSIONS_MAP } from "#root/constants/default_permissions";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
