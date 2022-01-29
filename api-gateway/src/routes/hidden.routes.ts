@@ -26,4 +26,23 @@ router.route("/Roles/SetDefaultRolePermissions").get(async (req, res) => {
   }
 });
 
+/**
+ * @description seeds the clients with default roles
+ */
+router.route("/Roles/SetDefaultRoles").get(async (req, res) => {
+  try {
+    const { data: response } = await authServiceClient.get("/admin/roles/adminSetDefaultRoles");
+
+    if (response.statusCode === 200) {
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
+      }
+    }
+
+    return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
+  } catch (error) {
+    return res.status(500).json({ message: "auth-service /client network error" });
+  }
+});
+
 export default router;

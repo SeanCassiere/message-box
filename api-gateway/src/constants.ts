@@ -8,6 +8,7 @@ export const APP_DATA_SERVICE_URI = process.env.APP_DATA_SERVICE_URI || "http://
 export const API_PREFIX = "/Api";
 
 export const ALLOWED_PUBLIC_PATHS = [
+  `${API_PREFIX}/Hidden/Roles/SetDefaultRoles`,
   `${API_PREFIX}/Hidden/Roles/SetDefaultRolePermissions`,
   "/Docs",
   "/docs",
