@@ -31,8 +31,8 @@ const ConfirmAccountScreen = () => {
           autoHideDuration: 7500,
           anchorOrigin: { horizontal: "center", vertical: "top" },
         });
-        return navigate("/");
       }
+      return navigate("/");
     })();
   }, [enqueueSnackbar, id, navigate]);
 
