@@ -17,10 +17,13 @@ import { selectLookupListsState } from "../../../../shared/redux/store";
 import { client } from "../../../../shared/api/client";
 import { setLookupRoles } from "../../../../shared/redux/slices/lookup/lookupSlice";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
+import { usePermission } from "../../../../shared/hooks/usePermission";
 
 const Layout = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+
+  const isAddButtonAccessible = usePermission("role:admin");
 
   const { rolesList } = useSelector(selectLookupListsState);
 
@@ -116,9 +119,13 @@ const Layout = () => {
             <IconButton color="secondary" aria-label="refresh" onClick={refreshListItems}>
               <RefreshOutlinedIcon />
             </IconButton>
-            <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewRoleDialog}>
-              Add
-            </Button>
+            {isAddButtonAccessible && (
+              <>
+                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewRoleDialog}>
+                  Add
+                </Button>
+              </>
+            )}
           </Box>
         </Box>
         <Box>

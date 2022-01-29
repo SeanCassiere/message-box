@@ -18,10 +18,13 @@ import { IRoleProfile, ITeamProfile } from "../../../../shared/interfaces/Client
 import { IUserProfileWithSortedDetails } from "../../../../shared/interfaces/User.interfaces";
 import { client } from "../../../../shared/api/client";
 import { setLookupRoles, setLookupTeams, setLookupUsers } from "../../../../shared/redux/slices/lookup/lookupSlice";
+import { usePermission } from "../../../../shared/hooks/usePermission";
 
 const Layout = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+
+  const isAddButtonAccessible = usePermission("user:admin");
 
   const { usersList, rolesList, teamsList } = useSelector(selectLookupListsState);
 
@@ -141,9 +144,13 @@ const Layout = () => {
             <IconButton color="secondary" aria-label="refresh" onClick={refreshListItems}>
               <RefreshOutlinedIcon />
             </IconButton>
-            <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewUserDialog}>
-              Add
-            </Button>
+            {isAddButtonAccessible && (
+              <>
+                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewUserDialog}>
+                  Add
+                </Button>
+              </>
+            )}
           </Box>
         </Box>
         <Box>

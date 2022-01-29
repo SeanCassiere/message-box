@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useSelector } from "react-redux";
@@ -15,18 +15,32 @@ import DialogTitle from "@mui/material/DialogTitle";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import ListItemText from "@mui/material/ListItemText";
+import Checkbox from "@mui/material/Checkbox";
 import FormHelperText from "@mui/material/FormHelperText";
 
 import { client } from "../../../../shared/api/client";
 import { selectLookupListsState } from "../../../../shared/redux/store";
 import { formatErrorsToFormik } from "../../../../shared/util/errorsToFormik";
 import { IRoleProfile } from "../../../../shared/interfaces/Client.interfaces";
+import { truncateTextByLength } from "../../../../shared/util/general";
 
 const validationSchema = yup.object().shape({
   rootName: yup.string().required("A role has be based on an existing role"),
   viewName: yup.string().required("Role name is required"),
+  permissions: yup.array().of(yup.string().required("Role permissions are required")),
 });
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    },
+  },
+};
 
 interface IProps {
   roleId: string | null;
@@ -42,6 +56,7 @@ const EditUserDialog = (props: IProps) => {
   const { rolesList } = useSelector(selectLookupListsState);
 
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [loadedPermissions, setLoadedPermissions] = useState<string[]>([]);
   const [foundDefaultRole, setFoundDefaultRole] = useState<IRoleProfile | null>(null);
 
   const isFieldInactive = useMemo(
@@ -53,10 +68,10 @@ const EditUserDialog = (props: IProps) => {
     initialValues: {
       rootName: "employee",
       viewName: "",
+      permissions: [] as string[],
     },
     validationSchema,
     onSubmit: (values, { setSubmitting, setErrors }) => {
-      console.log(values);
       client[roleId ? "put" : "post"](roleId ? `/Roles/${roleId}` : "/Clients/Roles", values)
         .then((res) => {
           if (res.status === 403 || res.status === 400) {
@@ -80,10 +95,32 @@ const EditUserDialog = (props: IProps) => {
     },
   });
 
+  const renderPermissionNames = useCallback((selectedPerms: string[]) => {
+    const text = selectedPerms.join(", ");
+    return truncateTextByLength(text, { maxLength: 70, includesDots: true });
+  }, []);
+
+  const handleBaseRoleChange = useCallback(
+    (evt: SelectChangeEvent<string>) => {
+      formik.setFieldValue("rootName", evt.target.value);
+      const defaultRoles = rolesList.filter((role) => role.isUserDeletable === false);
+      const findRole = defaultRoles.find((role) => role.rootName === evt.target.value)!;
+      formik.setFieldValue("permissions", findRole.permissions);
+    },
+    [formik, rolesList]
+  );
+
   useEffect(() => {
     setFoundDefaultRole(null);
     formik.resetForm();
-
+    (async () => {
+      try {
+        const { data } = await client.get("/Roles/Permissions");
+        setLoadedPermissions(data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
     if (roleId) {
       client
         .get(`/Roles/${roleId}`)
@@ -92,6 +129,7 @@ const EditUserDialog = (props: IProps) => {
             setFoundDefaultRole(res.data);
             formik.setFieldValue("viewName", res.data.viewName);
             formik.setFieldValue("rootName", res.data.rootName);
+            formik.setFieldValue("permissions", res.data.permissions);
           } else {
             console.log(res.data);
             enqueueSnackbar(`Error: Could not find role.`, { variant: "error" });
@@ -105,11 +143,18 @@ const EditUserDialog = (props: IProps) => {
           setIsLoadingData(false);
         });
     } else {
+      const defaultRoles = rolesList.filter((role) => role.isUserDeletable === false);
+      const findRole = defaultRoles.find((role) => role.rootName === formik.values.rootName)!;
+      formik.setFieldValue("permissions", findRole.permissions);
       setIsLoadingData(false);
     }
 
+    return () => {
+      formik.resetForm();
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roleId]);
+  }, [roleId, rolesList]);
 
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth>
@@ -135,7 +180,12 @@ const EditUserDialog = (props: IProps) => {
               />
             </Grid>
             <Grid item md={12}>
-              <FormControl variant="standard" sx={{ mt: 2, minWidth: 120 }} fullWidth disabled={isFieldInactive}>
+              <FormControl
+                variant="standard"
+                sx={{ mt: 2, minWidth: 120 }}
+                fullWidth
+                disabled={roleId ? true : isFieldInactive}
+              >
                 <InputLabel id="viewName-label" disableAnimation shrink>
                   Based on
                 </InputLabel>
@@ -144,7 +194,7 @@ const EditUserDialog = (props: IProps) => {
                   id="rootName"
                   name="rootName"
                   value={formik.values.rootName}
-                  onChange={formik.handleChange}
+                  onChange={handleBaseRoleChange}
                   error={formik.touched.rootName && Boolean(formik.errors.rootName)}
                 >
                   {rolesList
@@ -156,6 +206,32 @@ const EditUserDialog = (props: IProps) => {
                     ))}
                 </Select>
                 <FormHelperText>{formik.touched.rootName && formik.errors.rootName}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item md={12}>
+              <FormControl sx={{ minWidth: "100%", mt: 3 }}>
+                <InputLabel id="roles" sx={{ ml: -1.5 }} disableAnimation shrink>
+                  Permissions
+                </InputLabel>
+                <Select
+                  labelId="permissions"
+                  id="permissions"
+                  name="permissions"
+                  value={formik.values.permissions}
+                  onChange={formik.handleChange}
+                  renderValue={renderPermissionNames}
+                  MenuProps={MenuProps}
+                  multiple
+                  variant="standard"
+                  disabled={isLoadingData}
+                >
+                  {loadedPermissions.map((permission) => (
+                    <MenuItem key={`select-${permission}`} value={permission}>
+                      <Checkbox checked={formik.values.permissions.indexOf(permission) > -1} />
+                      <ListItemText primary={permission} />
+                    </MenuItem>
+                  ))}
+                </Select>
               </FormControl>
             </Grid>
           </Grid>

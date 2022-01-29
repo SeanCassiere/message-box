@@ -17,10 +17,13 @@ import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import { selectLookupListsState } from "../../../../shared/redux/store";
 import { client } from "../../../../shared/api/client";
 import { setLookupTeams } from "../../../../shared/redux/slices/lookup/lookupSlice";
+import { usePermission } from "../../../../shared/hooks/usePermission";
 
 const Layout = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+
+  const isAddButtonAccessible = usePermission("team:admin");
 
   const { teamsList } = useSelector(selectLookupListsState);
 
@@ -115,9 +118,13 @@ const Layout = () => {
             <IconButton color="secondary" aria-label="refresh" onClick={refreshListItems}>
               <RefreshOutlinedIcon />
             </IconButton>
-            <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewTeamDialog}>
-              Add
-            </Button>
+            {isAddButtonAccessible && (
+              <>
+                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewTeamDialog}>
+                  Add
+                </Button>
+              </>
+            )}
           </Box>
         </Box>
         <Box>

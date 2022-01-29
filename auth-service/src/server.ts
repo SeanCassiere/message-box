@@ -26,6 +26,7 @@ import { getRoleById } from "./controllers/roles/getRoleById";
 import { updateRoleById } from "./controllers/roles/updateRoleById";
 import { deleteRoleById } from "./controllers/roles/deleteRoleById";
 import { createRoleForClient } from "./controllers/roles/createRoleForClient";
+import { getAllRolePermissions } from "./controllers/roles/getAllRolePermissions";
 
 import { emailAndPasswordLogin2FA } from "./controllers/2fa/emailAndPasswordLogin2FA";
 import { getAccessTokenFor2FACode } from "./controllers/2fa/getAccessTokenFor2FACode";
@@ -88,6 +89,7 @@ expressApp.post("/roles/getRoleById", getRoleById as any);
 expressApp.post("/roles/createRoleForClient", createRoleForClient);
 expressApp.post("/roles/updateRoleById", updateRoleById);
 expressApp.post("/roles/deleteRoleById", deleteRoleById);
+expressApp.get("/roles/getAllRolePermissions", getAllRolePermissions);
 
 /**
  * Team routes

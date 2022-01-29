@@ -21,6 +21,9 @@ import { client } from "../../shared/api/client";
 import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
 import { setAccessToken } from "../../shared/redux/slices/auth/authSlice";
 import { selectAuthState } from "../../shared/redux/store";
+import jwtDecode from "jwt-decode";
+import { JwtPayload } from "../../shared/interfaces/AccessToken.interfaces";
+import { setPermissionsAndRoles } from "../../shared/redux/slices/user/userSlice";
 
 const credentialsLoginSchema = yup.object().shape({
   email: yup.string().email("Please enter a valid email").required("Username is required"),
@@ -123,6 +126,8 @@ const LoginScreen = () => {
             setShowLogin2fa(false);
             formikCredentialsLogin.resetForm();
             resetForm();
+            const { permissions, roles } = jwtDecode<JwtPayload>(res.data.access_token);
+            dispatch(setPermissionsAndRoles({ permissions, roles }));
             dispatch(setAccessToken({ accessToken: res.data.access_token }));
           }
         })

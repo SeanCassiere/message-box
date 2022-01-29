@@ -4,6 +4,7 @@ import * as yup from "yup";
 import Role from "#root/db/entities/Role";
 import { validateYupSchema } from "#root/util/validateYupSchema";
 import { formatRoleResponse } from "#root/util/formatResponses";
+import { ALL_AVAILABLE_ROLE_PERMISSIONS } from "#root/util/permissions";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -12,6 +13,7 @@ const validationSchema = yup.object().shape({
   body: yup.object().shape({
     rootName: yup.string().required("Root name is required"),
     viewName: yup.string().required("Role view name is required"),
+    permissions: yup.array().of(yup.string().required("Role permissions are required")),
   }),
 });
 
@@ -26,13 +28,44 @@ export async function createRoleForClient(req: Request, res: Response, next: Nex
   }
 
   const { clientId } = req.body.variables;
-  const { rootName, viewName } = req.body.body;
+  const { rootName, viewName, permissions } = req.body.body;
 
   try {
+    const findExistingName = await Role.findOne({ where: { clientId: clientId, viewName: viewName } });
+    if (findExistingName) {
+      return res.json({
+        statusCode: 400,
+        data: null,
+        errors: [
+          {
+            propertyPath: "viewName",
+            message: "Role with this name already exists",
+          },
+        ],
+      });
+    }
+  } catch (error) {
+    return res.json({
+      statusCode: 500,
+      data: null,
+      errors: [{ propertyPath: "service", message: "Something went wrong with the role creation method" }],
+    });
+  }
+
+  try {
+    let saveablePermissions: string[] = [];
+
+    for (const reqPerm of permissions) {
+      const mapDown = ALL_AVAILABLE_ROLE_PERMISSIONS.map((item) => item.key);
+      if (mapDown.includes(reqPerm)) {
+        saveablePermissions.push(reqPerm);
+      }
+    }
     const role = await Role.create({
       clientId: clientId,
       rootName: rootName.toLowerCase(),
       viewName: viewName,
+      permissions: saveablePermissions,
     }).save();
 
     return res.json({
