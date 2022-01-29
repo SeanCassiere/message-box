@@ -15,6 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { IRoleProfile } from "../../../../shared/interfaces/Client.interfaces";
+import { usePermission } from "../../../../shared/hooks/usePermission";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -43,6 +44,8 @@ interface ITableProps {
 }
 
 const ViewTable = ({ dataList, editItemHandler, deleteItemHandler }: ITableProps) => {
+  const isDeleteAccessible = usePermission("role:admin");
+  const isEditAccessible = usePermission("role:admin");
   const handleEditButton = (role: IRoleProfile) => {
     editItemHandler(role.roleId);
   };
@@ -75,12 +78,15 @@ const ViewTable = ({ dataList, editItemHandler, deleteItemHandler }: ITableProps
               </StyledTableCell>
               <StyledTableCell>{role.updatedAt}</StyledTableCell>
               <StyledTableCell align="right">
-                {role.isUserDeletable && (
+                {role.isUserDeletable && isDeleteAccessible && (
                   <>
                     <IconButton color="error" aria-label="remove" onClick={() => handleDeleteButton(role)}>
                       <DeleteIcon />
                     </IconButton>
-
+                  </>
+                )}
+                {role.isUserDeletable && isEditAccessible && (
+                  <>
                     <IconButton color="primary" aria-label="edit" onClick={() => handleEditButton(role)}>
                       <EditIcon />
                     </IconButton>

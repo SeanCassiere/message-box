@@ -32,12 +32,12 @@ import { IUserProfile } from "../../shared/interfaces/User.interfaces";
 import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
 
 import TaskContentEditor from "./TaskContentEditor";
+import { usePermission } from "../../shared/hooks/usePermission";
 
 interface Props {
   handleCloseFunction: () => void;
   taskId: string | null;
   showDialog: boolean;
-  showOwnerAssignee?: boolean;
 }
 
 const validationSchema = yup.object().shape({
@@ -64,10 +64,11 @@ const TaskModifyDialog = (props: Props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { handleCloseFunction, showDialog, taskId, showOwnerAssignee } = props;
+  const { handleCloseFunction, showDialog, taskId } = props;
 
   const { userProfile } = useSelector(selectAppProfileState);
   const { usersList } = useSelector(selectLookupListsState);
+  const showOwnerAssignee = usePermission("task:admin");
 
   const [initialContent, setInitialContent] = useState("");
 
