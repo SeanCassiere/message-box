@@ -34,7 +34,13 @@ export async function getAllTasksForUser(req: Request, res: Response) {
 
   try {
     // get the owned tasks
-    const tasks = await Task.find({ where: { ownerId: body.ownerId, clientId: variables.clientId, isDeleted: false } });
+    const query = Task.createQueryBuilder()
+      .select()
+      .where("owner_id = :ownerId", { ownerId: body.ownerId })
+      .andWhere("client_id = :clientId", { clientId: variables.clientId })
+      .andWhere("is_deleted = :isDeleted", { isDeleted: false });
+
+    const tasks = await query.getMany();
 
     for (const task of tasks) {
       const taskShares = await TaskShareMapping.find({ where: { taskId: task.taskId, isActive: true } });
