@@ -47,7 +47,7 @@ export const secondaryNavigationColor = "#E9ECFF";
 const profileRouteList = [{ route: "/logout", name: "Logout" }];
 const routesList = [
   { route: "/chat", name: "Chat", Icon: ChatIcon },
-  { route: "/tasks", name: "Tasks", Icon: AssignmentIcon },
+  { route: "/tasks/today", name: "Tasks", Icon: AssignmentIcon },
 ];
 
 const NavigationWrapper: React.FC = (props) => {

@@ -73,14 +73,14 @@ const TaskGroupColumn = (props: Props) => {
 
   return (
     <>
-      <Typography variant="h5" component="h3" sx={{ marginTop: "1em" }}>
+      <Typography variant="h5" component="h3">
         {title}
       </Typography>
       <Paper
         elevation={0}
         sx={{
-          minHeight: "67vh",
-          maxHeight: "67vh",
+          minHeight: "60vh",
+          maxHeight: "60vh",
           overflowY: "scroll",
           marginTop: "1em",
           bgcolor: grey[100],

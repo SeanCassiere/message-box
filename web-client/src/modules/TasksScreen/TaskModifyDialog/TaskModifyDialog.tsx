@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 
-import { client } from "../../shared/api/client";
+import { client } from "../../../shared/api/client";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -27,12 +27,12 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormHelperText from "@mui/material/FormHelperText";
 import MobileDateTimePicker from "@mui/lab/MobileDateTimePicker";
 
-import { selectAppProfileState, selectLookupListsState } from "../../shared/redux/store";
-import { IUserProfile } from "../../shared/interfaces/User.interfaces";
-import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
+import { selectAppProfileState, selectLookupListsState } from "../../../shared/redux/store";
+import { IUserProfile } from "../../../shared/interfaces/User.interfaces";
+import { formatErrorsToFormik } from "../../../shared/util/errorsToFormik";
 
 import TaskContentEditor from "./TaskContentEditor";
-import { usePermission } from "../../shared/hooks/usePermission";
+import { usePermission } from "../../../shared/hooks/usePermission";
 
 interface Props {
   handleCloseFunction: () => void;
