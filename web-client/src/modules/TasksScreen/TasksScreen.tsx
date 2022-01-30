@@ -108,53 +108,55 @@ const TasksScreen = () => {
         }}
       >
         <Grid container>
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={7}>
             <Typography variant="h4" fontWeight={500} component="h1">
               Tasks
             </Typography>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <Grid sx={{ gap: 1 }}>
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                {isUserSwitcherAccessible && (
-                  <Grid item xs={12} md={4} sx={{ flexGrow: 1 }}>
-                    <Select
-                      labelId="ownerId-label"
-                      id="ownerId"
-                      name="ownerId"
-                      variant="standard"
-                      value={currentViewingOwnerId}
-                      onChange={handleChangeCurrentViewingOwnerId}
-                      sx={{ mr: 1, minWidth: "9.5em" }}
-                      fullWidth
-                    >
-                      {usersList
-                        .filter((user) => user.isActive)
-                        .map((user) => (
-                          <MenuItem key={`select-root-rol-${user.userId}`} value={user.userId}>
-                            {`${user.firstName} ${user.lastName}`}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </Grid>
-                )}
-
-                <Grid item xs={6} md={1}>
-                  <IconButton sx={{ mr: 1 }} aria-label="refresh" onClick={handleRefreshAllItems}>
-                    <RefreshOutlinedIcon />
-                  </IconButton>
-                </Grid>
-                <Grid item xs={6} md={3}>
-                  <Button
-                    startIcon={<AddOutlinedIcon />}
-                    onClick={handleNewTaskDialog}
-                    disableElevation
-                    style={{ float: "right" }}
+          <Grid item xs={12} md={5}>
+            <Grid
+              container
+              spacing={2}
+              justifyContent={{ xs: "flex-start", md: "flex-end" }}
+              sx={{
+                mt: {
+                  xs: 1,
+                  md: 0,
+                },
+              }}
+            >
+              {isUserSwitcherAccessible && (
+                <Grid item xs={12} md={4}>
+                  <Select
+                    labelId="ownerId-label"
+                    id="ownerId"
+                    name="ownerId"
+                    variant="standard"
+                    value={currentViewingOwnerId}
+                    onChange={handleChangeCurrentViewingOwnerId}
+                    sx={{ mr: 1, minWidth: "9.5em" }}
+                    fullWidth
                   >
-                    New task
-                  </Button>
+                    {usersList
+                      .filter((user) => user.isActive)
+                      .map((user) => (
+                        <MenuItem key={`select-root-rol-${user.userId}`} value={user.userId}>
+                          {`${user.firstName} ${user.lastName}`}
+                        </MenuItem>
+                      ))}
+                  </Select>
                 </Grid>
-              </Box>
+              )}
+              <Grid item>
+                <IconButton sx={{ mr: 1 }} aria-label="refresh" onClick={handleRefreshAllItems}>
+                  <RefreshOutlinedIcon />
+                </IconButton>
+              </Grid>
+              <Grid item>
+                <Button startIcon={<AddOutlinedIcon />} onClick={handleNewTaskDialog} disableElevation>
+                  New task
+                </Button>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -164,6 +166,7 @@ const TasksScreen = () => {
               onChange={handleChangePrimaryValue}
               aria-label="lab API tabs example"
               variant="scrollable"
+              allowScrollButtonsMobile
               sx={{
                 "& .MuiTabs-scrollButtons.Mui-disabled": {
                   opacity: 0.3,

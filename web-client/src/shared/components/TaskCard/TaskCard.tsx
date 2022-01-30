@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
@@ -65,21 +66,22 @@ const TaskCard = (props: Props) => {
     <Box
       key={`${task.taskId}`}
       sx={{
-        // cursor: "pointer",
         width: "100%",
         transition: "ease-in 0.2s box-shadow",
         "&:hover, &:focus": {
           boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
         },
       }}
-      // onClick={() => handleTaskClick(task.taskId)}
     >
       <Card
         variant="outlined"
         sx={{
           marginBottom: 2,
           minHeight: "180px",
-          maxHeight: "190px",
+          maxHeight: {
+            xs: "auto",
+            md: "100%",
+          },
         }}
       >
         <CardContent>
@@ -108,7 +110,38 @@ const TaskCard = (props: Props) => {
             ></span>
             {/* {truncateTextByLength(markdownToText(task.content), { maxLength: 240, includesDots: true })} */}
           </Typography>
-          <Box
+          <Grid container>
+            <Grid item md={8}>
+              <Typography
+                sx={{ fontSize: 13, flexGrow: 1, cursor: "pointer" }}
+                color="text.secondary"
+                onClick={() => handleTaskClick(task.taskId)}
+              >
+                {mode === "Today" ? <>Due time: {task.dueDate}</> : <>Due date: {task.dueDate}</>}
+              </Typography>
+            </Grid>
+            <Grid item md={4}>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="small"
+                      // checked={task.isCompleted}
+                      sx={{ zIndex: 0, borderWidth: "1px", py: 1 }}
+                      checked={data.isCompleted}
+                      onChange={handleCheckboxToggle}
+                    />
+                  }
+                  label={
+                    <Typography component="span" sx={{ fontSize: 13 }} color="text.secondary">
+                      Completed
+                    </Typography>
+                  }
+                />
+              </FormGroup>
+            </Grid>
+          </Grid>
+          {/* <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
@@ -140,7 +173,7 @@ const TaskCard = (props: Props) => {
                 }
               />
             </FormGroup>
-          </Box>
+          </Box> */}
         </CardContent>
       </Card>
     </Box>

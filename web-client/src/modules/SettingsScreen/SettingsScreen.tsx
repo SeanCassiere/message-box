@@ -44,7 +44,6 @@ export const SettingsScreen = () => {
               onChange={handleChangePrimaryValue}
               aria-label="lab API tabs example"
               variant="scrollable"
-              scrollButtons={true}
               allowScrollButtonsMobile
               sx={{
                 "& .MuiTabs-scrollButtons.Mui-disabled": {
