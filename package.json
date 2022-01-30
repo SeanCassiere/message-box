@@ -3,9 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "prepare": "husky prepare",
     "test": "echo \"This project does not have testing set up.\n\"",
     "web-client": "npm start --prefix web-client",
-    "prepare": "husky prepare"
+    "build:auth-service": "npm run build --prefix auth-service",
+    "build:app-data-service": "npm run build --prefix application-data-service",
+    "build:api-gateway": "npm run build --prefix api-gateway",
+    "build:sever": "npm run build:auth-service && npm run build:app-data-service && build:api-gateway",
+    "build:web-client": "npm run build --prefix web-client",
+    "setup:auth-service": "npm install --prefix auth-service",
+    "setup:app-data-service": "npm install --prefix application-data-service",
+    "setup:api-gateway": "npm install --prefix api-gateway",
+    "setup:server": "npm run setup:auth-service && npm run setup:app-data-service && npm run setup:api-gateway",
+    "setup:web-client": "npm install --prefix web-client"
   },
   "keywords": [],
   "author": "",
