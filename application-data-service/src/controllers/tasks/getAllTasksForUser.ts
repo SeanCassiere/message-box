@@ -114,6 +114,13 @@ export async function getAllTasksForUser(req: Request, res: Response) {
       query.andWhere("due_date <= :before", { before: before.toISOString() });
 
       /**
+       * get all tasks that are after the start of the clientDate
+       */
+      const after = new Date(body.clientDate);
+      after.setUTCHours(0, 0, 0, 1);
+      query.andWhere("due_date >= :after", { after: after.toISOString() });
+
+      /**
        * get tasks that are completed
        */
       query.andWhere("is_completed = :is_completed", { is_completed: true }); // return only completed tasks
