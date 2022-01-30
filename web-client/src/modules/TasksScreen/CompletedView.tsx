@@ -5,13 +5,11 @@ import { styled } from "@mui/material/styles";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableFooter from "@mui/material/TableFooter";
@@ -24,10 +22,10 @@ import TextField from "@mui/material/TextField";
 import EditIcon from "@mui/icons-material/Edit";
 
 import TablePaginationActions from "../../shared/components/TablePaginationActions/TablePaginationActions";
+import CustomTableContainer from "../../shared/components/CustomTableContainer";
 
 import { client } from "../../shared/api/client";
 import { ITask } from "../../shared/interfaces/Task.interfaces";
-import { secondaryNavigationColor } from "../../shared/util/constants";
 import { markdownToForHtmlInsert, sortTasksByDateForColumn, truncateTextByLength } from "../../shared/util/general";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -147,7 +145,7 @@ const CompletedView = (props: Props) => {
         </Grid>
         <Grid item xs={12} md={12}>
           <Box sx={{ mt: 1 }}>
-            <TableContainer component={Paper} elevation={0} sx={{ border: `1px solid ${secondaryNavigationColor}` }}>
+            <CustomTableContainer>
               <Table sx={{ minWidth: 700 }} aria-label="customized table">
                 <TableHead>
                   <TableRow>
@@ -202,7 +200,7 @@ const CompletedView = (props: Props) => {
                   </TableRow>
                 </TableFooter>
               </Table>
-            </TableContainer>
+            </CustomTableContainer>
           </Box>
         </Grid>
       </Grid>

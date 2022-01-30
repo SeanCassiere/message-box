@@ -4,14 +4,15 @@ import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 
 import EditIcon from "@mui/icons-material/Edit";
+
+import CustomTableContainer from "../../../../shared/components/CustomTableContainer";
+
 import { usePermission } from "../../../../shared/hooks/usePermission";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -46,7 +47,7 @@ const ViewTable = ({ dataList, editItemHandler }: ITableProps) => {
     editItemHandler(user.userId);
   };
   return (
-    <TableContainer component={Paper} elevation={1}>
+    <CustomTableContainer>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
@@ -102,7 +103,7 @@ const ViewTable = ({ dataList, editItemHandler }: ITableProps) => {
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </CustomTableContainer>
   );
 };
 
