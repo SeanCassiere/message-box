@@ -251,7 +251,7 @@ const ForgotPasswordDialog = (props: Props) => {
           </Accordion>
         </DialogContent>
         <DialogActions>
-          <LoadingButton variant="text" color="error" sx={{ bgcolor: "initial" }} type="button" onClick={closeDialog}>
+          <LoadingButton variant="text" color="error" type="button" onClick={closeDialog}>
             Close
           </LoadingButton>
         </DialogActions>

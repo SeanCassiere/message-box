@@ -45,10 +45,10 @@ const CodeLoginDialog = (props: IProps) => {
           </Link>
         </DialogContent>
         <DialogActions>
-          <LoadingButton onClick={handleClose} color="error" sx={{ bgcolor: "initial" }}>
+          <LoadingButton onClick={handleClose} color="error">
             Cancel
           </LoadingButton>
-          <LoadingButton type="submit" loading={formik.isSubmitting} sx={{ bgcolor: "initial" }}>
+          <LoadingButton type="submit" loading={formik.isSubmitting}>
             Submit
           </LoadingButton>
         </DialogActions>

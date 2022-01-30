@@ -326,10 +326,10 @@ const TaskModifyDialog = (props: Props) => {
               </Grid>
             </DialogContent>
             <DialogActions>
-              <LoadingButton onClick={pressClose} color="error">
+              <LoadingButton onClick={pressClose} color="error" sx={{ bgcolor: "inherit" }}>
                 Cancel
               </LoadingButton>
-              <LoadingButton type="submit" loading={formik.isSubmitting}>
+              <LoadingButton type="submit" sx={{ bgcolor: "inherit" }} loading={formik.isSubmitting}>
                 {taskId ? <>Update</> : <>Create</>}
               </LoadingButton>
             </DialogActions>

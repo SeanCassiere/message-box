@@ -126,14 +126,14 @@ const UserRegistrationForm = (props: IProps) => {
             loading={formik.isSubmitting}
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2, bgcolor: "inherit" }}
+            sx={{ mt: 3, mb: 2 }}
           >
             Change Password
           </LoadingButton>
           <Grid container justifyContent="center">
             <Grid item sx={{ mb: 3 }}>
               <Link to="/" variant="body2" component={RouterLink}>
-                Nevermind, I just want to Sign in
+                Nevermind, I just want to sign in
               </Link>
             </Grid>
           </Grid>

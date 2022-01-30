@@ -251,7 +251,7 @@ const EditUserDialog = (props: IProps) => {
           <LoadingButton onClick={handleClose} color="error">
             Cancel
           </LoadingButton>
-          <LoadingButton type="submit" loading={formik.isSubmitting}>
+          <LoadingButton type="submit" color="primary" loading={formik.isSubmitting}>
             {roleId ? <>Update</> : <>Submit</>}
           </LoadingButton>
         </DialogActions>

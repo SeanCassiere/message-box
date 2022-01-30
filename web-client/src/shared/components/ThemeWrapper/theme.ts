@@ -5,7 +5,22 @@ import { teal, blueGrey } from "@mui/material/colors";
 export const theme = createTheme({
   palette: {
     mode: "light",
-    primary: teal,
+    primary: {
+      main: teal[300],
+      contrastText: "#fff",
+      dark: teal[800],
+      light: teal[300],
+      50: teal[50],
+      100: teal[100],
+      200: teal[200],
+      300: teal[300],
+      400: teal[400],
+      500: teal[500],
+      600: teal[600],
+      700: teal[700],
+      800: teal[800],
+      900: teal[900],
+    },
     secondary: blueGrey,
   },
   components: {
@@ -13,10 +28,6 @@ export const theme = createTheme({
       defaultProps: {
         variant: "contained",
         disableRipple: true,
-        // color: "primary",
-        sx: {
-          backgroundColor: teal[300],
-        },
       },
       styleOverrides: {
         text: {
