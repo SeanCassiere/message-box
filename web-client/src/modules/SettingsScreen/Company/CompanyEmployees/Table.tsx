@@ -3,7 +3,6 @@ import { IUserProfileWithSortedDetails } from "../../../../shared/interfaces/Use
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Chip from "@mui/material/Chip";
@@ -12,18 +11,9 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 
 import CustomTableContainer from "../../../../shared/components/CustomTableContainer";
+import StyledTableCell from "../../../../shared/components/StyledTableCell/StyledTableCell";
 
 import { usePermission } from "../../../../shared/hooks/usePermission";
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#E9ECFF",
-    color: theme.palette.primary.main,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -55,7 +45,7 @@ const ViewTable = ({ dataList, editItemHandler }: ITableProps) => {
             {/* <StyledTableCell>Email</StyledTableCell> */}
             <StyledTableCell>Role(s)</StyledTableCell>
             <StyledTableCell>Team(s)</StyledTableCell>
-            <StyledTableCell>Status</StyledTableCell>
+            <StyledTableCell width={50}>Status</StyledTableCell>
             {/* <StyledTableCell>Updated At</StyledTableCell> */}
             <StyledTableCell align="right">#</StyledTableCell>
           </TableRow>

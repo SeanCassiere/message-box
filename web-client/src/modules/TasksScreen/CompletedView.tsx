@@ -9,7 +9,6 @@ import Typography from "@mui/material/Typography";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableFooter from "@mui/material/TableFooter";
@@ -23,20 +22,11 @@ import EditIcon from "@mui/icons-material/Edit";
 
 import TablePaginationActions from "../../shared/components/TablePaginationActions/TablePaginationActions";
 import CustomTableContainer from "../../shared/components/CustomTableContainer";
+import StyledTableCell from "../../shared/components/StyledTableCell/StyledTableCell";
 
 import { client } from "../../shared/api/client";
 import { ITask } from "../../shared/interfaces/Task.interfaces";
 import { markdownToForHtmlInsert, sortTasksByDateForColumn, truncateTextByLength } from "../../shared/util/general";
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#E9ECFF",
-    color: theme.palette.primary.main,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -98,6 +88,7 @@ const CompletedView = (props: Props) => {
 
   useEffect(() => {
     const abort = new AbortController();
+    setCurrentPage(0);
     searchForTasks(ownerId, abort);
 
     return () => {

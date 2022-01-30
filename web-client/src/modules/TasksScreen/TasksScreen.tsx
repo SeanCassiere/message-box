@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -63,9 +64,9 @@ const TasksScreen = () => {
   }, []);
 
   const handleCloseEditor = useCallback(() => {
-    handleRefreshAllItems();
     setIsTaskUserDialogOpen(false);
     setOpenEditTaskId(null);
+    handleRefreshAllItems();
     navigate(primaryTabValue === "today" ? "/tasks/today" : "/tasks/completed");
   }, [handleRefreshAllItems, navigate, primaryTabValue]);
 
@@ -106,40 +107,57 @@ const TasksScreen = () => {
           overflow: "hidden",
         }}
       >
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Typography variant="h4" fontWeight={500} component="h1">
-            Tasks
-          </Typography>
-          <Box>
-            {isUserSwitcherAccessible && (
-              <>
-                <Select
-                  labelId="ownerId-label"
-                  id="ownerId"
-                  name="ownerId"
-                  variant="standard"
-                  value={currentViewingOwnerId}
-                  onChange={handleChangeCurrentViewingOwnerId}
-                  sx={{ mr: 1, minWidth: "14em" }}
-                >
-                  {usersList
-                    .filter((user) => user.isActive)
-                    .map((user) => (
-                      <MenuItem key={`select-root-rol-${user.userId}`} value={user.userId}>
-                        {`${user.firstName} ${user.lastName}`}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </>
-            )}
-            <IconButton sx={{ mr: 1 }} aria-label="refresh" onClick={handleRefreshAllItems}>
-              <RefreshOutlinedIcon />
-            </IconButton>
-            <Button disableElevation startIcon={<AddOutlinedIcon />} onClick={handleNewTaskDialog}>
-              New task
-            </Button>
-          </Box>
-        </Box>
+        <Grid container>
+          <Grid item xs={12} md={8}>
+            <Typography variant="h4" fontWeight={500} component="h1">
+              Tasks
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Grid sx={{ gap: 1 }}>
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                {isUserSwitcherAccessible && (
+                  <Grid item xs={12} md={4} sx={{ flexGrow: 1 }}>
+                    <Select
+                      labelId="ownerId-label"
+                      id="ownerId"
+                      name="ownerId"
+                      variant="standard"
+                      value={currentViewingOwnerId}
+                      onChange={handleChangeCurrentViewingOwnerId}
+                      sx={{ mr: 1, minWidth: "9.5em" }}
+                      fullWidth
+                    >
+                      {usersList
+                        .filter((user) => user.isActive)
+                        .map((user) => (
+                          <MenuItem key={`select-root-rol-${user.userId}`} value={user.userId}>
+                            {`${user.firstName} ${user.lastName}`}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </Grid>
+                )}
+
+                <Grid item xs={6} md={1}>
+                  <IconButton sx={{ mr: 1 }} aria-label="refresh" onClick={handleRefreshAllItems}>
+                    <RefreshOutlinedIcon />
+                  </IconButton>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                  <Button
+                    startIcon={<AddOutlinedIcon />}
+                    onClick={handleNewTaskDialog}
+                    disableElevation
+                    style={{ float: "right" }}
+                  >
+                    New task
+                  </Button>
+                </Grid>
+              </Box>
+            </Grid>
+          </Grid>
+        </Grid>
         <TabContext value={primaryTabValue}>
           <Box sx={{ mt: 3 }}>
             <TabList

@@ -188,7 +188,7 @@ const NavigationWrapper: React.FC = (props) => {
               <Button
                 size="medium"
                 disableElevation
-                sx={{ textTransform: "none", pr: 3, py: 1 }}
+                style={{ textTransform: "none", paddingRight: "25px", paddingTop: "8px", paddingBottom: "8px" }}
                 endIcon={anchorElUser ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 onClick={handleOpenUserMenu}
                 color="primary"
