@@ -67,7 +67,7 @@ const TasksScreen = () => {
     setIsTaskUserDialogOpen(false);
     setOpenEditTaskId(null);
     handleRefreshAllItems();
-    navigate(primaryTabValue === "today" ? "/tasks/today" : "/tasks/completed");
+    navigate(primaryTabValue.toLowerCase() === "today" ? "/tasks/today" : "/tasks/completed");
   }, [handleRefreshAllItems, navigate, primaryTabValue]);
 
   const handleChangePrimaryValue = (_: React.SyntheticEvent, newValue: string) => {
@@ -126,7 +126,7 @@ const TasksScreen = () => {
               }}
             >
               {isUserSwitcherAccessible && (
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={4} alignItems="center">
                   <Select
                     labelId="ownerId-label"
                     id="ownerId"

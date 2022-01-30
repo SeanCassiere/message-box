@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 import Grid from "@mui/material/Grid";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -32,6 +34,8 @@ const ROOT_NAME = "user-created-";
 const EditUserDialog = (props: IProps) => {
   const { handleClose, handleRefreshList, showDialog, teamId } = props;
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
+  const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [foundDefaultRole, setFoundDefaultRole] = useState<IRoleProfile | null>(null);
@@ -112,12 +116,12 @@ const EditUserDialog = (props: IProps) => {
   }, [teamId]);
 
   return (
-    <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth>
+    <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <form onSubmit={formik.handleSubmit}>
         <DialogTitle>{teamId ? "Edit" : "New"}&nbsp;Team</DialogTitle>
         <DialogContent>
           <Grid container spacing={1}>
-            <Grid item md={12}>
+            <Grid item xs={12}>
               <TextField
                 margin="normal"
                 fullWidth

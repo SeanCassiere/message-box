@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 import LoadingButton from "@mui/lab/LoadingButton";
 import TextField from "@mui/material/TextField";
@@ -57,6 +59,8 @@ interface IProps {
 const EditUserDialog = (props: IProps) => {
   const { handleClose, showDialog, userId, handleRefreshList } = props;
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
+  const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { userProfile } = useSelector(selectAppProfileState);
   const { rolesList, teamsList } = useSelector(selectLookupListsState);
@@ -195,13 +199,13 @@ const EditUserDialog = (props: IProps) => {
   );
 
   return (
-    <Dialog open={showDialog} onClose={() => ({})} maxWidth="md" disableEscapeKeyDown fullWidth>
+    <Dialog open={showDialog} onClose={() => ({})} maxWidth="md" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <Box component="form" onSubmit={formik.handleSubmit}>
         <DialogTitle>{userId ? <>Edit</> : <>New</>} User</DialogTitle>
         <DialogContent>
           {/* <DialogContentText>Enter your two-factor authentication code.</DialogContentText> */}
           <Grid container spacing={2}>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <TextField
                 margin="normal"
                 fullWidth
@@ -218,7 +222,7 @@ const EditUserDialog = (props: IProps) => {
                 disabled={isLoadingData}
               />
             </Grid>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <TextField
                 margin="normal"
                 fullWidth
@@ -234,7 +238,7 @@ const EditUserDialog = (props: IProps) => {
                 disabled={isLoadingData}
               />
             </Grid>
-            <Grid item md={userId ? 12 : 6}>
+            <Grid item xs={12} md={userId ? 12 : 6}>
               <TextField
                 margin="normal"
                 fullWidth
@@ -251,7 +255,7 @@ const EditUserDialog = (props: IProps) => {
               />
             </Grid>
             {!userId && (
-              <Grid item md={6}>
+              <Grid item xs={12} md={6}>
                 <TextField
                   margin="normal"
                   fullWidth
@@ -270,7 +274,7 @@ const EditUserDialog = (props: IProps) => {
             )}
             {userId && (
               <>
-                <Grid item md={12}>
+                <Grid item xs={12} md={12}>
                   <FormControl sx={{ minWidth: "100%", mt: 3 }}>
                     <InputLabel id="roles" sx={{ ml: -1.5 }} disableAnimation shrink>
                       Roles
@@ -302,7 +306,7 @@ const EditUserDialog = (props: IProps) => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item md={12}>
+                <Grid item xs={12} md={12}>
                   <FormControl sx={{ minWidth: "100%", mt: 3 }}>
                     <InputLabel id="teams" sx={{ ml: -1.5 }} disableAnimation shrink>
                       Teams

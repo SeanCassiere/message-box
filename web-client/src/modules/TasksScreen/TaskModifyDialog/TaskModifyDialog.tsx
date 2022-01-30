@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 import { client } from "../../../shared/api/client";
 
@@ -63,6 +65,8 @@ const MenuProps = {
 const TaskModifyDialog = (props: Props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
+  const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { handleCloseFunction, showDialog, taskId } = props;
 
@@ -88,7 +92,6 @@ const TaskModifyDialog = (props: Props) => {
         .then((res) => {
           if (res.status === 200) {
             enqueueSnackbar(`Success: Task ${taskId ? "updated" : "created"}.`, { variant: "success" });
-            navigate("/tasks");
             handleCloseFunction();
           } else {
             if (res.data.errors) {
@@ -109,10 +112,9 @@ const TaskModifyDialog = (props: Props) => {
 
   const pressClose = useCallback(() => {
     formik.resetForm();
-    navigate("/tasks");
     handleCloseFunction();
     return;
-  }, [formik, handleCloseFunction, navigate]);
+  }, [formik, handleCloseFunction]);
 
   const renderUserNames = useCallback(
     (selectedUsers: string[]) => {
@@ -191,6 +193,7 @@ const TaskModifyDialog = (props: Props) => {
       onClose={() => ({})}
       maxWidth="lg"
       disableEscapeKeyDown
+      fullScreen={isOnMobile}
       fullWidth
     >
       <DialogTitle>{taskId ? <>Edit</> : <>New</>}&nbsp;Task</DialogTitle>

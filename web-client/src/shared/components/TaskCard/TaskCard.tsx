@@ -108,9 +108,8 @@ const TaskCard = (props: Props) => {
                 }),
               }}
             ></span>
-            {/* {truncateTextByLength(markdownToText(task.content), { maxLength: 240, includesDots: true })} */}
           </Typography>
-          <Grid container>
+          <Grid container alignItems="center">
             <Grid item md={8}>
               <Typography
                 sx={{ fontSize: 13, flexGrow: 1, cursor: "pointer" }}
@@ -126,8 +125,11 @@ const TaskCard = (props: Props) => {
                   control={
                     <Checkbox
                       size="small"
-                      // checked={task.isCompleted}
-                      sx={{ zIndex: 0, borderWidth: "1px", py: 1 }}
+                      sx={{
+                        zIndex: 0,
+                        borderWidth: "1px",
+                        py: 1,
+                      }}
                       checked={data.isCompleted}
                       onChange={handleCheckboxToggle}
                     />
@@ -141,39 +143,6 @@ const TaskCard = (props: Props) => {
               </FormGroup>
             </Grid>
           </Grid>
-          {/* <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              sx={{ fontSize: 13, flexGrow: 1, cursor: "pointer" }}
-              color="text.secondary"
-              onClick={() => handleTaskClick(task.taskId)}
-            >
-              {mode === "Today" ? <>Due time: {task.dueDate}</> : <>Due date: {task.dueDate}</>}
-            </Typography>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    size="small"
-                    // checked={task.isCompleted}
-                    sx={{ zIndex: 0, borderWidth: "1px", py: 1 }}
-                    checked={data.isCompleted}
-                    onChange={handleCheckboxToggle}
-                  />
-                }
-                label={
-                  <Typography component="span" sx={{ fontSize: 13 }} color="text.secondary">
-                    Completed
-                  </Typography>
-                }
-              />
-            </FormGroup>
-          </Box> */}
         </CardContent>
       </Card>
     </Box>

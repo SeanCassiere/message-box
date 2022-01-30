@@ -3,6 +3,8 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 import Grid from "@mui/material/Grid";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -52,6 +54,8 @@ interface IProps {
 const EditUserDialog = (props: IProps) => {
   const { handleClose, handleRefreshList, showDialog, roleId } = props;
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
+  const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { rolesList } = useSelector(selectLookupListsState);
 
@@ -168,12 +172,12 @@ const EditUserDialog = (props: IProps) => {
   }, [roleId, rolesList, showDialog]);
 
   return (
-    <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth>
+    <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <form onSubmit={formik.handleSubmit}>
         <DialogTitle>{roleId ? "Edit" : "New"}&nbsp;Role</DialogTitle>
         <DialogContent>
           <Grid container spacing={1}>
-            <Grid item md={12}>
+            <Grid item xs={12}>
               <TextField
                 margin="normal"
                 fullWidth
@@ -190,13 +194,8 @@ const EditUserDialog = (props: IProps) => {
                 disabled={isFieldInactive}
               />
             </Grid>
-            <Grid item md={12}>
-              <FormControl
-                variant="standard"
-                sx={{ mt: 2, minWidth: 120 }}
-                fullWidth
-                disabled={roleId ? true : isFieldInactive}
-              >
+            <Grid item xs={12}>
+              <FormControl variant="standard" sx={{ mt: 2 }} fullWidth disabled={roleId ? true : isFieldInactive}>
                 <InputLabel id="viewName-label" disableAnimation shrink>
                   Based on
                 </InputLabel>
@@ -219,8 +218,8 @@ const EditUserDialog = (props: IProps) => {
                 <FormHelperText>{formik.touched.rootName && formik.errors.rootName}</FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item md={12}>
-              <FormControl sx={{ minWidth: "100%", mt: 3 }}>
+            <Grid item xs={12}>
+              <FormControl sx={{ mt: 3 }} fullWidth>
                 <InputLabel id="roles" sx={{ ml: -1.5 }} disableAnimation shrink>
                   Permissions
                 </InputLabel>
