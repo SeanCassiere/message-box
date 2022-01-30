@@ -21,7 +21,6 @@ export const theme = createTheme({
       styleOverrides: {
         text: {
           textTransform: "none",
-          backgroundColor: teal["A100"],
         },
       },
     },
