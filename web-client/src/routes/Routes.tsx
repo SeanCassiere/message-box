@@ -47,13 +47,23 @@ const AppRoutes = () => {
           element={
             <AuthRoute>
               <NavigationWrapper>
+                <Navigate to="/tasks/today" />
+              </NavigationWrapper>
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/tasks/:tab"
+          element={
+            <AuthRoute>
+              <NavigationWrapper>
                 <TasksScreen />
               </NavigationWrapper>
             </AuthRoute>
           }
         />
         <Route
-          path="/tasks/:id"
+          path="/tasks/view/:id"
           element={
             <AuthRoute>
               <NavigationWrapper>

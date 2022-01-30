@@ -30,7 +30,7 @@ const TaskCard = (props: Props) => {
 
   const handleTaskClick = useCallback(
     (navTaskId: string) => {
-      navigate(`/tasks/${navTaskId}`);
+      navigate(`/tasks/view/${navTaskId}`);
     },
     [navigate]
   );
@@ -78,7 +78,8 @@ const TaskCard = (props: Props) => {
         variant="outlined"
         sx={{
           marginBottom: 2,
-          minHeight: "150px",
+          minHeight: "180px",
+          maxHeight: "190px",
         }}
       >
         <CardContent>
@@ -100,7 +101,7 @@ const TaskCard = (props: Props) => {
               style={{ display: "block", height: "100%" }}
               dangerouslySetInnerHTML={{
                 __html: truncateTextByLength(markdownToForHtmlInsert(task.content), {
-                  maxLength: 100,
+                  maxLength: 50,
                   includesDots: true,
                 }),
               }}

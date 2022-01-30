@@ -146,7 +146,7 @@ const Layout = () => {
             </IconButton>
             {isAddButtonAccessible && (
               <>
-                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewUserDialog}>
+                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewUserDialog} disableElevation>
                   Add
                 </Button>
               </>

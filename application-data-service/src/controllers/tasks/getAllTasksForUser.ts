@@ -19,13 +19,15 @@ const validationSchema = yup.object().shape({
 });
 
 function findAudience(audience: string) {
-  switch (audience.toLowerCase()) {
+  switch (audience.toLowerCase().trim()) {
     case "today":
       return "today";
     case "tomorrow":
       return "tomorrow";
     case "overdue":
       return "overdue";
+    case "completed":
+      return "completed";
     default:
       return "today";
   }
@@ -103,6 +105,26 @@ export async function getAllTasksForUser(req: Request, res: Response) {
        * get tasks that are not completed
        */
       query.andWhere("is_completed = :isCompleted", { isCompleted: false }); // don't return completed tasks
+    } else if (audience === "completed") {
+      /**
+       * get all tasks that are before the end of the clientDate
+       */
+      const before = new Date(body.clientDate);
+      before.setUTCHours(23, 59, 59, 999);
+      query.andWhere("due_date <= :before", { before: before.toISOString() });
+
+      /**
+       * get all tasks that are after the start of the clientDate
+       */
+      const after = new Date(body.clientDate);
+      after.setUTCHours(0, 0, 0, 1);
+      query.andWhere("due_date >= :after", { after: after.toISOString() });
+
+      /**
+       * get tasks that are completed
+       */
+      query.andWhere("is_completed = :is_completed", { is_completed: true }); // return only completed tasks
+      console.log("\n\n\nCOMPLETED\n\n\n");
     }
 
     const tasks = await query.getMany();

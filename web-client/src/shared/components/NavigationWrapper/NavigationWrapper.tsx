@@ -40,14 +40,12 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-
-export const drawerWidth = 210;
-export const secondaryNavigationColor = "#E9ECFF";
+import { secondaryNavigationColor } from "../../util/constants";
 
 const profileRouteList = [{ route: "/logout", name: "Logout" }];
 const routesList = [
   { route: "/chat", name: "Chat", Icon: ChatIcon },
-  { route: "/tasks", name: "Tasks", Icon: AssignmentIcon },
+  { route: "/tasks/today", name: "Tasks", Icon: AssignmentIcon },
 ];
 
 const NavigationWrapper: React.FC = (props) => {
@@ -190,7 +188,7 @@ const NavigationWrapper: React.FC = (props) => {
               <Button
                 size="medium"
                 disableElevation
-                sx={{ textTransform: "none", pr: 3, py: 1 }}
+                style={{ textTransform: "none", paddingRight: "25px", paddingTop: "8px", paddingBottom: "8px" }}
                 endIcon={anchorElUser ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 onClick={handleOpenUserMenu}
                 color="primary"
