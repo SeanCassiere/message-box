@@ -28,7 +28,7 @@ interface Props {
 }
 
 const TaskGroupColumn = (props: Props) => {
-  const { title, showCompletedItemsCheckbox, mode, countUp, ownerId, triggerRefresh } = props;
+  const { title, showCompletedItemsCheckbox, mode, ownerId, triggerRefresh, countUp } = props;
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -45,30 +45,39 @@ const TaskGroupColumn = (props: Props) => {
     });
   }, [allTasks, showCompleted]);
 
-  const searchForTasks = useCallback(() => {
-    const params = new URLSearchParams();
-    params.set("for", mode);
-    params.set("currentDate", new Date().toISOString().substring(0, 10));
-    params.set("ownerId", ownerId);
-    client
-      .get("/Tasks", { params })
-      .then((response) => {
-        if (response.status !== 200) {
-          enqueueSnackbar(`Error searching for ${mode} tasks.`, { variant: "error" });
-          return;
-        }
+  const searchForTasks = useCallback(
+    (abort: AbortController) => {
+      const params = new URLSearchParams();
+      params.set("for", mode);
+      params.set("currentDate", new Date().toISOString().substring(0, 10));
+      params.set("ownerId", ownerId);
+      client
+        .get("/Tasks", { params, signal: abort.signal })
+        .then((response) => {
+          if (response.status !== 200) {
+            enqueueSnackbar(`Error searching for ${mode} tasks.`, { variant: "error" });
+            return;
+          }
 
-        setAllTasks(sortTasksByDateForColumn(response.data));
-        setIsLoading(false);
-      })
-      .catch((e) => {
-        console.log(`Error searching for ${mode} tasks`);
-        enqueueSnackbar(`Error searching for ${mode} tasks.`, { variant: "error" });
-      });
-  }, [enqueueSnackbar, mode, ownerId]);
+          setAllTasks(sortTasksByDateForColumn(response.data));
+          setIsLoading(false);
+        })
+        .catch((e) => {
+          if (e.message !== "canceled") {
+            console.log(`Error searching for ${mode} tasks`);
+            enqueueSnackbar(`Error searching for ${mode} tasks.`, { variant: "error" });
+          }
+        });
+    },
+    [enqueueSnackbar, mode, ownerId]
+  );
 
   useEffect(() => {
-    searchForTasks();
+    const abort = new AbortController();
+    searchForTasks(abort);
+    return () => {
+      abort.abort();
+    };
   }, [searchForTasks, countUp]);
 
   return (
@@ -127,7 +136,7 @@ const TaskGroupColumn = (props: Props) => {
         )}
         {!isLoading &&
           listedTasks.map((task) => (
-            <TaskCard key={task.taskId} task={task} mode={mode} triggerRefresh={triggerRefresh} />
+            <TaskCard key={`${mode}-${task.taskId}`} task={task} mode={mode} triggerRefresh={triggerRefresh} />
           ))}
       </Paper>
     </>

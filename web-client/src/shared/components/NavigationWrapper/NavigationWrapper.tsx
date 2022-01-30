@@ -40,9 +40,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-
-export const drawerWidth = 210;
-export const secondaryNavigationColor = "#E9ECFF";
+import { secondaryNavigationColor } from "../../util/constants";
 
 const profileRouteList = [{ route: "/logout", name: "Logout" }];
 const routesList = [

@@ -187,7 +187,7 @@ const TaskModifyDialog = (props: Props) => {
   return (
     <Dialog
       open={showDialog}
-      PaperProps={{ sx: { position: "absolute", top: 1, pb: 3 } }}
+      PaperProps={{ sx: { pb: 3 } }}
       onClose={() => ({})}
       maxWidth="lg"
       disableEscapeKeyDown

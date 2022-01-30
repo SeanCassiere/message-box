@@ -13,6 +13,7 @@ interface Props {
   refreshCountState: number;
   onFullRefresh: () => void;
 }
+
 const TaskTodayView = (props: Props) => {
   const { ownerId, refreshCountState, onFullRefresh } = props;
   return (

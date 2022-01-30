@@ -23,6 +23,7 @@ import { usePermission } from "../../shared/hooks/usePermission";
 
 import TaskModifyDialog from "./TaskModifyDialog/TaskModifyDialog";
 import TaskTodayView from "./TodayView";
+import TaskCompletedView from "./CompletedView";
 
 export const inactiveTabBgColor = "#FCFCFC";
 const primaryOptions = ["today", "completed"];
@@ -45,6 +46,11 @@ const TasksScreen = () => {
 
   const handleChangeCurrentViewingOwnerId = useCallback((evt: SelectChangeEvent<string>) => {
     setCurrentViewingOwnerId(evt.target.value);
+  }, []);
+
+  const handleOpenEditTaskDialog = useCallback((editOwnerId: string) => {
+    setOpenEditTaskId(editOwnerId);
+    setIsTaskUserDialogOpen(true); // open the dialog
   }, []);
 
   const handleNewTaskDialog = useCallback(() => {
@@ -91,7 +97,15 @@ const TasksScreen = () => {
         showDialog={isEditTaskDialogOpen}
         handleCloseFunction={handleCloseEditor}
       />
-      <Paper sx={{ px: 4, my: 2, py: 4, minHeight: "88vh", maxHeight: "89vh", overflow: "hidden" }}>
+      <Paper
+        sx={{
+          px: 4,
+          my: 2,
+          py: 4,
+          minHeight: "88vh",
+          overflow: "hidden",
+        }}
+      >
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography variant="h4" fontWeight={500} component="h1">
             Tasks
@@ -144,13 +158,17 @@ const TasksScreen = () => {
           </Box>
           <TabPanel value="today" sx={commonTabPanelStyle}>
             <TaskTodayView
-              refreshCountState={allStateRender}
               ownerId={currentViewingOwnerId}
+              refreshCountState={allStateRender}
               onFullRefresh={handleRefreshAllItems}
             />
           </TabPanel>
           <TabPanel value="completed" sx={commonTabPanelStyle}>
-            <Box>hello world</Box>
+            <TaskCompletedView
+              ownerId={currentViewingOwnerId}
+              refreshCountState={allStateRender}
+              onEditTask={handleOpenEditTaskDialog}
+            />
           </TabPanel>
         </TabContext>
       </Paper>
