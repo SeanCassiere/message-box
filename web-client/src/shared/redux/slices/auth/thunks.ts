@@ -10,13 +10,12 @@ import { setAccessToken, setClearedAuthState } from "./authSlice";
 export const userLogoutThunk = createAsyncThunk("auth/logout", async (_, { dispatch }) => {
   try {
     await client.get("/Authentication/Logout");
-
-    dispatch(setClearedAuthState());
-    dispatch(setClearedUserState());
-    dispatch(setClearedLookupState());
   } catch (error) {
     console.log(error);
   }
+  dispatch(setClearedAuthState());
+  dispatch(setClearedUserState());
+  dispatch(setClearedLookupState());
 });
 
 export const getRefreshedAccessTokenThunk = createAsyncThunk("auth/getNewAccessToken", async (_, { dispatch }) => {
