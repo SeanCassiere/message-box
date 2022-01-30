@@ -23,7 +23,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 
 import { client } from "../../../../shared/api/client";
 import { useSelector } from "react-redux";
-import { selectLookupListsState } from "../../../../shared/redux/store";
+import { selectAppProfileState, selectLookupListsState } from "../../../../shared/redux/store";
 import { IRoleProfile, ITeamProfile } from "../../../../shared/interfaces/Client.interfaces";
 import { formatErrorsToFormik } from "../../../../shared/util/errorsToFormik";
 
@@ -58,6 +58,7 @@ const EditUserDialog = (props: IProps) => {
   const { handleClose, showDialog, userId, handleRefreshList } = props;
   const { enqueueSnackbar } = useSnackbar();
 
+  const { userProfile } = useSelector(selectAppProfileState);
   const { rolesList, teamsList } = useSelector(selectLookupListsState);
 
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -178,6 +179,21 @@ const EditUserDialog = (props: IProps) => {
     [teamsList]
   );
 
+  const isRoleSelectDisabled = useCallback(
+    (role: IRoleProfile) => {
+      if (role.rootName === "employee" && role.isUserDeletable === false) {
+        return true;
+      }
+
+      if (role.rootName === "admin" && userId === userProfile?.userId) {
+        return true;
+      }
+
+      return false;
+    },
+    [userId, userProfile?.userId]
+  );
+
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="md" disableEscapeKeyDown fullWidth>
       <Box component="form" onSubmit={formik.handleSubmit}>
@@ -275,7 +291,8 @@ const EditUserDialog = (props: IProps) => {
                         <MenuItem
                           key={`select-${role.roleId}`}
                           value={role.roleId}
-                          disabled={role.rootName === "employee" && role.isUserDeletable === false}
+                          disabled={isRoleSelectDisabled(role)}
+                          // disabled={role.rootName === "employee" && role.isUserDeletable === false}
                           defaultChecked={role.rootName === "employee" && role.isUserDeletable === false}
                         >
                           <Checkbox checked={formik.values.roles.indexOf(role.roleId) > -1} />
@@ -316,27 +333,31 @@ const EditUserDialog = (props: IProps) => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item md={6}>
-                  <FormControl sx={{ minWidth: "100%", mt: 3 }}>
-                    <InputLabel sx={{ ml: -1.5 }} id="user-status" disableAnimation shrink>
-                      Status
-                    </InputLabel>
-                    <FormControlLabel
-                      sx={{ mt: 2 }}
-                      control={
-                        <Switch
-                          checked={formik.values.isActive ?? false}
-                          id="isActive"
-                          name="isActive"
-                          onChange={formik.handleChange}
-                          aria-label="User status"
+                {userId !== userProfile?.userId && (
+                  <>
+                    <Grid item md={6}>
+                      <FormControl sx={{ minWidth: "100%", mt: 3 }}>
+                        <InputLabel sx={{ ml: -1.5 }} id="user-status" disableAnimation shrink>
+                          Status
+                        </InputLabel>
+                        <FormControlLabel
+                          sx={{ mt: 2 }}
+                          control={
+                            <Switch
+                              checked={formik.values.isActive ?? false}
+                              id="isActive"
+                              name="isActive"
+                              onChange={formik.handleChange}
+                              aria-label="User status"
+                            />
+                          }
+                          label={formik.values.isActive ? "Active" : "Inactive"}
+                          value={formik.values.isActive ?? false}
                         />
-                      }
-                      label={formik.values.isActive ? "Active" : "Inactive"}
-                      value={formik.values.isActive ?? false}
-                    />
-                  </FormControl>
-                </Grid>
+                      </FormControl>
+                    </Grid>
+                  </>
+                )}
               </>
             )}
           </Grid>
