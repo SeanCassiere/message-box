@@ -16,6 +16,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
+
 import IconButton from "@mui/material/IconButton";
 import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import TextField from "@mui/material/TextField";
@@ -27,7 +28,7 @@ import TablePaginationActions from "../../shared/components/TablePaginationActio
 import { client } from "../../shared/api/client";
 import { ITask } from "../../shared/interfaces/Task.interfaces";
 import { secondaryNavigationColor } from "../../shared/util/constants";
-import { markdownToForHtmlInsert, truncateTextByLength } from "../../shared/util/general";
+import { markdownToForHtmlInsert, sortTasksByDateForColumn, truncateTextByLength } from "../../shared/util/general";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -64,6 +65,8 @@ const CompletedView = (props: Props) => {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [allTasks, setAllTasks] = useState<ITask[]>([]);
   const [viewingTasks, setViewingTasks] = useState<ITask[]>([]);
 
   const [clientDateValue, setClientDateValue] = useState(new Date().toISOString().substring(0, 10));
@@ -79,7 +82,9 @@ const CompletedView = (props: Props) => {
         .get("/Tasks", { params, signal: abort.signal })
         .then((res) => {
           if (res.status === 200) {
-            setViewingTasks(res.data);
+            const sortedTasks = sortTasksByDateForColumn(res.data);
+            setAllTasks(sortedTasks);
+            setViewingTasks(sortedTasks.slice(0, 10));
           } else {
             enqueueSnackbar(`Error searching for completed tasks.`, { variant: "error" });
           }
@@ -101,6 +106,16 @@ const CompletedView = (props: Props) => {
       abort.abort();
     };
   }, [ownerId, searchForTasks, refreshCountState]);
+
+  const handlePageChange = useCallback(
+    (_: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
+      const startIndex = page * 10;
+      const endIndex = startIndex + 10 + 1;
+      setViewingTasks(allTasks.slice(startIndex, endIndex));
+      setCurrentPage(page);
+    },
+    [allTasks]
+  );
 
   return (
     <>
@@ -172,17 +187,16 @@ const CompletedView = (props: Props) => {
                     <TablePagination
                       rowsPerPageOptions={[10]}
                       colSpan={4}
-                      count={viewingTasks.length}
+                      count={allTasks.length}
                       rowsPerPage={10}
-                      page={0}
+                      page={currentPage}
                       SelectProps={{
                         inputProps: {
                           "aria-label": "rows per page",
                         },
                         native: true,
                       }}
-                      onPageChange={() => ({})}
-                      onRowsPerPageChange={() => ({})}
+                      onPageChange={handlePageChange}
                       ActionsComponent={TablePaginationActions}
                     />
                   </TableRow>

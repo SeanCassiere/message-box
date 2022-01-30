@@ -49,3 +49,20 @@ export function sortTasksByDateForColumn(tasks: ITask[]) {
   };
   return [...sortedTasks(inCompleteTasks), ...sortedTasks(completedTasks)];
 }
+
+export function sortTasksByDateForColumnReverse(tasks: ITask[]) {
+  const inCompleteTasks = tasks.filter((task) => !task.isCompleted);
+  const completedTasks = tasks.filter((task) => task.isCompleted);
+  const sortedTasks = (sortableTasks: ITask[]) => {
+    return sortableTasks.sort((a, b) => {
+      if (Date.parse(a.dueDate) > Date.parse(b.dueDate)) {
+        return -1;
+      }
+      if (Date.parse(a.dueDate) < Date.parse(b.dueDate)) {
+        return 1;
+      }
+      return 0;
+    });
+  };
+  return [...sortedTasks(inCompleteTasks), ...sortedTasks(completedTasks)];
+}
