@@ -35,6 +35,7 @@ export const getRefreshedAccessTokenThunk = createAsyncThunk("auth/getNewAccessT
     return true;
   } catch (error) {
     console.log(error);
+    dispatch(userLogoutThunk());
     return false;
   }
 });
