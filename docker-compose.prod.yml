@@ -15,4 +15,4 @@ services:
   application-data-service:
     build:
       target: production
-    command: node dist/index.js
+    command: yarn start

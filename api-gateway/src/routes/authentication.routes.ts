@@ -56,6 +56,7 @@ authenticationRouter.route("/2FA/Code/Login").post(async (req, res) => {
       return res
         .status(200)
         .cookie("mb_refresh_token", response.data.refreshToken, {
+          sameSite: "none",
           secure: process.env.NODE_ENV === "production",
           httpOnly: true,
           expires: new Date(Date.now() + 18 * 60 * 60 * 1000),
@@ -111,7 +112,14 @@ authenticationRouter.route("/Login/Refresh").get(async (req, res) => {
 });
 
 authenticationRouter.route("/Logout").get(async (_, res) => {
-  return res.cookie("mb_refresh_token", "expiring now", { expires: new Date(Date.now()) }).json({ success: true });
+  return res
+    .cookie("mb_refresh_token", "expiring now", {
+      expires: new Date(Date.now()),
+      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+    })
+    .json({ success: true });
 });
 
 authenticationRouter.route("/Profile").get(async (req, res) => {
