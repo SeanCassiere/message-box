@@ -40,12 +40,17 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import TodayIcon from "@mui/icons-material/Today";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+
 import { secondaryNavigationColor } from "../../util/constants";
 
 const profileRouteList = [{ route: "/logout", name: "Logout" }];
 const routesList = [
   { route: "/chat", name: "Chat", Icon: ChatIcon, key: "/chat" },
   { route: "/tasks/today", name: "Tasks", Icon: AssignmentIcon, key: "/tasks" },
+  { route: "/calendar", name: "Calendar", Icon: TodayIcon, key: "/calendar" },
+  { route: "/reports", name: "Reports", Icon: ReceiptLongIcon, key: "/reports" },
 ];
 
 const NavigationWrapper: React.FC = (props) => {
@@ -259,7 +264,7 @@ const NavigationWrapper: React.FC = (props) => {
           <List>
             {routesList.map(({ route, name, Icon, key }) => (
               <Tooltip key={route} title={name} PopperProps={{ disablePortal: open }} placement="right">
-                <ListItem button onClick={() => handleNavigatePress(route)}>
+                <ListItem button onClick={() => handleNavigatePress(route)} sx={{ my: 1 }}>
                   <ListItemIcon>
                     <Icon color={key === currentLink ? "primary" : "inherit"} />
                   </ListItemIcon>

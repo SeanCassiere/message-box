@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import AuthRoute from "./AuthRoute";
+import AuthWrapper from "./AuthRoute";
 
 import NotFoundScreen from "../modules/NotFoundScreen/NotFoundScreen";
 
@@ -14,6 +14,8 @@ import NavigationWrapper from "../shared/components/NavigationWrapper/Navigation
 import ForgotPasswordScreen from "../modules/ForgotPassword/ForgotPassword";
 import ConfirmAccountScreen from "../modules/ConfirmAccountScreen/ConfirmAccountScreen";
 import SettingsScreen from "../modules/SettingsScreen";
+import CalendarScreen from "../modules/CalendarScreen/CalendarScreen";
+import ReportsScreen from "../modules/ReportsScreen/ReportsScreen";
 
 const AppRoutes = () => {
   return (
@@ -35,61 +37,81 @@ const AppRoutes = () => {
         <Route
           path="/chat"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <ChatScreen />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
           }
         />
         <Route
           path="/tasks"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <Navigate to="/tasks/today" />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
           }
         />
         <Route
           path="/tasks/:tab"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <TasksScreen />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
           }
         />
         <Route
           path="/tasks/view/:id"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <TasksScreen />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
           }
         />
         <Route
           path="/settings"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <SettingsScreen />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <AuthWrapper>
+              <NavigationWrapper>
+                <CalendarScreen />
+              </NavigationWrapper>
+            </AuthWrapper>
+          }
+        />
+        <Route
+          path="/reports"
+          element={
+            <AuthWrapper>
+              <NavigationWrapper>
+                <ReportsScreen />
+              </NavigationWrapper>
+            </AuthWrapper>
           }
         />
         <Route
           path="/settings/:tab"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <SettingsScreen />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
           }
         />
         <Route path="/not-found" element={<NotFoundScreen />} />

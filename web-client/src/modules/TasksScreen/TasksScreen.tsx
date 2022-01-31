@@ -101,9 +101,15 @@ const TasksScreen = () => {
       />
       <Paper
         sx={{
-          px: 4,
+          px: {
+            xs: 1,
+            md: 4,
+          },
           my: 2,
-          py: 4,
+          py: {
+            xs: 1,
+            md: 4,
+          },
           minHeight: "88vh",
           overflow: "hidden",
         }}
