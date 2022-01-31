@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 type ConfirmationType = "account_confirmation" | "password_reset" | "lost_2fa_access";
 
@@ -19,9 +19,9 @@ export default class EmailConfirmations extends BaseEntity {
   @Column({ type: "timestamp", default: () => "NOW() + INTERVAL '90 day'", name: "expires_at" })
   expiresAt: Date;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", name: "created_at" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP", name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 }

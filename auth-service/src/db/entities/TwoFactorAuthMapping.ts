@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("two_factor_auth_mappings")
 export default class TwoFactorAuthMapping extends BaseEntity {
@@ -14,9 +14,9 @@ export default class TwoFactorAuthMapping extends BaseEntity {
   @Column("text", { name: "is_temp", default: true })
   is_temp: boolean;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", name: "created_at" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP", name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 }
