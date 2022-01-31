@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
+  VersionColumn,
+} from "typeorm";
 
 @Entity("tasks")
 export default class Task extends BaseEntity {
@@ -29,9 +37,12 @@ export default class Task extends BaseEntity {
   @Column("text", { name: "client_id" })
   clientId: string;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", name: "created_at" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP", name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
+
+  @VersionColumn({ default: 1 })
+  version: number;
 }

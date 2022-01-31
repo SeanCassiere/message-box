@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("team_mappings")
 export default class TeamMapping extends BaseEntity {
@@ -11,9 +11,9 @@ export default class TeamMapping extends BaseEntity {
   @Column("text", { name: "user_id" })
   userId: string;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", name: "created_at" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP", name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("task_share_mappings")
 export default class TaskShareMapping extends BaseEntity {
@@ -14,9 +14,9 @@ export default class TaskShareMapping extends BaseEntity {
   @Column("bool", { name: "is_active", default: true })
   isActive: boolean;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", name: "created_at" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP", name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 }

@@ -27,6 +27,8 @@ import StyledTableCell from "../../shared/components/StyledTableCell/StyledTable
 import { client } from "../../shared/api/client";
 import { ITask } from "../../shared/interfaces/Task.interfaces";
 import { markdownToForHtmlInsert, sortTasksByDateForColumn, truncateTextByLength } from "../../shared/util/general";
+import { useSelector } from "react-redux";
+import { selectAppProfileState } from "../../shared/redux/store";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -52,6 +54,8 @@ const CompletedView = (props: Props) => {
   const { refreshCountState, ownerId, onEditTask } = props;
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const { formats } = useSelector(selectAppProfileState);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [allTasks, setAllTasks] = useState<ITask[]>([]);
@@ -119,6 +123,7 @@ const CompletedView = (props: Props) => {
             <MobileDatePicker
               label="Completed Date"
               value={new Date(clientDateValue)}
+              inputFormat={formats.shortDateFormat}
               onChange={(newValue) => {
                 if (newValue) {
                   setClientDateValue(new Date(newValue).toISOString().substring(0, 10));
