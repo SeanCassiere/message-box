@@ -322,7 +322,7 @@ const NavigationWrapper: React.FC = (props) => {
         </Drawer>
       )}
 
-      <Box component="main" sx={{ flexGrow: 1, px: 2, bgcolor: "#F5F5F5", minHeight: "100vh" }}>
+      <Box component="main" sx={{ flexGrow: 1, px: 2, bgcolor: "#F9F9F9", minHeight: "99vh" }}>
         <DrawerHeaderSpacer id="back-to-top-anchor" />
         {children}
         <ScrollTop {...props}>

@@ -8,8 +8,8 @@ export const theme = createTheme({
     primary: {
       main: teal[300],
       contrastText: "#fff",
-      dark: teal[800],
-      light: teal[300],
+      dark: teal[700],
+      light: teal[100],
       50: teal[50],
       100: teal[100],
       200: teal[200],

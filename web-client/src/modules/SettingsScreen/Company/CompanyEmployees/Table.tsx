@@ -42,11 +42,9 @@ const ViewTable = ({ dataList, editItemHandler }: ITableProps) => {
         <TableHead>
           <TableRow>
             <StyledTableCell>Full Name</StyledTableCell>
-            {/* <StyledTableCell>Email</StyledTableCell> */}
             <StyledTableCell>Role(s)</StyledTableCell>
             <StyledTableCell>Team(s)</StyledTableCell>
             <StyledTableCell width={50}>Status</StyledTableCell>
-            {/* <StyledTableCell>Updated At</StyledTableCell> */}
             <StyledTableCell align="right">#</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -56,7 +54,6 @@ const ViewTable = ({ dataList, editItemHandler }: ITableProps) => {
               <StyledTableCell component="th" scope="row">
                 {user.firstName} {user.lastName}
               </StyledTableCell>
-              {/* <StyledTableCell>{user.email}</StyledTableCell> */}
               <StyledTableCell>
                 {user.roleDetails.map((role) => (
                   <Chip

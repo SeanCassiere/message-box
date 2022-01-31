@@ -17,6 +17,8 @@ import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 
+import PagePaperWrapper from "../../shared/components/PagePaperWrapper/PagePaperWrapper";
+
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     backgroundColor: "#44b700",
@@ -51,20 +53,7 @@ const bigChatBorderWidth = "2.5px";
 
 const ChatScreen = () => {
   return (
-    <Paper
-      sx={{
-        px: {
-          xs: 1,
-          md: 4,
-        },
-        my: 2,
-        py: {
-          xs: 1,
-          md: 4,
-        },
-        minHeight: "90vh",
-      }}
-    >
+    <PagePaperWrapper>
       <Grid
         spacing={2}
         container
@@ -85,8 +74,9 @@ const ChatScreen = () => {
               borderColor: bigChatBorderColor,
               px: 2,
               py: 2,
-              minHeight: { md: "75vh" },
+              minHeight: { md: "79vh" },
             }}
+            component={Paper}
           >
             <Stack>
               <Box>Items 1</Box>
@@ -97,6 +87,7 @@ const ChatScreen = () => {
         {/*  */}
         <Grid item xs={12} md={7} sx={{ minHeight: "100%" }}>
           <Stack
+            component={Paper}
             direction="column"
             justifyContent={{
               xs: "space-between",
@@ -165,7 +156,7 @@ const ChatScreen = () => {
                 },
               }}
             >
-              <Stack sx={{ minHeight: { md: "65vh" }, maxHeight: { xs: "35vh", md: "65vh" }, py: 1, overflow: "auto" }}>
+              <Stack sx={{ minHeight: { md: "68vh" }, maxHeight: { xs: "35vh", md: "69vh" }, py: 1, overflow: "auto" }}>
                 {Array.from(Array(30)).map((_, index) => (
                   <Box sx={{ mt: 3 }} key={`box-stack-${index}`}>
                     <Typography fontSize={12} sx={{ mx: 1 }} textAlign={index % 2 === 0 ? "left" : "right"}>
@@ -236,7 +227,7 @@ const ChatScreen = () => {
           </Stack>
         </Grid>
       </Grid>
-    </Paper>
+    </PagePaperWrapper>
   );
 };
 
