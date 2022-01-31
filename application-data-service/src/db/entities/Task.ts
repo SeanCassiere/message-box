@@ -28,6 +28,9 @@ export default class Task extends BaseEntity {
   @Column("timestamptz", { name: "due_date" })
   dueDate: Date;
 
+  @Column("timestamptz", { name: "completed_date", nullable: true })
+  completedDate: Date;
+
   @Column("bool", { name: "is_completed", default: false })
   isCompleted: boolean;
 

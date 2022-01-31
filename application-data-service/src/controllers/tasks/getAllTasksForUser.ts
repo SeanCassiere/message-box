@@ -51,7 +51,6 @@ export async function getAllTasksForUser(req: Request, res: Response) {
 
   const returnFormattedTasks = [];
 
-  console.log("finding for", audience);
   try {
     // get the owned tasks
     const query = Task.createQueryBuilder()
@@ -111,20 +110,19 @@ export async function getAllTasksForUser(req: Request, res: Response) {
        */
       const before = new Date(body.clientDate);
       before.setUTCHours(23, 59, 59, 999);
-      query.andWhere("due_date <= :before", { before: before.toISOString() });
+      query.andWhere("completed_date <= :before", { before: before.toISOString() });
 
       /**
        * get all tasks that are after the start of the clientDate
        */
       const after = new Date(body.clientDate);
       after.setUTCHours(0, 0, 0, 1);
-      query.andWhere("due_date >= :after", { after: after.toISOString() });
+      query.andWhere("completed_date >= :after", { after: after.toISOString() });
 
       /**
        * get tasks that are completed
        */
       query.andWhere("is_completed = :is_completed", { is_completed: true }); // return only completed tasks
-      console.log("\n\n\nCOMPLETED\n\n\n");
     }
 
     const tasks = await query.getMany();
