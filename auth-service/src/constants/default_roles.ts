@@ -2,7 +2,7 @@ import { DEFAULT_PERMISSIONS_MAP } from "./default_permissions";
 
 export const DEFAULT_ROLES_ARRAY: { viewName: string; rootName: string; permissions: string[] }[] = [
   {
-    viewName: "Employee",
+    viewName: "Basic",
     rootName: "employee",
     permissions: DEFAULT_PERMISSIONS_MAP.employee,
   },
@@ -20,5 +20,10 @@ export const DEFAULT_ROLES_ARRAY: { viewName: string; rootName: string; permissi
     viewName: "Manager",
     rootName: "manager",
     permissions: DEFAULT_PERMISSIONS_MAP.manager,
+  },
+  {
+    viewName: "Employee",
+    rootName: "basic_access_user",
+    permissions: DEFAULT_PERMISSIONS_MAP.basic_access_user,
   },
 ];

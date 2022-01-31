@@ -4,7 +4,6 @@ export const DEFAULT_PERMISSIONS_MAP: {
   employee: [
     //profile
     "profile:read",
-    "profile:write",
     // user
     "user:read",
     // client
@@ -15,8 +14,6 @@ export const DEFAULT_PERMISSIONS_MAP: {
     "team:read",
     // task
     "task:read",
-    "task:create",
-    "task:delete",
   ],
   admin: [
     //profile
@@ -91,5 +88,22 @@ export const DEFAULT_PERMISSIONS_MAP: {
     "task:create",
     "task:delete",
     "task:admin",
+  ],
+  basic_access_user: [
+    //profile
+    "profile:read",
+    "profile:write",
+    // user
+    "user:read",
+    // client
+    "client:read",
+    // role
+    "role:read",
+    // team
+    "team:read",
+    // task
+    "task:read",
+    "task:create",
+    "task:delete",
   ],
 };

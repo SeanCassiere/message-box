@@ -26,7 +26,7 @@ export async function adminSetDefaultRoles(req: Request, res: Response, next: Ne
             savePromises.push(
               Role.create({
                 clientId: id,
-                viewName: newRoleContent.rootName,
+                viewName: newRoleContent.viewName,
                 rootName: newRoleContent.rootName,
                 permissions: newRoleContent.permissions,
                 isUserDeletable: false,
