@@ -44,8 +44,8 @@ import { secondaryNavigationColor } from "../../util/constants";
 
 const profileRouteList = [{ route: "/logout", name: "Logout" }];
 const routesList = [
-  { route: "/chat", name: "Chat", Icon: ChatIcon },
-  { route: "/tasks/today", name: "Tasks", Icon: AssignmentIcon },
+  { route: "/chat", name: "Chat", Icon: ChatIcon, key: "/chat" },
+  { route: "/tasks/today", name: "Tasks", Icon: AssignmentIcon, key: "/tasks" },
 ];
 
 const NavigationWrapper: React.FC = (props) => {
@@ -72,7 +72,10 @@ const NavigationWrapper: React.FC = (props) => {
   // set the current page
   useEffect(() => {
     const urlLocation = window.location.pathname.split("/");
-    const pagesKeyList = routesList.map((r) => r.route);
+    const pagesKeyList = routesList.map((r) => {
+      const returnRoute = r.route.split("/")[1];
+      return `/${returnRoute}`;
+    });
     if (pagesKeyList.includes(`/${urlLocation[1].toLowerCase()}`)) {
       setCurrentLink(`/${urlLocation[1].toLowerCase()}`);
     }
@@ -253,11 +256,11 @@ const NavigationWrapper: React.FC = (props) => {
             </DrawerHeaderSpacer>
           )}
           <List>
-            {routesList.map(({ route, name, Icon }) => (
+            {routesList.map(({ route, name, Icon, key }) => (
               <Tooltip key={route} title={name} PopperProps={{ disablePortal: open }} placement="right">
                 <ListItem button onClick={() => handleNavigatePress(route)}>
                   <ListItemIcon>
-                    <Icon color={route === currentLink ? "primary" : "inherit"} />
+                    <Icon color={key === currentLink ? "primary" : "inherit"} />
                   </ListItemIcon>
                   <ListItemText
                     primary={name}
@@ -295,11 +298,11 @@ const NavigationWrapper: React.FC = (props) => {
             </DrawerHeaderSpacer>
           )}
           <List>
-            {routesList.map(({ route, name, Icon }) => (
+            {routesList.map(({ route, name, Icon, key }) => (
               <Tooltip key={route} title={name} PopperProps={{ disablePortal: open }} placement="right">
                 <ListItem button onClick={() => handleNavigatePress(route)}>
                   <ListItemIcon>
-                    <Icon color={route === currentLink ? "primary" : "inherit"} />
+                    <Icon color={key === currentLink ? "primary" : "inherit"} />
                   </ListItemIcon>
                   <ListItemText
                     primary={name}
