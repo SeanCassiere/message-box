@@ -18,6 +18,8 @@ export const client = axios.create({
     }
     return false;
   },
+  timeout: 25000,
+  timeoutErrorMessage: "TimeOut",
 });
 
 client.interceptors.request.use(

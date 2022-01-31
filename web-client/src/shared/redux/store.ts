@@ -5,21 +5,21 @@ import lookupSlice from "./slices/lookup/lookupSlice";
 import userSlice from "./slices/user/userSlice";
 
 const batchedReducers = combineReducers({
-	[lookupSlice.name]: lookupSlice.reducer,
-	[userSlice.name]: userSlice.reducer,
-	[authSlice.name]: authSlice.reducer,
+  [lookupSlice.name]: lookupSlice.reducer,
+  [userSlice.name]: userSlice.reducer,
+  [authSlice.name]: authSlice.reducer,
 });
 
 const store = configureStore({
-	reducer: batchedReducers,
-	middleware: (getDefaultMiddleware) => [...getDefaultMiddleware()],
+  reducer: batchedReducers,
+  middleware: (getDefaultMiddleware) => [...getDefaultMiddleware()],
 });
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof batchedReducers>;
 
 export const selectAuthState = (state: RootState) => state.auth;
-export const selectAppProfileState = (state: RootState) => state.user;
+export const selectUserState = (state: RootState) => state.user;
 export const selectLookupListsState = (state: RootState) => state.lookup;
 
 export default store;

@@ -3,11 +3,12 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
 
-import { client } from "../../shared/api/client";
-import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
-
 import UserRegistrationForm from "./UserRegistrationForm";
 import RegistrationSuccessDialog from "./RegisterSuccessDialog";
+
+import { client } from "../../shared/api/client";
+import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
+import { MESSAGES } from "../../shared/util/messages";
 
 const validationSchema = yup.object().shape({
   clientName: yup.string().required("Company name is required"),
@@ -47,7 +48,7 @@ const RegisterScreen = () => {
         .post("/Clients", payload)
         .then((res) => {
           if (res.status === 400) {
-            enqueueSnackbar(`Warning: Input validation failed.`, { variant: "warning" });
+            enqueueSnackbar(MESSAGES.INPUT_VALIDATION, { variant: "warning" });
             setErrors(formatErrorsToFormik(res.data.errors));
           }
 
@@ -57,7 +58,7 @@ const RegisterScreen = () => {
         })
         .catch((err) => {
           console.log(err);
-          enqueueSnackbar(`Error: Registration failed.`, { variant: "error" });
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
         })
         .finally(() => {
           setSubmitting(false);

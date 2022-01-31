@@ -18,6 +18,7 @@ import { selectLookupListsState } from "../../../../shared/redux/store";
 import { client } from "../../../../shared/api/client";
 import { setLookupTeams } from "../../../../shared/redux/slices/lookup/lookupSlice";
 import { usePermission } from "../../../../shared/hooks/usePermission";
+import { MESSAGES } from "../../../../shared/util/messages";
 
 const Layout = () => {
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ const Layout = () => {
       })
       .catch((e) => {
         console.log(e);
-        enqueueSnackbar("Error: Failed fetching company teams.", { variant: "error" });
+        enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
       });
   }, [dispatch, enqueueSnackbar]);
 

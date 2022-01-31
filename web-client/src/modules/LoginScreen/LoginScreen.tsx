@@ -24,6 +24,7 @@ import { selectAuthState } from "../../shared/redux/store";
 import jwtDecode from "jwt-decode";
 import { JwtPayload } from "../../shared/interfaces/AccessToken.interfaces";
 import { setPermissionsAndRoles } from "../../shared/redux/slices/user/userSlice";
+import { MESSAGES } from "../../shared/util/messages";
 
 const credentialsLoginSchema = yup.object().shape({
   email: yup.string().email("Please enter a valid email").required("Username is required"),
@@ -99,7 +100,7 @@ const LoginScreen = () => {
         })
         .catch((err) => {
           console.log(err);
-          enqueueSnackbar("Error: Credentials login failed.", { variant: "error" });
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
         })
         .finally(() => {
           setSubmitting(false);
@@ -133,7 +134,7 @@ const LoginScreen = () => {
         })
         .catch((err) => {
           console.log(err);
-          enqueueSnackbar("Error: 2FA code login failed.", { variant: "error" });
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
         })
         .finally(() => {
           setSubmitting(false);
@@ -164,6 +165,7 @@ const LoginScreen = () => {
         })
         .catch((err) => {
           console.log(err);
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
         })
         .finally(() => {
           setSubmitting(false);

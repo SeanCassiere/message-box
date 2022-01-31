@@ -27,6 +27,7 @@ import { selectLookupListsState } from "../../../../shared/redux/store";
 import { formatErrorsToFormik } from "../../../../shared/util/errorsToFormik";
 import { IRoleProfile } from "../../../../shared/interfaces/Client.interfaces";
 import { truncateTextByLength } from "../../../../shared/util/general";
+import { MESSAGES } from "../../../../shared/util/messages";
 
 const validationSchema = yup.object().shape({
   rootName: yup.string().required("A role has be based on an existing role"),
@@ -79,7 +80,7 @@ const EditUserDialog = (props: IProps) => {
       client[roleId ? "put" : "post"](roleId ? `/Roles/${roleId}` : "/Clients/Roles", values)
         .then((res) => {
           if (res.status === 403 || res.status === 400) {
-            enqueueSnackbar(`Warning: Some fields are invalid.`, { variant: "warning" });
+            enqueueSnackbar(MESSAGES.INPUT_VALIDATION, { variant: "warning" });
             setErrors(formatErrorsToFormik(res.data.errors));
           }
 
@@ -91,7 +92,7 @@ const EditUserDialog = (props: IProps) => {
         })
         .catch((e) => {
           console.log(e);
-          enqueueSnackbar(`Error: Could not ${roleId ? "update" : "create"} role.`, { variant: "error" });
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
         })
         .finally(() => {
           setSubmitting(false);

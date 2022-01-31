@@ -25,9 +25,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 
 import { client } from "../../../../shared/api/client";
 import { useSelector } from "react-redux";
-import { selectAppProfileState, selectLookupListsState } from "../../../../shared/redux/store";
+import { selectUserState, selectLookupListsState } from "../../../../shared/redux/store";
 import { IRoleProfile, ITeamProfile } from "../../../../shared/interfaces/Client.interfaces";
 import { formatErrorsToFormik } from "../../../../shared/util/errorsToFormik";
+import { MESSAGES } from "../../../../shared/util/messages";
 
 const validationSchema = yup.object().shape({
   email: yup.string().email("Must be a valid email").required("Email is required"),
@@ -62,7 +63,7 @@ const EditUserDialog = (props: IProps) => {
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const { userProfile } = useSelector(selectAppProfileState);
+  const { userProfile } = useSelector(selectUserState);
   const { rolesList, teamsList } = useSelector(selectLookupListsState);
 
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -82,7 +83,7 @@ const EditUserDialog = (props: IProps) => {
       client[userId ? "put" : "post"](userId ? `/Users/${userId}` : "/Clients/Users", values)
         .then((res) => {
           if (res.status === 403 || res.status === 400) {
-            enqueueSnackbar(`Warning: Some fields are invalid.`, { variant: "warning" });
+            enqueueSnackbar(MESSAGES.INPUT_VALIDATION, { variant: "warning" });
             setErrors(formatErrorsToFormik(res.data.errors));
           }
 
@@ -96,7 +97,7 @@ const EditUserDialog = (props: IProps) => {
         })
         .catch((e) => {
           console.log(e);
-          enqueueSnackbar(`Error: Could not ${userId ? "update" : "create"} employee.`, { variant: "error" });
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
         })
         .finally(() => {
           setSubmitting(false);

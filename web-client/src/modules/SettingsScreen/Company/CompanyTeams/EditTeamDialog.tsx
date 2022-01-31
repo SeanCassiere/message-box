@@ -16,6 +16,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { client } from "../../../../shared/api/client";
 import { formatErrorsToFormik } from "../../../../shared/util/errorsToFormik";
 import { IRoleProfile } from "../../../../shared/interfaces/Client.interfaces";
+import { MESSAGES } from "../../../../shared/util/messages";
 
 const validationSchema = yup.object().shape({
   rootName: yup.string().required("A team root name is required"),
@@ -64,7 +65,7 @@ const EditUserDialog = (props: IProps) => {
       client[teamId ? "put" : "post"](teamId ? `/Teams/${teamId}` : "/Clients/Teams", payload)
         .then((res) => {
           if (res.status === 403 || res.status === 400) {
-            enqueueSnackbar(`Warning: Some fields are invalid.`, { variant: "warning" });
+            enqueueSnackbar(MESSAGES.INPUT_VALIDATION, { variant: "warning" });
             setErrors(formatErrorsToFormik(res.data.errors));
           }
 
@@ -76,7 +77,7 @@ const EditUserDialog = (props: IProps) => {
         })
         .catch((e) => {
           console.log(e);
-          enqueueSnackbar(`Error: Could not ${teamId ? "update" : "create"} team.`, { variant: "error" });
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
         })
         .finally(() => {
           setSubmitting(false);

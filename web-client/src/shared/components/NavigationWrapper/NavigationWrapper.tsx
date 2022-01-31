@@ -3,7 +3,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { indigo } from "@mui/material/colors";
 
-import { selectAppProfileState } from "../../redux/store";
+import { selectUserState } from "../../redux/store";
 import { stringAvatar } from "./navUtils";
 
 import ScrollTop from "../ScrollTop/ScrollTop";
@@ -56,7 +56,7 @@ const NavigationWrapper: React.FC = (props) => {
   const { children } = props;
   const [currentLink, setCurrentLink] = React.useState<string>("");
   const [open, setOpen] = React.useState(false);
-  const { userProfile } = useSelector(selectAppProfileState);
+  const { userProfile } = useSelector(selectUserState);
 
   const [currentStatusValue, setCurrentStatusValue] = React.useState("30");
 

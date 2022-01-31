@@ -17,7 +17,7 @@ import { ITask } from "../../interfaces/Task.interfaces";
 import { markdownToForHtmlInsert, truncateTextByLength } from "../../util/general";
 import { client } from "../../api/client";
 import { useSelector } from "react-redux";
-import { selectAppProfileState } from "../../redux/store";
+import { selectUserState } from "../../redux/store";
 import { colorsMap } from "../../util/colorsMap";
 
 interface Props {
@@ -32,7 +32,7 @@ const TaskCard = (props: Props) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [data, setData] = useState<ITask>(task);
-  const { formats } = useSelector(selectAppProfileState);
+  const { formats } = useSelector(selectUserState);
 
   const handleTaskClick = useCallback(
     (navTaskId: string) => {

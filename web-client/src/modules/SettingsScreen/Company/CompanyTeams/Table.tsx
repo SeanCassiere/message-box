@@ -18,7 +18,7 @@ import StyledTableCell from "../../../../shared/components/StyledTableCell/Style
 
 import { ITeamProfile } from "../../../../shared/interfaces/Client.interfaces";
 import { usePermission } from "../../../../shared/hooks/usePermission";
-import { selectAppProfileState } from "../../../../shared/redux/store";
+import { selectUserState } from "../../../../shared/redux/store";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -40,7 +40,7 @@ const ViewTable = ({ dataList, editItemHandler, deleteItemHandler }: ITableProps
   const isEditButtonAccessible = usePermission("team:admin");
   const isDeleteButtonAccessible = usePermission("team:admin");
 
-  const { formats } = useSelector(selectAppProfileState);
+  const { formats } = useSelector(selectUserState);
 
   const handleEditButton = (team: ITeamProfile) => {
     editItemHandler(team.teamId);

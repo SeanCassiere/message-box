@@ -12,12 +12,13 @@ import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 
 import ViewTable from "./Table";
 import EditRoleDialog from "./EditRoleDialog";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 
 import { selectLookupListsState } from "../../../../shared/redux/store";
 import { client } from "../../../../shared/api/client";
 import { setLookupRoles } from "../../../../shared/redux/slices/lookup/lookupSlice";
-import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import { usePermission } from "../../../../shared/hooks/usePermission";
+import { MESSAGES } from "../../../../shared/util/messages";
 
 const Layout = () => {
   const dispatch = useDispatch();
@@ -63,7 +64,7 @@ const Layout = () => {
         })
         .catch((e) => {
           console.log(e);
-          enqueueSnackbar("Error: Failed deleting role.", { variant: "error" });
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
         })
         .finally(() => {
           refreshListItems();

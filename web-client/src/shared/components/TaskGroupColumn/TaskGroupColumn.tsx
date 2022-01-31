@@ -17,6 +17,7 @@ import { grey } from "@mui/material/colors";
 import { ITask } from "../../interfaces/Task.interfaces";
 import TaskCard from "../TaskCard/TaskCard";
 import { sortTasksByDateForColumn } from "../../util/general";
+import { MESSAGES } from "../../util/messages";
 
 interface Props {
   title: string;
@@ -65,7 +66,7 @@ const TaskGroupColumn = (props: Props) => {
         .catch((e) => {
           if (e.message !== "canceled") {
             console.log(`Error searching for ${mode} tasks`);
-            enqueueSnackbar(`Error searching for ${mode} tasks.`, { variant: "error" });
+            enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
           }
         });
     },

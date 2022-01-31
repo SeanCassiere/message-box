@@ -32,8 +32,9 @@ import MobileDateTimePicker from "@mui/lab/MobileDateTimePicker";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 
-import { selectAppProfileState, selectLookupListsState } from "../../../shared/redux/store";
+import { selectUserState, selectLookupListsState } from "../../../shared/redux/store";
 import { IUserProfile } from "../../../shared/interfaces/User.interfaces";
 import { formatErrorsToFormik } from "../../../shared/util/errorsToFormik";
 
@@ -41,7 +42,7 @@ import TaskContentEditor from "./TaskContentEditor";
 import { usePermission } from "../../../shared/hooks/usePermission";
 import { colorsMap, IColorMap } from "../../../shared/util/colorsMap";
 import { taskColorOpacity } from "../../../shared/util/constants";
-import { Typography } from "@mui/material";
+import { MESSAGES } from "../../../shared/util/messages";
 
 interface Props {
   handleCloseFunction: () => void;
@@ -77,7 +78,7 @@ const TaskModifyDialog = (props: Props) => {
 
   const { handleCloseFunction, showDialog, taskId } = props;
 
-  const { userProfile, formats } = useSelector(selectAppProfileState);
+  const { userProfile, formats } = useSelector(selectUserState);
   const { usersList } = useSelector(selectLookupListsState);
   const showOwnerAssignee = usePermission("task:admin");
 
@@ -104,7 +105,7 @@ const TaskModifyDialog = (props: Props) => {
             handleCloseFunction();
           } else {
             if (res.data.errors) {
-              enqueueSnackbar(`Warning: Input validation failed.`, { variant: "warning" });
+              enqueueSnackbar(MESSAGES.INPUT_VALIDATION, { variant: "warning" });
               setErrors(formatErrorsToFormik(res.data.errors));
             }
           }

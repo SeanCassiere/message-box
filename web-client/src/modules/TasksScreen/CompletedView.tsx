@@ -29,9 +29,10 @@ import { client } from "../../shared/api/client";
 import { ITask } from "../../shared/interfaces/Task.interfaces";
 import { markdownToForHtmlInsert, sortTasksByDateForColumn, truncateTextByLength } from "../../shared/util/general";
 import { useSelector } from "react-redux";
-import { selectAppProfileState } from "../../shared/redux/store";
+import { selectUserState } from "../../shared/redux/store";
 import { colorsMap } from "../../shared/util/colorsMap";
 import { taskColorOpacity } from "../../shared/util/constants";
+import { MESSAGES } from "../../shared/util/messages";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -58,7 +59,7 @@ const CompletedView = (props: Props) => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const { formats } = useSelector(selectAppProfileState);
+  const { formats } = useSelector(selectUserState);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [allTasks, setAllTasks] = useState<ITask[]>([]);
@@ -86,9 +87,8 @@ const CompletedView = (props: Props) => {
         })
         .catch((e) => {
           console.log(e);
-          enqueueSnackbar(`Error searching for completed tasks.`, { variant: "error" });
-        })
-        .finally(() => {});
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+        });
     },
     [enqueueSnackbar, searchDate]
   );

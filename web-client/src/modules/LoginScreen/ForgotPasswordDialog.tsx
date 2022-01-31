@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 import { red } from "@mui/material/colors";
 
@@ -41,6 +43,9 @@ const ForgotPasswordDialog = (props: Props) => {
   const { handleDismiss, open } = props;
   const { enqueueSnackbar } = useSnackbar();
 
+  const theme = useTheme();
+  const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const [expanded, setExpanded] = useState("panel1"); // controls which panel is expanded
 
   const handleChangeOpen = (key: string) => {
@@ -70,7 +75,11 @@ const ForgotPasswordDialog = (props: Props) => {
             resetForm();
           }
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          enqueueSnackbar("Error: Network unavailable.", {
+            variant: "error",
+          });
+        })
         .finally(() => {
           setSubmitting(false);
         });
@@ -99,7 +108,11 @@ const ForgotPasswordDialog = (props: Props) => {
             resetForm();
           }
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          enqueueSnackbar("Error: Network unavailable.", {
+            variant: "error",
+          });
+        })
         .finally(() => {
           setSubmitting(false);
         });
@@ -115,7 +128,7 @@ const ForgotPasswordDialog = (props: Props) => {
 
   return (
     <>
-      <Dialog open={open} onClose={handleDismiss} maxWidth="xs" disableEscapeKeyDown>
+      <Dialog open={open} onClose={handleDismiss} maxWidth="xs" disableEscapeKeyDown fullScreen={isOnMobile}>
         <DialogTitle>Reset password</DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>How do you want to reset your password?</DialogContentText>

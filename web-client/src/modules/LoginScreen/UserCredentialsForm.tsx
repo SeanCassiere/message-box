@@ -15,6 +15,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 
 import { client } from "../../shared/api/client";
+import { MESSAGES } from "../../shared/util/messages";
 
 interface IProps {
   formik: FormikContextType<{ email: string; password: string }>;
@@ -42,7 +43,7 @@ const UserCredentialsForm = (props: IProps) => {
       enqueueSnackbar("Success: Confirmation link sent to your email.", { variant: "success" });
     } catch (error) {
       console.log(error);
-      enqueueSnackbar("Error: Could not resend the confirmation email.", { variant: "error" });
+      enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
     }
   };
 

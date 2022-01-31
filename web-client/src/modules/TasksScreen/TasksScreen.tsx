@@ -19,7 +19,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel, { TabPanelProps } from "@mui/lab/TabPanel";
 
-import { selectAppProfileState, selectLookupListsState } from "../../shared/redux/store";
+import { selectUserState, selectLookupListsState } from "../../shared/redux/store";
 import { usePermission } from "../../shared/hooks/usePermission";
 
 import TaskModifyDialog from "./TaskModifyDialog/TaskModifyDialog";
@@ -33,7 +33,7 @@ const TasksScreen = () => {
   const navigate = useNavigate();
   const { tab, id } = useParams<{ tab: string; id: string }>();
 
-  const { userProfile } = useSelector(selectAppProfileState);
+  const { userProfile } = useSelector(selectUserState);
   const { usersList } = useSelector(selectLookupListsState);
 
   const isUserSwitcherAccessible = usePermission("task:admin");

@@ -1,6 +1,8 @@
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { FormikContextType } from "formik";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 import LoadingButton from "@mui/lab/LoadingButton";
 import TextField from "@mui/material/TextField";
@@ -19,9 +21,11 @@ interface IProps {
 
 const CodeLoginDialog = (props: IProps) => {
   const { formik, handleClose, showDialog } = props;
+  const theme = useTheme();
+  const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown>
+    <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullScreen={isOnMobile}>
       <form onSubmit={formik.handleSubmit}>
         <DialogTitle>Two-Factor Authentication</DialogTitle>
         <DialogContent>

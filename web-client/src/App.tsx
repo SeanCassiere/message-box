@@ -14,7 +14,7 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import AppRoutes from "./routes/Routes";
 
 import { ThemeWrapper } from "./shared/components/ThemeWrapper/ThemeWrapper";
-import { selectAppProfileState, selectAuthState, selectLookupListsState } from "./shared/redux/store";
+import { selectUserState, selectAuthState, selectLookupListsState } from "./shared/redux/store";
 import { getProfilesThunk } from "./shared/redux/slices/user/thunks";
 import { getRefreshedAccessTokenThunk } from "./shared/redux/slices/auth/thunks";
 import { getAllLookupListsThunk } from "./shared/redux/slices/lookup/thunks";
@@ -23,7 +23,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const dispatch = useDispatch();
-  const { isLoadingProfileData } = useSelector(selectAppProfileState);
+  const { isLoadingProfileData } = useSelector(selectUserState);
   const { isLoadingLookupData } = useSelector(selectLookupListsState);
   const { isLoggedIn, expiresAt, access_token } = useSelector(selectAuthState);
 
@@ -68,7 +68,7 @@ const App = () => {
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <LocalizationProvider dateAdapter={DateAdapter}>
-          <SnackbarProvider maxSnack={4} anchorOrigin={{ horizontal: "right", vertical: "bottom" }}>
+          <SnackbarProvider maxSnack={4} anchorOrigin={{ horizontal: "right", vertical: "bottom" }} preventDuplicate>
             <AppRoutes />
           </SnackbarProvider>
         </LocalizationProvider>

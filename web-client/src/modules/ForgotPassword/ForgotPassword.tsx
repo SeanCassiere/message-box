@@ -9,6 +9,7 @@ import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
 
 import UserRegistrationForm from "./UserPasswordResetForm";
 import ResetSuccessDialog from "./ResetSuccessDialog";
+import { MESSAGES } from "../../shared/util/messages";
 
 const validationSchema = yup.object().shape({
   token: yup.string().required("Token is required"),
@@ -46,7 +47,7 @@ const ForgotPasswordScreen = () => {
         .post("/Users/ResetPassword/WithToken", payload)
         .then((res) => {
           if (res.status === 400) {
-            enqueueSnackbar(`Warning: Input validation failed.`, {
+            enqueueSnackbar(MESSAGES.INPUT_VALIDATION, {
               variant: "warning",
               anchorOrigin: { horizontal: "center", vertical: "top" },
             });
@@ -59,7 +60,7 @@ const ForgotPasswordScreen = () => {
         })
         .catch((err) => {
           console.log(err);
-          enqueueSnackbar(`Error: Could not reset your password.`, {
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, {
             variant: "error",
             anchorOrigin: { horizontal: "center", vertical: "top" },
           });
