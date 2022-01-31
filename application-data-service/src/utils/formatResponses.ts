@@ -10,6 +10,7 @@ export function formatTaskResponseWithUsers({ task, userIds }: { task: Task; use
     sharedWith: userIds,
     bgColor: task.bgColor,
     dueDate: task.dueDate,
+    completedDate: task.completedDate,
     isCompleted: task.isCompleted,
     isOverDue: isTaskOverdue,
     updatedAt: task.updatedAt,

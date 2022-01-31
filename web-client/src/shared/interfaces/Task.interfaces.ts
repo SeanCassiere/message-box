@@ -6,6 +6,7 @@ export interface ITask {
   sharedWith: string[];
   bgColor: string;
   dueDate: string;
+  completedDate: string | null;
   isCompleted: boolean;
   updatedAt: string;
 }

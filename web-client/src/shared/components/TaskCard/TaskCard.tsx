@@ -18,6 +18,7 @@ import { markdownToForHtmlInsert, truncateTextByLength } from "../../util/genera
 import { client } from "../../api/client";
 import { useSelector } from "react-redux";
 import { selectAppProfileState } from "../../redux/store";
+import { colorsMap } from "../../util/colorsMap";
 
 interface Props {
   task: ITask;
@@ -66,6 +67,14 @@ const TaskCard = (props: Props) => {
     [data, enqueueSnackbar, triggerRefresh]
   );
 
+  const getBorderColor = useCallback((bgColor: string) => {
+    const map = colorsMap.find((color) => color.bgColor === bgColor);
+    if (map) {
+      return map.borderColor;
+    }
+    return colorsMap[0].borderColor;
+  }, []);
+
   return (
     <Box
       key={`${task.taskId}`}
@@ -90,7 +99,16 @@ const TaskCard = (props: Props) => {
       >
         <CardContent>
           <Typography
-            sx={{ fontSize: 16, fontWeight: 500, cursor: "pointer" }}
+            sx={{
+              fontSize: 15,
+              fontWeight: 500,
+              cursor: "pointer",
+              bgcolor: task.bgColor,
+              py: "5px",
+              pl: 1,
+              border: `1.3px solid ${getBorderColor(task.bgColor)}`,
+              borderRadius: 1,
+            }}
             color="text.primary"
             onClick={() => handleTaskClick(task.taskId)}
             gutterBottom
@@ -120,11 +138,17 @@ const TaskCard = (props: Props) => {
                 color="text.secondary"
                 onClick={() => handleTaskClick(task.taskId)}
               >
-                Due time:&nbsp;
+                Due&nbsp;
                 {mode === "Today" ? (
-                  <Moment format={formats.timeFormat}>{task.dueDate}</Moment>
+                  <>
+                    time:&nbsp;
+                    <Moment format={formats.timeFormat}>{task.dueDate}</Moment>
+                  </>
                 ) : (
-                  <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment>
+                  <>
+                    date:&nbsp;
+                    <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment>
+                  </>
                 )}
               </Typography>
             </Grid>

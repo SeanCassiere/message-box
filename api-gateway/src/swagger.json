@@ -1991,6 +1991,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "completedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "isCompleted": {
             "type": "boolean",
             "default": false
