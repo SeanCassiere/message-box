@@ -135,7 +135,7 @@ const TaskCard = (props: Props) => {
             <Grid item md={8}>
               <Typography
                 sx={{ fontSize: 13, flexGrow: 1, cursor: "pointer" }}
-                color="text.secondary"
+                color={task.isOverDue ? "error" : "text.secondary"}
                 onClick={() => handleTaskClick(task.taskId)}
               >
                 Due&nbsp;

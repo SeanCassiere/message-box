@@ -90,7 +90,8 @@ const NavigationWrapper: React.FC = (props) => {
   };
 
   const handleNavigatePress = (route: string) => {
-    setCurrentLink(route);
+    const split = route.split("/");
+    setCurrentLink(`/${split[1]}`);
     navigate(route);
   };
 

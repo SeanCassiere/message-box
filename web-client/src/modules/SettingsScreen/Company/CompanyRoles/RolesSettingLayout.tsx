@@ -41,7 +41,7 @@ const Layout = () => {
       })
       .catch((e) => {
         console.log(e);
-        enqueueSnackbar("Error: Failed fetching company roles.", { variant: "error" });
+        enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
       });
   }, [dispatch, enqueueSnackbar]);
 
@@ -122,7 +122,7 @@ const Layout = () => {
             </IconButton>
             {isAddButtonAccessible && (
               <>
-                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewRoleDialog} disableElevation>
+                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewRoleDialog}>
                   Add
                 </Button>
               </>

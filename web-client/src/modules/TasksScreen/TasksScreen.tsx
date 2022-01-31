@@ -37,6 +37,7 @@ const TasksScreen = () => {
   const { usersList } = useSelector(selectLookupListsState);
 
   const isUserSwitcherAccessible = usePermission("task:admin");
+  const isTaskWriteAccessible = usePermission("task:create");
 
   const [isEditTaskDialogOpen, setIsTaskUserDialogOpen] = useState(false);
   const [openEditTaskId, setOpenEditTaskId] = useState<string | null>(null);
@@ -152,11 +153,15 @@ const TasksScreen = () => {
                   <RefreshOutlinedIcon />
                 </IconButton>
               </Grid>
-              <Grid item>
-                <Button startIcon={<AddOutlinedIcon />} onClick={handleNewTaskDialog} disableElevation>
-                  New task
-                </Button>
-              </Grid>
+              {isTaskWriteAccessible && (
+                <>
+                  <Grid item>
+                    <Button startIcon={<AddOutlinedIcon />} onClick={handleNewTaskDialog}>
+                      New task
+                    </Button>
+                  </Grid>
+                </>
+              )}
             </Grid>
           </Grid>
         </Grid>

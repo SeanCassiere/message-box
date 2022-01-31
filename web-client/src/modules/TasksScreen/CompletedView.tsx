@@ -72,8 +72,8 @@ const CompletedView = (props: Props) => {
     (userId, abort: AbortController) => {
       const params = new URLSearchParams();
       params.set("for", "Completed");
-      params.set("ownerId", userId);
       params.set("currentDate", searchDate);
+      params.set("ownerId", userId);
       client
         .get("/Tasks", { params, signal: abort.signal })
         .then((res) => {
@@ -126,6 +126,7 @@ const CompletedView = (props: Props) => {
           opacity: `${taskColorOpacity}`,
           border: `2px solid ${borderColor}`,
           bgcolor: bgColor,
+          borderRadius: 1,
         }}
       ></Box>
     );
@@ -168,6 +169,7 @@ const CompletedView = (props: Props) => {
                   <TableRow>
                     <StyledTableCell width={200}>Completed date</StyledTableCell>
                     <StyledTableCell>Title</StyledTableCell>
+                    <StyledTableCell width={200}>Due date</StyledTableCell>
                     <StyledTableCell width={50}>Color</StyledTableCell>
                     <StyledTableCell>Content</StyledTableCell>
                     <StyledTableCell align="right">#</StyledTableCell>
@@ -182,6 +184,9 @@ const CompletedView = (props: Props) => {
                         </Moment>
                       </StyledTableCell>
                       <StyledTableCell>{task.title}</StyledTableCell>
+                      <StyledTableCell component="th" scope="row">
+                        <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment>
+                      </StyledTableCell>
                       <StyledTableCell>{renderColorBox(task.bgColor)}</StyledTableCell>
                       <StyledTableCell>
                         <span
@@ -205,7 +210,7 @@ const CompletedView = (props: Props) => {
                   <TableRow>
                     <TablePagination
                       rowsPerPageOptions={[10]}
-                      colSpan={5}
+                      colSpan={6}
                       count={allTasks.length}
                       rowsPerPage={10}
                       page={currentPage}

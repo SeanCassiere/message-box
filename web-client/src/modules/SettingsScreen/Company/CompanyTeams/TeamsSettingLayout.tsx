@@ -63,7 +63,7 @@ const Layout = () => {
           enqueueSnackbar("Success: Deleted team successfully.", { variant: "success" });
         })
         .catch((e) => {
-          enqueueSnackbar("Error: Failed deleting team.", { variant: "error" });
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
         })
         .finally(() => {
           refreshListItems();
@@ -121,7 +121,7 @@ const Layout = () => {
             </IconButton>
             {isAddButtonAccessible && (
               <>
-                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewTeamDialog} disableElevation>
+                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewTeamDialog}>
                   Add
                 </Button>
               </>

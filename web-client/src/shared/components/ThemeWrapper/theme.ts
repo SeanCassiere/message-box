@@ -28,6 +28,7 @@ export const theme = createTheme({
       defaultProps: {
         variant: "contained",
         disableRipple: true,
+        disableElevation: true,
       },
       styleOverrides: {
         text: {

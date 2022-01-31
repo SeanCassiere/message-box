@@ -350,7 +350,6 @@ const TaskModifyDialog = (props: Props) => {
                     <Stack direction="row" mt={2} spacing={2} divider={<Divider orientation="vertical" flexItem />}>
                       {colorsMap.map((map) => (
                         <Button
-                          disableElevation
                           key={`${taskId ? taskId : "new-task"}-${map.bgColor}-${map.borderColor}`}
                           sx={{
                             bgcolor: map.bgColor,

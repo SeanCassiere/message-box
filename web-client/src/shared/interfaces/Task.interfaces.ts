@@ -8,5 +8,6 @@ export interface ITask {
   dueDate: string;
   completedDate: string | null;
   isCompleted: boolean;
+  isOverDue: boolean;
   updatedAt: string;
 }
