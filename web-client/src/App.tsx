@@ -4,10 +4,12 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { SnackbarProvider } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
+import "moment-timezone";
 
 import DateAdapter from "@mui/lab/AdapterMoment";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
 
 import AppRoutes from "./routes/Routes";
 
@@ -16,7 +18,6 @@ import { selectAppProfileState, selectAuthState, selectLookupListsState } from "
 import { getProfilesThunk } from "./shared/redux/slices/user/thunks";
 import { getRefreshedAccessTokenThunk } from "./shared/redux/slices/auth/thunks";
 import { getAllLookupListsThunk } from "./shared/redux/slices/lookup/thunks";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
 
 const queryClient = new QueryClient();
 
@@ -71,7 +72,7 @@ const App = () => {
             <AppRoutes />
           </SnackbarProvider>
         </LocalizationProvider>
-        {process.env.NODE_ENV === "production" && <ReactQueryDevtools initialIsOpen={false} />}
+        {process.env.NODE_ENV !== "production" && <ReactQueryDevtools initialIsOpen={false} />}
         {/** only show devtools in development */}
       </QueryClientProvider>
     </ThemeWrapper>

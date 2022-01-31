@@ -10,6 +10,14 @@ interface UserSliceState {
   clientProfile: IClientProfile | null;
   roles: string[];
   permissions: string[];
+  formats: {
+    shortDateFormat: string;
+    shortDateTimeFormat: string;
+    longDateFormat: string;
+    longDateTimeFormat: string;
+    timeFormat: string;
+    defaultDateRefreshInterval: number;
+  };
 }
 
 const initialState: UserSliceState = {
@@ -18,6 +26,14 @@ const initialState: UserSliceState = {
   clientProfile: null,
   roles: [],
   permissions: [],
+  formats: {
+    shortDateFormat: "MM/DD/YYYY",
+    shortDateTimeFormat: "MM/DD/YYYY h:mm a",
+    longDateFormat: "MMMM Do YYYY",
+    longDateTimeFormat: "MMMM Do YYYY h:mm a",
+    timeFormat: "h:mm a",
+    defaultDateRefreshInterval: 30000,
+  },
 };
 
 const userSlice = createSlice({

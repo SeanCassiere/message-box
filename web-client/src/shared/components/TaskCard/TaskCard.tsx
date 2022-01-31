@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import Moment from "react-moment";
 
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -15,6 +16,8 @@ import CardContent from "@mui/material/CardContent";
 import { ITask } from "../../interfaces/Task.interfaces";
 import { markdownToForHtmlInsert, truncateTextByLength } from "../../util/general";
 import { client } from "../../api/client";
+import { useSelector } from "react-redux";
+import { selectAppProfileState } from "../../redux/store";
 
 interface Props {
   task: ITask;
@@ -28,6 +31,7 @@ const TaskCard = (props: Props) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [data, setData] = useState<ITask>(task);
+  const { formats } = useSelector(selectAppProfileState);
 
   const handleTaskClick = useCallback(
     (navTaskId: string) => {
@@ -116,7 +120,12 @@ const TaskCard = (props: Props) => {
                 color="text.secondary"
                 onClick={() => handleTaskClick(task.taskId)}
               >
-                {mode === "Today" ? <>Due time: {task.dueDate}</> : <>Due date: {task.dueDate}</>}
+                Due time:&nbsp;
+                {mode === "Today" ? (
+                  <Moment format={formats.timeFormat}>{task.dueDate}</Moment>
+                ) : (
+                  <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment>
+                )}
               </Typography>
             </Grid>
             <Grid item md={4}>

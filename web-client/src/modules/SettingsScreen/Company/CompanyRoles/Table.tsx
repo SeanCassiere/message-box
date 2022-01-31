@@ -1,4 +1,6 @@
 import React from "react";
+import Moment from "react-moment";
+import { useSelector } from "react-redux";
 
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -16,6 +18,7 @@ import StyledTableCell from "../../../../shared/components/StyledTableCell/Style
 
 import { IRoleProfile } from "../../../../shared/interfaces/Client.interfaces";
 import { usePermission } from "../../../../shared/hooks/usePermission";
+import { selectAppProfileState } from "../../../../shared/redux/store";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -36,6 +39,9 @@ interface ITableProps {
 const ViewTable = ({ dataList, editItemHandler, deleteItemHandler }: ITableProps) => {
   const isDeleteAccessible = usePermission("role:admin");
   const isEditAccessible = usePermission("role:admin");
+
+  const { formats } = useSelector(selectAppProfileState);
+
   const handleEditButton = (role: IRoleProfile) => {
     editItemHandler(role.roleId);
   };
@@ -49,7 +55,7 @@ const ViewTable = ({ dataList, editItemHandler, deleteItemHandler }: ITableProps
           <TableRow>
             <StyledTableCell>Name</StyledTableCell>
             <StyledTableCell width={300}>Created by</StyledTableCell>
-            <StyledTableCell width={300}>Updated At</StyledTableCell>
+            <StyledTableCell width={300}>Last updated</StyledTableCell>
             <StyledTableCell align="right">#</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -66,7 +72,11 @@ const ViewTable = ({ dataList, editItemHandler, deleteItemHandler }: ITableProps
                   <Chip label="System generated" />
                 )}
               </StyledTableCell>
-              <StyledTableCell>{role.updatedAt}</StyledTableCell>
+              <StyledTableCell>
+                <Moment interval={formats.defaultDateRefreshInterval} fromNow>
+                  {role.updatedAt}
+                </Moment>
+              </StyledTableCell>
               <StyledTableCell align="right">
                 {role.isUserDeletable && isDeleteAccessible && (
                   <>

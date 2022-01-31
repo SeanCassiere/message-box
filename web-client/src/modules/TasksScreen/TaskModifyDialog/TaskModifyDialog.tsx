@@ -70,7 +70,7 @@ const TaskModifyDialog = (props: Props) => {
 
   const { handleCloseFunction, showDialog, taskId } = props;
 
-  const { userProfile } = useSelector(selectAppProfileState);
+  const { userProfile, formats } = useSelector(selectAppProfileState);
   const { usersList } = useSelector(selectLookupListsState);
   const showOwnerAssignee = usePermission("task:admin");
 
@@ -269,6 +269,7 @@ const TaskModifyDialog = (props: Props) => {
                       onChange={handleSetDateChange}
                       renderInput={(params) => <TextField {...params} variant="standard" name="dueDate" />}
                       disabled={isLoading}
+                      inputFormat={formats.shortDateTimeFormat}
                     />
                     <FormHelperText>{formik.touched.dueDate && formik.errors.dueDate}</FormHelperText>
                   </FormControl>
