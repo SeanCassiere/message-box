@@ -1,21 +1,26 @@
+import { lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import AuthWrapper from "./AuthRoute";
-
-import NotFoundScreen from "../modules/NotFoundScreen/NotFoundScreen";
-
-import ChatScreen from "../modules/ChatScreen/ChatScreen";
-import LoginScreen from "../modules/LoginScreen/LoginScreen";
-import LogoutScreen from "../modules/LogoutScreen/LogoutScreen";
-import RegisterScreen from "../modules/RegisterScreen/RegisterScreen";
 import NoAuthOnlyRoute from "./NoAuthOnlyRoute";
-import TasksScreen from "../modules/TasksScreen/TasksScreen";
 import NavigationWrapper from "../shared/components/NavigationWrapper/NavigationWrapper";
-import ForgotPasswordScreen from "../modules/ForgotPassword/ForgotPassword";
-import ConfirmAccountScreen from "../modules/ConfirmAccountScreen/ConfirmAccountScreen";
-import SettingsScreen from "../modules/SettingsScreen";
-import CalendarScreen from "../modules/CalendarScreen/CalendarScreen";
-import ReportsScreen from "../modules/ReportsScreen/ReportsScreen";
+
+import NotFoundScreen from "../modules/NotFoundScreen";
+import LogoutScreen from "../modules/LogoutScreen";
+import LoginScreen from "../modules/LoginScreen";
+
+const ChatScreen = lazy(() => import(/* webpackChunkName: 'ChatScreen' */ "../modules/ChatScreen"));
+const TasksScreen = lazy(() => import(/* webpackChunkName: 'TasksScreen' */ "../modules/TasksScreen"));
+const ReportsScreen = lazy(() => import(/* webpackChunkName: 'ReportsScreen' */ "../modules/ReportsScreen"));
+const CalendarScreen = lazy(() => import(/* webpackChunkName: 'CalendarScreen' */ "../modules/CalendarScreen"));
+const SettingsScreen = lazy(() => import(/* webpackChunkName: 'SettingsScreen' */ "../modules/SettingsScreen"));
+const RegisterScreen = lazy(() => import(/* webpackChunkName: 'RegisterScreen' */ "../modules/RegisterScreen"));
+const ForgotPasswordScreen = lazy(
+  () => import(/* webpackChunkName: 'ForgotPasswordScreen' */ "../modules/ForgotPasswordScreen")
+);
+const ConfirmAccountScreen = lazy(
+  () => import(/* webpackChunkName: 'ConfirmAccountScreen' */ "../modules/ConfirmAccountScreen")
+);
 
 const AppRoutes = () => {
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { indigo } from "@mui/material/colors";
@@ -14,6 +14,8 @@ import CustomDrawer from "./CustomDrawer";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import Drawer from "@mui/material/Drawer";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -324,7 +326,15 @@ const NavigationWrapper: React.FC = (props) => {
 
       <Box component="main" sx={{ flexGrow: 1, px: 2, bgcolor: "#F9F9F9", minHeight: "99vh" }}>
         <DrawerHeaderSpacer id="back-to-top-anchor" />
-        {children}
+        <Suspense
+          fallback={
+            <Backdrop sx={{ color: "#fff" }} open={true} onClick={() => ({})}>
+              <CircularProgress color="primary" size={50} thickness={4} />
+            </Backdrop>
+          }
+        >
+          {children}
+        </Suspense>
         <ScrollTop {...props}>
           <Fab color="secondary" size="medium" aria-label="scroll back to top">
             <KeyboardArrowUpIcon />
