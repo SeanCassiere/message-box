@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import Moment from "react-moment";
 
 import { client } from "../../../shared/api/client";
 
@@ -28,6 +29,9 @@ import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormHelperText from "@mui/material/FormHelperText";
 import MobileDateTimePicker from "@mui/lab/MobileDateTimePicker";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
 
 import { selectAppProfileState, selectLookupListsState } from "../../../shared/redux/store";
 import { IUserProfile } from "../../../shared/interfaces/User.interfaces";
@@ -35,6 +39,9 @@ import { formatErrorsToFormik } from "../../../shared/util/errorsToFormik";
 
 import TaskContentEditor from "./TaskContentEditor";
 import { usePermission } from "../../../shared/hooks/usePermission";
+import { colorsMap, IColorMap } from "../../../shared/util/colorsMap";
+import { taskColorOpacity } from "../../../shared/util/constants";
+import { Typography } from "@mui/material";
 
 interface Props {
   handleCloseFunction: () => void;
@@ -81,8 +88,10 @@ const TaskModifyDialog = (props: Props) => {
       ownerId: userProfile?.userId,
       title: "",
       content: "",
-      bgColor: "#2DD4Bf",
+      bgColor: colorsMap[0].bgColor,
+      borderColor: colorsMap[0].borderColor,
       dueDate: new Date().toISOString(),
+      completedDate: null,
       isCompleted: false,
       sharedWith: [] as string[],
     },
@@ -160,12 +169,16 @@ const TaskModifyDialog = (props: Props) => {
           if (res.status === 200) {
             formik.setFieldValue("ownerId", res.data.ownerId);
             formik.setFieldValue("title", res.data.title);
-            formik.setFieldValue("bgColor", res.data.bgColor);
             formik.setFieldValue("content", res.data.content);
             setInitialContent(res.data.content);
             formik.setFieldValue("dueDate", res.data.dueDate);
+            formik.setFieldValue("completedDate", res.data.completedDate);
+            formik.setFieldValue("dueDate", res.data.dueDate);
             formik.setFieldValue("isCompleted", res.data.isCompleted);
             formik.setFieldValue("sharedWith", res.data.sharedWith);
+            formik.setFieldValue("bgColor", res.data.bgColor);
+            const findColor = colorsMap.find((x) => x.bgColor === res.data.bgColor);
+            formik.setFieldValue("borderColor", findColor ? findColor.borderColor : colorsMap[0].borderColor);
           }
         })
         .catch((e) => {
@@ -186,6 +199,14 @@ const TaskModifyDialog = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleCloseFunction, navigate, taskId]);
 
+  const handleSetColor = useCallback(
+    (map: IColorMap) => {
+      formik.setFieldValue("bgColor", map.bgColor);
+      formik.setFieldValue("borderColor", map.borderColor);
+    },
+    [formik]
+  );
+
   return (
     <Dialog
       open={showDialog}
@@ -199,6 +220,23 @@ const TaskModifyDialog = (props: Props) => {
       <DialogTitle>{taskId ? <>Edit</> : <>New</>}&nbsp;Task</DialogTitle>
       <Box component="form" onSubmit={formik.handleSubmit}>
         <Grid container spacing={0}>
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                minHeight: {
+                  sx: "30px",
+                  md: "50px",
+                },
+                bgcolor: formik.values.bgColor,
+                border: `2px solid ${formik.values.borderColor}`,
+                borderRadius: 1,
+                mx: 3,
+                opacity: `${taskColorOpacity}`,
+              }}
+            >
+              &nbsp;
+            </Box>
+          </Grid>
           <Grid item xs={12} md={8} sx={{ mt: 3 }}>
             <Grid container>
               <Grid item xs={12} md={12} sx={{ px: 3 }}>
@@ -303,29 +341,73 @@ const TaskModifyDialog = (props: Props) => {
                     </Select>
                   </FormControl>
                 </Grid>
+                <Grid item xs={12} md={12}>
+                  <FormControl sx={{ minWidth: "100%" }}>
+                    <InputLabel disableAnimation shrink sx={{ ml: -1.5 }}>
+                      Color
+                    </InputLabel>
+                    <Stack direction="row" mt={2} spacing={2} divider={<Divider orientation="vertical" flexItem />}>
+                      {colorsMap.map((map) => (
+                        <Button
+                          disableElevation
+                          key={`${taskId ? taskId : "new-task"}-${map.bgColor}-${map.borderColor}`}
+                          sx={{
+                            bgcolor: map.bgColor,
+                            minWidth: 3,
+                            minHeight: 3,
+                            border: `2px solid ${map.borderColor}`,
+                            opacity: `${taskColorOpacity}`,
+                            "&:hover": {
+                              bgcolor: map.bgColor,
+                            },
+                          }}
+                          onClick={() => handleSetColor(map)}
+                        >
+                          &nbsp;
+                        </Button>
+                      ))}
+                    </Stack>
+                  </FormControl>
+                </Grid>
                 {taskId && (
-                  <Grid item xs={12} md={12}>
-                    <FormControl sx={{ minWidth: "50%", mt: 1 }}>
-                      <InputLabel sx={{ ml: -1.5 }} id="task-owner" disableAnimation shrink>
-                        Completed?
-                      </InputLabel>
-                      <FormControlLabel
-                        sx={{ mt: 2 }}
-                        disabled={isLoading}
-                        control={
-                          <Switch
-                            checked={formik.values.isCompleted}
-                            id="isCompleted"
-                            name="isCompleted"
-                            onChange={formik.handleChange}
-                            aria-label="Task owner"
-                          />
-                        }
-                        label={formik.values.isCompleted ? "Completed" : "Pending"}
-                        value={formik.values.isCompleted ?? false}
-                      />
-                    </FormControl>
-                  </Grid>
+                  <>
+                    <Grid item xs={12} md={5}>
+                      <FormControl sx={{ minWidth: "50%", mt: 1 }}>
+                        <InputLabel sx={{ ml: -1.5 }} id="task-owner" disableAnimation shrink>
+                          Completed?
+                        </InputLabel>
+                        <FormControlLabel
+                          sx={{ mt: 2 }}
+                          disabled={isLoading}
+                          control={
+                            <Switch
+                              checked={formik.values.isCompleted}
+                              id="isCompleted"
+                              name="isCompleted"
+                              onChange={formik.handleChange}
+                              aria-label="Task owner"
+                            />
+                          }
+                          label={formik.values.isCompleted ? "Completed" : "Pending"}
+                          value={formik.values.isCompleted ?? false}
+                        />
+                      </FormControl>
+                    </Grid>
+                    {formik.values.isCompleted && formik.values.completedDate && (
+                      <Grid item xs={12} md={7}>
+                        <FormControl sx={{ minWidth: "50%", mt: 1 }}>
+                          <InputLabel sx={{ ml: -1.5 }} id="task-owner" disableAnimation shrink>
+                            Completed date
+                          </InputLabel>
+                          <Typography fontSize="1rem" fontWeight={400} mt={3}>
+                            <Moment format={formats.shortDateTimeFormat}>
+                              {formik.values.completedDate ?? new Date()}
+                            </Moment>
+                          </Typography>
+                        </FormControl>
+                      </Grid>
+                    )}
+                  </>
                 )}
               </Grid>
             </DialogContent>
