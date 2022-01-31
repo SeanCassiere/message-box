@@ -72,7 +72,7 @@ const App = () => {
             <AppRoutes />
           </SnackbarProvider>
         </LocalizationProvider>
-        {process.env.NODE_ENV !== "production" && <ReactQueryDevtools initialIsOpen={false} />}
+        {process.env.REACT_APP_ENV !== "production" && <ReactQueryDevtools initialIsOpen={false} />}
         {/** only show devtools in development */}
       </QueryClientProvider>
     </ThemeWrapper>
