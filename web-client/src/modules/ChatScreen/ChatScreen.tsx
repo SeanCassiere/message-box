@@ -19,6 +19,8 @@ import Avatar from "@mui/material/Avatar";
 
 import PagePaperWrapper from "../../shared/components/PagePaperWrapper/PagePaperWrapper";
 
+import { COMMON_ITEM_BORDER_STYLING } from "../../shared/util/constants";
+
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     backgroundColor: "#44b700",
@@ -48,9 +50,6 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-const bigChatBorderColor = "#f3f4f6";
-const bigChatBorderWidth = "2.5px";
-
 const ChatScreen = () => {
   return (
     <PagePaperWrapper>
@@ -70,8 +69,7 @@ const ChatScreen = () => {
           </Typography>
           <Stack
             sx={{
-              border: `${bigChatBorderWidth} solid`,
-              borderColor: bigChatBorderColor,
+              border: COMMON_ITEM_BORDER_STYLING,
               px: 2,
               py: 2,
               minHeight: { md: "79vh" },
@@ -95,15 +93,13 @@ const ChatScreen = () => {
             }}
             sx={{
               minHeight: "100%",
-              border: `${bigChatBorderWidth} solid`,
-              borderColor: bigChatBorderColor,
+              border: COMMON_ITEM_BORDER_STYLING,
               borderRadius: 1,
             }}
           >
             <Box
               sx={{
-                borderBottom: `${bigChatBorderWidth} solid`,
-                borderColor: bigChatBorderColor,
+                borderBottom: COMMON_ITEM_BORDER_STYLING,
                 py: {
                   md: 2,
                 },
@@ -145,8 +141,7 @@ const ChatScreen = () => {
             <Box
               flexGrow={1}
               sx={{
-                borderBottom: `${bigChatBorderWidth} solid`,
-                borderColor: bigChatBorderColor,
+                borderBottom: COMMON_ITEM_BORDER_STYLING,
                 py: {
                   xs: 1,
                   md: 1,

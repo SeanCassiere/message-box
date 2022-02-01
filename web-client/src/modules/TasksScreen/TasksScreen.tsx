@@ -158,7 +158,7 @@ const TasksScreen = () => {
           </Grid>
         </Grid>
         <TabContext value={primaryTabValue}>
-          <Box sx={{ mt: 3 }}>
+          <Box sx={{ mt: 0 }}>
             <TabList
               onChange={handleChangePrimaryValue}
               aria-label="lab API tabs example"

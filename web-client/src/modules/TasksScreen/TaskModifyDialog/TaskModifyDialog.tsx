@@ -304,6 +304,7 @@ const TaskModifyDialog = (props: Props) => {
                   <FormControl variant="standard" sx={{ mt: showOwnerAssignee ? 0 : 2 }} fullWidth>
                     <MobileDateTimePicker
                       label="Due date"
+                      showTodayButton
                       value={Date.parse(formik.values.dueDate)}
                       onChange={handleSetDateChange}
                       renderInput={(params) => <TextField {...params} variant="standard" name="dueDate" />}

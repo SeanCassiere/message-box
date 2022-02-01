@@ -37,7 +37,7 @@ export const SettingsScreen = () => {
       <Typography variant="h4" fontWeight={500} component="h1">
         Configuration
       </Typography>
-      <Box sx={{ mt: 6 }}>
+      <Box sx={{ mt: 2 }}>
         <TabContext value={primaryTabValue}>
           <Box sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "transparent" }}>
             <TabList

@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense } from "react";
+import React, { Suspense, useEffect, useMemo } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { indigo } from "@mui/material/colors";
@@ -46,14 +46,9 @@ import TodayIcon from "@mui/icons-material/Today";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 
 import { secondaryNavigationColor } from "../../util/constants";
+import { usePermission } from "../../hooks/usePermission";
 
 const profileRouteList = [{ route: "/logout", name: "Logout" }];
-const routesList = [
-  { route: "/chat", name: "Chat", Icon: ChatIcon, key: "/chat" },
-  { route: "/tasks/today", name: "Tasks", Icon: AssignmentIcon, key: "/tasks" },
-  { route: "/calendar", name: "Calendar", Icon: TodayIcon, key: "/calendar" },
-  { route: "/reports", name: "Reports", Icon: ReceiptLongIcon, key: "/reports" },
-];
 
 const NavigationWrapper: React.FC = (props) => {
   const navigate = useNavigate();
@@ -61,9 +56,31 @@ const NavigationWrapper: React.FC = (props) => {
   const matchLargerThanPhone = useMediaQuery(theme.breakpoints.up("sm"));
 
   const { children } = props;
+  const { userProfile } = useSelector(selectUserState);
+
+  const isTasksAccessible = usePermission("task:read");
+  const routesList = useMemo(() => {
+    const listedRoutes = [];
+
+    listedRoutes.push({ route: "/chat", name: "Chat", Icon: ChatIcon, key: "/chat" });
+
+    if (isTasksAccessible) {
+      listedRoutes.push({ route: "/tasks/today", name: "Tasks", Icon: AssignmentIcon, key: "/tasks" });
+    }
+
+    if (isTasksAccessible) {
+      listedRoutes.push({ route: "/calendar", name: "Calendar", Icon: TodayIcon, key: "/calendar" });
+    }
+
+    if (isTasksAccessible) {
+      listedRoutes.push({ route: "/reports", name: "Reports", Icon: ReceiptLongIcon, key: "/reports" });
+    }
+
+    return listedRoutes;
+  }, [isTasksAccessible]);
+
   const [currentLink, setCurrentLink] = React.useState<string>("");
   const [open, setOpen] = React.useState(false);
-  const { userProfile } = useSelector(selectUserState);
 
   const [currentStatusValue, setCurrentStatusValue] = React.useState("30");
 
@@ -86,7 +103,7 @@ const NavigationWrapper: React.FC = (props) => {
     if (pagesKeyList.includes(`/${urlLocation[1].toLowerCase()}`)) {
       setCurrentLink(`/${urlLocation[1].toLowerCase()}`);
     }
-  }, []);
+  }, [routesList]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
