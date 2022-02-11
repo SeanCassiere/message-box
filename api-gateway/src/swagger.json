@@ -19,6 +19,11 @@
   },
   "servers": [
     {
+      "url": "https://web4000.localhost/Api",
+      "description": "Development server with SSL",
+      "variables": {}
+    },
+    {
       "url": "http://localhost:4000/Api",
       "description": "Development server",
       "variables": {}
@@ -272,6 +277,14 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "host": {
+                    "type": "string",
+                    "default": "https://example.com"
+                  },
+                  "path": {
+                    "type": "string",
+                    "default": "/confirm-account/"
+                  },
                   "client": {
                     "type": "object",
                     "properties": {
@@ -622,6 +635,14 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "host": {
+                    "type": "string",
+                    "default": "https://example.com"
+                  },
+                  "path": {
+                    "type": "string",
+                    "default": "/confirm-account/"
+                  },
                   "firstName": {
                     "type": "string"
                   },
@@ -1450,6 +1471,14 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "host": {
+                    "type": "string",
+                    "default": "https://example.com"
+                  },
+                  "path": {
+                    "type": "string",
+                    "default": "/confirm-account/"
+                  },
                   "email": {
                     "type": "string",
                     "format": "email",
@@ -1492,6 +1521,14 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "host": {
+                    "type": "string",
+                    "default": "https://example.com"
+                  },
+                  "path": {
+                    "type": "string",
+                    "default": "/forgot-password/"
+                  },
                   "email": {
                     "type": "string",
                     "format": "email",

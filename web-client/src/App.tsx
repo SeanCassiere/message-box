@@ -7,10 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import "moment-timezone";
 
 import DateAdapter from "@mui/lab/AdapterMoment";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 
+import BackdropLoader from "./shared/components/SuspenseLoadingWrapper/BackdropLoader";
 import AppRoutes from "./routes/Routes";
 
 import { ThemeWrapper } from "./shared/components/ThemeWrapper/ThemeWrapper";
@@ -56,11 +55,7 @@ const App = () => {
 
   // if the initial data is loading, show a full-screen loader
   if (isLoadingProfileData || isLoadingLookupData) {
-    return (
-      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true} onClick={() => ({})}>
-        <CircularProgress color="primary" size={50} thickness={4} />
-      </Backdrop>
-    );
+    return <BackdropLoader />;
   }
 
   return (

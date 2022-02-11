@@ -80,7 +80,14 @@ const EditUserDialog = (props: IProps) => {
     },
     validationSchema,
     onSubmit: (values, { setSubmitting, setErrors }) => {
-      client[userId ? "put" : "post"](userId ? `/Users/${userId}` : "/Clients/Users", values)
+      const currentHost = window.location.protocol + "//" + window.location.host;
+      const confirmationPath = "/confirm-account/";
+
+      client[userId ? "put" : "post"](userId ? `/Users/${userId}` : "/Clients/Users", {
+        ...values,
+        host: currentHost,
+        path: confirmationPath,
+      })
         .then((res) => {
           if (res.status === 403 || res.status === 400) {
             enqueueSnackbar(MESSAGES.INPUT_VALIDATION, { variant: "warning" });

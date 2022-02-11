@@ -8,6 +8,7 @@ import NavigationWrapper from "../shared/components/NavigationWrapper/Navigation
 import NotFoundScreen from "../modules/NotFoundScreen";
 import LogoutScreen from "../modules/LogoutScreen";
 import LoginScreen from "../modules/LoginScreen";
+import SuspenseLoadingWrapper from "../shared/components/SuspenseLoadingWrapper";
 
 const ChatScreen = lazy(() => import(/* webpackChunkName: 'ChatScreen' */ "../modules/ChatScreen"));
 const TasksScreen = lazy(() => import(/* webpackChunkName: 'TasksScreen' */ "../modules/TasksScreen"));
@@ -28,8 +29,22 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<LoginScreen />} />
         <Route path="/login" element={<LoginScreen />} />
-        <Route path="/forgot-password/:id" element={<ForgotPasswordScreen />} />
-        <Route path="/confirm-account/:id" element={<ConfirmAccountScreen />} />
+        <Route
+          path="/forgot-password/:id"
+          element={
+            <SuspenseLoadingWrapper>
+              <ForgotPasswordScreen />
+            </SuspenseLoadingWrapper>
+          }
+        />
+        <Route
+          path="/confirm-account/:id"
+          element={
+            <SuspenseLoadingWrapper>
+              <ConfirmAccountScreen />
+            </SuspenseLoadingWrapper>
+          }
+        />
         <Route path="/logout" element={<LogoutScreen />} />
         <Route
           path="/sign-up"
