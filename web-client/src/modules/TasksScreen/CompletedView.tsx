@@ -51,6 +51,7 @@ const CompletedView = (props: Props) => {
   const { formats } = useSelector(selectUserState);
 
   const [currentPage, setCurrentPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [allTasks, setAllTasks] = useState<ITask[]>([]);
   const [viewingTasks, setViewingTasks] = useState<ITask[]>([]);
 
@@ -59,6 +60,8 @@ const CompletedView = (props: Props) => {
 
   const searchForTasks = useCallback(
     (userId, abort: AbortController) => {
+      setIsLoading(true);
+
       const params = new URLSearchParams();
       params.set("for", "Completed");
       params.set("currentDate", searchDate);
@@ -77,6 +80,9 @@ const CompletedView = (props: Props) => {
         .catch((e) => {
           console.log(e);
           enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     },
     [enqueueSnackbar, searchDate]
@@ -194,6 +200,20 @@ const CompletedView = (props: Props) => {
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}
+                  {!isLoading && viewingTasks.length === 0 && (
+                    <StyledTableRow>
+                      <StyledTableCell colSpan={6}>
+                        <Typography textAlign="center">No records to show</Typography>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  )}
+                  {isLoading && (
+                    <StyledTableRow>
+                      <StyledTableCell colSpan={6}>
+                        <Typography textAlign="center">Searching</Typography>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  )}
                 </TableBody>
                 <TableFooter>
                   <TableRow>
