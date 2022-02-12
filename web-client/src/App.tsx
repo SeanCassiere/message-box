@@ -8,6 +8,8 @@ import "moment-timezone";
 
 import DateAdapter from "@mui/lab/AdapterMoment";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 import BackdropLoader from "./shared/components/SuspenseLoadingWrapper/BackdropLoader";
 import AppRoutes from "./routes/Routes";
@@ -58,12 +60,33 @@ const App = () => {
     return <BackdropLoader />;
   }
 
+  const notistackRef = React.createRef<any>();
+  const onClickDismiss = (key: any) => () => {
+    notistackRef?.current?.closeSnackbar(key);
+  };
+
   return (
     <ThemeWrapper>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <LocalizationProvider dateAdapter={DateAdapter}>
-          <SnackbarProvider maxSnack={4} anchorOrigin={{ horizontal: "right", vertical: "bottom" }} preventDuplicate>
+          <SnackbarProvider
+            maxSnack={4}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            ref={notistackRef}
+            action={(key) => (
+              <IconButton
+                aria-label="Close"
+                onClick={onClickDismiss(key)}
+                size="small"
+                onMouseDown={onClickDismiss(key)}
+              >
+                <CloseIcon sx={{ color: "#fff", fontSize: "1.3rem" }} />
+              </IconButton>
+            )}
+            disableWindowBlurListener
+            preventDuplicate
+          >
             <AppRoutes />
           </SnackbarProvider>
         </LocalizationProvider>
