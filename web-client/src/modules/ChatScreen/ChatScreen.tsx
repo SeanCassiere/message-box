@@ -1,225 +1,61 @@
-import React from "react";
+import React, { useCallback } from "react";
 
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import TextField from "@mui/material/TextField";
-
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import SendIcon from "@mui/icons-material/Send";
-
-import { styled } from "@mui/material/styles";
-import Badge from "@mui/material/Badge";
-import Avatar from "@mui/material/Avatar";
-
 import PagePaperWrapper from "../../shared/components/PagePaperWrapper/PagePaperWrapper";
 
-import { COMMON_ITEM_BORDER_STYLING } from "../../shared/util/constants";
+import ChatContentPane from "./ChatContentPane";
+import SelectChat from "./SelectChat";
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  "& .MuiBadge-badge": {
-    backgroundColor: "#44b700",
-    color: "#44b700",
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    "&::after": {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      borderRadius: "50%",
-      animation: "ripple 1.2s infinite ease-in-out",
-      border: "1px solid currentColor",
-      content: '""',
-    },
-  },
-  "@keyframes ripple": {
-    "0%": {
-      transform: "scale(.8)",
-      opacity: 1,
-    },
-    "100%": {
-      transform: "scale(2.4)",
-      opacity: 0,
-    },
-  },
-}));
+export type ISelectedChat = { conversationId: string; conversationName: string };
 
 const ChatScreen = () => {
+  const [selectedChatConversation, setSelectedChatConversation] = React.useState<ISelectedChat | null>(null);
+
+  const handleSetSelectedChat = useCallback((chat: ISelectedChat) => {
+    setSelectedChatConversation(chat);
+  }, []);
+
   return (
     <PagePaperWrapper>
       <Grid
         spacing={2}
         container
         sx={{
-          minHeight: {
-            // md: "64vh",
-          },
           flexGrow: 1,
         }}
       >
         <Grid item xs={12} md={5}>
-          <Typography variant="h4" fontWeight={500} component="h1" sx={{ mb: { xs: 2, md: 5 } }}>
-            Chat
-          </Typography>
           <Stack
             sx={{
-              border: COMMON_ITEM_BORDER_STYLING,
-              px: 2,
-              py: 2,
-              minHeight: { md: "79vh" },
+              minHeight: {
+                sm: "200px",
+                md: "88vh",
+              },
+              maxHeight: {
+                sm: "200px",
+                md: "88vh",
+              },
             }}
-            component={Paper}
           >
-            <Stack>
-              <Box>Items 1</Box>
-              <Box>Items 2</Box>
-            </Stack>
+            <Typography variant="h4" fontWeight={500} component="h1" sx={{ mb: { xs: 2, md: 5 } }}>
+              Chat
+            </Typography>
+            <SelectChat setSelectedChatConversation={handleSetSelectedChat} availableChatConversations={[]} />
           </Stack>
         </Grid>
         {/*  */}
-        <Grid item xs={12} md={7} sx={{ minHeight: "100%" }}>
-          <Stack
-            component={Paper}
-            direction="column"
-            justifyContent={{
-              xs: "space-between",
-              md: "space-between",
-            }}
-            sx={{
-              minHeight: "100%",
-              border: COMMON_ITEM_BORDER_STYLING,
-              borderRadius: 1,
-            }}
-          >
-            <Box
-              sx={{
-                borderBottom: COMMON_ITEM_BORDER_STYLING,
-                py: {
-                  md: 2,
-                },
-              }}
-            >
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  spacing={2}
-                  sx={{ px: { xs: 1, md: 2 }, py: { xs: 1, md: 0 } }}
-                >
-                  <Box>
-                    <StyledBadge
-                      overlap="circular"
-                      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                      variant="dot"
-                    >
-                      <Avatar alt="Sean Cassiere" src="/static/images/avatar/1.jpg" />
-                    </StyledBadge>
-                  </Box>
-                  <Box>
-                    <Typography fontWeight={500} fontSize={16}>
-                      Sean Cassiere
-                    </Typography>
-                    <Typography fontWeight={200} fontSize={13}>
-                      Last seen 12 hours ago
-                    </Typography>
-                  </Box>
-                </Stack>
-                <Box sx={{ px: { xs: 1, md: 1 } }}>
-                  <IconButton aria-label="More" onClick={() => ({})} onMouseDown={() => ({})}>
-                    {<MoreVertIcon />}
-                  </IconButton>
-                </Box>
-              </Stack>
-            </Box>
-            {/*  */}
-            <Box
-              flexGrow={1}
-              sx={{
-                borderBottom: COMMON_ITEM_BORDER_STYLING,
-                py: {
-                  xs: 1,
-                  md: 1,
-                },
-                px: {
-                  md: 2,
-                },
-              }}
-            >
-              <Stack sx={{ minHeight: { md: "68vh" }, maxHeight: { xs: "35vh", md: "69vh" }, py: 1, overflow: "auto" }}>
-                {Array.from(Array(30)).map((_, index) => (
-                  <Box sx={{ mt: 3 }} key={`box-stack-${index}`}>
-                    <Typography fontSize={12} sx={{ mx: 1 }} textAlign={index % 2 === 0 ? "left" : "right"}>
-                      11:00 AM 2022-01-15
-                    </Typography>
-                    <Typography sx={{ textAlign: index % 2 === 0 ? "left" : "right", mt: 2 }}>
-                      <span
-                        style={{
-                          maxWidth: "max-content",
-                          backgroundColor: "#f0fdfa",
-                          paddingTop: "0.7rem",
-                          paddingBottom: "0.7rem",
-                          paddingLeft: "1rem",
-                          paddingRight: "1rem",
-                          border: "1px solid",
-                          borderColor: "#14b8a6",
-                          borderRadius: 4,
-                        }}
-                      >
-                        I'm a {index % 2 === 0 ? "left" : "right"} message
-                      </span>
-                    </Typography>
-                  </Box>
-                ))}
-              </Stack>
-            </Box>
-            {/*  */}
-            <Box
-              sx={{
-                py: {
-                  xs: 1,
-                  md: 2,
-                },
-                px: {
-                  xs: 1,
-                  md: 2,
-                },
-                mb: {
-                  xs: 3,
-                  md: 0,
-                },
-              }}
-            >
-              <Grid container sx={{ width: "100%" }} spacing={1}>
-                <Grid item xs={12} md={11}>
-                  <TextField
-                    variant="outlined"
-                    placeholder="Type your message here"
-                    fullWidth
-                    size="small"
-                    InputProps={{ sx: { bgcolor: "#eef2ff" } }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={1}>
-                  <Button
-                    aria-label="Send"
-                    fullWidth
-                    onClick={() => ({})}
-                    onMouseDown={() => ({})}
-                    sx={{ height: "100%" }}
-                    size="medium"
-                  >
-                    <SendIcon />
-                  </Button>
-                </Grid>
-              </Grid>
-            </Box>
-          </Stack>
+        <Grid
+          item
+          xs={12}
+          md={7}
+          sx={{
+            minHeight: "100%",
+          }}
+        >
+          <ChatContentPane selectedChatConversation={selectedChatConversation} />
         </Grid>
       </Grid>
     </PagePaperWrapper>
