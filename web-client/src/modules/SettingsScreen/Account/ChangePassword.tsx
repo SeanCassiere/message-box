@@ -12,6 +12,7 @@ import { selectUserState } from "../../../shared/redux/store";
 
 const ChangePassword = () => {
   const { userProfile } = useSelector(selectUserState);
+
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: 2 }}>
@@ -25,7 +26,9 @@ const ChangePassword = () => {
           <Button startIcon={<EditOutlinedIcon />}>Edit</Button>
         </Box>
       </Box>
-      <pre>{JSON.stringify(userProfile, null, 2)}</pre>
+      <Box>
+        <p>{JSON.stringify(userProfile, null, 2)}</p>
+      </Box>
     </Box>
   );
 };

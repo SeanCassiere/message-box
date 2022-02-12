@@ -77,4 +77,5 @@ const formCommonTabStyle = (value: string, identifier: string): TabProps["sx"] =
 const commonTabPanelStyle: TabPanelProps["sx"] = {
   p: 0,
   pt: 1.5,
+  maxHeight: "100%",
 };

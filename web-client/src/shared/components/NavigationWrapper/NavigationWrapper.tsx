@@ -5,11 +5,14 @@ import { indigo } from "@mui/material/colors";
 
 import { selectUserState } from "../../redux/store";
 import { stringAvatar } from "./navUtils";
+import { secondaryNavigationColor } from "../../util/constants";
+import { usePermission } from "../../hooks/usePermission";
 
 import ScrollTop from "../ScrollTop/ScrollTop";
 import DrawerHeaderSpacer from "./DrawerHeaderSpacer";
 import CustomAppBar from "./CustomAppBar";
 import CustomDrawer from "./CustomDrawer";
+import SuspenseLoadingWrapper from "../SuspenseLoadingWrapper";
 
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -41,11 +44,8 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import TodayIcon from "@mui/icons-material/Today";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-
-import { secondaryNavigationColor } from "../../util/constants";
-import { usePermission } from "../../hooks/usePermission";
-import SuspenseLoadingWrapper from "../SuspenseLoadingWrapper";
+import InsertChartIcon from "@mui/icons-material/InsertChart";
+import PeopleIcon from "@mui/icons-material/People";
 
 const profileRouteList = [{ route: "/logout", name: "Logout" }];
 
@@ -72,7 +72,11 @@ const NavigationWrapper: React.FC = (props) => {
     }
 
     if (isTasksAccessible) {
-      listedRoutes.push({ route: "/reports", name: "Reports", Icon: ReceiptLongIcon, key: "/reports" });
+      listedRoutes.push({ route: "/team-activity", name: "Team Activity", Icon: PeopleIcon, key: "/team-activity" });
+    }
+
+    if (isTasksAccessible) {
+      listedRoutes.push({ route: "/reports", name: "Reports", Icon: InsertChartIcon, key: "/reports" });
     }
 
     return listedRoutes;
@@ -340,7 +344,16 @@ const NavigationWrapper: React.FC = (props) => {
         </Drawer>
       )}
 
-      <Box component="main" sx={{ flexGrow: 1, px: 2, bgcolor: "#F9F9F9", minHeight: "99vh" }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          px: 2,
+          bgcolor: "#F9F9F9",
+          minHeight: "99vh",
+          maxHeight: "100%",
+        }}
+      >
         <DrawerHeaderSpacer id="back-to-top-anchor" />
         <SuspenseLoadingWrapper>{children}</SuspenseLoadingWrapper>
         <ScrollTop {...props}>

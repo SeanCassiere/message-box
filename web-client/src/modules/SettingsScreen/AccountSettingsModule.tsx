@@ -1,7 +1,15 @@
 import React from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 import { inactiveTabBgColor } from "./SettingsScreen";
 
@@ -26,7 +34,7 @@ function TabPanel(props: TabPanelProps) {
       sx={{ minWidth: "calc(100% - 170px)" }}
       {...other}
     >
-      {value === index && <Box sx={{ pl: 4, pr: 0.5, pt: 0, pb: 2 }}>{children}</Box>}
+      {value === index && <Box sx={{ pl: { sm: 0, md: 4 }, pr: { sm: 0, md: 0.5 }, pt: 0, pb: 2 }}>{children}</Box>}
     </Box>
   );
 }
@@ -41,45 +49,82 @@ function a11yProps(index: number) {
 const AccountSettingsModule = () => {
   const [value, setValue] = React.useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const theme = useTheme();
+  const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const handleChangeTabs = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  return (
-    <Box sx={{ flexGrow: 1, display: "flex", minHeight: "100%" }}>
-      <Tabs
-        orientation="vertical"
-        variant="scrollable"
-        value={value}
-        onChange={handleChange}
-        aria-label="Vertical tabs example"
-        sx={{
-          borderColor: "divider",
-          minWidth: 170,
-          pl: 0,
-          textAlign: "left",
-          pr: 0,
-          mr: 0,
-          minHeight: "100%",
-        }}
-        TabIndicatorProps={{ style: { backgroundColor: "secondary" } }}
-      >
-        <Tab label="Profile" {...a11yProps(0)} sx={{ bgcolor: value === 0 ? "primary.50" : inactiveTabBgColor }} />
-        <Tab
-          label="Change Password"
-          {...a11yProps(1)}
-          sx={{ bgcolor: value === 1 ? "primary.50" : inactiveTabBgColor }}
-        />
-      </Tabs>
+  const handleChangeSelect = (event: SelectChangeEvent) => {
+    setValue(Number(event.target.value));
+  };
 
-      <TabPanel value={value} index={0}>
-        <AccountProfile />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <ChangePassword />
-      </TabPanel>
+  return (
+    <Box sx={{ flexGrow: 1, display: "flex", minHeight: "100%", flexDirection: isOnMobile ? "column" : "row" }}>
+      {!isOnMobile && (
+        <Tabs
+          orientation="vertical"
+          variant="scrollable"
+          value={value}
+          onChange={handleChangeTabs}
+          aria-label="Vertical tabs example"
+          sx={{
+            borderColor: "divider",
+            minWidth: 170,
+            pl: 0,
+            textAlign: "left",
+            pr: 0,
+            mr: 0,
+            minHeight: "100%",
+          }}
+          TabIndicatorProps={{ style: { backgroundColor: "secondary" } }}
+        >
+          {TABS_TO_PRINT.map((t) => (
+            <Tab
+              key={`tab-label-${t.label}-${t.value}`}
+              label={t.label}
+              {...a11yProps(t.value)}
+              sx={{ bgcolor: value === t.value ? "primary.50" : inactiveTabBgColor }}
+            />
+          ))}
+        </Tabs>
+      )}
+      {isOnMobile && (
+        <Box>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Tab</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={String(value)}
+              label="Age"
+              onChange={handleChangeSelect}
+            >
+              {TABS_TO_PRINT.map((t) => (
+                <MenuItem key={`select-label-${t.label}-${t.value}`} value={t.value}>
+                  {t.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+      )}
+      <Box>
+        <TabPanel value={value} index={0}>
+          <AccountProfile />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <ChangePassword />
+        </TabPanel>
+      </Box>
     </Box>
   );
 };
+
+const TABS_TO_PRINT = [
+  { label: "Profile", value: 0 },
+  { label: "Change Password", value: 1 },
+];
 
 export default AccountSettingsModule;
