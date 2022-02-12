@@ -112,7 +112,7 @@ const CompanySettingsModule = () => {
           </FormControl>
         </Box>
       )}
-      <Box>
+      <Box sx={{ width: "100%" }}>
         <TabPanel value={value} index={0}>
           <CompanyProfile />
         </TabPanel>

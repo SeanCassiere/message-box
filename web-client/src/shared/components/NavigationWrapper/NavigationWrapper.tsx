@@ -123,7 +123,7 @@ const NavigationWrapper: React.FC = (props) => {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", maxHeight: "100%" }}>
       <CustomAppBar position="fixed" open={open} elevation={0}>
         <Toolbar>
           {!matchLargerThanPhone && (
@@ -169,22 +169,6 @@ const NavigationWrapper: React.FC = (props) => {
                 <MenuItem value="20">Busy</MenuItem>
                 <MenuItem value="30">Away from desk</MenuItem>
               </TextField>
-              {/* <FormControl sx={{ mr: 1 }} fullWidth>
-								<InputLabel id='demo-simple-select-label'>Currently?</InputLabel>
-								<Select
-									variant='outlined'
-									labelId='demo-simple-select-label'
-									id='demo-simple-select'
-									value={30}
-									label='Age'
-									onChange={() => ({})}
-									size='small'
-								>
-									<MenuItem value={10}>General work</MenuItem>
-									<MenuItem value={20}>Busy</MenuItem>
-									<MenuItem value={30}>Away from desk</MenuItem>
-								</Select>
-							</FormControl> */}
             </Box>
           )}
           <Box sx={{ flexGrow: 0 }}>
@@ -350,8 +334,10 @@ const NavigationWrapper: React.FC = (props) => {
           flexGrow: 1,
           px: 2,
           bgcolor: "#F9F9F9",
-          minHeight: "99vh",
-          maxHeight: "100%",
+          width: "100%",
+          height: "100%",
+          // minHeight: "99vh",
+          // maxHeight: "100%",
         }}
       >
         <DrawerHeaderSpacer id="back-to-top-anchor" />

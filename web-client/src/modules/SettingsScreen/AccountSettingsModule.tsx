@@ -110,7 +110,7 @@ const AccountSettingsModule = () => {
           </FormControl>
         </Box>
       )}
-      <Box>
+      <Box sx={{ width: "100%" }}>
         <TabPanel value={value} index={0}>
           <AccountProfile />
         </TabPanel>

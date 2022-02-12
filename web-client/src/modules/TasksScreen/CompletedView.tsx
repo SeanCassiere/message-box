@@ -129,7 +129,7 @@ const CompletedView = (props: Props) => {
             Filters
           </Typography>
         </Grid>
-        <Grid item xs={2} md={2}>
+        <Grid item xs={6} md={2}>
           <Box>
             <MobileDatePicker
               label="Completed Date"
