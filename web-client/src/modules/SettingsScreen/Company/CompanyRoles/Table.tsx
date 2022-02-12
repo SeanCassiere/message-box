@@ -2,7 +2,6 @@ import React from "react";
 import Moment from "react-moment";
 import { useSelector } from "react-redux";
 
-import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableHead from "@mui/material/TableHead";
@@ -13,22 +12,13 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import CustomTableContainer from "../../../../shared/components/CustomTableContainer";
+import CustomTableContainer from "../../../../shared/components/StyledTableContainer";
 import StyledTableCell from "../../../../shared/components/StyledTableCell/StyledTableCell";
+import StyledTableRow from "../../../../shared/components/StyledTableRow";
 
 import { IRoleProfile } from "../../../../shared/interfaces/Client.interfaces";
 import { usePermission } from "../../../../shared/hooks/usePermission";
 import { selectUserState } from "../../../../shared/redux/store";
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
 
 interface ITableProps {
   dataList: IRoleProfile[];

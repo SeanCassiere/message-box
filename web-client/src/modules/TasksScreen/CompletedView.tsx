@@ -2,8 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useSnackbar } from "notistack";
 import Moment from "react-moment";
 
-import { styled } from "@mui/material/styles";
-
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -22,8 +20,9 @@ import TextField from "@mui/material/TextField";
 import EditIcon from "@mui/icons-material/Edit";
 
 import TablePaginationActions from "../../shared/components/TablePaginationActions/TablePaginationActions";
-import CustomTableContainer from "../../shared/components/CustomTableContainer";
+import StyledTableContainer from "../../shared/components/StyledTableContainer";
 import StyledTableCell from "../../shared/components/StyledTableCell/StyledTableCell";
+import StyledTableRow from "../../shared/components/StyledTableRow";
 
 import { client } from "../../shared/api/client";
 import { ITask } from "../../shared/interfaces/Task.interfaces";
@@ -33,16 +32,6 @@ import { selectUserState } from "../../shared/redux/store";
 import { colorsMap } from "../../shared/util/colorsMap";
 import { taskColorOpacity } from "../../shared/util/constants";
 import { MESSAGES } from "../../shared/util/messages";
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
 
 /**
  * @description this component houses the view "Completed" tab of the TaskScreen
@@ -163,7 +152,7 @@ const CompletedView = (props: Props) => {
         </Grid>
         <Grid item xs={12} md={12}>
           <Box sx={{ mt: 1 }}>
-            <CustomTableContainer>
+            <StyledTableContainer>
               <Table sx={{ minWidth: 700 }} aria-label="customized table">
                 <TableHead>
                   <TableRow>
@@ -226,7 +215,7 @@ const CompletedView = (props: Props) => {
                   </TableRow>
                 </TableFooter>
               </Table>
-            </CustomTableContainer>
+            </StyledTableContainer>
           </Box>
         </Grid>
       </Grid>

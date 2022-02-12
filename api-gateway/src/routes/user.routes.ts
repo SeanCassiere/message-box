@@ -53,7 +53,6 @@ userRouter.route("/Profile/ChangePassword").post(async (req, res) => {
   try {
     const { data: response } = await client.post("/users/changePasswordForUser", {
       variables: {
-        host: process.env.FRONTEND_HOST,
         clientId: request.auth?.message_box_clientId,
         userId: request.auth?.message_box_userId,
       },
@@ -97,7 +96,6 @@ userRouter.route("/:id/ChangePassword").post(async (req, res) => {
   try {
     const { data: response } = await client.post("/users/changePasswordByUserId", {
       variables: {
-        host: process.env.FRONTEND_HOST,
         clientId: request.auth?.message_box_clientId,
         userId: id,
       },
@@ -118,7 +116,7 @@ userRouter.route("/ResetPassword/With2FA").post(async (req, res) => {
   const request = req as CustomRequest<{}>;
   try {
     const { data: response } = await client.post("/2fa/changePasswordUsing2FA", {
-      variables: { host: process.env.FRONTEND_HOST },
+      variables: null,
       body: { ...request.body },
     });
 
@@ -148,10 +146,13 @@ userRouter.route("/ResetPassword/WithToken").post(async (req, res) => {
 });
 
 userRouter.route("/ResetPassword/RequestEmail").post(async (req, res) => {
-  const request = req as CustomRequest<{}>;
+  const request = req as CustomRequest<{ host: string; path: string }>;
   try {
     const { data: response } = await client.post("/users/requestPasswordByEmail", {
-      variables: { host: process.env.FRONTEND_HOST, path: "/forgot-password/" },
+      variables: {
+        host: request.body?.host ?? "http://localhost:3000",
+        path: request.body?.path ?? "/forgot-password/",
+      },
       body: { ...request.body },
     });
 
@@ -181,10 +182,14 @@ userRouter.route("/ConfirmUser").post(async (req, res) => {
 });
 
 userRouter.route("/ConfirmUser/ResendConfirmationEmail").post(async (req, res) => {
-  const request = req as CustomRequest<{}>;
+  const request = req as CustomRequest<{ host: string; path: string }>;
+
   try {
     const { data: response } = await client.post("/users/resendConfirmationEmail", {
-      variables: { host: process.env.FRONTEND_HOST, path: "/confirm-account/" },
+      variables: {
+        host: request.body?.host ?? "http://localhost:3000",
+        path: request.body?.path ?? "/confirm-account/",
+      },
       body: { ...request.body },
     });
 

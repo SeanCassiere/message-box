@@ -1,15 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { indigo } from "@mui/material/colors";
 
 import { selectUserState } from "../../redux/store";
 import { stringAvatar } from "./navUtils";
+import { secondaryNavigationColor } from "../../util/constants";
+import { usePermission } from "../../hooks/usePermission";
 
 import ScrollTop from "../ScrollTop/ScrollTop";
 import DrawerHeaderSpacer from "./DrawerHeaderSpacer";
 import CustomAppBar from "./CustomAppBar";
 import CustomDrawer from "./CustomDrawer";
+import SuspenseLoadingWrapper from "../SuspenseLoadingWrapper";
 
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -40,13 +43,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { secondaryNavigationColor } from "../../util/constants";
+import TodayIcon from "@mui/icons-material/Today";
+import InsertChartIcon from "@mui/icons-material/InsertChart";
+import PeopleIcon from "@mui/icons-material/People";
 
 const profileRouteList = [{ route: "/logout", name: "Logout" }];
-const routesList = [
-  { route: "/chat", name: "Chat", Icon: ChatIcon, key: "/chat" },
-  { route: "/tasks/today", name: "Tasks", Icon: AssignmentIcon, key: "/tasks" },
-];
 
 const NavigationWrapper: React.FC = (props) => {
   const navigate = useNavigate();
@@ -54,9 +55,35 @@ const NavigationWrapper: React.FC = (props) => {
   const matchLargerThanPhone = useMediaQuery(theme.breakpoints.up("sm"));
 
   const { children } = props;
+  const { userProfile } = useSelector(selectUserState);
+
+  const isTasksAccessible = usePermission("task:read");
+  const routesList = useMemo(() => {
+    const listedRoutes = [];
+
+    listedRoutes.push({ route: "/chat", name: "Chat", Icon: ChatIcon, key: "/chat" });
+
+    if (isTasksAccessible) {
+      listedRoutes.push({ route: "/tasks/today", name: "Tasks", Icon: AssignmentIcon, key: "/tasks" });
+    }
+
+    if (isTasksAccessible) {
+      listedRoutes.push({ route: "/calendar", name: "Calendar", Icon: TodayIcon, key: "/calendar" });
+    }
+
+    if (isTasksAccessible) {
+      listedRoutes.push({ route: "/team-activity", name: "Team Activity", Icon: PeopleIcon, key: "/team-activity" });
+    }
+
+    if (isTasksAccessible) {
+      listedRoutes.push({ route: "/reports", name: "Reports", Icon: InsertChartIcon, key: "/reports" });
+    }
+
+    return listedRoutes;
+  }, [isTasksAccessible]);
+
   const [currentLink, setCurrentLink] = React.useState<string>("");
   const [open, setOpen] = React.useState(false);
-  const { userProfile } = useSelector(selectUserState);
 
   const [currentStatusValue, setCurrentStatusValue] = React.useState("30");
 
@@ -79,7 +106,7 @@ const NavigationWrapper: React.FC = (props) => {
     if (pagesKeyList.includes(`/${urlLocation[1].toLowerCase()}`)) {
       setCurrentLink(`/${urlLocation[1].toLowerCase()}`);
     }
-  }, []);
+  }, [routesList]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -259,7 +286,7 @@ const NavigationWrapper: React.FC = (props) => {
           <List>
             {routesList.map(({ route, name, Icon, key }) => (
               <Tooltip key={route} title={name} PopperProps={{ disablePortal: open }} placement="right">
-                <ListItem button onClick={() => handleNavigatePress(route)}>
+                <ListItem button onClick={() => handleNavigatePress(route)} sx={{ my: 1 }}>
                   <ListItemIcon>
                     <Icon color={key === currentLink ? "primary" : "inherit"} />
                   </ListItemIcon>
@@ -317,9 +344,18 @@ const NavigationWrapper: React.FC = (props) => {
         </Drawer>
       )}
 
-      <Box component="main" sx={{ flexGrow: 1, px: 2, bgcolor: "#F5F5F5", minHeight: "100vh" }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          px: 2,
+          bgcolor: "#F9F9F9",
+          minHeight: "99vh",
+          maxHeight: "100%",
+        }}
+      >
         <DrawerHeaderSpacer id="back-to-top-anchor" />
-        {children}
+        <SuspenseLoadingWrapper>{children}</SuspenseLoadingWrapper>
         <ScrollTop {...props}>
           <Fab color="secondary" size="medium" aria-label="scroll back to top">
             <KeyboardArrowUpIcon />

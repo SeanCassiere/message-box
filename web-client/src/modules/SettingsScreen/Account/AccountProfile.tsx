@@ -45,7 +45,9 @@ const AccountProfile = () => {
           <Button startIcon={<EditOutlinedIcon />}>Edit</Button>
         </Box>
       </Box>
-      <pre>{JSON.stringify(user, null, 2)}</pre>
+      <Box>
+        <p>{JSON.stringify(user, null, 2)}</p>
+      </Box>
     </Box>
   );
 };

@@ -1,19 +1,27 @@
+import { lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import AuthRoute from "./AuthRoute";
-
-import NotFoundScreen from "../modules/NotFoundScreen/NotFoundScreen";
-
-import ChatScreen from "../modules/ChatScreen/ChatScreen";
-import LoginScreen from "../modules/LoginScreen/LoginScreen";
-import LogoutScreen from "../modules/LogoutScreen/LogoutScreen";
-import RegisterScreen from "../modules/RegisterScreen/RegisterScreen";
+import AuthWrapper from "./AuthRoute";
 import NoAuthOnlyRoute from "./NoAuthOnlyRoute";
-import TasksScreen from "../modules/TasksScreen/TasksScreen";
 import NavigationWrapper from "../shared/components/NavigationWrapper/NavigationWrapper";
-import ForgotPasswordScreen from "../modules/ForgotPassword/ForgotPassword";
-import ConfirmAccountScreen from "../modules/ConfirmAccountScreen/ConfirmAccountScreen";
-import SettingsScreen from "../modules/SettingsScreen";
+
+import NotFoundScreen from "../modules/NotFoundScreen";
+import LogoutScreen from "../modules/LogoutScreen";
+import LoginScreen from "../modules/LoginScreen";
+import SuspenseLoadingWrapper from "../shared/components/SuspenseLoadingWrapper";
+
+const ChatScreen = lazy(() => import(/* webpackChunkName: 'ChatScreen' */ "../modules/ChatScreen"));
+const TasksScreen = lazy(() => import(/* webpackChunkName: 'TasksScreen' */ "../modules/TasksScreen"));
+const ReportsScreen = lazy(() => import(/* webpackChunkName: 'ReportsScreen' */ "../modules/ReportsScreen"));
+const CalendarScreen = lazy(() => import(/* webpackChunkName: 'CalendarScreen' */ "../modules/CalendarScreen"));
+const SettingsScreen = lazy(() => import(/* webpackChunkName: 'SettingsScreen' */ "../modules/SettingsScreen"));
+const RegisterScreen = lazy(() => import(/* webpackChunkName: 'RegisterScreen' */ "../modules/RegisterScreen"));
+const ForgotPasswordScreen = lazy(
+  () => import(/* webpackChunkName: 'ForgotPasswordScreen' */ "../modules/ForgotPasswordScreen")
+);
+const ConfirmAccountScreen = lazy(
+  () => import(/* webpackChunkName: 'ConfirmAccountScreen' */ "../modules/ConfirmAccountScreen")
+);
 
 const AppRoutes = () => {
   return (
@@ -21,8 +29,22 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<LoginScreen />} />
         <Route path="/login" element={<LoginScreen />} />
-        <Route path="/forgot-password/:id" element={<ForgotPasswordScreen />} />
-        <Route path="/confirm-account/:id" element={<ConfirmAccountScreen />} />
+        <Route
+          path="/forgot-password/:id"
+          element={
+            <SuspenseLoadingWrapper>
+              <ForgotPasswordScreen />
+            </SuspenseLoadingWrapper>
+          }
+        />
+        <Route
+          path="/confirm-account/:id"
+          element={
+            <SuspenseLoadingWrapper>
+              <ConfirmAccountScreen />
+            </SuspenseLoadingWrapper>
+          }
+        />
         <Route path="/logout" element={<LogoutScreen />} />
         <Route
           path="/sign-up"
@@ -35,61 +57,81 @@ const AppRoutes = () => {
         <Route
           path="/chat"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <ChatScreen />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
           }
         />
         <Route
           path="/tasks"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <Navigate to="/tasks/today" />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
           }
         />
         <Route
           path="/tasks/:tab"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <TasksScreen />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
           }
         />
         <Route
           path="/tasks/view/:id"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <TasksScreen />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
           }
         />
         <Route
           path="/settings"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <SettingsScreen />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <AuthWrapper>
+              <NavigationWrapper>
+                <CalendarScreen />
+              </NavigationWrapper>
+            </AuthWrapper>
+          }
+        />
+        <Route
+          path="/reports"
+          element={
+            <AuthWrapper>
+              <NavigationWrapper>
+                <ReportsScreen />
+              </NavigationWrapper>
+            </AuthWrapper>
           }
         />
         <Route
           path="/settings/:tab"
           element={
-            <AuthRoute>
+            <AuthWrapper>
               <NavigationWrapper>
                 <SettingsScreen />
               </NavigationWrapper>
-            </AuthRoute>
+            </AuthWrapper>
           }
         />
         <Route path="/not-found" element={<NotFoundScreen />} />

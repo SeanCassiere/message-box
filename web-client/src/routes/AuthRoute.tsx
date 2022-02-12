@@ -4,14 +4,14 @@ import { useSelector } from "react-redux";
 
 import { selectAuthState } from "../shared/redux/store";
 
-const AuthRoute: React.FC = ({ children }) => {
-	const location = useLocation();
+const AuthWrapper: React.FC = ({ children }) => {
+  const location = useLocation();
 
-	const { isLoggedIn, access_token } = useSelector(selectAuthState);
+  const { isLoggedIn, access_token } = useSelector(selectAuthState);
 
-	if (!isLoggedIn || !access_token) return <Navigate to='/login' replace state={{ from: location }} />;
+  if (!isLoggedIn || !access_token) return <Navigate to="/login" replace state={{ from: location }} />;
 
-	return <>{children}</>;
+  return <>{children}</>;
 };
 
-export default AuthRoute;
+export default AuthWrapper;

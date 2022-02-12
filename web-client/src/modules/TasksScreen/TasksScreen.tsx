@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -25,6 +24,7 @@ import { usePermission } from "../../shared/hooks/usePermission";
 import TaskModifyDialog from "./TaskModifyDialog/TaskModifyDialog";
 import TaskTodayView from "./TodayView";
 import TaskCompletedView from "./CompletedView";
+import PagePaperWrapper from "../../shared/components/PagePaperWrapper/PagePaperWrapper";
 
 export const inactiveTabBgColor = "#FCFCFC";
 const primaryOptions = ["today", "completed"];
@@ -99,15 +99,7 @@ const TasksScreen = () => {
         showDialog={isEditTaskDialogOpen}
         handleCloseFunction={handleCloseEditor}
       />
-      <Paper
-        sx={{
-          px: 4,
-          my: 2,
-          py: 4,
-          minHeight: "88vh",
-          overflow: "hidden",
-        }}
-      >
+      <PagePaperWrapper>
         <Grid container>
           <Grid item xs={12} md={7}>
             <Typography variant="h4" fontWeight={500} component="h1">
@@ -166,7 +158,7 @@ const TasksScreen = () => {
           </Grid>
         </Grid>
         <TabContext value={primaryTabValue}>
-          <Box sx={{ mt: 3 }}>
+          <Box sx={{ mt: 0 }}>
             <TabList
               onChange={handleChangePrimaryValue}
               aria-label="lab API tabs example"
@@ -197,7 +189,7 @@ const TasksScreen = () => {
             />
           </TabPanel>
         </TabContext>
-      </Paper>
+      </PagePaperWrapper>
     </>
   );
 };

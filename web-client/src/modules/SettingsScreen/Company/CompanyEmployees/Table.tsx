@@ -1,6 +1,5 @@
 import { IUserProfileWithSortedDetails } from "../../../../shared/interfaces/User.interfaces";
 
-import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableHead from "@mui/material/TableHead";
@@ -10,20 +9,11 @@ import IconButton from "@mui/material/IconButton";
 
 import EditIcon from "@mui/icons-material/Edit";
 
-import CustomTableContainer from "../../../../shared/components/CustomTableContainer";
+import CustomTableContainer from "../../../../shared/components/StyledTableContainer";
 import StyledTableCell from "../../../../shared/components/StyledTableCell/StyledTableCell";
+import StyledTableRow from "../../../../shared/components/StyledTableRow";
 
 import { usePermission } from "../../../../shared/hooks/usePermission";
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
 
 interface ITableProps {
   dataList: IUserProfileWithSortedDetails[];
@@ -42,11 +32,9 @@ const ViewTable = ({ dataList, editItemHandler }: ITableProps) => {
         <TableHead>
           <TableRow>
             <StyledTableCell>Full Name</StyledTableCell>
-            {/* <StyledTableCell>Email</StyledTableCell> */}
             <StyledTableCell>Role(s)</StyledTableCell>
             <StyledTableCell>Team(s)</StyledTableCell>
             <StyledTableCell width={50}>Status</StyledTableCell>
-            {/* <StyledTableCell>Updated At</StyledTableCell> */}
             <StyledTableCell align="right">#</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -56,7 +44,6 @@ const ViewTable = ({ dataList, editItemHandler }: ITableProps) => {
               <StyledTableCell component="th" scope="row">
                 {user.firstName} {user.lastName}
               </StyledTableCell>
-              {/* <StyledTableCell>{user.email}</StyledTableCell> */}
               <StyledTableCell>
                 {user.roleDetails.map((role) => (
                   <Chip

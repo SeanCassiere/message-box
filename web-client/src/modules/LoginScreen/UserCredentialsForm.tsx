@@ -38,8 +38,14 @@ const UserCredentialsForm = (props: IProps) => {
   };
 
   const handleResendConfirmationEmail = async () => {
+    const currentHost = window.location.protocol + "//" + window.location.host;
+    const confirmationPath = "/confirm-account/";
     try {
-      await client.post("/Users/ConfirmUser/ResendConfirmationEmail", { email: formik.values.email });
+      await client.post("/Users/ConfirmUser/ResendConfirmationEmail", {
+        email: formik.values.email,
+        host: currentHost,
+        path: confirmationPath,
+      });
       enqueueSnackbar("Success: Confirmation link sent to your email.", { variant: "success" });
     } catch (error) {
       console.log(error);

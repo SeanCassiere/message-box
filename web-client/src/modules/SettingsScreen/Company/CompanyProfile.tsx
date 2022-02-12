@@ -26,7 +26,9 @@ const CompanyProfile = () => {
           <Button startIcon={<EditOutlinedIcon />}>Edit</Button>
         </Box>
       </Box>
-      <pre>{JSON.stringify(clientProfile, null, 2)}</pre>
+      <Box>
+        <p>{JSON.stringify(clientProfile, null, 2)}</p>
+      </Box>
     </Box>
   );
 };

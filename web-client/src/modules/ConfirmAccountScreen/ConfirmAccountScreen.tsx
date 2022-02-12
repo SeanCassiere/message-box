@@ -2,8 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
+import BackdropLoader from "../../shared/components/SuspenseLoadingWrapper/BackdropLoader";
 
 import { client } from "../../shared/api/client";
 
@@ -36,11 +35,7 @@ const ConfirmAccountScreen = () => {
     })();
   }, [enqueueSnackbar, id, navigate]);
 
-  return (
-    <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true} onClick={() => ({})}>
-      <CircularProgress color="primary" size={50} thickness={4} />
-    </Backdrop>
-  );
+  return <BackdropLoader />;
 };
 
 export default ConfirmAccountScreen;

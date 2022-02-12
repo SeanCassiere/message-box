@@ -26,12 +26,17 @@ clientRouter
     }
   })
   .post(async (req, res) => {
-    const request = req as CustomRequest<{}>;
+    const request = req as CustomRequest<{ host: string; path: string }>;
 
     try {
+      const { host, path, ...requestBody } = request.body;
+
       const { data: response } = await client.post("/clients/createClientAndUser", {
-        variables: { host: process.env.FRONTEND_HOST, path: "/confirm-account/" },
-        body: { ...request.body },
+        variables: {
+          host: host ?? "http://localhost:3000",
+          path: path ?? "/confirm-account/",
+        },
+        body: { ...requestBody },
       });
 
       if (response.statusCode === 200) {
@@ -60,14 +65,14 @@ clientRouter
     }
   })
   .post(async (req, res) => {
-    const request = req as CustomRequest<{}>;
+    const request = req as CustomRequest<{ host: string; path: string }>;
 
     try {
       const { data: response } = await client.post(`/users/createUserForClient`, {
         variables: {
           clientId: request.auth?.message_box_clientId,
-          host: process.env.FRONTEND_HOST,
-          path: "/confirm-account/",
+          host: request.body?.host ?? "http://localhost:3000",
+          path: request.body?.path ?? "/confirm-account/",
         },
         body: { ...req.body },
       });

@@ -35,6 +35,8 @@ const RegisterScreen = () => {
     validationSchema,
     onSubmit: (values, { setSubmitting, setErrors }) => {
       const { clientName, passwordConfirmation, ...rest } = values;
+      const currentHost = window.location.protocol + "//" + window.location.host;
+      const confirmationPath = "/confirm-account/";
       const payload = {
         client: {
           clientName,
@@ -42,6 +44,8 @@ const RegisterScreen = () => {
         user: {
           ...rest,
         },
+        host: currentHost,
+        path: confirmationPath,
       };
 
       client

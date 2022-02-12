@@ -13,11 +13,13 @@ import Checkbox from "@mui/material/Checkbox";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
+import TaskCard from "../TaskCard/TaskCard";
+
 import { grey } from "@mui/material/colors";
 import { ITask } from "../../interfaces/Task.interfaces";
-import TaskCard from "../TaskCard/TaskCard";
 import { sortTasksByDateForColumn } from "../../util/general";
 import { MESSAGES } from "../../util/messages";
+import { COMMON_ITEM_BORDER_STYLING } from "../../util/constants";
 
 interface Props {
   title: string;
@@ -89,17 +91,18 @@ const TaskGroupColumn = (props: Props) => {
       <Paper
         elevation={0}
         sx={{
-          minHeight: "60vh",
-          maxHeight: "60vh",
+          minHeight: "68vh",
+          maxHeight: "68vh",
           overflowY: "scroll",
           marginTop: "1em",
-          bgcolor: grey[100],
-          border: `1px solid ${grey[300]}`,
+          // bgcolor: grey[100],
+          // border: `1px solid ${grey[300]}`,
+          border: COMMON_ITEM_BORDER_STYLING,
           padding: `${showCompletedItemsCheckbox ? "0em" : "1.5em"} 1em 1em 1em`,
-          borderRadius: "1px",
+          borderRadius: 1,
           boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
           "&::-webkit-scrollbar": {
-            backgroundColor: grey[100],
+            // backgroundColor: grey[100],
             width: "12px",
           },
           "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
@@ -112,7 +115,16 @@ const TaskGroupColumn = (props: Props) => {
         }}
       >
         {showCompletedItemsCheckbox && (
-          <Box sx={{ mb: 1, pt: 1, position: "sticky", top: 0, bgcolor: grey[100], zIndex: 2 }}>
+          <Box
+            sx={{
+              mb: 1,
+              pt: 1,
+              position: "sticky",
+              top: 0,
+              // bgcolor: grey[100],
+              zIndex: 2,
+            }}
+          >
             <FormGroup>
               <FormControlLabel
                 control={<Checkbox size="small" checked={showCompleted} onChange={() => setShowCompleted((i) => !i)} />}

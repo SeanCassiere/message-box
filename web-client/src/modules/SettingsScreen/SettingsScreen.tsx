@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import Paper from "@mui/material/Paper";
 import Tab, { TabProps } from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -11,8 +10,9 @@ import TabPanel, { TabPanelProps } from "@mui/lab/TabPanel";
 
 import CompanySettingsModule from "./CompanySettingsModule";
 import AccountSettingsModule from "./AccountSettingsModule";
+import PagePaperWrapper from "../../shared/components/PagePaperWrapper/PagePaperWrapper";
 
-export const inactiveTabBgColor = "#FCFCFC";
+export const inactiveTabBgColor = "#F9F9F9";
 const primaryOptions = ["account", "company"];
 
 export const SettingsScreen = () => {
@@ -33,13 +33,13 @@ export const SettingsScreen = () => {
     navigate(`/settings/${newValue}`);
   };
   return (
-    <Paper sx={{ px: 4, my: 2, py: 4, minHeight: "90vh" }}>
+    <PagePaperWrapper>
       <Typography variant="h4" fontWeight={500} component="h1">
         Configuration
       </Typography>
-      <Box sx={{ bgcolor: "background.paper", mt: 6 }}>
+      <Box sx={{ mt: 2 }}>
         <TabContext value={primaryTabValue}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "transparent" }}>
             <TabList
               onChange={handleChangePrimaryValue}
               aria-label="lab API tabs example"
@@ -63,7 +63,7 @@ export const SettingsScreen = () => {
           </TabPanel>
         </TabContext>
       </Box>
-    </Paper>
+    </PagePaperWrapper>
   );
 };
 
@@ -77,4 +77,5 @@ const formCommonTabStyle = (value: string, identifier: string): TabProps["sx"] =
 const commonTabPanelStyle: TabPanelProps["sx"] = {
   p: 0,
   pt: 1.5,
+  maxHeight: "100%",
 };

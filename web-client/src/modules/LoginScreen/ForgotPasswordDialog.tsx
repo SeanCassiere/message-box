@@ -93,8 +93,10 @@ const ForgotPasswordDialog = (props: Props) => {
     validationSchema: validationEmailReset,
     onSubmit: (values, { setSubmitting, setErrors, resetForm }) => {
       const formData = { email: values.emailReset };
+      const currentHost = window.location.protocol + "//" + window.location.host;
+      const confirmationPath = "/forgot-password/";
       client
-        .post("/Users/ResetPassword/RequestEmail", formData)
+        .post("/Users/ResetPassword/RequestEmail", { ...formData, host: currentHost, path: confirmationPath })
         .then((res) => {
           if (res.status === 400) {
             setErrors(formatErrorsToFormik(res.data.errors));
