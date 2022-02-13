@@ -19,10 +19,10 @@ import TextField from "@mui/material/TextField";
 
 import EditIcon from "@mui/icons-material/Edit";
 
-import TablePaginationActions from "../../shared/components/TablePaginationActions/TablePaginationActions";
-import StyledTableContainer from "../../shared/components/StyledTableContainer";
-import StyledTableCell from "../../shared/components/StyledTableCell/StyledTableCell";
-import StyledTableRow from "../../shared/components/StyledTableRow";
+import TablePaginationActions from "../../shared/components/Table/TablePaginationActions";
+import StyledTableContainer from "../../shared/components/Table/StyledTableContainer";
+import StyledTableCell from "../../shared/components/Table/StyledTableCell";
+import StyledTableRow from "../../shared/components/Table/StyledTableRow";
 
 import { client } from "../../shared/api/client";
 import { ITask } from "../../shared/interfaces/Task.interfaces";
@@ -32,6 +32,7 @@ import { selectUserState } from "../../shared/redux/store";
 import { colorsMap } from "../../shared/util/colorsMap";
 import { taskColorOpacity } from "../../shared/util/constants";
 import { MESSAGES } from "../../shared/util/messages";
+import PageBlockItem from "../../shared/components/Layout/PageBlockItem";
 
 /**
  * @description this component houses the view "Completed" tab of the TaskScreen
@@ -130,112 +131,120 @@ const CompletedView = (props: Props) => {
   return (
     <>
       <Grid container sx={{ mt: 2, mb: 3 }} spacing={2}>
-        <Grid item xs={12}>
-          <Typography sx={{ mb: 1 }} variant="h5" component="h3">
-            Filters
-          </Typography>
-        </Grid>
-        <Grid item xs={6} md={2}>
-          <Box>
-            <MobileDatePicker
-              label="Completed Date"
-              value={new Date(clientDateValue)}
-              inputFormat={formats.shortDateFormat}
-              onChange={(newValue) => {
-                if (newValue) {
-                  setClientDateValue(new Date(newValue).toISOString().substring(0, 10));
-                }
-              }}
-              onAccept={(newValue) => {
-                if (newValue) {
-                  setSearchDate(new Date(newValue).toISOString().substring(0, 10));
-                }
-              }}
-              showTodayButton
-              renderInput={(params) => <TextField {...params} variant="standard" fullWidth />}
-            />
-          </Box>
+        <Grid item xs={12} md={12}>
+          <PageBlockItem>
+            <Grid container>
+              <Grid item xs={12}>
+                <Typography sx={{ mb: 1 }} variant="h5" component="h3">
+                  Filters
+                </Typography>
+              </Grid>
+              <Grid item xs={6} md={2}>
+                <Box>
+                  <MobileDatePicker
+                    label="Completed Date"
+                    value={new Date(clientDateValue)}
+                    inputFormat={formats.shortDateFormat}
+                    onChange={(newValue) => {
+                      if (newValue) {
+                        setClientDateValue(new Date(newValue).toISOString().substring(0, 10));
+                      }
+                    }}
+                    onAccept={(newValue) => {
+                      if (newValue) {
+                        setSearchDate(new Date(newValue).toISOString().substring(0, 10));
+                      }
+                    }}
+                    showTodayButton
+                    renderInput={(params) => <TextField {...params} variant="standard" fullWidth />}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+          </PageBlockItem>
         </Grid>
         <Grid item xs={12} md={12}>
           <Box sx={{ mt: 1 }}>
-            <StyledTableContainer>
-              <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell width={200}>Completed date</StyledTableCell>
-                    <StyledTableCell>Title</StyledTableCell>
-                    <StyledTableCell width={200}>Due date</StyledTableCell>
-                    <StyledTableCell width={50}>Color</StyledTableCell>
-                    <StyledTableCell>Content</StyledTableCell>
-                    <StyledTableCell align="right">#</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {viewingTasks.map((task) => (
-                    <StyledTableRow key={`completed-view-${task.taskId}`}>
-                      <StyledTableCell component="th" scope="row">
-                        <Moment format={formats.shortDateTimeFormat}>
-                          {task.completedDate ? task.completedDate : new Date().toISOString()}
-                        </Moment>
-                      </StyledTableCell>
-                      <StyledTableCell>{task.title}</StyledTableCell>
-                      <StyledTableCell component="th" scope="row">
-                        <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment>
-                      </StyledTableCell>
-                      <StyledTableCell>{renderColorBox(task.bgColor)}</StyledTableCell>
-                      <StyledTableCell>
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: truncateTextByLength(markdownToForHtmlInsert(task.content), {
-                              maxLength: 50,
-                              includesDots: true,
-                            }),
-                          }}
-                        ></span>
-                      </StyledTableCell>
-                      <StyledTableCell align="right">
-                        <IconButton color="primary" aria-label="edit" onClick={() => onEditTask(task.taskId)}>
-                          <EditIcon />
-                        </IconButton>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ))}
-                  {!isLoading && viewingTasks.length === 0 && (
-                    <StyledTableRow>
-                      <StyledTableCell colSpan={6}>
-                        <Typography textAlign="center">No records to show</Typography>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  )}
-                  {isLoading && (
-                    <StyledTableRow>
-                      <StyledTableCell colSpan={6}>
-                        <Typography textAlign="center">Searching</Typography>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  )}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      rowsPerPageOptions={[10]}
-                      colSpan={6}
-                      count={allTasks.length}
-                      rowsPerPage={10}
-                      page={currentPage}
-                      SelectProps={{
-                        inputProps: {
-                          "aria-label": "rows per page",
-                        },
-                        native: true,
-                      }}
-                      onPageChange={handlePageChange}
-                      ActionsComponent={TablePaginationActions}
-                    />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </StyledTableContainer>
+            <PageBlockItem>
+              <StyledTableContainer>
+                <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell width={200}>Completed date</StyledTableCell>
+                      <StyledTableCell>Title</StyledTableCell>
+                      <StyledTableCell width={200}>Due date</StyledTableCell>
+                      <StyledTableCell width={50}>Color</StyledTableCell>
+                      <StyledTableCell>Content</StyledTableCell>
+                      <StyledTableCell align="right">#</StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {viewingTasks.map((task) => (
+                      <StyledTableRow key={`completed-view-${task.taskId}`}>
+                        <StyledTableCell component="th" scope="row">
+                          <Moment format={formats.shortDateTimeFormat}>
+                            {task.completedDate ? task.completedDate : new Date().toISOString()}
+                          </Moment>
+                        </StyledTableCell>
+                        <StyledTableCell>{task.title}</StyledTableCell>
+                        <StyledTableCell component="th" scope="row">
+                          <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment>
+                        </StyledTableCell>
+                        <StyledTableCell>{renderColorBox(task.bgColor)}</StyledTableCell>
+                        <StyledTableCell>
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: truncateTextByLength(markdownToForHtmlInsert(task.content), {
+                                maxLength: 50,
+                                includesDots: true,
+                              }),
+                            }}
+                          ></span>
+                        </StyledTableCell>
+                        <StyledTableCell align="right">
+                          <IconButton color="primary" aria-label="edit" onClick={() => onEditTask(task.taskId)}>
+                            <EditIcon />
+                          </IconButton>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                    {!isLoading && viewingTasks.length === 0 && (
+                      <StyledTableRow>
+                        <StyledTableCell colSpan={6}>
+                          <Typography textAlign="center">No records to show</Typography>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    )}
+                    {isLoading && (
+                      <StyledTableRow>
+                        <StyledTableCell colSpan={6}>
+                          <Typography textAlign="center">Searching</Typography>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    )}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TablePagination
+                        rowsPerPageOptions={[10]}
+                        colSpan={6}
+                        count={allTasks.length}
+                        rowsPerPage={10}
+                        page={currentPage}
+                        SelectProps={{
+                          inputProps: {
+                            "aria-label": "rows per page",
+                          },
+                          native: true,
+                        }}
+                        onPageChange={handlePageChange}
+                        ActionsComponent={TablePaginationActions}
+                      />
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </StyledTableContainer>
+            </PageBlockItem>
           </Box>
         </Grid>
       </Grid>

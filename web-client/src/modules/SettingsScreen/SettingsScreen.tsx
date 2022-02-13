@@ -10,7 +10,7 @@ import TabPanel, { TabPanelProps } from "@mui/lab/TabPanel";
 
 import CompanySettingsModule from "./CompanySettingsModule";
 import AccountSettingsModule from "./AccountSettingsModule";
-import PagePaperWrapper from "../../shared/components/PagePaperWrapper/PagePaperWrapper";
+import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 
 export const inactiveTabBgColor = "#F9F9F9";
 const primaryOptions = ["account", "company"];

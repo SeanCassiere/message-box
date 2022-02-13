@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import { COMMON_ITEM_BORDER_COLOR } from "../../util/constants";
+import { COMMON_ITEM_BORDER_COLOR } from "../../../util/constants";
 
 const PageBlockItem: React.FC<{ title?: string }> = ({ children, title }) => {
   return (

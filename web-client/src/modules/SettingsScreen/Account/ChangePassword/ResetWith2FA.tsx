@@ -7,8 +7,8 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
 import LoadingButton from "@mui/lab/LoadingButton";
-import TextField from "@mui/material/TextField";
 
+import TextField from "../../../../shared/components/Form/TextField";
 import { useSelector } from "react-redux";
 import { selectUserState } from "../../../../shared/redux/store";
 import { client } from "../../../../shared/api/client";
@@ -68,49 +68,37 @@ const ResetWith2FA = () => {
       <Grid container spacing={2} component="form" onSubmit={formik.handleSubmit}>
         <Grid item xs={12} md={12}>
           <TextField
-            // margin="normal"
             label="Two factor code"
             id="2fa-reset-code"
             name="code"
-            autoComplete="off"
-            InputLabelProps={{ disableAnimation: false }}
             value={formik.values.code}
             onChange={formik.handleChange}
             error={formik.touched.code && Boolean(formik.errors.code)}
             helperText={formik.touched.code && formik.errors.code}
-            fullWidth
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
-            // margin="normal"
             label="New password"
             id="2fa-reset-password"
             type="password"
             name="password"
-            autoComplete="off"
-            InputLabelProps={{ disableAnimation: false }}
             value={formik.values.password}
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
-            fullWidth
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
-            // margin="normal"
             label="Confirm new password"
             id="2fa-reset-passwordConfirmation"
             type="password"
             name="passwordConfirmation"
-            autoComplete="off"
-            InputLabelProps={{ disableAnimation: false }}
             value={formik.values.passwordConfirmation}
             onChange={formik.handleChange}
             error={formik.touched.passwordConfirmation && Boolean(formik.errors.passwordConfirmation)}
             helperText={formik.touched.passwordConfirmation && formik.errors.passwordConfirmation}
-            fullWidth
           />
         </Grid>
         <Grid item xs={12} md={12}>

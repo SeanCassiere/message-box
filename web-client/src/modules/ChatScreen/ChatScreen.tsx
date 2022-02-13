@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 
-import PagePaperWrapper from "../../shared/components/PagePaperWrapper/PagePaperWrapper";
+import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 
 import ChatContentPane from "./ChatContentPane";
 import SelectChat from "./SelectChat";

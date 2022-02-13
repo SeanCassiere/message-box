@@ -3,7 +3,7 @@ import React from "react";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 
-import { COMMON_ITEM_BORDER_STYLING } from "../../util/constants";
+import { COMMON_ITEM_BORDER_STYLING } from "../../../util/constants";
 
 const CustomTableContainer: React.FC = ({ children }) => {
   return (

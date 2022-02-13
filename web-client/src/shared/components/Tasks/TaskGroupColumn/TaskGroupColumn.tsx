@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useSnackbar } from "notistack";
 
-import { client } from "../../../shared/api/client";
+import { client } from "../../../api/client";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -13,13 +13,13 @@ import Checkbox from "@mui/material/Checkbox";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
-import TaskCard from "../TaskCard/TaskCard";
+import TaskCard from "../TaskCard";
 
 import { grey } from "@mui/material/colors";
-import { ITask } from "../../interfaces/Task.interfaces";
-import { sortTasksByDateForColumn } from "../../util/general";
-import { MESSAGES } from "../../util/messages";
-import { COMMON_ITEM_BORDER_STYLING } from "../../util/constants";
+import { ITask } from "../../../interfaces/Task.interfaces";
+import { sortTasksByDateForColumn } from "../../../util/general";
+import { MESSAGES } from "../../../util/messages";
+import { COMMON_ITEM_BORDER_STYLING } from "../../../util/constants";
 
 interface Props {
   title: string;

@@ -7,8 +7,8 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
 import LoadingButton from "@mui/lab/LoadingButton";
-import TextField from "@mui/material/TextField";
 
+import TextField from "../../../../shared/components/Form/TextField";
 import { client } from "../../../../shared/api/client";
 import { MESSAGES } from "../../../../shared/util/messages";
 import { formatErrorsToFormik } from "../../../../shared/util/errorsToFormik";
@@ -63,50 +63,38 @@ const ResetWithOldPassword = () => {
       <Grid container spacing={2} component="form" onSubmit={formik.handleSubmit}>
         <Grid item xs={12} md={12}>
           <TextField
-            // margin="normal"
             label="Old password"
             id="oldPassword-reset-password"
             type="password"
             name="password"
-            autoComplete="off"
-            InputLabelProps={{ disableAnimation: false }}
             value={formik.values.password}
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
-            fullWidth
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
-            // margin="normal"
             label="New password"
             id="oldPassword-reset-newPassword"
             type="password"
             name="newPassword"
-            autoComplete="off"
-            InputLabelProps={{ disableAnimation: false }}
             value={formik.values.newPassword}
             onChange={formik.handleChange}
             error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
             helperText={formik.touched.newPassword && formik.errors.newPassword}
-            fullWidth
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
-            // margin="normal"
             label="Confirm new password"
             id="oldPassword-reset-newPasswordConfirmation"
             type="password"
             name="newPasswordConfirmation"
-            autoComplete="off"
-            InputLabelProps={{ disableAnimation: false }}
             value={formik.values.newPasswordConfirmation}
             onChange={formik.handleChange}
             error={formik.touched.newPasswordConfirmation && Boolean(formik.errors.newPasswordConfirmation)}
             helperText={formik.touched.newPasswordConfirmation && formik.errors.newPasswordConfirmation}
-            fullWidth
           />
         </Grid>
         <Grid item xs={12} md={12}>

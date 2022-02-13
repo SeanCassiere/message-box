@@ -2,9 +2,9 @@ import React from "react";
 
 import Typography from "@mui/material/Typography";
 
-import PagePaperWrapper from "../../shared/components/PagePaperWrapper/PagePaperWrapper";
+import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import SearchForReports from "./SearchForReports";
-import PageBlockItem from "../../shared/components/PageBlockItem";
+import PageBlockItem from "../../shared/components/Layout/PageBlockItem";
 
 const ReportsScreen = () => {
   return (

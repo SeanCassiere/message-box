@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import Moment from "react-moment";
+import { useSelector } from "react-redux";
 
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -13,12 +14,11 @@ import Checkbox from "@mui/material/Checkbox";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
-import { ITask } from "../../interfaces/Task.interfaces";
-import { markdownToForHtmlInsert, truncateTextByLength } from "../../util/general";
-import { client } from "../../api/client";
-import { useSelector } from "react-redux";
-import { selectUserState } from "../../redux/store";
-import { colorsMap } from "../../util/colorsMap";
+import { ITask } from "../../../interfaces/Task.interfaces";
+import { markdownToForHtmlInsert, truncateTextByLength } from "../../../util/general";
+import { client } from "../../../api/client";
+import { selectUserState } from "../../../redux/store";
+import { colorsMap } from "../../../util/colorsMap";
 
 interface Props {
   task: ITask;

@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import AuthWrapper from "./AuthRoute";
 import NoAuthOnlyRoute from "./NoAuthOnlyRoute";
-import NavigationWrapper from "../shared/components/NavigationWrapper/NavigationWrapper";
+import NavigationWrapper from "../shared/components/Layout/NavigationWrapper";
 
 import NotFoundScreen from "../modules/NotFoundScreen";
 import LogoutScreen from "../modules/LogoutScreen";

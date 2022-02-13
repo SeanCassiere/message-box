@@ -3,16 +3,16 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { indigo } from "@mui/material/colors";
 
-import { selectUserState } from "../../redux/store";
+import { selectUserState } from "../../../redux/store";
 import { stringAvatar } from "./navUtils";
-import { secondaryNavigationColor } from "../../util/constants";
-import { usePermission } from "../../hooks/usePermission";
+import { secondaryNavigationColor } from "../../../util/constants";
+import { usePermission } from "../../../hooks/usePermission";
 
-import ScrollTop from "../ScrollTop/ScrollTop";
+import ScrollTop from "./ScrollTop/ScrollTop";
 import DrawerHeaderSpacer from "./DrawerHeaderSpacer";
 import CustomAppBar from "./CustomAppBar";
 import CustomDrawer from "./CustomDrawer";
-import SuspenseLoadingWrapper from "../SuspenseLoadingWrapper";
+import SuspenseLoadingWrapper from "../../SuspenseLoadingWrapper";
 
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";

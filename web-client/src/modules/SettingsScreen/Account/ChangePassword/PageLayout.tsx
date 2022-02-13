@@ -10,7 +10,7 @@ import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 
 import ResetWith2FA from "./ResetWith2FA";
 import ResetWithOldPassword from "./ResetWithOldPassword";
-import PageBlockItem from "../../../../shared/components/PageBlockItem";
+import PageBlockItem from "../../../../shared/components/Layout/PageBlockItem";
 
 import { selectUserState } from "../../../../shared/redux/store";
 import { client } from "../../../../shared/api/client";
