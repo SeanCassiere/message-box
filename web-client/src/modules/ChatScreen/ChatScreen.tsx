@@ -36,7 +36,7 @@ const ChatScreen = () => {
               },
               maxHeight: {
                 sm: "200px",
-                md: "88vh",
+                // md: "88vh",
               },
             }}
           >

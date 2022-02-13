@@ -12,7 +12,7 @@ export const client = axios.create({
   },
   withCredentials: true,
   validateStatus: (status) => {
-    const acceptableStatusCodes = [200, 201, 204, 400];
+    const acceptableStatusCodes = [200, 201, 204, 400, 403];
     if (acceptableStatusCodes.includes(status)) {
       return true;
     }

@@ -14,7 +14,10 @@ import { MESSAGES } from "../../shared/util/messages";
 const validationSchema = yup.object().shape({
   token: yup.string().required("Token is required"),
   password: yup.string().required("Password is required"),
-  passwordConfirmation: yup.string().oneOf([yup.ref("password"), null], "Passwords must match"),
+  passwordConfirmation: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Confirm your new password"),
 });
 
 const ForgotPasswordScreen = () => {

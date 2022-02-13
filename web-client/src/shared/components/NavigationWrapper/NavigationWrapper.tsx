@@ -334,8 +334,8 @@ const NavigationWrapper: React.FC = (props) => {
           flexGrow: 1,
           px: 2,
           bgcolor: "#F9F9F9",
-          width: "100%",
-          height: "100%",
+          width: "100%", //both are needed for responsive on mobile, don't really know why sometimes
+          height: "100vh", //both are needed for responsive on mobile, don't really know why sometimes
           // minHeight: "99vh",
           // maxHeight: "100%",
         }}

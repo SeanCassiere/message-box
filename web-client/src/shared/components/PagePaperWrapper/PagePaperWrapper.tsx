@@ -17,7 +17,7 @@ const PagePaperWrapper: React.FC<Props> = (props) => {
         },
         my: 2,
         py: {
-          xs: 1,
+          xs: 2,
           // md: 4,
         },
         minHeight: "88vh",
