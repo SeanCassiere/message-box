@@ -50,7 +50,7 @@ export async function createUserForClient(req: Request, res: Response, next: Nex
         data: null,
         errors: [
           {
-            field: "email",
+            propertyPath: "email",
             message: "Email is already in use.",
           },
         ],
@@ -60,7 +60,7 @@ export async function createUserForClient(req: Request, res: Response, next: Nex
     return res.json({
       statusCode: 500,
       data: null,
-      errors: [{ field: "service", message: "Something went wrong" }],
+      errors: [{ propertyPath: "service", message: "Something went wrong" }],
     });
   }
 
@@ -108,7 +108,7 @@ export async function createUserForClient(req: Request, res: Response, next: Nex
     return res.json({
       statusCode: 500,
       data: null,
-      errors: [{ field: "service", message: "Something went wrong" }],
+      errors: [{ propertyPath: "service", message: "Something went wrong" }],
     });
   }
 }

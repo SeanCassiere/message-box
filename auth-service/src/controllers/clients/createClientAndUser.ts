@@ -58,8 +58,8 @@ export async function createClientAndUser(req: Request, res: Response, next: Nex
       data: null,
       errors: [
         {
-          field: "email",
-          message: "Username is already in use.",
+          propertyPath: "email",
+          message: "Email is already in use.",
         },
       ],
     });
@@ -149,7 +149,7 @@ export async function createClientAndUser(req: Request, res: Response, next: Nex
     return res.json({
       statusCode: 500,
       data: null,
-      errors: [{ field: "service", message: "Something went wrong with creating a new client and user" }],
+      errors: [{ propertyPath: "service", message: "Something went wrong with creating a new client and user" }],
     });
   }
 }

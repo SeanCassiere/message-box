@@ -40,11 +40,11 @@ export async function changePasswordByUserId(req: Request, res: Response, next: 
         data: null,
         errors: [
           {
-            field: "userId",
+            propertyPath: "userId",
             message: "User not found.",
           },
           {
-            field: "password",
+            propertyPath: "password",
             message: "User not found.",
           },
         ],
@@ -66,7 +66,7 @@ export async function changePasswordByUserId(req: Request, res: Response, next: 
     return res.json({
       statusCode: 500,
       data: null,
-      errors: [{ field: "service", message: "Something went wrong" }],
+      errors: [{ propertyPath: "service", message: "Something went wrong" }],
     });
   }
 }

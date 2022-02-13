@@ -41,15 +41,15 @@ export async function changePasswordForUser(req: Request, res: Response, next: N
         data: null,
         errors: [
           {
-            field: "userId",
+            propertyPath: "userId",
             message: "User not found.",
           },
           {
-            field: "password",
+            propertyPath: "password",
             message: "User not found.",
           },
           {
-            field: "newPassword",
+            propertyPath: "newPassword",
             message: "User not found.",
           },
         ],
@@ -63,7 +63,7 @@ export async function changePasswordForUser(req: Request, res: Response, next: N
         data: null,
         errors: [
           {
-            field: "password",
+            propertyPath: "password",
             message: "Incorrect password.",
           },
         ],
@@ -85,7 +85,7 @@ export async function changePasswordForUser(req: Request, res: Response, next: N
     return res.json({
       statusCode: 500,
       data: null,
-      errors: [{ field: "service", message: "Something went wrong with changePasswordForUser" }],
+      errors: [{ propertyPath: "service", message: "Something went wrong with changePasswordForUser" }],
     });
   }
 }
