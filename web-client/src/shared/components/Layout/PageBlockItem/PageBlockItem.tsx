@@ -1,9 +1,16 @@
+import React from "react";
+
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import React from "react";
+import Chip from "@mui/material/Chip";
+
 import { COMMON_ITEM_BORDER_COLOR } from "../../../util/constants";
 
-const PageBlockItem: React.FC<{ title?: string }> = ({ children, title }) => {
+const PageBlockItem: React.FC<{ title?: string | React.ReactNode; badgeText?: string }> = ({
+  children,
+  title,
+  badgeText,
+}) => {
   return (
     <Box
       sx={{
@@ -19,9 +26,12 @@ const PageBlockItem: React.FC<{ title?: string }> = ({ children, title }) => {
       }}
     >
       {title && (
-        <Typography fontSize={16} fontWeight={400} sx={{ textTransform: "uppercase" }}>
-          {title}
-        </Typography>
+        <>
+          <Typography fontSize={17} fontWeight={400} sx={{ textTransform: "uppercase" }}>
+            {title}
+            {badgeText && <Chip label={badgeText} variant="filled" color="error" sx={{ ml: 1 }} />}
+          </Typography>
+        </>
       )}
       {children}
     </Box>

@@ -65,7 +65,7 @@ const PageLayout = () => {
       </Box>
       <Grid container spacing={1}>
         <Grid item xs={12} md={6}>
-          <PageBlockItem title="Using your Two-Factor code">
+          <PageBlockItem title="Using your Two-Factor code" badgeText="Recommended">
             <ResetWith2FA />
           </PageBlockItem>
         </Grid>
