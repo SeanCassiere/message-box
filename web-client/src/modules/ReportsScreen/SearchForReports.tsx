@@ -38,9 +38,9 @@ const SearchForReports = (props: Props) => {
   );
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} sx={{ pt: 2 }}>
       <Grid item xs={12} md={12}>
-        <Box sx={{ mt: { sm: 0, md: 3 }, pt: { sm: 3, md: 0 } }}>
+        <Box>
           <Autocomplete
             disablePortal
             id="combo-box-demo"

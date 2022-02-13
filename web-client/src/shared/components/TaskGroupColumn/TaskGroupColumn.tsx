@@ -91,8 +91,7 @@ const TaskGroupColumn = (props: Props) => {
       <Paper
         elevation={0}
         sx={{
-          minHeight: "68vh",
-          maxHeight: "68vh",
+          height: "66.5vh",
           overflowY: "scroll",
           marginTop: "1em",
           // bgcolor: grey[100],

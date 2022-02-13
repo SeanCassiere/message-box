@@ -10,8 +10,8 @@ import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 
 import ResetWith2FA from "./ResetWith2FA";
 import ResetWithOldPassword from "./ResetWithOldPassword";
+import PageBlockItem from "../../../../shared/components/PageBlockItem";
 
-import { COMMON_ITEM_BORDER_COLOR } from "../../../../shared/util/constants";
 import { selectUserState } from "../../../../shared/redux/store";
 import { client } from "../../../../shared/api/client";
 import { MESSAGES } from "../../../../shared/util/messages";
@@ -65,37 +65,16 @@ const PageLayout = () => {
       </Box>
       <Grid container spacing={1}>
         <Grid item xs={12} md={6}>
-          <BlockItem title="Using your 2FA code">
+          <PageBlockItem title="Using your Two-Factor code">
             <ResetWith2FA />
-          </BlockItem>
+          </PageBlockItem>
         </Grid>
         <Grid item xs={12} md={6}>
-          <BlockItem title="Using your old password">
+          <PageBlockItem title="Using your old password">
             <ResetWithOldPassword />
-          </BlockItem>
+          </PageBlockItem>
         </Grid>
       </Grid>
-    </Box>
-  );
-};
-
-const BlockItem: React.FC<{ title: string }> = ({ children, title }) => {
-  return (
-    <Box
-      sx={{
-        bgcolor: "#fff",
-        py: 2,
-        px: 2,
-        borderRadius: 2,
-        borderColor: COMMON_ITEM_BORDER_COLOR,
-        borderWidth: 3,
-        borderStyle: "solid",
-      }}
-    >
-      <Typography fontSize={16} fontWeight={400} sx={{ textTransform: "uppercase" }}>
-        {title}
-      </Typography>
-      {children}
     </Box>
   );
 };

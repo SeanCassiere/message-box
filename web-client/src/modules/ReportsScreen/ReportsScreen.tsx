@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 
 import PagePaperWrapper from "../../shared/components/PagePaperWrapper/PagePaperWrapper";
 import SearchForReports from "./SearchForReports";
+import PageBlockItem from "../../shared/components/PageBlockItem";
 
 const ReportsScreen = () => {
   return (
@@ -11,7 +12,9 @@ const ReportsScreen = () => {
       <Typography variant="h4" fontWeight={500} component="h1">
         Reports
       </Typography>
-      <SearchForReports availableReports={REPORTS} />
+      <PageBlockItem title="Select report">
+        <SearchForReports availableReports={REPORTS} />
+      </PageBlockItem>
     </PagePaperWrapper>
   );
 };
