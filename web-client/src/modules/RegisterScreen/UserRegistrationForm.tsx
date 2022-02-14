@@ -4,7 +4,6 @@ import { Link as RouterLink } from "react-router-dom";
 
 import Avatar from "@mui/material/Avatar";
 import LoadingButton from "@mui/lab/LoadingButton";
-import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -17,6 +16,8 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
+import TextField from "../../shared/components/Form/TextField";
 
 interface IProps {
   formik: FormikContextType<{
@@ -70,7 +71,6 @@ const UserRegistrationForm = (props: IProps) => {
             <Grid item xs={12}>
               <TextField
                 required
-                fullWidth
                 id="clientName"
                 label="Company Name"
                 name="clientName"
@@ -91,7 +91,6 @@ const UserRegistrationForm = (props: IProps) => {
               <TextField
                 autoComplete="given-name"
                 required
-                fullWidth
                 name="firstName"
                 id="firstName"
                 label="First Name"
@@ -104,7 +103,6 @@ const UserRegistrationForm = (props: IProps) => {
             <Grid item xs={12} sm={6}>
               <TextField
                 required
-                fullWidth
                 label="Last Name"
                 id="lastName"
                 name="lastName"
@@ -118,7 +116,6 @@ const UserRegistrationForm = (props: IProps) => {
             <Grid item xs={12}>
               <TextField
                 required
-                fullWidth
                 label="Email Address"
                 id="email"
                 name="email"
@@ -132,7 +129,6 @@ const UserRegistrationForm = (props: IProps) => {
             <Grid item xs={12}>
               <TextField
                 required
-                fullWidth
                 name="password"
                 label="Password"
                 type={showPassword ? "text" : "password"}
@@ -160,7 +156,6 @@ const UserRegistrationForm = (props: IProps) => {
             <Grid item xs={12}>
               <TextField
                 required
-                fullWidth
                 name="passwordConfirmation"
                 label="Confirm Password"
                 type={showPassword ? "text" : "password"}
@@ -189,7 +184,6 @@ const UserRegistrationForm = (props: IProps) => {
           <LoadingButton
             type="submit"
             loading={formik.isSubmitting}
-            fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2, py: 1.2, fontSize: 15 }}
           >

@@ -5,7 +5,6 @@ import { useSnackbar } from "notistack";
 
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
-import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -13,6 +12,8 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
+
+import TextField from "../../shared/components/Form/TextField";
 
 import { client } from "../../shared/api/client";
 import { MESSAGES } from "../../shared/util/messages";

@@ -4,8 +4,9 @@ import { REPORT_LIST_TYPE } from "./ReportsScreen";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+
+import TextField from "../../shared/components/Form/TextField";
 
 import { COMMON_ITEM_BORDER_COLOR } from "../../shared/util/constants";
 
@@ -40,12 +41,13 @@ const SearchForReports = (props: Props) => {
   return (
     <Grid container spacing={2} sx={{ pt: 2 }}>
       <Grid item xs={12} md={12}>
-        <Box>
+        <Box sx={{ maxWidth: { sx: "80vw", md: "25vw" } }}>
           <Autocomplete
             disablePortal
             id="combo-box-demo"
             options={formattedReports}
             sx={{ width: 300 }}
+            fullWidth
             onSelect={handleSearchSelectItem}
             renderInput={(params) => (
               <TextField

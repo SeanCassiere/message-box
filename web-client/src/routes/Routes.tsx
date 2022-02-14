@@ -50,7 +50,9 @@ const AppRoutes = () => {
           path="/sign-up"
           element={
             <NoAuthOnlyRoute>
-              <RegisterScreen />
+              <SuspenseLoadingWrapper>
+                <RegisterScreen />
+              </SuspenseLoadingWrapper>
             </NoAuthOnlyRoute>
           }
         />
