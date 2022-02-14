@@ -29,7 +29,7 @@ const PageBlockItem: React.FC<{ title?: string | React.ReactNode; badgeText?: st
         <>
           <Typography fontSize={17} fontWeight={400} sx={{ textTransform: "uppercase" }}>
             {title}
-            {badgeText && <Chip label={badgeText} variant="filled" color="error" sx={{ ml: 1 }} />}
+            {badgeText && <Chip label={badgeText} variant="filled" color="error" component="span" sx={{ ml: 1 }} />}
           </Typography>
         </>
       )}

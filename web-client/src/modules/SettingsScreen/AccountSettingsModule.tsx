@@ -120,7 +120,7 @@ const AccountSettingsModule = () => {
 };
 
 const TABS_TO_PRINT = [
-  { label: "Profile", value: 0 },
+  { label: "My Account", value: 0 },
   { label: "Change Password", value: 1 },
 ];
 

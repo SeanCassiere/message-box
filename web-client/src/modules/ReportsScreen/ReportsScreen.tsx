@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import SearchForReports from "./SearchForReports";
 import PageBlockItem from "../../shared/components/Layout/PageBlockItem";
+import ReportResultData from "./ReportResultData";
 
 const ReportsScreen = () => {
   return (
@@ -15,6 +16,7 @@ const ReportsScreen = () => {
       <PageBlockItem title="Select report">
         <SearchForReports availableReports={REPORTS} />
       </PageBlockItem>
+      <ReportResultData />
     </PagePaperWrapper>
   );
 };
