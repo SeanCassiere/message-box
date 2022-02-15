@@ -9,15 +9,16 @@ import { ITeamProfile } from "../../../interfaces/Client.interfaces";
 
 interface Props {
   userTeams: ITeamProfile[];
+  title?: string;
 }
 
 const BasicTeamsDetails = (props: Props) => {
-  const { userTeams } = props;
+  const { userTeams, title } = props;
   return (
     <Grid container>
       <Grid item xs={12} md={12}>
         <Typography fontSize={20} fontWeight={400}>
-          My Teams
+          {title ? <>{title}</> : "My Teams"}
         </Typography>
       </Grid>
       <Grid item xs={12} md={12} sx={{ marginTop: 1 }}>

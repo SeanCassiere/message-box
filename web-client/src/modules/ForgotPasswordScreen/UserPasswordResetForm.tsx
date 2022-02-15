@@ -123,6 +123,7 @@ const UserRegistrationForm = (props: IProps) => {
             loading={formik.isSubmitting}
             fullWidth
             variant="contained"
+            size="large"
             sx={{ mt: 3, mb: 2 }}
           >
             Change Password

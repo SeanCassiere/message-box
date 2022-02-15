@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -48,17 +49,40 @@ function a11yProps(index: number) {
 }
 
 const CompanySettingsModule = () => {
+  const navigate = useNavigate();
+  const { module } = useParams<{ module: string }>();
+
+  useEffect(() => {
+    const availableModules = TABS_TO_PRINT.map((tab) => tab.urlRef);
+    if (module && availableModules.includes(module.toLowerCase())) {
+      const findTab = TABS_TO_PRINT.find((tab) => tab.urlRef === module.toLowerCase());
+      if (findTab) {
+        setValue(findTab.value);
+        navigate(`/settings/${TAB_NAME}/${module.toLowerCase()}`);
+      }
+    }
+  }, [module, navigate]);
+
   const [value, setValue] = React.useState(0);
 
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleChangeTabs = (event: React.SyntheticEvent, newValue: number) => {
+    const findTab = TABS_TO_PRINT.find((tab) => tab.value === Number(newValue));
+    if (findTab) {
+      navigate(`/settings/${TAB_NAME}/${findTab.urlRef}`);
+      // setValue(Number(newValue));
+    }
     setValue(newValue);
   };
 
   const handleChangeSelect = (event: SelectChangeEvent) => {
-    setValue(Number(event.target.value));
+    const findTab = TABS_TO_PRINT.find((tab) => tab.value === Number(event.target.value));
+    if (findTab) {
+      navigate(`/settings/${TAB_NAME}/${findTab.urlRef}`);
+      // setValue(Number(event.target.value));
+    }
   };
 
   return (
@@ -127,11 +151,13 @@ const CompanySettingsModule = () => {
   );
 };
 
+const TAB_NAME = "company";
+
 const TABS_TO_PRINT = [
-  { label: "Profile", value: 0 },
-  { label: "Employees", value: 1 },
-  { label: "Roles", value: 2 },
-  { label: "Teams", value: 3 },
+  { label: "My Company", value: 0, urlRef: "account" },
+  { label: "Employees", value: 1, urlRef: "employees" },
+  { label: "Roles", value: 2, urlRef: "roles" },
+  { label: "Teams", value: 3, urlRef: "teams" },
 ];
 
 export default CompanySettingsModule;

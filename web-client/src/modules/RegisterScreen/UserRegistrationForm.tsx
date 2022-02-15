@@ -186,6 +186,7 @@ const UserRegistrationForm = (props: IProps) => {
             loading={formik.isSubmitting}
             variant="contained"
             sx={{ mt: 3, mb: 2, py: 1.2, fontSize: 15 }}
+            fullWidth
           >
             Sign Up
           </LoadingButton>

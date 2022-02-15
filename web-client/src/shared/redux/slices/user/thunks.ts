@@ -41,3 +41,16 @@ export const refreshUserProfileThunk = createAsyncThunk("user/refreshUserProfile
     console.log(error);
   }
 });
+
+export const refreshClientProfileThunk = createAsyncThunk("user/refreshClientProfile", async (_, { dispatch }) => {
+  try {
+    const response = await client.get("/Clients/Profile");
+
+    if (response.status === 200) {
+      const data = response.data as IClientProfile;
+      dispatch(setClientProfileData(data));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});

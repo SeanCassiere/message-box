@@ -1,25 +1,26 @@
-import React, { useState } from "react";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { useSnackbar } from "notistack";
+import { useState } from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useFormik } from "formik";
+import { useSnackbar } from "notistack";
 import { useTheme } from "@mui/material/styles";
+import * as yup from "yup";
 
 import { red } from "@mui/material/colors";
 
 import LoadingButton from "@mui/lab/LoadingButton";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
+
 import RadioButtonCheckedOutlinedIcon from "@mui/icons-material/RadioButtonCheckedOutlined";
 import RadioButtonUncheckedOutlinedIcon from "@mui/icons-material/RadioButtonUncheckedOutlined";
+
+import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
 
 import { client } from "../../shared/api/client";
 import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
@@ -131,9 +132,9 @@ const ForgotPasswordDialog = (props: Props) => {
   return (
     <>
       <Dialog open={open} onClose={handleDismiss} maxWidth="xs" disableEscapeKeyDown fullScreen={isOnMobile}>
-        <DialogTitle>Reset password</DialogTitle>
+        <DialogHeaderClose title="Reset password" onClose={closeDialog} />
         <DialogContent>
-          <DialogContentText sx={{ mb: 2 }}>How do you want to reset your password?</DialogContentText>
+          <DialogContentText sx={{ mt: 3, mb: 2 }}>How do you want to reset your password?</DialogContentText>
           <Accordion
             elevation={0}
             expanded={expanded === "panel1"}
@@ -265,11 +266,6 @@ const ForgotPasswordDialog = (props: Props) => {
             </AccordionDetails>
           </Accordion>
         </DialogContent>
-        <DialogActions>
-          <LoadingButton variant="text" color="error" type="button" onClick={closeDialog}>
-            Close
-          </LoadingButton>
-        </DialogActions>
       </Dialog>
     </>
   );

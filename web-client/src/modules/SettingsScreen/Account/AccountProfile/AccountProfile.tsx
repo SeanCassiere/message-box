@@ -5,11 +5,6 @@ import { useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-
-import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 import PageBlockItem from "../../../../shared/components/Layout/PageBlockItem";
 import BasicDetailsBlock from "../../../../shared/components/Account/BasicDetailsBlock";
@@ -17,8 +12,12 @@ import BasicTeamsDetails from "../../../../shared/components/Account/BasicTeamsD
 import BasicRolesDetails from "../../../../shared/components/Account/BasicRolesDetails";
 
 import { selectUserState, selectLookupListsState } from "../../../../shared/redux/store";
-import { IRoleProfile, ITeamProfile } from "../../../../shared/interfaces/Client.interfaces";
+import {
+  getClientRolesLookupListThunk,
+  getClientTeamsLookupListThunk,
+} from "../../../../shared/redux/slices/lookup/thunks";
 import { refreshUserProfileThunk } from "../../../../shared/redux/slices/user/thunks";
+import { IRoleProfile, ITeamProfile } from "../../../../shared/interfaces/Client.interfaces";
 
 const AccountProfile = () => {
   const dispatch = useDispatch();
@@ -28,6 +27,8 @@ const AccountProfile = () => {
 
   useEffect(() => {
     dispatch(refreshUserProfileThunk());
+    dispatch(getClientRolesLookupListThunk());
+    dispatch(getClientTeamsLookupListThunk());
   }, [dispatch]);
 
   const availableUserRoles = useMemo(() => {
@@ -63,12 +64,6 @@ const AccountProfile = () => {
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", py: 2 }}>
         <Box>
           <Typography variant="h5">My Account</Typography>
-        </Box>
-        <Box sx={{ display: "inline-flex", columnGap: "1rem" }}>
-          <IconButton color="secondary" aria-label="refresh">
-            <RefreshOutlinedIcon />
-          </IconButton>
-          <Button startIcon={<EditOutlinedIcon />}>Edit</Button>
         </Box>
       </Box>
       <PageBlockItem>

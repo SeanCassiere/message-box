@@ -1,18 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useFormik } from "formik";
+import { useSnackbar } from "notistack";
 import { useTheme } from "@mui/material/styles";
+import * as yup from "yup";
 
-import LoadingButton from "@mui/lab/LoadingButton";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import DialogTitle from "@mui/material/DialogTitle";
 
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -22,6 +19,9 @@ import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
+
+import DialogHeaderClose from "../../../../shared/components/Dialog/DialogHeaderClose";
+import DialogBigButtonFooter from "../../../../shared/components/Dialog/DialogBigButtonFooter";
 
 import { client } from "../../../../shared/api/client";
 import { useSelector } from "react-redux";
@@ -207,13 +207,12 @@ const EditUserDialog = (props: IProps) => {
   );
 
   return (
-    <Dialog open={showDialog} onClose={() => ({})} maxWidth="md" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
+    <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <Box component="form" onSubmit={formik.handleSubmit}>
-        <DialogTitle>{userId ? <>Edit</> : <>New</>} User</DialogTitle>
+        <DialogHeaderClose title={`${userId ? "Edit" : "New"} User`} onClose={handleClose} />
         <DialogContent>
-          {/* <DialogContentText>Enter your two-factor authentication code.</DialogContentText> */}
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+          <Grid container spacing={2} sx={{ pt: 2 }}>
+            <Grid item xs={12} md={12}>
               <TextField
                 margin="normal"
                 fullWidth
@@ -230,7 +229,7 @@ const EditUserDialog = (props: IProps) => {
                 disabled={isLoadingData}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
               <TextField
                 margin="normal"
                 fullWidth
@@ -246,7 +245,7 @@ const EditUserDialog = (props: IProps) => {
                 disabled={isLoadingData}
               />
             </Grid>
-            <Grid item xs={12} md={userId ? 12 : 6}>
+            <Grid item xs={12} md={12}>
               <TextField
                 margin="normal"
                 fullWidth
@@ -263,7 +262,7 @@ const EditUserDialog = (props: IProps) => {
               />
             </Grid>
             {!userId && (
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={12}>
                 <TextField
                   margin="normal"
                   fullWidth
@@ -374,14 +373,10 @@ const EditUserDialog = (props: IProps) => {
             )}
           </Grid>
         </DialogContent>
-        <DialogActions>
-          <LoadingButton onClick={handleClose} color="error">
-            Cancel
-          </LoadingButton>
-          <LoadingButton type="submit" loading={formik.isSubmitting}>
-            {userId ? <>Update</> : <>Submit</>}
-          </LoadingButton>
-        </DialogActions>
+        <DialogBigButtonFooter
+          submitButtonText={userId ? "UPDATE USER" : "CREATE NEW USER"}
+          isLoading={formik.isSubmitting}
+        />
       </Box>
     </Dialog>
   );

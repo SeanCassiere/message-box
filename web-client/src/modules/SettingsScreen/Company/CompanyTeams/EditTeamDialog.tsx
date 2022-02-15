@@ -1,17 +1,17 @@
 import { useState, useEffect, useMemo } from "react";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useFormik } from "formik";
+import { useSnackbar } from "notistack";
 import { useTheme } from "@mui/material/styles";
+import * as yup from "yup";
 
 import Grid from "@mui/material/Grid";
-import LoadingButton from "@mui/lab/LoadingButton";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
+
+import DialogHeaderClose from "../../../../shared/components/Dialog/DialogHeaderClose";
+import DialogBigButtonFooter from "../../../../shared/components/Dialog/DialogBigButtonFooter";
 
 import { client } from "../../../../shared/api/client";
 import { formatErrorsToFormik } from "../../../../shared/util/errorsToFormik";
@@ -119,7 +119,7 @@ const EditUserDialog = (props: IProps) => {
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <form onSubmit={formik.handleSubmit}>
-        <DialogTitle>{teamId ? "Edit" : "New"}&nbsp;Team</DialogTitle>
+        <DialogHeaderClose title={`${teamId ? "Edit" : "New"} Team`} onClose={handleClose} />
         <DialogContent>
           <Grid container spacing={1}>
             <Grid item xs={12}>
@@ -141,14 +141,7 @@ const EditUserDialog = (props: IProps) => {
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions>
-          <LoadingButton onClick={handleClose} color="error">
-            Cancel
-          </LoadingButton>
-          <LoadingButton type="submit" loading={formik.isSubmitting}>
-            {teamId ? <>Update</> : <>Submit</>}
-          </LoadingButton>
-        </DialogActions>
+        <DialogBigButtonFooter submitButtonText={teamId ? "UPDATE TEAM" : "CREATE TEAM"} />
       </form>
     </Dialog>
   );

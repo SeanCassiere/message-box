@@ -1,12 +1,11 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+
+import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
+import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButtonFooter";
 
 interface IProps {
   open: boolean;
@@ -29,17 +28,14 @@ const ResetSuccessDialog = (props: IProps) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Password has been reset</DialogTitle>
+        {/* <DialogTitle id="alert-dialog-title">Password has been reset</DialogTitle> */}
+        <DialogHeaderClose title="Password has been reset" />
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id="alert-dialog-description" sx={{ pt: 3 }}>
             Your password has been successfully reset, please login with your new password.
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleOkClick} variant="text" autoFocus>
-            OK
-          </Button>
-        </DialogActions>
+        <DialogBigButtonFooter submitButtonText="GO TO THE LOGIN PAGE" onSubmit={handleOkClick} />
       </Dialog>
     </>
   );

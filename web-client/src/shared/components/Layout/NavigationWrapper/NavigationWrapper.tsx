@@ -47,7 +47,11 @@ import TodayIcon from "@mui/icons-material/Today";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import PeopleIcon from "@mui/icons-material/People";
 
-const profileRouteList = [{ route: "/logout", name: "Logout" }];
+const profileRouteList = [
+  { route: "/settings/account/my-account", name: "My Account" },
+  { route: "/settings/account/change-password", name: "Change Password" },
+  { route: "/logout", name: "Logout" },
+];
 
 const NavigationWrapper: React.FC = (props) => {
   const navigate = useNavigate();
@@ -239,6 +243,7 @@ const NavigationWrapper: React.FC = (props) => {
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
+              onClick={handleCloseUserMenu}
             >
               {profileRouteList.map((setting) => (
                 <MenuItem key={setting.route} component={RouterLink} to={setting.route}>

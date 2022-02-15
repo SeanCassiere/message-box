@@ -9,15 +9,16 @@ import { IRoleProfile } from "../../../interfaces/Client.interfaces";
 
 interface Props {
   userRoles: IRoleProfile[];
+  title?: string;
 }
 
 const BasicRolesDetails = (props: Props) => {
-  const { userRoles } = props;
+  const { userRoles, title } = props;
   return (
     <Grid container>
       <Grid item xs={12} md={12}>
         <Typography fontSize={20} fontWeight={400}>
-          My Access Roles
+          {title ? <>{title}</> : "My Access Roles"}
         </Typography>
       </Grid>
       <Grid item xs={12} md={12} sx={{ marginTop: 1 }}>

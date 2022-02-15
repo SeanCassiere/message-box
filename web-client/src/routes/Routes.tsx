@@ -97,16 +97,6 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/settings"
-          element={
-            <AuthWrapper>
-              <NavigationWrapper>
-                <SettingsScreen />
-              </NavigationWrapper>
-            </AuthWrapper>
-          }
-        />
-        <Route
           path="/calendar"
           element={
             <AuthWrapper>
@@ -127,7 +117,27 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/settings/:tab/:module"
+          element={
+            <AuthWrapper>
+              <NavigationWrapper>
+                <SettingsScreen />
+              </NavigationWrapper>
+            </AuthWrapper>
+          }
+        />
+        <Route
           path="/settings/:tab"
+          element={
+            <AuthWrapper>
+              <NavigationWrapper>
+                <SettingsScreen />
+              </NavigationWrapper>
+            </AuthWrapper>
+          }
+        />
+        <Route
+          path="/settings"
           element={
             <AuthWrapper>
               <NavigationWrapper>
