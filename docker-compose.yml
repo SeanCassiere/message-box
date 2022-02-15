@@ -6,7 +6,7 @@ services:
       RANDOM_ENV_VARIABLE: RANDOM_ENV_VARIABLE_VALUE
     build:
       context: ./api-gateway
-      dockerfile: "./api-gateway/Dockerfile"
+      dockerfile: "Dockerfile"
       target: base
     depends_on:
       - auth-service
