@@ -20,6 +20,7 @@ import { resendConfirmationEmail } from "./controllers/email-related/resendConfi
 import { createClientAndUser } from "./controllers/clients/createClientAndUser";
 import { getAllClients } from "./controllers/clients/getAllClients";
 import { getClientById } from "./controllers/clients/getClientById";
+import { updateClientById } from "./controllers/clients/updateClientById";
 
 import { getAllRolesForClient } from "./controllers/roles/getAllRolesForClient";
 import { getRoleById } from "./controllers/roles/getRoleById";
@@ -84,6 +85,7 @@ expressApp.post("/users/changePasswordByUserId", changePasswordByUserId);
 expressApp.get("/clients/getAllClients", getAllClients);
 expressApp.post("/clients/getClientById", getClientById);
 expressApp.post("/clients/createClientAndUser", createClientAndUser);
+expressApp.post("/clients/updateClientById", updateClientById);
 
 /**
  * Role routes

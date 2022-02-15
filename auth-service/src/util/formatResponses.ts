@@ -20,6 +20,7 @@ export function formatClientResponse({ client }: { client: Client }) {
   return {
     clientId: client.clientId,
     clientName: client.name,
+    adminUserId: client.adminUserId,
     updatedAt: client.updatedAt,
   };
 }
