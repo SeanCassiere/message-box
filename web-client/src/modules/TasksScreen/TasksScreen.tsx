@@ -24,7 +24,7 @@ import { usePermission } from "../../shared/hooks/usePermission";
 import TaskModifyDialog from "./TaskModifyDialog/TaskModifyDialog";
 import TaskTodayView from "./TodayView";
 import TaskCompletedView from "./CompletedView";
-import PagePaperWrapper from "../../shared/components/PagePaperWrapper/PagePaperWrapper";
+import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 
 export const inactiveTabBgColor = "#FCFCFC";
 const primaryOptions = ["today", "completed"];

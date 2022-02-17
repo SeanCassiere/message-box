@@ -47,7 +47,7 @@ export async function confirmUserAccountByToken(req: Request, res: Response, nex
     return res.json({
       statusCode: 500,
       data: null,
-      errors: [{ field: "service", message: "Something went wrong when trying to get the client profile" }],
+      errors: [{ propertyPath: "service", message: "Something went wrong when trying to get the client profile" }],
     });
   }
 }

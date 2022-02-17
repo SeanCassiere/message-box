@@ -1,6 +1,7 @@
 export interface IClientProfile {
   clientId: string;
   clientName: string;
+  adminUserId: string;
   updatedAt: string;
 }
 

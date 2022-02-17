@@ -12,9 +12,9 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import CustomTableContainer from "../../../../shared/components/StyledTableContainer";
-import StyledTableCell from "../../../../shared/components/StyledTableCell/StyledTableCell";
-import StyledTableRow from "../../../../shared/components/StyledTableRow";
+import CustomTableContainer from "../../../../shared/components/Table/StyledTableContainer";
+import StyledTableCell from "../../../../shared/components/Table/StyledTableCell";
+import StyledTableRow from "../../../../shared/components/Table/StyledTableRow";
 
 import { IRoleProfile } from "../../../../shared/interfaces/Client.interfaces";
 import { usePermission } from "../../../../shared/hooks/usePermission";

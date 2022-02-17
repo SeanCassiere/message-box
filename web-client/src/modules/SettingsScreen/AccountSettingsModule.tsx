@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -47,17 +47,40 @@ function a11yProps(index: number) {
 }
 
 const AccountSettingsModule = () => {
+  const navigate = useNavigate();
+  const { module } = useParams<{ module: string }>();
+
+  useEffect(() => {
+    const availableModules = TABS_TO_PRINT.map((tab) => tab.urlRef);
+    if (module && availableModules.includes(module.toLowerCase())) {
+      const findTab = TABS_TO_PRINT.find((tab) => tab.urlRef === module.toLowerCase());
+      if (findTab) {
+        setValue(findTab.value);
+        navigate(`/settings/${TAB_NAME}/${module.toLowerCase()}`);
+      }
+    }
+  }, [module, navigate]);
+
   const [value, setValue] = React.useState(0);
 
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleChangeTabs = (event: React.SyntheticEvent, newValue: number) => {
+    const findTab = TABS_TO_PRINT.find((tab) => tab.value === Number(newValue));
+    if (findTab) {
+      navigate(`/settings/${TAB_NAME}/${findTab.urlRef}`);
+      // setValue(Number(newValue));
+    }
     setValue(newValue);
   };
 
   const handleChangeSelect = (event: SelectChangeEvent) => {
-    setValue(Number(event.target.value));
+    const findTab = TABS_TO_PRINT.find((tab) => tab.value === Number(event.target.value));
+    if (findTab) {
+      navigate(`/settings/${TAB_NAME}/${findTab.urlRef}`);
+      // setValue(Number(event.target.value));
+    }
   };
 
   return (
@@ -93,12 +116,10 @@ const AccountSettingsModule = () => {
       {isOnMobile && (
         <Box>
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Tab</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={String(value)}
-              label="Age"
               onChange={handleChangeSelect}
             >
               {TABS_TO_PRINT.map((t) => (
@@ -110,7 +131,7 @@ const AccountSettingsModule = () => {
           </FormControl>
         </Box>
       )}
-      <Box>
+      <Box sx={{ width: "100%" }}>
         <TabPanel value={value} index={0}>
           <AccountProfile />
         </TabPanel>
@@ -122,9 +143,11 @@ const AccountSettingsModule = () => {
   );
 };
 
+const TAB_NAME = "account";
+
 const TABS_TO_PRINT = [
-  { label: "Profile", value: 0 },
-  { label: "Change Password", value: 1 },
+  { label: "My Account", value: 0, urlRef: "my-account" },
+  { label: "Change Password", value: 1, urlRef: "change-password" },
 ];
 
 export default AccountSettingsModule;

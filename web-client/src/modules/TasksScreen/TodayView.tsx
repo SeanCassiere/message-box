@@ -2,7 +2,7 @@ import React from "react";
 
 import Grid from "@mui/material/Grid";
 
-import TaskGroupColumn from "../../shared/components/TaskGroupColumn/TaskGroupColumn";
+import TaskGroupColumn from "../../shared/components/Tasks/TaskGroupColumn";
 
 /**
  * @description this component houses the view "Today" tab of the TaskScreen

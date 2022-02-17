@@ -1,14 +1,14 @@
-import React from "react";
-import { FormikContextType } from "formik";
 import QRCode from "qrcode.react";
+import { FormikContextType } from "formik";
 
-import LoadingButton from "@mui/lab/LoadingButton";
-import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
+
+import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
+import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButtonFooter";
 
 interface TwoFactorSecretPair {
   base32: string;
@@ -26,10 +26,12 @@ const AddQrDialog = (props: IProps) => {
   const { formik, handleClose, showDialog, secret } = props;
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown>
-      <form onSubmit={formik.handleSubmit}>
-        <DialogTitle>Set up two-factor authentication.</DialogTitle>
+      <Box component="form" onSubmit={formik.handleSubmit}>
+        <DialogHeaderClose title="SET-UP TWO-FACTOR AUTHENTICATION" onClose={handleClose} />
         <DialogContent>
-          <DialogContentText>This account does not have two-factor authentication configured.</DialogContentText>
+          <DialogContentText sx={{ mt: 3 }}>
+            This account does not have two-factor authentication configured.
+          </DialogContentText>
           <DialogContentText sx={{ mt: 3, textAlign: "center" }}>
             {secret && <QRCode value={secret?.otpauth_url} size={200} />}
           </DialogContentText>
@@ -52,15 +54,8 @@ const AddQrDialog = (props: IProps) => {
             autoFocus
           />
         </DialogContent>
-        <DialogActions>
-          <LoadingButton onClick={handleClose} color="error">
-            Cancel
-          </LoadingButton>
-          <LoadingButton type="submit" color="primary" loading={formik.isSubmitting}>
-            Submit
-          </LoadingButton>
-        </DialogActions>
-      </form>
+        <DialogBigButtonFooter submitButtonText="COMPLETE 2FA SETUP" isLoading={formik.isSubmitting} />
+      </Box>
     </Dialog>
   );
 };

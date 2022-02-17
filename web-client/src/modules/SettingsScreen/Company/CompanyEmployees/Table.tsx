@@ -9,9 +9,9 @@ import IconButton from "@mui/material/IconButton";
 
 import EditIcon from "@mui/icons-material/Edit";
 
-import CustomTableContainer from "../../../../shared/components/StyledTableContainer";
-import StyledTableCell from "../../../../shared/components/StyledTableCell/StyledTableCell";
-import StyledTableRow from "../../../../shared/components/StyledTableRow";
+import CustomTableContainer from "../../../../shared/components/Table/StyledTableContainer";
+import StyledTableCell from "../../../../shared/components/Table/StyledTableCell";
+import StyledTableRow from "../../../../shared/components/Table/StyledTableRow";
 
 import { usePermission } from "../../../../shared/hooks/usePermission";
 

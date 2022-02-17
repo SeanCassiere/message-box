@@ -1,18 +1,15 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useFormik } from "formik";
-import * as yup from "yup";
 import { useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import * as yup from "yup";
 
 import Grid from "@mui/material/Grid";
-import LoadingButton from "@mui/lab/LoadingButton";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -21,6 +18,9 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import FormHelperText from "@mui/material/FormHelperText";
+
+import DialogHeaderClose from "../../../../shared/components/Dialog/DialogHeaderClose";
+import DialogBigButtonFooter from "../../../../shared/components/Dialog/DialogBigButtonFooter";
 
 import { client } from "../../../../shared/api/client";
 import { selectLookupListsState } from "../../../../shared/redux/store";
@@ -175,7 +175,7 @@ const EditUserDialog = (props: IProps) => {
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <form onSubmit={formik.handleSubmit}>
-        <DialogTitle>{roleId ? "Edit" : "New"}&nbsp;Role</DialogTitle>
+        <DialogHeaderClose title={`${roleId ? "Edit" : "New"} Role`} onClose={handleClose} />
         <DialogContent>
           <Grid container spacing={1}>
             <Grid item xs={12}>
@@ -247,14 +247,7 @@ const EditUserDialog = (props: IProps) => {
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions>
-          <LoadingButton onClick={handleClose} color="error">
-            Cancel
-          </LoadingButton>
-          <LoadingButton type="submit" color="primary" loading={formik.isSubmitting}>
-            {roleId ? <>Update</> : <>Submit</>}
-          </LoadingButton>
-        </DialogActions>
+        <DialogBigButtonFooter submitButtonText={roleId ? "UPDATE ROLE" : "CREATE NEW ROLE"} />
       </form>
     </Dialog>
   );

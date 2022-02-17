@@ -66,11 +66,11 @@ const SelectChat = (props: Props) => {
         border: COMMON_ITEM_BORDER_STYLING,
         px: 1,
         py: 1,
-        // height: {
-        //   sm: "25%",
-        //   md: "100%",
-        // },
         overflowY: "auto",
+        height: {
+          sm: "75vh",
+          md: "auto",
+        },
       }}
       component={Paper}
     >

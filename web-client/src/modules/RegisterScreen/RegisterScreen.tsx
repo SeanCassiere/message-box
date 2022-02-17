@@ -16,7 +16,10 @@ const validationSchema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
   lastName: yup.string().required("Last name is required"),
   password: yup.string().required("Password is required"),
-  passwordConfirmation: yup.string().oneOf([yup.ref("password"), null], "Passwords must match"),
+  passwordConfirmation: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Confirm your new password"),
 });
 
 const RegisterScreen = () => {

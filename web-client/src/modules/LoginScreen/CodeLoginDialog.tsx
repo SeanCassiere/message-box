@@ -1,17 +1,17 @@
-import React from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { FormikContextType } from "formik";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { Link as RouterLink } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
+import { FormikContextType } from "formik";
 
-import LoadingButton from "@mui/lab/LoadingButton";
 import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+
+import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
+import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButtonFooter";
 
 interface IProps {
   formik: FormikContextType<{ code: string }>;
@@ -26,10 +26,10 @@ const CodeLoginDialog = (props: IProps) => {
 
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullScreen={isOnMobile}>
-      <form onSubmit={formik.handleSubmit}>
-        <DialogTitle>Two-Factor Authentication</DialogTitle>
+      <Box component="form" onSubmit={formik.handleSubmit}>
+        <DialogHeaderClose title="Two-Factor Authentication" onClose={handleClose} />
         <DialogContent>
-          <DialogContentText>Enter your two-factor authentication code.</DialogContentText>
+          <DialogContentText sx={{ mt: 3 }}>Enter your two-factor authentication code.</DialogContentText>
           <TextField
             margin="normal"
             fullWidth
@@ -48,15 +48,8 @@ const CodeLoginDialog = (props: IProps) => {
             I no longer have access to my 2FA code
           </Link>
         </DialogContent>
-        <DialogActions>
-          <LoadingButton onClick={handleClose} color="error">
-            Cancel
-          </LoadingButton>
-          <LoadingButton type="submit" loading={formik.isSubmitting}>
-            Submit
-          </LoadingButton>
-        </DialogActions>
-      </form>
+        <DialogBigButtonFooter submitButtonText="SUBMIT" isLoading={formik.isSubmitting} />
+      </Box>
     </Dialog>
   );
 };

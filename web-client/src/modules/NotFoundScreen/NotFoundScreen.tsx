@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { selectAuthState } from "../../shared/redux/store";
-import NavigationWrapper from "../../shared/components/NavigationWrapper/NavigationWrapper";
+import NavigationWrapper from "../../shared/components/Layout/NavigationWrapper";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";

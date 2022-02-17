@@ -4,7 +4,6 @@ import { Link as RouterLink } from "react-router-dom";
 
 import Avatar from "@mui/material/Avatar";
 import LoadingButton from "@mui/lab/LoadingButton";
-import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -17,6 +16,8 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
+import TextField from "../../shared/components/Form/TextField";
 
 interface IProps {
   formik: FormikContextType<{
@@ -66,8 +67,6 @@ const UserRegistrationForm = (props: IProps) => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                required
-                fullWidth
                 name="password"
                 label="Password"
                 type={showPassword ? "text" : "password"}
@@ -94,8 +93,6 @@ const UserRegistrationForm = (props: IProps) => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                required
-                fullWidth
                 name="passwordConfirmation"
                 label="Confirm Password"
                 type={showPassword ? "text" : "password"}
@@ -126,6 +123,7 @@ const UserRegistrationForm = (props: IProps) => {
             loading={formik.isSubmitting}
             fullWidth
             variant="contained"
+            size="large"
             sx={{ mt: 3, mb: 2 }}
           >
             Change Password

@@ -9,7 +9,7 @@
     "build:auth-service": "npm run build --prefix auth-service",
     "build:app-data-service": "npm run build --prefix application-data-service",
     "build:api-gateway": "npm run build --prefix api-gateway",
-    "build:sever": "npm run build:auth-service && npm run build:app-data-service && build:api-gateway",
+    "build:server": "npm run build:auth-service && npm run build:app-data-service && build:api-gateway",
     "build:web-client": "npm run build --prefix web-client",
     "setup:auth-service": "npm install --prefix auth-service",
     "setup:app-data-service": "npm install --prefix application-data-service",
@@ -18,7 +18,7 @@
     "setup:web-client": "npm install --prefix web-client"
   },
   "keywords": [],
-  "author": "",
+  "author": "SeanCassiere",
   "license": "ISC",
   "devDependencies": {
     "commitizen": "^4.2.4",

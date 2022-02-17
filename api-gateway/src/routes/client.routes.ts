@@ -163,22 +163,42 @@ clientRouter
     }
   });
 
-clientRouter.route("/Profile").get(async (req, res) => {
-  const request = req as CustomRequest<{}>;
+clientRouter
+  .route("/Profile")
+  .get(async (req, res) => {
+    const request = req as CustomRequest<{}>;
 
-  try {
-    const { data: response } = await client.post("/clients/getClientById", {
-      variables: { clientId: request.auth?.message_box_clientId, userId: request.auth?.message_box_userId },
-    });
+    try {
+      const { data: response } = await client.post("/clients/getClientById", {
+        variables: { clientId: request.auth?.message_box_clientId, userId: request.auth?.message_box_userId },
+      });
 
-    if (response.statusCode === 200) {
-      return res.json({ ...response.data });
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
+      }
+
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
+    } catch (error) {
+      return res.status(500).json({ message: "auth-service /client network error" });
     }
+  })
+  .put(async (req, res) => {
+    const request = req as CustomRequest<{}>;
 
-    return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
-  } catch (error) {
-    return res.status(500).json({ message: "auth-service /client network error" });
-  }
-});
+    try {
+      const { data: response } = await client.post("/clients/updateClientById", {
+        variables: { clientId: request.auth?.message_box_clientId, userId: request.auth?.message_box_userId },
+        body: { ...request.body },
+      });
+
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
+      }
+
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
+    } catch (error) {
+      return res.status(500).json({ message: "auth-service /client network error" });
+    }
+  });
 
 export default clientRouter;
