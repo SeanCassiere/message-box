@@ -127,7 +127,7 @@ const NavigationWrapper: React.FC = (props) => {
   };
 
   return (
-    <Box sx={{ display: "flex", maxHeight: "100%" }}>
+    <Box sx={{ display: "flex", maxHeight: "100%", overflowY: "hidden" }}>
       <CustomAppBar position="fixed" open={open} elevation={0}>
         <Toolbar>
           {!matchLargerThanPhone && (

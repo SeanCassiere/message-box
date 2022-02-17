@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
@@ -7,8 +7,14 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
 import LoadingButton from "@mui/lab/LoadingButton";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import TextField from "../../../../shared/components/Form/TextField";
+
 import { client } from "../../../../shared/api/client";
 import { MESSAGES } from "../../../../shared/util/messages";
 import { formatErrorsToFormik } from "../../../../shared/util/errorsToFormik";
@@ -24,6 +30,16 @@ const validationSchema = yup.object().shape({
 
 const ResetWithOldPassword = () => {
   const { enqueueSnackbar } = useSnackbar();
+
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const handleClickShowPassword = (cb: (cbFn: any) => any) => {
+    cb((prev: boolean) => !prev);
+  };
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
 
   const formik = useFormik({
     validationSchema,
@@ -65,36 +81,75 @@ const ResetWithOldPassword = () => {
           <TextField
             label="Old password"
             id="oldPassword-reset-password"
-            type="password"
+            type={showOldPassword ? "text" : "password"}
             name="password"
             value={formik.values.password}
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => handleClickShowPassword(setShowOldPassword)}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {showOldPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
             label="New password"
             id="oldPassword-reset-newPassword"
-            type="password"
+            type={showNewPassword ? "text" : "password"}
             name="newPassword"
             value={formik.values.newPassword}
             onChange={formik.handleChange}
             error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
             helperText={formik.touched.newPassword && formik.errors.newPassword}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => handleClickShowPassword(setShowNewPassword)}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {showNewPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
             label="Confirm new password"
             id="oldPassword-reset-newPasswordConfirmation"
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             name="newPasswordConfirmation"
             value={formik.values.newPasswordConfirmation}
             onChange={formik.handleChange}
             error={formik.touched.newPasswordConfirmation && Boolean(formik.errors.newPasswordConfirmation)}
             helperText={formik.touched.newPasswordConfirmation && formik.errors.newPasswordConfirmation}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => handleClickShowPassword(setShowConfirmPassword)}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </Grid>
         <Grid item xs={12} md={12}>
