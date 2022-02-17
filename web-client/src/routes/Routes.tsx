@@ -9,6 +9,7 @@ import NotFoundScreen from "../modules/NotFoundScreen";
 import LogoutScreen from "../modules/LogoutScreen";
 import LoginScreen from "../modules/LoginScreen";
 import SuspenseLoadingWrapper from "../shared/components/SuspenseLoadingWrapper";
+import NavigateToNotFound from "./NavigateToNotFound";
 
 const ChatScreen = lazy(() => import(/* webpackChunkName: 'ChatScreen' */ "../modules/ChatScreen"));
 const TasksScreen = lazy(() => import(/* webpackChunkName: 'TasksScreen' */ "../modules/TasksScreen"));
@@ -147,7 +148,7 @@ const AppRoutes = () => {
           }
         />
         <Route path="/not-found" element={<NotFoundScreen />} />
-        <Route path="*" element={<Navigate to="/not-found" />} />
+        <Route path="*" element={<NavigateToNotFound />} />
       </Routes>
     </BrowserRouter>
   );
