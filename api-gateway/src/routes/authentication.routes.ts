@@ -63,6 +63,7 @@ authenticationRouter.route("/2FA/Code/Login").post(async (req, res) => {
         })
         .json({
           access_token: response.data.accessToken,
+          token_type: response.data.tokenType,
           expiresIn: response.data.expiresIn,
           message: response.data.message,
         });

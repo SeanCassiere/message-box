@@ -129,7 +129,7 @@ const LoginScreen = () => {
             resetForm();
             const { permissions, roles } = jwtDecode<JwtPayload>(res.data.access_token);
             dispatch(setPermissionsAndRoles({ permissions, roles }));
-            dispatch(setAccessToken({ accessToken: res.data.access_token }));
+            dispatch(setAccessToken({ accessToken: res.data.access_token, tokenType: res.data.token_type }));
           }
         })
         .catch((err) => {

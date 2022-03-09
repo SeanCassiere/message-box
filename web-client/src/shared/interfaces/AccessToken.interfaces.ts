@@ -1,6 +1,7 @@
 export interface AccessTokenPair {
   access_token: string | null;
   expiresIn: number;
+  token_type: string;
 }
 
 export interface JwtPayload {
