@@ -24,10 +24,10 @@ export const client = axios.create({
 
 client.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth.access_token;
+    const { access_token, token_type } = store.getState().auth;
 
     if (config && config.headers) {
-      config.headers["Authorization"] = "Bearer " + token;
+      config.headers["Authorization"] = `${token_type} ${access_token}`;
     }
 
     return config;
@@ -46,7 +46,7 @@ client.interceptors.request.use(
         const data = response.data as AccessTokenPair;
 
         if (data.access_token) {
-          store.dispatch(setAccessToken({ accessToken: data.access_token }));
+          store.dispatch(setAccessToken({ accessToken: data.access_token, tokenType: data.token_type }));
         }
 
         originalRequest.headers.Authorization = `Bearer ${data.access_token}`;

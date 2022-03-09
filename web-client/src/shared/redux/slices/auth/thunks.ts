@@ -26,7 +26,7 @@ export const getRefreshedAccessTokenThunk = createAsyncThunk("auth/getNewAccessT
     if (data.access_token) {
       const { permissions, roles } = jwt_decode<JwtPayload>(data.access_token);
       dispatch(setPermissionsAndRoles({ roles, permissions }));
-      dispatch(setAccessToken({ accessToken: data.access_token }));
+      dispatch(setAccessToken({ accessToken: data.access_token, tokenType: data.token_type }));
     } else {
       dispatch(userLogoutThunk());
     }
