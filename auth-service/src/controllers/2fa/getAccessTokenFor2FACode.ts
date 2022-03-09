@@ -100,6 +100,7 @@ export async function getAccessTokenFor2FACode(req: Request, res: Response, next
       data: {
         message: "Successfully logged in",
         accessToken: accessToken,
+        tokenType: "Bearer",
         expiresIn: 10 * 60,
         refreshToken: refreshToken,
         refreshExpiresAt: addMinsToCurrentDate(18 * 60),
