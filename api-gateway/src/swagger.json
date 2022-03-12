@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "MessageBox API Gateway",
-    "description": "&nbsp;\n## Welcome\nThis is the MessageBox API-Gateway to interact with its' backend micro-services.\n\n## BaseURL\n\nPlease use the base url of `/Api` respecting the capitalization of the preceding endpoint names.\n\nFor example, when refreshing the access token you should use the following url: `/Api/Authentication/Login/Refresh` and NOT `/api/authentication/login/refresh`.\n\n## Login\nTo login, use the `/POST -> /Api/Authentication/Login` endpoint with user credentials to be hinted on the next step.\n\n&nbsp;",
+    "description": "&nbsp;\n## Welcome\nThis is the MessageBox API-Gateway to interact with its' backend micro-services.\n\n## BaseURL\n\nPlease use the base url of `/Api` respecting the capitalization of the preceding endpoint names.\n\nFor example, when refreshing the access token you should use the following url: `/Api/Authentication/Login/Refresh` and NOT `/api/authentication/login/refresh`.\n\n## Login\nTo login, use the `/POST -> /Api/Authentication/Login` endpoint with user credentials to be hinted on the next step.\n\n&nbsp;\n### Using the access token\nTo use the access token, append it to the request headers in the following format.\n```sh\n\n HTTP headers:\n    Authorization: Bearer [access_token]\n\n```\n\n&nbsp;\n",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {
       "email": "apiteam@swagger.io"
@@ -11,7 +11,7 @@
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "version": "1.0.0"
+    "version": "1.0"
   },
   "externalDocs": {
     "description": "Visit the MessageBox web application",

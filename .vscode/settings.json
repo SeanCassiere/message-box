@@ -23,6 +23,7 @@
     "respawn",
     "SENDGRID",
     "timestamptz",
+    "topbar",
     "totp",
     "typeorm"
   ]

@@ -2,7 +2,7 @@ import express, { NextFunction } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import swaggerUI from "swagger-ui-express";
+import swaggerUI, { SwaggerUiOptions } from "swagger-ui-express";
 import morgan from "morgan";
 import axios from "axios";
 import jwt from "express-jwt";
@@ -31,10 +31,25 @@ expressApp.get("/docs/swagger.json", (_, res) => {
   return res.status(200).send(swaggerDocument);
 });
 
-const swaggerOptions = {
+const swaggerOptions: SwaggerUiOptions = {
   swaggerOptions: {
     url: `/docs/swagger.json`,
   },
+  customSiteTitle: "MessageBox API Gateway",
+  customCss: `
+  .swagger-ui .topbar .topbar-wrapper img[alt="Swagger UI"] { visibility: hidden }
+  .swagger-ui .topbar .topbar-wrapper .link::after { 
+    content: 'MessageBox';
+    color: #fff;
+    visibility: visible;
+    display: block;
+    position: absolute;
+    padding: 0px;
+  }
+  .swagger-ui .info .title small.version-stamp {
+    background-color: #0d9488;
+  }
+  `,
 };
 expressApp.use("/docs", swaggerUI.serveFiles(undefined, swaggerOptions), swaggerUI.setup(undefined, swaggerOptions));
 
