@@ -29,6 +29,7 @@ export async function refreshUserAccessToken(req: Request, res: Response, next: 
         data: {
           message: "Sorry!, but you do not get a new access_token",
           accessToken: null,
+          tokenType: "Bearer",
           expiresIn: 0,
         },
         errors: [],
@@ -41,6 +42,7 @@ export async function refreshUserAccessToken(req: Request, res: Response, next: 
       data: {
         message: "Successfully refreshed access token",
         accessToken: accessToken,
+        tokenType: "Bearer",
         expiresIn: 10 * 60,
       },
       errors: [],
@@ -51,6 +53,7 @@ export async function refreshUserAccessToken(req: Request, res: Response, next: 
       data: {
         message: "Sorry!, but you do not get a new access_token",
         accessToken: null,
+        tokenType: "Bearer",
         expiresIn: 0,
       },
       errors: [],

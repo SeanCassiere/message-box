@@ -101,7 +101,11 @@ authenticationRouter.route("/Login/Refresh").get(async (req, res) => {
       const { data: response } = await client.post("/users/refresh", { cookie: cookieToken });
 
       if (response.statusCode === 200) {
-        return res.json({ access_token: response.data.accessToken, expiresIn: response.data.expiresIn });
+        return res.json({
+          access_token: response.data.accessToken,
+          token_type: response.data.tokenType,
+          expiresIn: response.data.expiresIn,
+        });
       }
       return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
     } catch (error) {
