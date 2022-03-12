@@ -14,6 +14,11 @@ export const DEFAULT_PERMISSIONS_MAP: {
     "team:read",
     // task
     "task:read",
+    // chat
+    "chat:read",
+    "chat:create",
+    // calendar
+    "calendar:read",
   ],
   admin: [
     //profile
@@ -40,6 +45,23 @@ export const DEFAULT_PERMISSIONS_MAP: {
     "task:delete",
     "task:create",
     "task:admin",
+    // report
+    "report:read",
+    "report:write",
+    "report:admin",
+    // team-activity
+    "team-activity:read",
+    "team-activity:write",
+    "team-activity:admin",
+    // calendar
+    "calendar:admin",
+    // chat
+    "chat:delete",
+    "chat:admin",
+    // calendar
+    "calendar:create",
+    "calendar:delete",
+    "calendar:admin",
   ],
   hr: [
     //profile
@@ -64,6 +86,17 @@ export const DEFAULT_PERMISSIONS_MAP: {
     "task:create",
     "task:delete",
     "task:admin",
+    // report
+    "report:read",
+    "report:write",
+    // team-activity
+    "team-activity:read",
+    "team-activity:write",
+    // chat
+    "chat:delete",
+    // calendar
+    "calendar:create",
+    "calendar:delete",
   ],
   manager: [
     //profile
@@ -88,6 +121,17 @@ export const DEFAULT_PERMISSIONS_MAP: {
     "task:create",
     "task:delete",
     "task:admin",
+    // report
+    "report:read",
+    "report:write",
+    // team-activity
+    "team-activity:read",
+    "team-activity:write",
+    // chat
+    "chat:delete",
+    // calendar
+    "calendar:create",
+    "calendar:delete",
   ],
   basic_access_user: [
     //profile
@@ -105,5 +149,11 @@ export const DEFAULT_PERMISSIONS_MAP: {
     "task:read",
     "task:create",
     "task:delete",
+    // calendar
+    "calendar:create",
+    "calendar:delete",
+    // chat
+    "chat:create",
+    "chat:delete",
   ],
 };

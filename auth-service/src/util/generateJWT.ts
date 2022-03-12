@@ -30,12 +30,22 @@ export async function generateJWT(user: User, expiresIn: string) {
     console.log("ACCESS TOKEN: Could not get roles for user", error);
   }
 
+  const sortedPermissions = permissions.sort((a, b) => {
+    if (a < b) {
+      return -1;
+    }
+    if (a > b) {
+      return 1;
+    }
+    return 0;
+  });
+
   return jwt.sign(
     {
       message_box_clientId: user.clientId,
       message_box_userId: user.userId,
       roles: [...userRoles],
-      permissions: [...permissions],
+      permissions: [...sortedPermissions],
     },
     secret,
     { expiresIn, algorithm: "RS256" }

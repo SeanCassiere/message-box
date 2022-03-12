@@ -7,7 +7,6 @@ export async function getAllClients(req: Request, res: Response, next: NextFunct
   try {
     const allClients = await Client.find({
       where: { isActive: true },
-      select: ["clientId", "name", "updatedAt"],
       order: { createdAt: "DESC" },
     });
     const formatClients = allClients.map((client) => {
