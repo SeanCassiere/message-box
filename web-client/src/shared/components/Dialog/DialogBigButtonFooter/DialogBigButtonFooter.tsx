@@ -8,23 +8,28 @@ interface Props {
   onSubmit?: () => void;
   isLoading?: boolean;
   color?: "inherit" | "primary" | "secondary" | "success" | "error" | "info" | "warning";
+  hideButton?: boolean;
 }
 
-const DialogBigButtonFooter = (props: Props = { submitButtonText: "", isLoading: false, color: "primary" }) => {
+const DialogBigButtonFooter = (
+  props: Props = { submitButtonText: "", isLoading: false, color: "primary", hideButton: false }
+) => {
   return (
     <>
       <DialogActions>
-        <LoadingButton
-          type={props.onSubmit ? "button" : "submit"}
-          onClick={props.onSubmit ? props.onSubmit : () => ({})}
-          loading={props.isLoading}
-          fullWidth
-          variant="contained"
-          sx={{ mb: 2, mx: 2 }}
-          color={props.color}
-        >
-          {props.submitButtonText}
-        </LoadingButton>
+        {!props.hideButton && (
+          <LoadingButton
+            type={props.onSubmit ? "button" : "submit"}
+            onClick={props.onSubmit ? props.onSubmit : () => ({})}
+            loading={props.isLoading}
+            fullWidth
+            variant="contained"
+            sx={{ mb: 2, mx: 2 }}
+            color={props.color}
+          >
+            {props.submitButtonText}
+          </LoadingButton>
+        )}
       </DialogActions>
     </>
   );

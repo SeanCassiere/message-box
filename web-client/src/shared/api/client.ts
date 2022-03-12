@@ -13,10 +13,7 @@ export const client = axios.create({
   withCredentials: true,
   validateStatus: (status) => {
     const acceptableStatusCodes = [200, 201, 204, 400, 403];
-    if (acceptableStatusCodes.includes(status)) {
-      return true;
-    }
-    return false;
+    return acceptableStatusCodes.includes(status);
   },
   timeout: 25000,
   timeoutErrorMessage: "TimeOut",
@@ -42,7 +39,7 @@ client.interceptors.request.use(
     if (err.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const response = await client.get("/Authentication/Refresh");
+        const response = await client.get("/Authentication/Login/Refresh");
         const data = response.data as AccessTokenPair;
 
         if (data.access_token) {

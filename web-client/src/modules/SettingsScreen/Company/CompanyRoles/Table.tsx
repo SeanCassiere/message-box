@@ -11,6 +11,7 @@ import IconButton from "@mui/material/IconButton";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import CustomTableContainer from "../../../../shared/components/Table/StyledTableContainer";
 import StyledTableCell from "../../../../shared/components/Table/StyledTableCell";
@@ -27,17 +28,13 @@ interface ITableProps {
 }
 
 const ViewTable = ({ dataList, editItemHandler, deleteItemHandler }: ITableProps) => {
-  const isDeleteAccessible = usePermission("role:admin");
-  const isEditAccessible = usePermission("role:admin");
-
-  const { formats } = useSelector(selectUserState);
-
   const handleEditButton = (role: IRoleProfile) => {
     editItemHandler(role.roleId);
   };
   const handleDeleteButton = (role: IRoleProfile) => {
     deleteItemHandler(role.roleId);
   };
+
   return (
     <CustomTableContainer>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -50,44 +47,74 @@ const ViewTable = ({ dataList, editItemHandler, deleteItemHandler }: ITableProps
           </TableRow>
         </TableHead>
         <TableBody>
-          {dataList.map((role) => (
-            <StyledTableRow key={role.roleId}>
-              <StyledTableCell component="th" scope="row">
-                {role.viewName}
-              </StyledTableCell>
-              <StyledTableCell>
-                {role.isUserDeletable ? (
-                  <Chip label="User created" variant="outlined" />
-                ) : (
-                  <Chip label="System generated" />
-                )}
-              </StyledTableCell>
-              <StyledTableCell>
-                <Moment interval={formats.defaultDateRefreshInterval} fromNow>
-                  {role.updatedAt}
-                </Moment>
-              </StyledTableCell>
-              <StyledTableCell align="right">
-                {role.isUserDeletable && isDeleteAccessible && (
-                  <>
-                    <IconButton color="error" aria-label="remove" onClick={() => handleDeleteButton(role)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </>
-                )}
-                {role.isUserDeletable && isEditAccessible && (
-                  <>
-                    <IconButton color="primary" aria-label="edit" onClick={() => handleEditButton(role)}>
-                      <EditIcon />
-                    </IconButton>
-                  </>
-                )}
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
+          {dataList
+            .filter((role) => !role.isUserDeletable)
+            .map((role) => (
+              <RenderRowData
+                key={role.roleId}
+                role={role}
+                handleDeleteButton={handleDeleteButton}
+                handleEditButton={handleEditButton}
+              />
+            ))}
+          {dataList
+            .filter((role) => role.isUserDeletable)
+            .map((role) => (
+              <RenderRowData
+                key={role.roleId}
+                role={role}
+                handleDeleteButton={handleDeleteButton}
+                handleEditButton={handleEditButton}
+              />
+            ))}
         </TableBody>
       </Table>
     </CustomTableContainer>
+  );
+};
+
+const RenderRowData = (props: {
+  role: IRoleProfile;
+  handleDeleteButton: (role: IRoleProfile) => void;
+  handleEditButton: (role: IRoleProfile) => void;
+}) => {
+  const { role, handleDeleteButton, handleEditButton } = props;
+
+  const { formats } = useSelector(selectUserState);
+
+  const isDeleteAccessible = usePermission("role:admin");
+  const isEditAccessible = usePermission("role:admin");
+
+  return (
+    <StyledTableRow>
+      <StyledTableCell component="th" scope="row">
+        {role.viewName}
+      </StyledTableCell>
+      <StyledTableCell>
+        {role.isUserDeletable ? <Chip label="User created" variant="outlined" /> : <Chip label="System generated" />}
+      </StyledTableCell>
+      <StyledTableCell>
+        <Moment interval={formats.defaultDateRefreshInterval} fromNow>
+          {role.updatedAt}
+        </Moment>
+      </StyledTableCell>
+      <StyledTableCell align="right">
+        {role.isUserDeletable && isDeleteAccessible && (
+          <>
+            <IconButton color="error" aria-label="remove" onClick={() => handleDeleteButton(role)}>
+              <DeleteIcon />
+            </IconButton>
+          </>
+        )}
+        {isEditAccessible && (
+          <>
+            <IconButton color="primary" aria-label="edit" onClick={() => handleEditButton(role)}>
+              {role.isUserDeletable ? <EditIcon /> : <VisibilityIcon color="disabled" />}
+            </IconButton>
+          </>
+        )}
+      </StyledTableCell>
+    </StyledTableRow>
   );
 };
 

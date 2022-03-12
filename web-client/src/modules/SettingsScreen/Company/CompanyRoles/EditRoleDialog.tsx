@@ -74,6 +74,7 @@ const EditUserDialog = (props: IProps) => {
       rootName: "employee",
       viewName: "",
       permissions: [] as string[],
+      isUserDeletable: true,
     },
     validationSchema,
     onSubmit: (values, { setSubmitting, setErrors }) => {
@@ -143,9 +144,10 @@ const EditUserDialog = (props: IProps) => {
         .then((res) => {
           if (res.status === 200) {
             setFoundDefaultRole(res.data);
-            formik.setFieldValue("viewName", res.data.viewName);
-            formik.setFieldValue("rootName", res.data.rootName);
-            formik.setFieldValue("permissions", res.data.permissions);
+            // formik.setFieldValue("viewName", res.data.viewName);
+            // formik.setFieldValue("rootName", res.data.rootName);
+            // formik.setFieldValue("permissions", res.data.permissions);
+            formik.setValues(res.data);
           } else {
             console.log(res.data);
             enqueueSnackbar(`Error: Could not find role.`, { variant: "error" });
@@ -237,7 +239,7 @@ const EditUserDialog = (props: IProps) => {
                   disabled={isLoadingData}
                 >
                   {loadedPermissions.map((permission) => (
-                    <MenuItem key={`select-${permission}`} value={permission}>
+                    <MenuItem key={`select-${permission}`} value={permission} disabled={!formik.values.isUserDeletable}>
                       <Checkbox checked={formik.values.permissions.indexOf(permission) > -1} />
                       <ListItemText primary={permission} />
                     </MenuItem>
@@ -247,7 +249,10 @@ const EditUserDialog = (props: IProps) => {
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogBigButtonFooter submitButtonText={roleId ? "UPDATE ROLE" : "CREATE NEW ROLE"} />
+        <DialogBigButtonFooter
+          submitButtonText={roleId ? "UPDATE ROLE" : "CREATE NEW ROLE"}
+          hideButton={!formik.values.isUserDeletable}
+        />
       </form>
     </Dialog>
   );
