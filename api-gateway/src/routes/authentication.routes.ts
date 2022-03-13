@@ -148,16 +148,4 @@ authenticationRouter.route("/Logout").get(async (req, res) => {
     .json({ success: true });
 });
 
-authenticationRouter.route("/Profile").get(async (req, res) => {
-  const request = req as CustomRequest<{}>;
-
-  try {
-    const { data: response } = await client.get(`/users/${request.auth?.message_box_userId}`);
-
-    return res.status(response.statusCode).json({ ...response.data });
-  } catch (error) {
-    return res.status(500).json({ message: "auth-service /users network error" });
-  }
-});
-
 export default authenticationRouter;
