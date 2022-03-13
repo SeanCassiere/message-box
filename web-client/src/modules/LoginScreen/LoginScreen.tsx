@@ -4,6 +4,7 @@ import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import jwtDecode from "jwt-decode";
 
 import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
@@ -21,8 +22,7 @@ import { client } from "../../shared/api/client";
 import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
 import { setAccessToken } from "../../shared/redux/slices/auth/authSlice";
 import { selectAuthState } from "../../shared/redux/store";
-import jwtDecode from "jwt-decode";
-import { JwtPayload } from "../../shared/interfaces/AccessToken.interfaces";
+import { JwtPayload, TwoFactorSecretPair } from "../../shared/interfaces/AccessToken.interfaces";
 import { setPermissionsAndRoles } from "../../shared/redux/slices/user/userSlice";
 import { MESSAGES } from "../../shared/util/messages";
 
@@ -34,11 +34,6 @@ const credentialsLoginSchema = yup.object().shape({
 const codeLoginSchema = yup.object().shape({
   code: yup.string().required("Code is required"),
 });
-
-interface TwoFactorSecretPair {
-  base32: string;
-  otpauth_url: string;
-}
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -142,7 +137,7 @@ const LoginScreen = () => {
     },
   });
 
-  // using the 2fa challenge code to get the access token
+  // using the 2fa challenge code to verify the 2fa settings
   const formikVerify2fa = useFormik({
     initialValues: {
       code: "",
@@ -196,6 +191,23 @@ const LoginScreen = () => {
     setShowForgotPassword(true);
   }, []);
 
+  const handleClickRequest2faReset = useCallback(async () => {
+    const currentHost = window.location.protocol + "//" + window.location.host;
+    const confirmationPath = "/reset-2fa/";
+
+    enqueueSnackbar("In-Progress: Requesting 2FA reset.", { variant: "info", autoHideDuration: 4000 });
+    try {
+      await client.post("/Users/Reset2FA/RequestEmail", { userId, host: currentHost, path: confirmationPath });
+      enqueueSnackbar("Success: 2FA reset link sent to your email.", { variant: "success" });
+    } catch (error) {
+      console.log("error sending the request email");
+    }
+
+    setTimeout(() => {
+      setShowLogin2fa(false);
+    }, 1000);
+  }, [enqueueSnackbar, userId]);
+
   return (
     <>
       <AddQrDialog
@@ -205,7 +217,12 @@ const LoginScreen = () => {
         secret={newQrData}
       />
       <ForgotPasswordDialog open={showForgotPassword} handleDismiss={handleCloseForgotPasswordDialog} />
-      <CodeLoginDialog formik={formik2faCodeLogin} showDialog={showLogin2fa} handleClose={handleClose2faDialog} />
+      <CodeLoginDialog
+        formik={formik2faCodeLogin}
+        showDialog={showLogin2fa}
+        handleClose={handleClose2faDialog}
+        handleClickRequest2faReset={handleClickRequest2faReset}
+      />
       <Grid container component="main" sx={{ height: "100vh" }}>
         <Grid
           item

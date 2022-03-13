@@ -1,5 +1,4 @@
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Link as RouterLink } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { FormikContextType } from "formik";
 
@@ -17,6 +16,7 @@ interface IProps {
   formik: FormikContextType<{ code: string }>;
   handleClose: () => void;
   showDialog: boolean;
+  handleClickRequest2faReset: () => void;
 }
 
 const CodeLoginDialog = (props: IProps) => {
@@ -44,7 +44,7 @@ const CodeLoginDialog = (props: IProps) => {
             helperText={formik.touched.code && formik.errors.code}
             autoFocus
           />
-          <Link to="/forgot-password" variant="body2" component={RouterLink}>
+          <Link variant="body2" sx={{ cursor: "pointer" }} onClick={props.handleClickRequest2faReset}>
             I no longer have access to my 2FA code
           </Link>
         </DialogContent>
