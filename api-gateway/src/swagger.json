@@ -768,7 +768,8 @@
             "description": "Unique Role ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -809,7 +810,8 @@
             "description": "Unique Role ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -861,7 +863,8 @@
             "description": "Unique Role ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -903,7 +906,8 @@
             "in": "query",
             "description": "Owner ID (UUID)",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           },
           {
@@ -1012,7 +1016,8 @@
             "description": "Unique Team ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1053,7 +1058,8 @@
             "description": "Unique Team ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1105,7 +1111,8 @@
             "description": "Unique Team ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1148,7 +1155,8 @@
             "description": "Unique Team ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1189,7 +1197,8 @@
             "description": "Unique Team ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1241,7 +1250,8 @@
             "description": "Unique Team ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1289,7 +1299,8 @@
             "description": "User's unique ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1324,7 +1335,8 @@
             "description": "User's unique ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1377,7 +1389,8 @@
             "description": "User's unique ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1414,7 +1427,8 @@
             "description": "User's unique ID (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1609,7 +1623,8 @@
             "description": "Reset token (UUID)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1624,10 +1639,7 @@
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "403": {
+          "400": {
             "$ref": "#/components/responses/BadRequest"
           }
         }
