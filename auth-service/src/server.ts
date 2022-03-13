@@ -48,6 +48,7 @@ import { changePasswordByUserId } from "./controllers/users/changePasswordByUser
 import { getAllUserIdsForClient } from "./controllers/clients/getAllUserIdsForClient";
 import { adminSetDefaultRolePermissions } from "./controllers/roles/adminSetDefaultRolePermissions";
 import { adminSetDefaultRoles } from "./controllers/roles/adminSetDefaultRoles";
+import { markEmailConfirmationIdAsUsed } from "./controllers/email-related/markEmailConfirmationIdAsUsed";
 
 const expressApp = express();
 
@@ -116,5 +117,7 @@ expressApp.post("/2fa/getAccessTokenFor2FACode", getAccessTokenFor2FACode);
 expressApp.post("/2fa/changePasswordUsing2FA", changePasswordUsing2FA);
 expressApp.post("/2fa/sendReset2faTokenEmail", sendReset2faTokenEmail);
 expressApp.post("/2fa/getReset2faDetailsFromEmailToken", getReset2faDetailsFromEmailToken);
+
+expressApp.post("/email/markEmailConfirmationIdAsUsed", markEmailConfirmationIdAsUsed);
 
 export default expressApp;

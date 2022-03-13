@@ -78,10 +78,15 @@ authenticationRouter.route("/2FA/Code/Login").post(async (req, res) => {
 });
 
 authenticationRouter.route("/2FA/Code/ConfirmUser").post(async (req, res) => {
-  const request = req as CustomRequest<{}>;
+  const request = req as CustomRequest<{ token?: string }>;
 
   try {
     const { data: response } = await client.post("/2fa/verifyUser2FAStatus", { body: request.body });
+
+    console.log("\n\n\ntoken", request.body.token, "\n\n\n");
+    if (request.body.token) {
+      await client.post("/email/markEmailConfirmationIdAsUsed", { body: { confirmationId: request.body.token } });
+    }
 
     if (response.statusCode === 200) {
       return res.json(response.data);
