@@ -9,6 +9,7 @@ import TwoFactorAuthMapping from "./entities/TwoFactorAuthMapping";
 import EmailConfirmations from "./entities/EmailConfirmations";
 import Team from "./entities/Team";
 import TeamMapping from "./entities/TeamMapping";
+import Token from "./entities/Token";
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ export async function initConnection(retries = 5) {
   while (retries) {
     try {
       connection = await createConnection({
-        entities: [User, Client, Role, RoleMapping, TwoFactorAuthMapping, EmailConfirmations, Team, TeamMapping],
+        entities: [User, Client, Role, RoleMapping, TwoFactorAuthMapping, EmailConfirmations, Team, TeamMapping, Token],
         type: "postgres",
         url: process.env.AUTH_SERVICE_DB_URL,
         synchronize: true,

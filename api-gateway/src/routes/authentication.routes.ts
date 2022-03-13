@@ -6,6 +6,8 @@ import { AUTH_SERVICE_URI } from "#root/constants";
 
 const authenticationRouter = express.Router();
 
+const REFRESH_TOKEN_KEY = "mb_refresh_token";
+
 const client = axios.create({
   baseURL: AUTH_SERVICE_URI,
 });
@@ -55,7 +57,7 @@ authenticationRouter.route("/2FA/Code/Login").post(async (req, res) => {
     if (response.statusCode === 200) {
       return res
         .status(200)
-        .cookie("mb_refresh_token", response.data.refreshToken, {
+        .cookie(REFRESH_TOKEN_KEY, response.data.refreshToken, {
           sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
           secure: process.env.NODE_ENV === "production",
           httpOnly: true,
@@ -94,18 +96,27 @@ authenticationRouter.route("/2FA/Code/ConfirmUser").post(async (req, res) => {
 authenticationRouter.route("/Login/Refresh").get(async (req, res) => {
   const request = req as CustomRequest<{}>;
 
-  const cookieToken = request.cookies["mb_refresh_token"];
+  const cookieToken = request.cookies[REFRESH_TOKEN_KEY];
 
   if (cookieToken) {
     try {
       const { data: response } = await client.post("/users/refresh", { cookie: cookieToken });
 
       if (response.statusCode === 200) {
-        return res.json({
-          access_token: response.data.accessToken,
-          token_type: response.data.tokenType,
-          expiresIn: response.data.expiresIn,
-        });
+        const refreshExpiry = new Date(response.data.refreshExpiresAt);
+        return res
+          .cookie(REFRESH_TOKEN_KEY, `${response.data.refreshToken}`, {
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: process.env.NODE_ENV === "production",
+            httpOnly: true,
+            expires: refreshExpiry,
+          })
+          .json({
+            access_token: response.data.accessToken,
+            token_type: response.data.tokenType,
+            expiresIn: response.data.expiresIn,
+            message: response.data.message,
+          });
       }
       return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
     } catch (error) {
@@ -113,12 +124,22 @@ authenticationRouter.route("/Login/Refresh").get(async (req, res) => {
     }
   }
 
-  return res.status(200).json({ access_token: null, expiresIn: 0 });
+  return res.status(200).json({ access_token: null, expiresIn: 0, token_type: "Bearer", message: "No cookie" });
 });
 
-authenticationRouter.route("/Logout").get(async (_, res) => {
+authenticationRouter.route("/Logout").get(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+
+  const cookieToken = request.cookies[REFRESH_TOKEN_KEY];
+
+  try {
+    await client.post("/users/logoutUserToken", { cookie: cookieToken ?? null });
+  } catch (error) {
+    console.log(`Could not logout this refresh_token ${cookieToken}`);
+  }
+
   return res
-    .cookie("mb_refresh_token", "expiring now", {
+    .cookie(REFRESH_TOKEN_KEY, "null", {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,

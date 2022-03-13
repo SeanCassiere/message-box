@@ -16,6 +16,7 @@ import { confirmUserAccountByToken } from "./controllers/email-related/confirmUs
 import { requestPasswordByEmail } from "./controllers/email-related/requestPasswordByEmail";
 import { resetPasswordByToken } from "./controllers/email-related/resetPasswordByToken";
 import { resendConfirmationEmail } from "./controllers/email-related/resendConfirmationEmail";
+import { logoutUserToken } from "./controllers/users/logoutUserToken";
 
 import { createClientAndUser } from "./controllers/clients/createClientAndUser";
 import { getAllClients } from "./controllers/clients/getAllClients";
@@ -78,6 +79,7 @@ expressApp.post("/users/resetPasswordByToken", resetPasswordByToken);
 expressApp.post("/users/resendConfirmationEmail", resendConfirmationEmail);
 expressApp.post("/users/changePasswordForUser", changePasswordForUser);
 expressApp.post("/users/changePasswordByUserId", changePasswordByUserId);
+expressApp.post("/users/logoutUserToken", logoutUserToken);
 
 /**
  * Client routes

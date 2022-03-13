@@ -10,9 +10,9 @@ import TwoFactorAuthMapping from "#root/db/entities/TwoFactorAuthMapping";
 
 import { validateYupSchema } from "#root/util/validateYupSchema";
 import { Secret2FA } from "#root/interfaces/2FA.interfaces";
-import { generateJWT, generateRefreshJWT } from "#root/util/generateJWT";
-import { addMinsToCurrentDate } from "#root/util/addMinsToCurrentDate";
+import { generateJWT } from "#root/util/generateJWT";
 import { generate2faSecret } from "#root/util/generate2faSecret";
+import Token from "#root/db/entities/Token";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({
@@ -93,7 +93,12 @@ export async function getAccessTokenFor2FACode(req: Request, res: Response, next
 
     // return the access token
     const accessToken = await generateJWT(user, "10min");
-    const refreshToken = generateRefreshJWT(user, "18h");
+
+    const newRefreshTokenObject = Token.create({ userId: user.userId });
+    newRefreshTokenObject.appendRefreshToken();
+    await newRefreshTokenObject.save();
+    newRefreshTokenObject.reload();
+
     return res.json({
       statusCode: 200,
       pagination: null,
@@ -102,8 +107,8 @@ export async function getAccessTokenFor2FACode(req: Request, res: Response, next
         accessToken: accessToken,
         tokenType: "Bearer",
         expiresIn: 10 * 60,
-        refreshToken: refreshToken,
-        refreshExpiresAt: addMinsToCurrentDate(18 * 60),
+        refreshToken: newRefreshTokenObject.token,
+        refreshExpiresAt: newRefreshTokenObject.expiresAt,
       },
       errors: [],
     });
