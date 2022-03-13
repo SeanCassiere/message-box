@@ -1,4 +1,5 @@
 import dotenv from "dotenv-safe";
+import { pathToRegexp } from "path-to-regexp";
 
 dotenv.config();
 
@@ -19,11 +20,13 @@ export const ALLOWED_PUBLIC_PATHS = [
   `${API_PREFIX}/Authentication/2FA/Code/ConfirmUser`,
   `${API_PREFIX}/Authentication/Logout`,
   `${API_PREFIX}/Clients`,
-  `${API_PREFIX}/Users/:id/ChangePassword`,
+  pathToRegexp(`${API_PREFIX}/Users/:id/ChangePassword`),
   `${API_PREFIX}/Users/ConfirmUser`,
   `${API_PREFIX}/Users/ConfirmUser/ResendConfirmationEmail`,
   `${API_PREFIX}/Users/ResetPassword`,
   `${API_PREFIX}/Users/ResetPassword/RequestEmail`,
   `${API_PREFIX}/Users/ResetPassword/With2FA`,
   `${API_PREFIX}/Users/ResetPassword/WithToken`,
+  `${API_PREFIX}/Users/Reset2FA/RequestEmail`,
+  pathToRegexp(`${API_PREFIX}/Users/Reset2FA/:token`),
 ];
