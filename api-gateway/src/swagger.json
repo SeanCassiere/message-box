@@ -1547,6 +1547,92 @@
         }
       }
     },
+    "/Users/Reset2FA/RequestEmail": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Request an email to reset a user's 2fa access.",
+        "description": "Request an email to reset the user's 2fa access.",
+        "operationId": "Request2FAResetWithEmail",
+        "parameters": [],
+        "requestBody": {
+          "description": "Body required to request a 2FA reset",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string",
+                    "default": "https://example.com"
+                  },
+                  "path": {
+                    "type": "string",
+                    "default": "/reset-2fa/"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully send the reset email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/Users/Reset2FA/{token}": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get the 2FA reset details for the token",
+        "description": "Get the 2FA reset details for the token",
+        "operationId": "Get2faResetByToken",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Reset token (UUID)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched reset 2fa details for the token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/2FAUsernameAndPasswordLogin"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "403": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/Users/ResetPassword/RequestEmail": {
       "post": {
         "tags": ["User"],

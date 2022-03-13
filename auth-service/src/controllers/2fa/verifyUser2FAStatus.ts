@@ -51,17 +51,17 @@ export async function verifyUser2FAStatus(req: Request, res: Response, next: Nex
     /**
      * If the user is already using 2fa, dummy success
      */
-    if (userRecord.is2faActive) {
-      return res.json({
-        statusCode: 200,
-        pagination: null,
-        data: {
-          success: true,
-          message: "Successfully confirmed your 2fa registration",
-        },
-        errors: [],
-      });
-    }
+    // if (userRecord.is2faActive) {
+    //   return res.json({
+    //     statusCode: 200,
+    //     pagination: null,
+    //     data: {
+    //       success: true,
+    //       message: "Successfully confirmed your 2fa registration",
+    //     },
+    //     errors: [],
+    //   });
+    // }
 
     /**
      * Check code success

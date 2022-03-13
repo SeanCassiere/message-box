@@ -166,6 +166,43 @@ userRouter.route("/ResetPassword/RequestEmail").post(async (req, res) => {
   }
 });
 
+userRouter.route("/Reset2FA/RequestEmail").post(async (req, res) => {
+  const request = req as CustomRequest<{ host: string; path: string }>;
+  try {
+    const { data: response } = await client.post("/2fa/sendReset2faTokenEmail", {
+      variables: {
+        host: request.body?.host ?? "http://localhost:3000",
+        path: request.body?.path ?? "/reset-2fa/",
+      },
+      body: { ...request.body },
+    });
+
+    if (response.statusCode !== 200) {
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
+    }
+
+    return res.json({ ...response.data });
+  } catch (error) {
+    return res.status(500).json({ message: "auth-service /users /sendReset2faTokenEmail network error" });
+  }
+});
+
+userRouter.route("/Reset2FA/:token").get(async (req, res) => {
+  try {
+    const { data: response } = await client.post("/2fa/getReset2faDetailsFromEmailToken", {
+      body: { token: req.params.token },
+    });
+
+    if (response.statusCode !== 200) {
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
+    }
+
+    return res.json({ ...response.data });
+  } catch (error) {
+    return res.status(500).json({ message: "auth-service /users /getReset2faDetailsFromEmailToken network error" });
+  }
+});
+
 userRouter.route("/ConfirmUser").post(async (req, res) => {
   const request = req as CustomRequest<{}>;
   try {

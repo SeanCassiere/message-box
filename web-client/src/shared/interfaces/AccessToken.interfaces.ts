@@ -11,3 +11,8 @@ export interface JwtPayload {
   permissions: string[];
   exp: number;
 }
+
+export interface TwoFactorSecretPair {
+  base32: string;
+  otpauth_url: string;
+}

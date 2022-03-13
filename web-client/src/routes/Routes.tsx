@@ -23,6 +23,7 @@ const ForgotPasswordScreen = lazy(
 const ConfirmAccountScreen = lazy(
   () => import(/* webpackChunkName: 'ConfirmAccountScreen' */ "../modules/ConfirmAccountScreen")
 );
+const Reset2FAScreen = lazy(() => import(/* webpackChunkName: 'Reset2FAScreen' */ "../modules/Reset2FAScreen"));
 
 const AppRoutes = () => {
   return (
@@ -69,6 +70,14 @@ const AppRoutes = () => {
           element={
             <SuspenseLoadingWrapper>
               <ForgotPasswordScreen />
+            </SuspenseLoadingWrapper>
+          }
+        />
+        <Route
+          path="reset-2fa/:token"
+          element={
+            <SuspenseLoadingWrapper>
+              <Reset2FAScreen />
             </SuspenseLoadingWrapper>
           }
         />
