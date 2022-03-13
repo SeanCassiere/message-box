@@ -47,12 +47,6 @@ import TodayIcon from "@mui/icons-material/Today";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import PeopleIcon from "@mui/icons-material/People";
 
-const profileRouteList = [
-  { route: "/settings/account/my-account", name: "My Account" },
-  { route: "/settings/account/change-password", name: "Change Password" },
-  { route: "/logout", name: "Logout" },
-];
-
 const NavigationWrapper: React.FC = (props) => {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -61,30 +55,48 @@ const NavigationWrapper: React.FC = (props) => {
   const { children } = props;
   const { userProfile } = useSelector(selectUserState);
 
+  const isChatAccessible = usePermission("chat:read");
   const isTasksAccessible = usePermission("task:read");
+  const isCalendarAccessible = usePermission("calendar:read");
+  const isTeamActivityAccessible = usePermission("team-activity:read");
+  const isReportsAccessible = usePermission("report:read");
   const routesList = useMemo(() => {
     const listedRoutes = [];
 
-    listedRoutes.push({ route: "/chat", name: "Chat", Icon: ChatIcon, key: "/chat" });
-
+    if (isChatAccessible) {
+      listedRoutes.push({ route: "/chat", name: "Chat", Icon: ChatIcon, key: "/chat" });
+    }
     if (isTasksAccessible) {
       listedRoutes.push({ route: "/tasks/today", name: "Tasks", Icon: AssignmentIcon, key: "/tasks" });
     }
-
-    if (isTasksAccessible) {
+    if (isCalendarAccessible) {
       listedRoutes.push({ route: "/calendar", name: "Calendar", Icon: TodayIcon, key: "/calendar" });
     }
-
-    if (isTasksAccessible) {
+    if (isTeamActivityAccessible) {
       listedRoutes.push({ route: "/team-activity", name: "Team Activity", Icon: PeopleIcon, key: "/team-activity" });
     }
-
-    if (isTasksAccessible) {
+    if (isReportsAccessible) {
       listedRoutes.push({ route: "/reports", name: "Reports", Icon: InsertChartIcon, key: "/reports" });
     }
 
     return listedRoutes;
-  }, [isTasksAccessible]);
+  }, [isCalendarAccessible, isChatAccessible, isReportsAccessible, isTasksAccessible, isTeamActivityAccessible]);
+
+  const isUserProfileAccessible = usePermission("profile:read");
+  const isChangePasswordAccessible = usePermission("profile:write");
+  const profileRouteList = useMemo(() => {
+    const listedRoutes = [];
+
+    if (isUserProfileAccessible) {
+      listedRoutes.push({ route: "/settings/account/my-account", name: "My Account" });
+    }
+    if (isChangePasswordAccessible) {
+      listedRoutes.push({ route: "/settings/account/change-password", name: "Change Password" });
+    }
+    listedRoutes.push({ route: "/logout", name: "Logout" });
+
+    return listedRoutes;
+  }, [isChangePasswordAccessible, isUserProfileAccessible]);
 
   const [currentLink, setCurrentLink] = React.useState<string>("");
   const [open, setOpen] = React.useState(false);
