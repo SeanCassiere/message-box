@@ -21,7 +21,7 @@ const codeLoginSchema = yup.object().shape({
 
 interface IFetchTokenDetails {
   userId: string | null;
-  secret: TwoFactorSecretPair | null;
+  twoFactorAuthenticationCodeCreator: TwoFactorSecretPair | null;
 }
 
 const Reset2FAScreen = () => {
@@ -30,12 +30,15 @@ const Reset2FAScreen = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [responseData, setResponseData] = useState<IFetchTokenDetails>({ userId: null, secret: null });
+  const [responseData, setResponseData] = useState<IFetchTokenDetails>({
+    userId: null,
+    twoFactorAuthenticationCodeCreator: null,
+  });
 
   const getReset2faDetailsWithToken = useCallback(async () => {
     try {
       const response = await client.get(`/Users/Reset2FA/${token}`);
-      setResponseData(response.data);
+      setResponseData({ ...response.data });
 
       enqueueSnackbar("Verified request", { variant: "info", autoHideDuration: 3000 });
     } catch (error) {
@@ -83,7 +86,7 @@ const Reset2FAScreen = () => {
     },
   });
 
-  if (!isLoading && responseData.secret === null) <Navigate to="/" />;
+  if (!isLoading && responseData.twoFactorAuthenticationCodeCreator === null) <Navigate to="/" />;
 
   return (
     <>
@@ -96,7 +99,7 @@ const Reset2FAScreen = () => {
           navigate("/");
         }}
         formik={formikVerify2fa}
-        secret={responseData?.secret}
+        secret={responseData?.twoFactorAuthenticationCodeCreator}
       />
     </>
   );
