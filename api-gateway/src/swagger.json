@@ -556,6 +556,22 @@
                   },
                   "teamName": {
                     "type": "string"
+                  },
+                  "members": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "userId": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "isLeader": {
+                          "type": "boolean",
+                          "default": false
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -569,7 +585,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RoleSchema"
+                  "$ref": "#/components/schemas/TeamSchema"
                 }
               }
             }
@@ -2201,6 +2217,22 @@
           "isUserDeletable": {
             "type": "boolean",
             "default": false
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "isLeader": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
           },
           "updatedAt": {
             "type": "string",
