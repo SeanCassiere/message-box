@@ -120,7 +120,7 @@ export async function createClientAndUser(req: Request, res: Response, next: Nex
     }).save();
 
     // create the team mappings
-    await TeamMapping.create({ userId: adminUser.userId, teamId: companyTeam.teamId }).save();
+    await TeamMapping.create({ userId: adminUser.userId, teamId: companyTeam.teamId, isATeamLeader: true }).save();
 
     // save the admin user to the client profile
     newClient.adminUserId = adminUser.userId;
