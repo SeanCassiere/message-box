@@ -27,7 +27,8 @@ export async function getAllTeamsForClient(req: CustomRequest<{ clientId: string
 
     for (const team of foundTeams) {
       const mapping = await TeamMapping.find({ where: { teamId: team.teamId } });
-      formattedTeams.push(formatTeamResponse({ team, members: mapping }));
+      const fullTeam = await formatTeamResponse({ team, members: mapping });
+      formattedTeams.push(fullTeam);
     }
 
     return res.json({

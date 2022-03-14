@@ -58,9 +58,10 @@ export async function createTeamForClient(req: Request, res: Response, next: Nex
 
     const mappings = await TeamMapping.find({ where: { teamId: team.teamId } });
 
+    const response = await formatTeamResponse({ team, members: mappings });
     return res.json({
       statusCode: 200,
-      data: formatTeamResponse({ team, members: mappings }),
+      data: response,
       errors: [],
     });
   } catch (err) {

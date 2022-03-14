@@ -2230,6 +2230,14 @@
                 "isLeader": {
                   "type": "boolean",
                   "default": false
+                },
+                "firstName": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "lastName": {
+                  "type": "string",
+                  "nullable": true
                 }
               }
             }
