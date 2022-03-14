@@ -12,7 +12,7 @@ export async function getTeamById(req: CustomRequest<{ teamId: string }>, res: R
     const team = await Team.findOneOrFail({ where: { teamId: teamId } });
     const mappings = await TeamMapping.find({ where: { teamId: teamId } });
 
-    const response = await formatTeamResponse({ team, members: mappings });
+    const response = await formatTeamResponse({ team, members: mappings, resolveUsers: true });
 
     return res.json({
       statusCode: 200,

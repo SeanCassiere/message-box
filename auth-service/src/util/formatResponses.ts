@@ -37,20 +37,31 @@ export function formatRoleResponse({ role }: { role: Role }) {
   };
 }
 
-export async function formatTeamResponse({ team, members: mappings }: { team: Team; members: TeamMapping[] }) {
+export async function formatTeamResponse({
+  team,
+  members: mappings,
+  resolveUsers,
+}: {
+  team: Team;
+  members: TeamMapping[];
+  resolveUsers?: boolean;
+}) {
   const mappingsToReturn = [];
 
   for (const map of mappings) {
     try {
-      const user = await User.findOne({ where: { userId: map.userId } });
-      if (user) {
-        mappingsToReturn.push({
-          userId: user.userId,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          isLeader: map.isATeamLeader,
-        });
+      let user: any = { firstName: null, lastName: null };
+
+      if (resolveUsers) {
+        user = await User.findOne({ where: { userId: map.userId } });
       }
+
+      mappingsToReturn.push({
+        userId: map.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        isLeader: map.isATeamLeader,
+      });
     } catch (error) {
       console.log("User not found", error);
     }
