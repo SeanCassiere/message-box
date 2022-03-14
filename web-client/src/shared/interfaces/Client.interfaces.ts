@@ -14,10 +14,17 @@ export interface IRoleProfile {
   updatedAt: string;
 }
 
+export interface ITeamMember {
+  userId: string;
+  firstName?: string;
+  lastName?: string;
+  isLeader: boolean;
+}
 export interface ITeamProfile {
   teamId: string;
   rootName: string;
   teamName: string;
+  members: ITeamMember[];
   isUserDeletable: boolean;
   updatedAt: string;
 }
