@@ -1,6 +1,7 @@
 import Client from "#root/db/entities/Client";
 import Role from "#root/db/entities/Role";
 import Team from "#root/db/entities/Team";
+import TeamMapping from "#root/db/entities/TeamMapping";
 import User from "#root/db/entities/User";
 
 export function formatUserResponseWithRoles({ user, roles, teams }: { user: User; roles: string[]; teams: string[] }) {
@@ -36,11 +37,12 @@ export function formatRoleResponse({ role }: { role: Role }) {
   };
 }
 
-export function formatTeamResponse({ team }: { team: Team }) {
+export function formatTeamResponse({ team, members: mappings }: { team: Team; members: TeamMapping[] }) {
   return {
     teamId: team.teamId,
     rootName: team.rootName,
     teamName: team.teamName,
+    members: mappings.map((member) => ({ userId: member.userId, isLeader: member.isATeamLeader })),
     isUserDeletable: team.isUserDeletable,
     updatedAt: team.updatedAt,
   };
