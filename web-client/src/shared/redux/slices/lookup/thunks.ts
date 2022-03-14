@@ -71,3 +71,19 @@ export const getClientTeamsLookupListThunk = createAsyncThunk(
     }
   }
 );
+
+export const getClientUsersLookupListThunk = createAsyncThunk(
+  "lookup/getClientUsersLookupList",
+  async (_, { dispatch }) => {
+    // fetch the all users for the client
+    try {
+      const response = await client.get("/Clients/Users");
+      if (response.status === 200) {
+        const data = response.data as IUserProfile[];
+        dispatch(setLookupUsers(data));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);

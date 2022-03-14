@@ -197,7 +197,11 @@ userRouter.route("/Reset2FA/:token").get(async (req, res) => {
       return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
     }
 
-    return res.json({ ...response.data });
+    return res.json({
+      next: "/Api/Authentication/2FA/Code/ConfirmUser",
+      userId: response.data.userId,
+      twoFactorAuthenticationCodeCreator: response.data.secret,
+    });
   } catch (error) {
     return res.status(500).json({ message: "auth-service /users /getReset2faDetailsFromEmailToken network error" });
   }

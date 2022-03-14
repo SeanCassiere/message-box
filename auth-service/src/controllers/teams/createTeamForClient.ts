@@ -2,8 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import * as yup from "yup";
 
 import Team from "#root/db/entities/Team";
+import TeamMapping from "#root/db/entities/TeamMapping";
+
 import { validateYupSchema } from "#root/util/validateYupSchema";
 import { formatTeamResponse } from "#root/util/formatResponses";
+import User from "#root/db/entities/User";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -12,6 +15,12 @@ const validationSchema = yup.object().shape({
   body: yup.object().shape({
     rootName: yup.string().required("Root name is required"),
     teamName: yup.string().required("Team view name is required"),
+    members: yup.array().of(
+      yup.object({
+        userId: yup.string().required("UserId is required"),
+        isLeader: yup.boolean(),
+      })
+    ),
   }),
 });
 
@@ -26,7 +35,7 @@ export async function createTeamForClient(req: Request, res: Response, next: Nex
   }
 
   const { clientId } = req.body.variables;
-  const { rootName, teamName } = req.body.body;
+  const { rootName, teamName, members } = req.body.body;
 
   try {
     const team = await Team.create({
@@ -35,9 +44,24 @@ export async function createTeamForClient(req: Request, res: Response, next: Nex
       teamName: teamName,
     }).save();
 
+    for (const member of members) {
+      const user = await User.findOne({ where: { userId: member.userId, isActive: true } });
+
+      if (user) {
+        await TeamMapping.create({
+          teamId: team.teamId,
+          userId: member.userId,
+          isATeamLeader: member.isLeader,
+        }).save();
+      }
+    }
+
+    const mappings = await TeamMapping.find({ where: { teamId: team.teamId } });
+
+    const response = await formatTeamResponse({ team, members: mappings });
     return res.json({
       statusCode: 200,
-      data: formatTeamResponse({ team }),
+      data: response,
       errors: [],
     });
   } catch (err) {

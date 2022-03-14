@@ -11,6 +11,9 @@ export default class TeamMapping extends BaseEntity {
   @Column("text", { name: "user_id" })
   userId: string;
 
+  @Column("bool", { name: "is_a_team_leader", default: false })
+  isATeamLeader: boolean;
+
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
