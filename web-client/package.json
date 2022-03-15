@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@date-io/moment": "^2.13.1",
+    "@devexpress/dx-react-core": "^3.0.2",
+    "@devexpress/dx-react-scheduler": "^3.0.2",
+    "@devexpress/dx-react-scheduler-material-ui": "^3.0.2",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.2.4",
@@ -19,6 +22,7 @@
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
     "axios": "^0.24.0",
+    "clsx": "^1.1.1",
     "draft-js": "^0.11.7",
     "es6-shim": "^0.35.6",
     "formik": "^2.2.9",
@@ -65,9 +69,9 @@
     ]
   },
   "devDependencies": {
-    "@types/qrcode.react": "^1.0.2",
     "@types/draft-js": "^0.11.8",
     "@types/markdown-draft-js": "^2.2.4",
+    "@types/qrcode.react": "^1.0.2",
     "@types/remove-markdown": "^0.3.1"
   }
 }
