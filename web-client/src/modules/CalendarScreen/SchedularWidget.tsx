@@ -27,7 +27,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Grid from "@mui/material/Grid";
 
-import { getDummyCalendarEvents } from "./demoAppointments";
+import { ICalendarEvent } from "../../shared/interfaces/CalendarEvent.interfaces";
 
 const PREFIX = "MessageBox";
 
@@ -62,16 +62,14 @@ interface ICustomCalendarSchedularProps {
   maxHeight?: number;
   showOverlay: boolean;
   handleHideOverlay: () => void;
+  isCalendarLoading: boolean;
+  calendarEvents: ICalendarEvent[];
 }
 
 const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const [calLoadingState] = useState(false);
-
-  const [calendarEvents] = useState(getDummyCalendarEvents());
 
   const [calCurrentDate, setCalCurrentDate] = useState(new Date());
   const setCurrentDateHandler = useCallback((dateInput: Date) => {
@@ -85,7 +83,7 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
 
   return (
     <Paper>
-      <Scheduler data={calendarEvents} height={parentProps.maxHeight ?? 780}>
+      <Scheduler data={parentProps.calendarEvents} height={parentProps.maxHeight ?? 780}>
         <ViewState
           currentDate={calCurrentDate}
           onCurrentDateChange={setCurrentDateHandler}
@@ -126,7 +124,7 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
         // }}
         />
         <CurrentTimeIndicator updateInterval={6000} />
-        <Toolbar {...(calLoadingState ? { rootComponent: ToolbarWithLoading } : null)} />
+        <Toolbar {...(parentProps.isCalendarLoading ? { rootComponent: ToolbarWithLoading } : null)} />
         {!isOnMobile && <DateNavigator openButtonComponent={DateNavigatorButtonComponent} />}
         <ViewSwitcher switcherComponent={SwitcherComponent} />
         <TodayButton />
