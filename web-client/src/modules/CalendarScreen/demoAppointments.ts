@@ -55,13 +55,13 @@ export function getDummyCalendarEvents() {
 
   returnEvents.push({
     id: "4",
-    ownerId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
+    ownerId: "74251bdf-808e-4a1a-9792-ef5e4a2b14f0",
     title: "Mid 24 hours",
     startDate: new Date(
-      `${year}-${month}-${parseInt(currentDate.toISOString().substring(8, 10)) + 1} 14:00`
+      `${year}-${month}-${parseInt(currentDate.toISOString().substring(8, 10)) + 1} 09:00`
     ).toISOString(),
     endDate: new Date(
-      `${year}-${month}-${parseInt(currentDate.toISOString().substring(8, 10)) + 2} 14:00`
+      `${year}-${month}-${parseInt(currentDate.toISOString().substring(8, 10)) + 1} 16:00`
     ).toISOString(),
     isAllDay: true,
     sharedWith: [],

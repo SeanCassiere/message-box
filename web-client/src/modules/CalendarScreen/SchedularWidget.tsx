@@ -1,12 +1,10 @@
 // ref: https://devexpress.github.io/devextreme-reactive/react/scheduler/demos/featured/remote-data/
 // ref: https://devexpress.github.io/devextreme-reactive/react/scheduler/docs/guides/appointments/
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useState, useCallback } from "react";
-import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import LinearProgress from "@mui/material/LinearProgress";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   Scheduler,
   WeekView,
@@ -19,44 +17,21 @@ import {
   AppointmentTooltip,
   TodayButton,
   AllDayPanel,
+  MonthView,
   CurrentTimeIndicator,
+  Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Grid from "@mui/material/Grid";
 
+import DateNavigatorButtonComponent from "../../shared/components/Calendar/DateNavigatorButtonComponent";
+import ViewSwitcherComponent from "../../shared/components/Calendar/ViewSwitcherComponent";
+import ToolbarWithLoading from "../../shared/components/Calendar/ToolbarWithLoading";
+import AppointmentComponent from "../../shared/components/Calendar/AppointmentComponent";
+import AppointmentContentComponent from "../../shared/components/Calendar/AppointmentContentComponent";
+
 import { ICalendarEvent } from "../../shared/interfaces/CalendarEvent.interfaces";
-
-const PREFIX = "MessageBox";
-
-const classes = {
-  toolbarRoot: `${PREFIX}-toolbarRoot`,
-  progress: `${PREFIX}-progress`,
-};
-
-const StyledDiv = styled("div")({
-  [`&.${classes.toolbarRoot}`]: {
-    position: "relative",
-  },
-});
-
-const StyledLinearProgress = styled(LinearProgress)(() => ({
-  [`&.${classes.progress}`]: {
-    position: "absolute",
-    width: "100%",
-    bottom: 0,
-    left: 0,
-  },
-}));
-
-const ToolbarWithLoading = ({ children, ...restProps }: any) => (
-  <StyledDiv className={classes.toolbarRoot}>
-    <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
-    <StyledLinearProgress className={classes.progress} />
-  </StyledDiv>
-);
+import { resources } from "../../shared/components/Calendar/common";
 
 interface ICustomCalendarSchedularProps {
   maxHeight?: number;
@@ -91,43 +66,26 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
           onCurrentViewNameChange={setCurrentViewNameHandler}
         />
         <DayView startDayHour={1} endDayHour={23} />
+        <MonthView />
         <WeekView startDayHour={7} endDayHour={18.5} />
         <AllDayPanel />
         <Appointments
-        // appointmentComponent={(appointmentProps) => {
-        //   return (
-        //     <Paper
-        //       {...appointmentProps}
-        //       onClick={(e) => {
-        //         if (appointmentProps.onClick) {
-        //           appointmentProps.onClick(appointmentProps.data);
-        //         }
-        //       }}
-        //       elevation={0}
-        //       sx={{
-        //         bgcolor: "primary.400",
-        //         height: "100%",
-        //         borderWidth: 2,
-        //         borderStyle: "solid",
-        //         borderColor: "primary.600",
-        //         borderRadius: 2,
-        //       }}
-        //       onDoubleClick={(e) => {
-        //         e.preventDefault();
-        //         e.stopPropagation();
-        //         navigate(appointmentProps.data.id ? `${appointmentProps.data?.id}` : "new");
-        //       }}
-        //     >
-        //       {appointmentProps.children}
-        //     </Paper>
-        //   );
-        // }}
+          appointmentComponent={(compProps) => (
+            <AppointmentComponent
+              {...compProps}
+              handleAppointmentDoubleClick={(eventId) => {
+                navigate(`/calendar/${eventId}`);
+              }}
+            />
+          )}
+          appointmentContentComponent={AppointmentContentComponent}
         />
         <CurrentTimeIndicator updateInterval={6000} />
         <Toolbar {...(parentProps.isCalendarLoading ? { rootComponent: ToolbarWithLoading } : null)} />
         {!isOnMobile && <DateNavigator openButtonComponent={DateNavigatorButtonComponent} />}
-        <ViewSwitcher switcherComponent={SwitcherComponent} />
+        <ViewSwitcher switcherComponent={ViewSwitcherComponent} />
         <TodayButton />
+        <Resources data={resources} />
         <AppointmentTooltip
           showOpenButton
           showCloseButton
@@ -161,38 +119,5 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
     </Paper>
   );
 };
-
-const SwitcherComponent = ({
-  currentView: switcherCurrentView,
-  onChange: onViewChange,
-  availableViews,
-}: ViewSwitcher.SwitcherProps) => {
-  const handleChangingView = (event: SelectChangeEvent<string>) => {
-    onViewChange(event.target.value);
-  };
-  return (
-    <Select
-      value={switcherCurrentView.name}
-      onChange={handleChangingView}
-      size="small"
-      displayEmpty
-      inputProps={{ "aria-label": "Without label" }}
-      color="primary"
-      variant="outlined"
-    >
-      {availableViews.map((view) => (
-        <MenuItem key={`view-item-${view.name}`} value={view.name}>
-          {view.displayName}
-        </MenuItem>
-      ))}
-    </Select>
-  );
-};
-
-const DateNavigatorButtonComponent = ({ onVisibilityToggle, text }: DateNavigator.OpenButtonProps) => (
-  <Button onClick={onVisibilityToggle} variant="outlined">
-    {text}
-  </Button>
-);
 
 export default CalendarSchedular;

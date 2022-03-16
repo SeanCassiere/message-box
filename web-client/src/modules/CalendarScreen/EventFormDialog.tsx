@@ -341,7 +341,7 @@ const EventFormDialog = (props: IProps) => {
                 </Grid>
               </>
             )}
-            <Grid item xs={4}>
+            <Grid item xs={12} md={4}>
               <FormControl sx={{ minWidth: "100%", mt: 0 }}>
                 <FormControlLabel
                   control={
