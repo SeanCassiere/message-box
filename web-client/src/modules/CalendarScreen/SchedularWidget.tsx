@@ -73,9 +73,9 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
           onCurrentViewNameChange={setCurrentViewNameHandler}
         />
         <DayView startDayHour={1} endDayHour={23} />
-        <MonthView />
         <WeekView startDayHour={7} endDayHour={18.5} />
         <AllDayPanel />
+        <MonthView />
         <Appointments
           appointmentComponent={(compProps) => (
             <AppointmentComponent
