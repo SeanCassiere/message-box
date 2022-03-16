@@ -32,13 +32,13 @@ import AppointmentContentComponent from "../../shared/components/Calendar/Appoin
 
 import { ICalendarEvent } from "../../shared/interfaces/CalendarEvent.interfaces";
 import { resources } from "../../shared/components/Calendar/common";
+import { COMMON_ITEM_BORDER_STYLING } from "../../shared/util/constants";
 
 interface ICustomCalendarSchedularProps {
   maxHeight?: number;
-  showOverlay: boolean;
-  handleHideOverlay: () => void;
   isCalendarLoading: boolean;
   calendarEvents: ICalendarEvent[];
+  openDeleteOverlay?: (id: string | null) => void;
 }
 
 const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
@@ -57,7 +57,14 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
   }, []);
 
   return (
-    <Paper>
+    <Paper
+      elevation={0}
+      sx={{
+        border: COMMON_ITEM_BORDER_STYLING,
+        borderRadius: 1,
+        boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+      }}
+    >
       <Scheduler data={parentProps.calendarEvents} height={parentProps.maxHeight ?? 780}>
         <ViewState
           currentDate={calCurrentDate}
@@ -100,14 +107,21 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
               }
             };
 
+            const openDelete = () => {
+              if (props.onHide) {
+                props.onHide();
+              }
+
+              if (parentProps.openDeleteOverlay) {
+                parentProps.openDeleteOverlay(`${props.appointmentData?.id}`);
+              }
+            };
+
             return (
               <Paper sx={{ pt: 1, pb: 1, pr: 1 }}>
                 <Grid container spacing={1} justifyContent="end">
                   <Grid item>{props.showOpenButton && <CommandButton id="open" onExecute={openClose} />}</Grid>
-
-                  <Grid item>
-                    {props.showDeleteButton && <CommandButton id="delete" onExecute={props.onDeleteButtonClick} />}
-                  </Grid>
+                  <Grid item>{props.showDeleteButton && <CommandButton id="delete" onExecute={openDelete} />}</Grid>
                   <Grid item>{props.showCloseButton && <CommandButton id="close" onExecute={props.onHide} />}</Grid>
                 </Grid>
               </Paper>

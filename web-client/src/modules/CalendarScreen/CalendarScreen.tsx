@@ -11,14 +11,15 @@ import Button from "@mui/material/Button";
 
 import EventIcon from "@mui/icons-material/Event";
 
-import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import EventFormDialog from "./EventFormDialog";
 import CalendarSchedular from "./SchedularWidget";
+import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
+import DeleteEventConfirmationDialog from "./DeleteEventConfirmationDialog";
 
-import { selectUserState } from "../../shared/redux/store";
 import { ICalendarEvent } from "../../shared/interfaces/CalendarEvent.interfaces";
-import { dummyPromise } from "../../shared/util/testingUtils";
+import { selectUserState } from "../../shared/redux/store";
 import { getDummyCalendarEvents } from "./demoAppointments";
+import { dummyPromise } from "../../shared/util/testingUtils";
 
 const CalendarScreen = () => {
   const navigate = useNavigate();
@@ -27,8 +28,11 @@ const CalendarScreen = () => {
   const { id } = useParams<{ id: string }>();
   const { userProfile } = useSelector(selectUserState);
 
-  const [currentEventEdit, setCurrentEventEdit] = useState<string | "new">("new");
-  const [showOverlay, setShowOverlay] = useState(false);
+  const [eventEditId, setEventEditId] = useState<string | "new">("new");
+  const [showEditOverlay, setShowEditOverlay] = useState(false);
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openDeleteId, setOpenDeleteId] = useState<string | null>(null);
 
   const [isCalendarLoading, setIsCalendarLoading] = useState(false);
   const [fetchedCalendarEvents, setFetchedCalendarEvents] = useState<ICalendarEvent[]>([]);
@@ -48,29 +52,51 @@ const CalendarScreen = () => {
 
   useEffect(() => {
     if (id) {
-      setCurrentEventEdit(id.toLowerCase());
-      setShowOverlay(true);
+      setEventEditId(id.toLowerCase());
+      setShowEditOverlay(true);
     }
   }, [id]);
+
+  const handleAcceptDelete = useCallback(() => {
+    fetchCalendarEvents();
+    setOpenDeleteDialog(false);
+    setOpenDeleteId(null);
+  }, [fetchCalendarEvents]);
+
+  const handleOpenDeleteDialog = useCallback((id: string | null) => {
+    setOpenDeleteId(id);
+    setOpenDeleteDialog(true);
+  }, []);
+
+  const handleCloseDeleteDialog = useCallback(() => {
+    setOpenDeleteDialog(false);
+    setOpenDeleteId(null);
+  }, []);
 
   const handleShowNewDialog = useCallback(() => {
     navigate("new");
   }, [navigate]);
 
   const handleHideDialog = useCallback(() => {
-    setShowOverlay(false);
+    setShowEditOverlay(false);
     navigate("/calendar");
-    setCurrentEventEdit("new");
+    setEventEditId("new");
   }, [navigate]);
 
   return (
     <>
       <EventFormDialog
-        eventId={currentEventEdit}
+        eventId={eventEditId}
         ownerId={userProfile?.userId ?? ""}
-        showDialog={showOverlay}
+        showDialog={showEditOverlay}
         handleClose={handleHideDialog}
         handleRefreshList={handleHideDialog}
+      />
+      <DeleteEventConfirmationDialog
+        showDialog={openDeleteDialog}
+        handleAccept={handleAcceptDelete}
+        handleClose={handleCloseDeleteDialog}
+        deleteId={openDeleteId}
       />
       <PagePaperWrapper>
         <Grid container sx={{ marginBottom: 2 }}>
@@ -88,11 +114,10 @@ const CalendarScreen = () => {
           </Grid>
         </Grid>
         <CalendarSchedular
-          maxHeight={isOnMobile ? 600 : 780}
-          showOverlay={showOverlay}
-          handleHideOverlay={handleHideDialog}
+          maxHeight={isOnMobile ? 600 : 770}
           isCalendarLoading={isCalendarLoading}
           calendarEvents={fetchedCalendarEvents}
+          openDeleteOverlay={handleOpenDeleteDialog}
         />
       </PagePaperWrapper>
     </>
