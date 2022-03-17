@@ -1,11 +1,14 @@
 import { useCallback, useState } from "react";
+import { useSnackbar } from "notistack";
+
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 
 import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
 import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButtonFooter";
-import { dummyPromise } from "../../shared/util/testingUtils";
+import { client } from "../../shared/api/client";
+import { MESSAGES } from "../../shared/util/messages";
 
 interface IProps {
   handleClose: () => void;
@@ -15,6 +18,7 @@ interface IProps {
 }
 
 const DeleteEventConfirmationDialog = (props: IProps) => {
+  const { enqueueSnackbar } = useSnackbar();
   const { handleClose, handleAccept, showDialog, deleteId } = props;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -24,12 +28,24 @@ const DeleteEventConfirmationDialog = (props: IProps) => {
 
     setIsLoading(true);
 
-    await dummyPromise(4000);
-    console.log("deleting", deleteId);
-    setIsLoading(false);
-
-    handleAccept();
-  }, [deleteId, handleAccept]);
+    client
+      .delete(`/CalendarEvent/${deleteId}`)
+      .then((response) => {
+        if (response.status === 200) {
+          enqueueSnackbar("Successfully deleted event", { variant: "success" });
+        } else {
+          enqueueSnackbar("Error: Something went wrong", { variant: "error" });
+        }
+      })
+      .catch((e) => {
+        console.log(`deleting event ${deleteId}`, e);
+        enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+      })
+      .finally(() => {
+        setIsLoading(false);
+        handleAccept();
+      });
+  }, [deleteId, enqueueSnackbar, handleAccept]);
 
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth>
