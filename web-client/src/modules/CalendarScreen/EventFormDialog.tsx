@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useFormik } from "formik";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as yup from "yup";
 
@@ -69,6 +70,7 @@ interface IProps {
 }
 
 const EventFormDialog = (props: IProps) => {
+  const location = useLocation();
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [isDisabled, setIsDisabled] = useState(true);
@@ -110,14 +112,28 @@ const EventFormDialog = (props: IProps) => {
 
     if (eventId === "new") {
       formik.resetForm();
-      const currentDate = new Date();
-      formik.setFieldValue("originalStartDate", currentDate);
-      formik.setFieldValue("startDate", currentDate);
 
-      const futureDate = new Date();
-      futureDate.setHours(futureDate.getHours() + DEFAULT_EVENT_GAP_HOURS);
-      formik.setFieldValue("originalEndDate", futureDate);
-      formik.setFieldValue("endDate", futureDate);
+      // getting from the navigation state
+      const locationState = location as unknown as {
+        state: { startDate?: string; endDate?: string; isAllDay?: boolean };
+      };
+
+      const startDate = locationState?.state?.startDate ? new Date(locationState.state.startDate) : new Date();
+      formik.setFieldValue("originalStartDate", startDate);
+      formik.setFieldValue("startDate", startDate);
+
+      // const endDate = new Date();
+      const endDate = locationState?.state?.endDate ? new Date(locationState.state.endDate) : new Date();
+      if (!locationState?.state?.endDate) {
+        endDate.setHours(endDate.getHours() + DEFAULT_EVENT_GAP_HOURS);
+      }
+      formik.setFieldValue("originalEndDate", endDate);
+      formik.setFieldValue("endDate", endDate);
+
+      // setting isAllDay from the hidden state
+      if (locationState?.state?.isAllDay) {
+        formik.setFieldValue("isAllDay", true);
+      }
 
       formik.initialErrors = {};
       setIsDisabled(false);
@@ -145,7 +161,7 @@ const EventFormDialog = (props: IProps) => {
     })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventId, showDialog]);
+  }, [eventId, showDialog, location]);
 
   const passThroughClose = () => {
     formik.resetForm();

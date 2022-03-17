@@ -13,7 +13,7 @@ import {
   Toolbar,
   DateNavigator,
   ViewSwitcher,
-  AppointmentForm,
+  // AppointmentForm,
   AppointmentTooltip,
   TodayButton,
   AllDayPanel,
@@ -22,13 +22,20 @@ import {
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
+// import Box from "@mui/material/Box";
 
 import DateNavigatorButtonComponent from "../../shared/components/Calendar/DateNavigatorButtonComponent";
 import ViewSwitcherComponent from "../../shared/components/Calendar/ViewSwitcherComponent";
 import ToolbarWithLoading from "../../shared/components/Calendar/ToolbarWithLoading";
+import AppointmentTooltipHeaderComponent from "../../shared/components/Calendar/AppointmentTooltipHeaderComponent";
 import AppointmentComponent from "../../shared/components/Calendar/AppointmentComponent";
 import AppointmentContentComponent from "../../shared/components/Calendar/AppointmentContentComponent";
+import {
+  MonthViewTimeTableCell,
+  WeekViewTimeTableCell,
+  AllDayViewCell,
+  DayViewTimeTableCell,
+} from "../../shared/components/Calendar/TimeTableCell";
 
 import { ICalendarEvent } from "../../shared/interfaces/CalendarEvent.interfaces";
 import { resources } from "../../shared/components/Calendar/common";
@@ -56,34 +63,37 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
     setCalCurrentViewNameState(viewName);
   }, []);
 
+  const handleDoubleClickOnAppointment = useCallback(
+    (eventId: string) => {
+      navigate(`/calendar/${eventId}`);
+    },
+    [navigate]
+  );
+
   return (
     <Paper
       elevation={0}
       sx={{
+        height: parentProps.maxHeight ?? 780,
         border: COMMON_ITEM_BORDER_STYLING,
         borderRadius: 1,
         boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
       }}
     >
-      <Scheduler data={parentProps.calendarEvents} height={parentProps.maxHeight ?? 780}>
+      <Scheduler data={parentProps.calendarEvents} height="auto">
         <ViewState
           currentDate={calCurrentDate}
           onCurrentDateChange={setCurrentDateHandler}
           currentViewName={calCurrentViewNameState}
           onCurrentViewNameChange={setCurrentViewNameHandler}
         />
-        <DayView startDayHour={1} endDayHour={23} />
-        <WeekView startDayHour={7} endDayHour={18.5} />
-        <AllDayPanel />
-        <MonthView />
+        <DayView timeTableCellComponent={DayViewTimeTableCell} startDayHour={1} endDayHour={23} />
+        <WeekView timeTableCellComponent={WeekViewTimeTableCell} startDayHour={7} endDayHour={20} />
+        <AllDayPanel cellComponent={AllDayViewCell} />
+        <MonthView timeTableCellComponent={MonthViewTimeTableCell} />
         <Appointments
           appointmentComponent={(compProps) => (
-            <AppointmentComponent
-              {...compProps}
-              handleAppointmentDoubleClick={(eventId) => {
-                navigate(`/calendar/${eventId}`);
-              }}
-            />
+            <AppointmentComponent {...compProps} handleAppointmentDoubleClick={handleDoubleClickOnAppointment} />
           )}
           appointmentContentComponent={AppointmentContentComponent}
         />
@@ -97,38 +107,15 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
           showOpenButton
           showCloseButton
           showDeleteButton
-          headerComponent={(props: AppointmentTooltip.HeaderProps) => {
-            const CommandButton = props.commandButtonComponent;
-
-            const openClose = () => {
-              navigate(`${props.appointmentData?.id ? props.appointmentData.id : "new"}`);
-              if (props.onHide) {
-                props?.onHide();
-              }
-            };
-
-            const openDelete = () => {
-              if (props.onHide) {
-                props.onHide();
-              }
-
-              if (parentProps.openDeleteOverlay) {
-                parentProps.openDeleteOverlay(`${props.appointmentData?.id}`);
-              }
-            };
-
-            return (
-              <Paper sx={{ pt: 1, pb: 1, pr: 1 }}>
-                <Grid container spacing={1} justifyContent="end">
-                  <Grid item>{props.showOpenButton && <CommandButton id="open" onExecute={openClose} />}</Grid>
-                  <Grid item>{props.showDeleteButton && <CommandButton id="delete" onExecute={openDelete} />}</Grid>
-                  <Grid item>{props.showCloseButton && <CommandButton id="close" onExecute={props.onHide} />}</Grid>
-                </Grid>
-              </Paper>
-            );
-          }}
+          headerComponent={(props) => (
+            <AppointmentTooltipHeaderComponent
+              {...props}
+              openDeleteOverlay={parentProps.openDeleteOverlay}
+              customOnOpenClose={handleDoubleClickOnAppointment}
+            />
+          )}
         />
-        <AppointmentForm visible={false} />
+        {/* <AppointmentForm visible={false} /> */}
       </Scheduler>
     </Paper>
   );
