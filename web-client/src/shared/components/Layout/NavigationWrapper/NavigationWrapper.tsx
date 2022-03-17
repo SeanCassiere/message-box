@@ -51,6 +51,7 @@ const NavigationWrapper: React.FC = (props) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const matchLargerThanPhone = useMediaQuery(theme.breakpoints.up("sm"));
+  const matchLargerThanTablet = useMediaQuery(theme.breakpoints.up("md"));
 
   const { children } = props;
   const { userProfile } = useSelector(selectUserState);
@@ -159,7 +160,7 @@ const NavigationWrapper: React.FC = (props) => {
             </Box>
           )}
           <Box sx={{ flexGrow: 1 }}></Box>
-          {matchLargerThanPhone && (
+          {matchLargerThanTablet && (
             <Box sx={{ flexGrow: 0, ml: 1, mr: 1, minWidth: "65ch" }}>
               <TextField
                 id="standard-select-currency"

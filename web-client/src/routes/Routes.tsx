@@ -38,7 +38,9 @@ const AppRoutes = () => {
 
           <Route path="team-activity" element={<TeamActivityScreen />}></Route>
 
-          <Route path="calendar" element={<CalendarScreen />}></Route>
+          <Route path="calendar" element={<CalendarScreen />}>
+            <Route path=":id" element={<CalendarScreen />} />
+          </Route>
 
           <Route path="reports" element={<ReportsScreen />}></Route>
 
