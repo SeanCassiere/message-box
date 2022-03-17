@@ -24,15 +24,13 @@ export interface IFormatCalendarEventResponse {
 }
 
 export function formatCalendarEventResponse({ event, guestUsers }: IFormatCalendarEventResponse) {
-  const startDate = new Date(event.endDate).toISOString();
+  const startDate = new Date(event.startDate).toISOString();
   const endDate = new Date(event.endDate).toISOString();
 
-  const endOfStartDate = startDate.substring(17, 24);
-  const endOfEndDate = endDate.substring(17, 24);
+  const endOfStartDate = startDate.substring(11, 24);
+  const endOfEndDate = endDate.substring(11, 24);
 
-  const comparisonString = "00.000Z";
-
-  const isAllDay = endOfStartDate === comparisonString && endOfEndDate === comparisonString;
+  const isAllDay = endOfStartDate === endOfEndDate;
 
   return {
     eventId: event.eventId,

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useFormik } from "formik";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
@@ -21,12 +21,10 @@ import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 
 import TextField from "../../shared/components/Form/TextField/TextField";
-
 import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
 import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButtonFooter";
 
 import { selectLookupListsState, selectUserState } from "../../shared/redux/store";
-import { getDummyCalendarEvents } from "./demoAppointments";
 import { ICalendarEventGuestUser } from "../../shared/interfaces/CalendarEvent.interfaces";
 import { client } from "../../shared/api/client";
 import { MESSAGES } from "../../shared/util/messages";
@@ -99,6 +97,7 @@ const EventFormDialog = (props: IProps) => {
     validationSchema,
     validateOnBlur: true,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
+      setSubmitting(true);
       const { id, originalStartDate, originalEndDate, ...rest } = values;
       const payload = { ...rest, startDate: rest.startDate.toISOString(), endDate: rest.endDate.toISOString() };
 
@@ -127,11 +126,17 @@ const EventFormDialog = (props: IProps) => {
     },
   });
 
+  const passThroughClose = useCallback(() => {
+    formik.resetForm();
+    handleClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleClose]);
+
   useEffect(() => {
     setIsDisabled(true);
     if (!showDialog) return;
 
-    if (eventId === "new") {
+    if (eventId.toLowerCase() === "new") {
       formik.resetForm();
 
       // getting from the navigation state
@@ -159,39 +164,35 @@ const EventFormDialog = (props: IProps) => {
       formik.initialErrors = {};
       setIsDisabled(false);
       return;
+    } else {
+      client
+        .get(`/CalendarEvent/${eventId}`)
+        .then((res) => {
+          if (res.status !== 200) {
+            enqueueSnackbar("Could not find the calendar event", { variant: "error" });
+            passThroughClose();
+            return;
+          } else {
+            formik.setValues(res.data);
+            //
+            formik.setFieldValue("startDate", new Date(res.data.startDate));
+            formik.setFieldValue("endDate", new Date(res.data.endDate));
+            //
+            formik.setFieldValue("originalStartDate", new Date(res.data.startDate));
+            formik.setFieldValue("originalEndDate", new Date(res.data.endDate));
+          }
+        })
+        .catch((e) => {
+          console.log(`Error getting calendar event ${eventId}`, e);
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+        })
+        .finally(() => {
+          setIsDisabled(false);
+        });
     }
 
-    (async () => {
-      const fetchItem = () =>
-        new Promise((resolve: any) => {
-          setTimeout(() => {
-            resolve({ success: true });
-            const date = new Date();
-            const selected =
-              eventId === "3"
-                ? getDummyCalendarEvents(date.getMonth() + 1)[2]
-                : (getDummyCalendarEvents(date.getMonth() + 1)[0] as any);
-            formik.setValues(selected);
-            //
-            formik.setFieldValue("startDate", new Date(selected.startDate));
-            formik.setFieldValue("endDate", new Date(selected.endDate));
-            //
-            formik.setFieldValue("originalStartDate", new Date(selected.startDate));
-            formik.setFieldValue("originalEndDate", new Date(selected.endDate));
-          }, 500);
-        });
-
-      await fetchItem();
-      setIsDisabled(false);
-    })();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventId, showDialog, location]);
-
-  const passThroughClose = () => {
-    formik.resetForm();
-    handleClose();
-  };
+  }, [eventId, showDialog, location, enqueueSnackbar, passThroughClose]);
 
   const handleToggleIsAllDay = (_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     formik.setFieldValue("isAllDay", checked);
