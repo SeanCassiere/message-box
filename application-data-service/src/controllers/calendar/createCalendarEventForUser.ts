@@ -36,7 +36,7 @@ const validationSchema = yup.object().shape({
         },
       })
       .required("End date is required"),
-    guests: yup.array().of(
+    sharedWith: yup.array().of(
       yup.object().shape({
         userId: yup.string().required("User ID for guest is required"),
       })
@@ -86,7 +86,7 @@ export async function createCalendarEventForUser(req: Request, res: Response) {
 
   // add the guests
   const saveableGuests: string[] = [];
-  const guestUserIds = body.guests.map((guest: { userId: string }) => guest.userId);
+  const guestUserIds = body.sharedWith.map((guest: { userId: string }) => guest.userId);
   try {
     let clientUserIds: string[] = [];
     const { data: response } = await axios.post(`${AUTH_SERVICE_URI}/clients/getAllUserIdsForClient`, {
