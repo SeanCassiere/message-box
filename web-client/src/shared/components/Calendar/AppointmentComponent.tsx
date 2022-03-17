@@ -47,7 +47,9 @@ const AppointmentComponent = ({
   const { userProfile } = useSelector(selectUserState);
 
   const doubleClick = (e: any) => {
-    if (onDoubleClick) onDoubleClick(e);
+    if (onDoubleClick) {
+      onDoubleClick(e);
+    }
     handleAppointmentDoubleClick(`${data.id}`);
   };
 

@@ -1,7 +1,7 @@
 // ref: https://devexpress.github.io/devextreme-reactive/react/scheduler/demos/featured/remote-data/
 // ref: https://devexpress.github.io/devextreme-reactive/react/scheduler/docs/guides/appointments/
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import { useTheme } from "@mui/material/styles";
@@ -13,7 +13,7 @@ import {
   Toolbar,
   DateNavigator,
   ViewSwitcher,
-  // AppointmentForm,
+  AppointmentForm,
   AppointmentTooltip,
   TodayButton,
   AllDayPanel,
@@ -22,9 +22,8 @@ import {
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Paper from "@mui/material/Paper";
-// import Box from "@mui/material/Box";
 
-import DateNavigatorButtonComponent from "../../shared/components/Calendar/DateNavigatorButtonComponent";
+import DateNavigatorOpenButtonComponent from "../../shared/components/Calendar/DateNavigatorOpenButtonComponent";
 import ViewSwitcherComponent from "../../shared/components/Calendar/ViewSwitcherComponent";
 import ToolbarWithLoading from "../../shared/components/Calendar/ToolbarWithLoading";
 import AppointmentTooltipHeaderComponent from "../../shared/components/Calendar/AppointmentTooltipHeaderComponent";
@@ -45,23 +44,17 @@ interface ICustomCalendarSchedularProps {
   maxHeight?: number;
   isCalendarLoading: boolean;
   calendarEvents: ICalendarEvent[];
+  viewName: string;
   openDeleteOverlay?: (id: string | null) => void;
+  calendarViewingDate: Date;
+  setCalendarViewingDate: (date: Date, viewName: string) => void;
+  setCalendarViewName: (viewName: string) => void;
 }
 
 const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const [calCurrentDate, setCalCurrentDate] = useState(new Date());
-  const setCurrentDateHandler = useCallback((dateInput: Date) => {
-    setCalCurrentDate(dateInput);
-  }, []);
-
-  const [calCurrentViewNameState, setCalCurrentViewNameState] = useState("Week");
-  const setCurrentViewNameHandler = useCallback((viewName: string) => {
-    setCalCurrentViewNameState(viewName);
-  }, []);
 
   const handleDoubleClickOnAppointment = useCallback(
     (eventId: string) => {
@@ -74,7 +67,7 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
     <Paper
       elevation={0}
       sx={{
-        height: parentProps.maxHeight ?? 780,
+        // height: parentProps.maxHeight ?? 780,
         border: COMMON_ITEM_BORDER_STYLING,
         borderRadius: 1,
         boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
@@ -82,10 +75,10 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
     >
       <Scheduler data={parentProps.calendarEvents} height="auto">
         <ViewState
-          currentDate={calCurrentDate}
-          onCurrentDateChange={setCurrentDateHandler}
-          currentViewName={calCurrentViewNameState}
-          onCurrentViewNameChange={setCurrentViewNameHandler}
+          currentDate={parentProps.calendarViewingDate}
+          onCurrentDateChange={(date) => parentProps.setCalendarViewingDate(date, parentProps.viewName)}
+          currentViewName={parentProps.viewName}
+          onCurrentViewNameChange={parentProps.setCalendarViewName}
         />
         <DayView timeTableCellComponent={DayViewTimeTableCell} startDayHour={1} endDayHour={23} />
         <WeekView timeTableCellComponent={WeekViewTimeTableCell} startDayHour={7} endDayHour={20} />
@@ -99,7 +92,7 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
         />
         <CurrentTimeIndicator updateInterval={6000} />
         <Toolbar {...(parentProps.isCalendarLoading ? { rootComponent: ToolbarWithLoading } : null)} />
-        {!isOnMobile && <DateNavigator openButtonComponent={DateNavigatorButtonComponent} />}
+        {!isOnMobile && <DateNavigator openButtonComponent={DateNavigatorOpenButtonComponent} />}
         <ViewSwitcher switcherComponent={ViewSwitcherComponent} />
         <TodayButton />
         <Resources data={resources} />
@@ -115,7 +108,10 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
             />
           )}
         />
-        {/* <AppointmentForm visible={false} /> */}
+        <AppointmentForm
+          visible={false}
+          // leave visible as false since the tooltip component uses it for anchoring, even though the form is not visible
+        />
       </Scheduler>
     </Paper>
   );

@@ -1,10 +1,10 @@
-export function getDummyCalendarEvents() {
+export function getDummyCalendarEvents(month: number) {
   const returnEvents = [];
 
   const currentDate = new Date(Date.now());
 
   const year = currentDate.getFullYear();
-  const month = currentDate.getMonth() + 1;
+  // const month = currentDate.getMonth() + 1;
   const day = parseInt(currentDate.toISOString().substring(8, 10));
 
   returnEvents.push({

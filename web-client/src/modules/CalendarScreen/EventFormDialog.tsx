@@ -99,9 +99,10 @@ const EventFormDialog = (props: IProps) => {
       const payload = { ...rest, startDate: rest.startDate.toISOString(), endDate: rest.endDate.toISOString() };
       console.dir(payload);
 
-      await dummyPromise();
+      await dummyPromise(1500);
 
       setSubmitting(false);
+      props.handleRefreshList();
       props.handleClose();
     },
   });
@@ -145,7 +146,11 @@ const EventFormDialog = (props: IProps) => {
         new Promise((resolve: any) => {
           setTimeout(() => {
             resolve({ success: true });
-            const selected = eventId === "3" ? getDummyCalendarEvents()[2] : (getDummyCalendarEvents()[0] as any);
+            const date = new Date();
+            const selected =
+              eventId === "3"
+                ? getDummyCalendarEvents(date.getMonth() + 1)[2]
+                : (getDummyCalendarEvents(date.getMonth() + 1)[0] as any);
             formik.setValues(selected);
             //
             formik.setFieldValue("startDate", new Date(selected.startDate));

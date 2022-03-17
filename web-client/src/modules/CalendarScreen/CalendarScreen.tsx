@@ -20,6 +20,7 @@ import { ICalendarEvent } from "../../shared/interfaces/CalendarEvent.interfaces
 import { selectUserState } from "../../shared/redux/store";
 import { getDummyCalendarEvents } from "./demoAppointments";
 import { dummyPromise } from "../../shared/util/testingUtils";
+import { getDateRangeFromViewName } from "../../shared/components/Calendar/common";
 
 const CalendarScreen = () => {
   const navigate = useNavigate();
@@ -37,18 +38,54 @@ const CalendarScreen = () => {
   const [isCalendarLoading, setIsCalendarLoading] = useState(false);
   const [fetchedCalendarEvents, setFetchedCalendarEvents] = useState<ICalendarEvent[]>([]);
 
-  const fetchCalendarEvents = useCallback(async () => {
+  /**
+   * API CALL
+   */
+  const fetchCalendarEvents = useCallback(async (date: Date, viewName: string) => {
+    const [startDate, endDate] = getDateRangeFromViewName(viewName, date);
+    console.group(`fetchCalendarEvents(${date.toDateString()}, ${viewName})`);
+    console.log("viewName", viewName);
+    console.log("startDate", `${startDate.toDateString()} ${startDate.toTimeString()}`);
+    console.log("endDate", `${endDate.toDateString()} ${endDate.toTimeString()}`);
+    console.groupEnd();
+
     setIsCalendarLoading(true);
 
     await dummyPromise(1500);
 
-    setFetchedCalendarEvents(getDummyCalendarEvents());
+    /** */
+    const month = date.getMonth();
+    /** */
+    setFetchedCalendarEvents(getDummyCalendarEvents(month + 1));
     setIsCalendarLoading(false);
   }, []);
 
+  const [calendarViewName, setCalendarViewName] = useState("Week");
+  const [calendarDate, setCalendarDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
+
+  const triggerRefresh = useCallback(() => {
+    fetchCalendarEvents(calendarDate, calendarViewName);
+  }, [calendarDate, calendarViewName, fetchCalendarEvents]);
+
+  const handleSetCalendarDate = useCallback(
+    (date: Date, viewName: string) => {
+      setCalendarDate(date);
+      fetchCalendarEvents(date, viewName);
+    },
+    [fetchCalendarEvents]
+  );
+
+  const handleChangeViewName = useCallback((viewName: string) => {
+    setCalendarDate(new Date());
+    setCalendarViewName(viewName);
+  }, []);
+
+  //
   useEffect(() => {
-    fetchCalendarEvents();
-  }, [fetchCalendarEvents]);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    fetchCalendarEvents(currentDate, calendarViewName);
+  }, [calendarViewName, fetchCalendarEvents]);
 
   useEffect(() => {
     if (id) {
@@ -58,10 +95,10 @@ const CalendarScreen = () => {
   }, [id]);
 
   const handleAcceptDelete = useCallback(() => {
-    fetchCalendarEvents();
+    fetchCalendarEvents(calendarDate, calendarViewName);
     setOpenDeleteDialog(false);
     setOpenDeleteId(null);
-  }, [fetchCalendarEvents]);
+  }, [calendarDate, calendarViewName, fetchCalendarEvents]);
 
   const handleOpenDeleteDialog = useCallback((id: string | null) => {
     setOpenDeleteId(id);
@@ -90,7 +127,7 @@ const CalendarScreen = () => {
         ownerId={userProfile?.userId ?? ""}
         showDialog={showEditOverlay}
         handleClose={handleHideDialog}
-        handleRefreshList={handleHideDialog}
+        handleRefreshList={triggerRefresh}
       />
       <DeleteEventConfirmationDialog
         showDialog={openDeleteDialog}
@@ -114,10 +151,14 @@ const CalendarScreen = () => {
           </Grid>
         </Grid>
         <CalendarSchedular
-          maxHeight={isOnMobile ? 600 : 770}
-          isCalendarLoading={isCalendarLoading}
+          calendarViewingDate={calendarDate}
+          setCalendarViewName={handleChangeViewName}
+          setCalendarViewingDate={handleSetCalendarDate}
+          viewName={calendarViewName}
           calendarEvents={fetchedCalendarEvents}
+          isCalendarLoading={isCalendarLoading}
           openDeleteOverlay={handleOpenDeleteDialog}
+          maxHeight={isOnMobile ? 600 : 770}
         />
       </PagePaperWrapper>
     </>

@@ -27,3 +27,24 @@ export const resources = [
 ];
 
 export const isWeekEnd = (date: Date): boolean => date.getDay() === 0 || date.getDay() === 6;
+
+export const getDateRangeFromViewName = (viewName: string, date: Date): [Date, Date] => {
+  let startDate = new Date(date);
+  let endDate = new Date(date);
+
+  if (viewName.toLowerCase() === "month") {
+    // restricted to current month only
+    startDate = new Date(new Date(new Date(date).setMonth(date.getMonth(), 1)).setHours(0, 0, 0, 0));
+    endDate = new Date(new Date(new Date(date).setMonth(date.getMonth() + 1, 0)).setHours(23, 59, 59, 999));
+  } else if (viewName.toLowerCase() === "week") {
+    // gets the start of sunday through to the start of the next sunday
+    startDate = new Date(new Date(new Date(date).setDate(date.getDate() - date.getDay() + 0)).setHours(0, 0, 0, 0));
+    endDate = new Date(new Date(new Date(date).setDate(date.getDate() - date.getDay() + 7)).setHours(23, 59, 59, 999));
+  } else if (viewName.toLowerCase() === "day") {
+    // gets the start of the today to the start of the next day
+    startDate = new Date(new Date(date).setHours(0, 0, 0, 0));
+    endDate = new Date(new Date(new Date(date).setDate(date.getDate() + 1)).setHours(0, 1, 0, 0));
+  }
+
+  return [startDate, endDate];
+};
