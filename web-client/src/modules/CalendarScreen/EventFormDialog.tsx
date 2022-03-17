@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as yup from "yup";
 
@@ -27,7 +28,9 @@ import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButto
 import { selectLookupListsState, selectUserState } from "../../shared/redux/store";
 import { getDummyCalendarEvents } from "./demoAppointments";
 import { ICalendarEventGuestUser } from "../../shared/interfaces/CalendarEvent.interfaces";
-import { dummyPromise } from "../../shared/util/testingUtils";
+import { client } from "../../shared/api/client";
+import { MESSAGES } from "../../shared/util/messages";
+import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
 
 const validationSchema = yup.object({
   title: yup.string().required("Event name is required"),
@@ -70,11 +73,12 @@ interface IProps {
 }
 
 const EventFormDialog = (props: IProps) => {
+  const { enqueueSnackbar } = useSnackbar();
   const location = useLocation();
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [isDisabled, setIsDisabled] = useState(true);
-  const { formats } = useSelector(selectUserState);
+  const { formats, userProfile } = useSelector(selectUserState);
   const { usersList } = useSelector(selectLookupListsState);
 
   const { eventId, showDialog, handleClose } = props;
@@ -94,16 +98,32 @@ const EventFormDialog = (props: IProps) => {
     },
     validationSchema,
     validateOnBlur: true,
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
       const { id, originalStartDate, originalEndDate, ...rest } = values;
       const payload = { ...rest, startDate: rest.startDate.toISOString(), endDate: rest.endDate.toISOString() };
-      console.dir(payload);
 
-      await dummyPromise(1500);
-
-      setSubmitting(false);
-      props.handleRefreshList();
-      props.handleClose();
+      client[id.toLowerCase() === "new" ? "post" : "put"](
+        id.toLowerCase() === "new" ? `/CalendarEvent` : `/CalendarEvent/${id}`,
+        payload
+      )
+        .then((response) => {
+          if (response.status === 200) {
+            enqueueSnackbar("Event saved successfully", { variant: "success" });
+            setSubmitting(false);
+            props.handleRefreshList();
+            props.handleClose();
+          } else {
+            enqueueSnackbar(MESSAGES.INPUT_VALIDATION, { variant: "warning" });
+            setErrors(formatErrorsToFormik(response.data.errors));
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+        })
+        .finally(() => {
+          setSubmitting(false);
+        });
     },
   });
 
@@ -245,7 +265,9 @@ const EventFormDialog = (props: IProps) => {
   };
 
   const guestOptions = useMemo(() => {
-    const mappedList = usersList.map((u) => ({ label: `${u.firstName} ${u.lastName}`, id: u.userId }));
+    const mappedList = usersList
+      .filter((u) => u.userId !== userProfile?.userId)
+      .map((u) => ({ label: `${u.firstName} ${u.lastName}`, id: u.userId }));
 
     const existingIds = formik.values.sharedWith.map((item) => item.userId);
     const filterOutOptions = mappedList.filter((item) => !existingIds.includes(item.id));
@@ -255,7 +277,7 @@ const EventFormDialog = (props: IProps) => {
     }
 
     return filterOutOptions;
-  }, [formik.values.sharedWith, usersList]);
+  }, [formik.values.sharedWith, userProfile?.userId, usersList]);
 
   return (
     <Dialog open={showDialog} onClose={() => ({})} disableEscapeKeyDown fullScreen={isOnMobile} fullWidth>
@@ -440,6 +462,7 @@ const EventFormDialog = (props: IProps) => {
         <DialogBigButtonFooter
           submitButtonText={eventId === "new" ? "CREATE EVENT" : "UPDATE EVENT"}
           isLoading={isDisabled || formik.isSubmitting}
+          hideButton={formik.values.ownerId !== userProfile?.userId}
         />
       </Box>
     </Dialog>

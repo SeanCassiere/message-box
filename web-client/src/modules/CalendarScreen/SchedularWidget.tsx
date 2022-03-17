@@ -36,14 +36,14 @@ import {
   DayViewTimeTableCell,
 } from "../../shared/components/Calendar/TimeTableCell";
 
-import { ICalendarEvent } from "../../shared/interfaces/CalendarEvent.interfaces";
+import { ICalendarEventBase } from "../../shared/interfaces/CalendarEvent.interfaces";
 import { resources } from "../../shared/components/Calendar/common";
 import { COMMON_ITEM_BORDER_STYLING } from "../../shared/util/constants";
 
 interface ICustomCalendarSchedularProps {
   maxHeight?: number;
   isCalendarLoading: boolean;
-  calendarEvents: ICalendarEvent[];
+  calendarEvents: ICalendarEventBase[];
   viewName: string;
   openDeleteOverlay?: (id: string | null) => void;
   calendarViewingDate: Date;
