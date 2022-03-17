@@ -76,24 +76,50 @@ calendarEventRouter
     }
   });
 
-calendarEventRouter.route("/:id").delete(async (req, res) => {
-  const request = req as CustomRequest<{}>;
-  const { message_box_clientId, message_box_userId } = request.auth!;
-  const { id } = request.params;
-  try {
-    const { data: response } = await client.post("/calendar-events/deleteCalendarEventById", {
-      variables: { clientId: message_box_clientId, userId: message_box_userId },
-      body: { eventId: id },
-    });
+calendarEventRouter
+  .route("/:id")
+  .get(async (req, res) => {
+    const request = req as CustomRequest<{}>;
 
-    if (response.statusCode === 200) {
-      return res.json({ ...response.data });
+    const eventId = request.params.id;
+    try {
+      const { data: response } = await client.post("/calendar-events/getCalendarEventById", {
+        variables: {
+          clientId: request.auth!.message_box_clientId,
+          userId: request.auth!.message_box_userId,
+        },
+        body: {
+          eventId: eventId,
+        },
+      });
+
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
+      }
+
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
+    } catch (error) {
+      return res.status(500).json({ message: "application-data-service /calendar-events network error" });
     }
+  })
+  .delete(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+    const { message_box_clientId, message_box_userId } = request.auth!;
+    const { id } = request.params;
+    try {
+      const { data: response } = await client.post("/calendar-events/deleteCalendarEventById", {
+        variables: { clientId: message_box_clientId, userId: message_box_userId },
+        body: { eventId: id },
+      });
 
-    return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "application-data-service /calendar-events network error" });
-  }
-});
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
+      }
+
+      return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "application-data-service /calendar-events network error" });
+    }
+  });
 export default calendarEventRouter;

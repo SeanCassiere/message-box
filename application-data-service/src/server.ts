@@ -11,6 +11,7 @@ import { updateTaskById } from "./controllers/tasks/updateTaskById";
 import { createCalendarEventForUser } from "./controllers/calendar/createCalendarEventForUser";
 import { getCalendarEventsForUser } from "./controllers/calendar/getCalendarEventsForUser";
 import { deleteCalendarEventById } from "./controllers/calendar/deleteCalendarEventById";
+import { getCalendarEventById } from "./controllers/calendar/getCalendarEventById";
 
 const expressApp = express();
 
@@ -33,5 +34,6 @@ expressApp.post("/tasks/updateTaskById", updateTaskById);
 expressApp.post("/calendar-events/createCalendarEventForUser", createCalendarEventForUser);
 expressApp.post("/calendar-events/getCalendarEventsForUser", getCalendarEventsForUser);
 expressApp.post("/calendar-events/deleteCalendarEventById", deleteCalendarEventById);
+expressApp.post("/calendar-events/getCalendarEventById", getCalendarEventById);
 
 export default expressApp;
