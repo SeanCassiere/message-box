@@ -18,6 +18,7 @@ import roleRouter from "./routes/roles.routes";
 import teamRouter from "./routes/teams.routes";
 import tasksRouter from "./routes/task.routes";
 import hiddenRouter from "./routes/hidden.routes";
+import calendarEventRouter from "./routes/calendarEvent.routes";
 
 const expressApp = express();
 
@@ -90,6 +91,7 @@ expressApp.use("/Api/Clients", clientRouter);
 expressApp.use("/Api/Roles", roleRouter);
 expressApp.use("/Api/Teams", teamRouter);
 expressApp.use("/Api/Tasks", tasksRouter);
+expressApp.use("/Api/CalendarEvent", calendarEventRouter);
 
 expressApp.use(function (err: Error, req: express.Request, res: express.Response, next: express.NextFunction) {
   if (err.name === "UnauthorizedError") {

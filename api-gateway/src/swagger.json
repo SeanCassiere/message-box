@@ -35,6 +35,10 @@
       "description": "MessageBox authentication-related endpoints"
     },
     {
+      "name": "CalendarEvent",
+      "description": "endpoints relating to calendar events"
+    },
+    {
       "name": "Client",
       "description": "endpoints relating to clients"
     },
@@ -231,6 +235,114 @@
             }
           }
         },
+        "parameters": []
+      }
+    },
+    "/CalendarEvent": {
+      "get": {
+        "tags": ["CalendarEvent"],
+        "summary": "Get calendar events for the user",
+        "description": "Get calendar events for the user.",
+        "operationId": "GetCalendarEventsForUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Start of the date range in ISO 8601 date format (e.g. `2022-01-01T00:00:00.000Z`)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": true
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "Start of the date range in ISO 8601 date format (e.g. `2022-01-01T00:00:00.000Z`)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": true
+          },
+          {
+            "name": "ownerId",
+            "in": "query",
+            "description": "Owner ID (UUID)",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully fetched all the calendar events for the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CalendarEventSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "post": {
+        "tags": ["CalendarEvent"],
+        "summary": "Create a calendar event for the user",
+        "description": "Create a calendar event for the user.",
+        "operationId": "CreateCalendarEventForUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Details required to create a calendar event.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarEventSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully created a new calendar event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarEventSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body",
         "parameters": []
       }
     },
@@ -2236,6 +2348,57 @@
                   "nullable": true
                 },
                 "lastName": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CalendarEventSchema": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isAllDay": {
+            "type": "boolean",
+            "default": false
+          },
+          "guests": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
                   "type": "string",
                   "nullable": true
                 }
