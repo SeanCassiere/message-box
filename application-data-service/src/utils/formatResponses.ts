@@ -43,7 +43,7 @@ export function formatCalendarEventResponse({ event, guestUsers }: IFormatCalend
     // endDate: endDate,
     endDate: event.endDate,
     isAllDay: isAllDay,
-    guests: guestUsers.map((guest) => ({ userId: guest.userId, name: guest.name ?? "" })),
+    sharedWith: guestUsers.map((guest) => ({ userId: guest.userId, name: guest.name ?? "" })),
     updatedAt: event.updatedAt,
   };
 }

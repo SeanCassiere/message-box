@@ -2389,7 +2389,7 @@
             "type": "boolean",
             "default": false
           },
-          "guests": {
+          "sharedWith": {
             "type": "array",
             "items": {
               "type": "object",
