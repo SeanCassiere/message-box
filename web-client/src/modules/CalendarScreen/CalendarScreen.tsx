@@ -92,10 +92,15 @@ const CalendarScreen = () => {
     [fetchCalendarEvents]
   );
 
-  const handleChangeViewName = useCallback((viewName: string) => {
-    setCalendarDate(new Date());
-    setCalendarViewName(viewName);
-  }, []);
+  const handleChangeViewName = useCallback(
+    (viewName: string) => {
+      const setDate = new Date();
+      setCalendarDate(setDate);
+      setCalendarViewName(viewName);
+      fetchCalendarEvents(setDate, viewName);
+    },
+    [fetchCalendarEvents]
+  );
 
   //
   useEffect(() => {
