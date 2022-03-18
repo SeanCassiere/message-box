@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { DateNavigator } from "@devexpress/dx-react-scheduler-material-ui";
 import Button from "@mui/material/Button";
 
@@ -7,4 +8,4 @@ const DateNavigatorOpenButtonComponent = ({ onVisibilityToggle, text }: DateNavi
   </Button>
 );
 
-export default DateNavigatorOpenButtonComponent;
+export default memo(DateNavigatorOpenButtonComponent);

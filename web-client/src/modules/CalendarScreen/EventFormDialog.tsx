@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, memo } from "react";
 import { useFormik } from "formik";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
@@ -474,4 +474,4 @@ const EventFormDialog = (props: IProps) => {
   );
 };
 
-export default EventFormDialog;
+export default memo(EventFormDialog);

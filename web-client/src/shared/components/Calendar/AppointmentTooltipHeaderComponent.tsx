@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { AppointmentTooltip } from "@devexpress/dx-react-scheduler-material-ui";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -48,4 +49,4 @@ const AppointmentTooltipHeaderComponent = (
   );
 };
 
-export default AppointmentTooltipHeaderComponent;
+export default memo(AppointmentTooltipHeaderComponent);

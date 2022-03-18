@@ -1,7 +1,7 @@
 // ref: https://devexpress.github.io/devextreme-reactive/react/scheduler/demos/featured/remote-data/
 // ref: https://devexpress.github.io/devextreme-reactive/react/scheduler/docs/guides/appointments/
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useCallback } from "react";
+import { useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ViewState, EditingState, IntegratedEditing } from "@devexpress/dx-react-scheduler";
 import { useTheme } from "@mui/material/styles";
@@ -81,7 +81,6 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
   const handlePatchingAppointment = useCallback(
     (changeSet: LOCAL_ChangesSet) => {
       if (changeSet.changed) {
-        console.log(changeSet.changed);
         const changedItems = Array.from(Object.entries(changeSet.changed));
 
         if (!changedItems[0]) return;
@@ -172,4 +171,4 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
   );
 };
 
-export default CalendarSchedular;
+export default memo(CalendarSchedular);

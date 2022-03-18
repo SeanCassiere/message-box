@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useMemo, memo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
@@ -243,6 +243,14 @@ const CalendarScreen = () => {
     [calendarDate, calendarViewName, enqueueSnackbar, fetchCalendarEvents, fetchedCalendarEvents]
   );
 
+  const eventsForSchedular = useMemo(() => {
+    return fetchedCalendarEvents;
+  }, [fetchedCalendarEvents]);
+
+  const eventsAreLoading = useMemo(() => {
+    return isCalendarLoading;
+  }, [isCalendarLoading]);
+
   return (
     <>
       <EventFormDialog
@@ -305,8 +313,8 @@ const CalendarScreen = () => {
           setCalendarViewingDate={handleSetCalendarDate}
           handlePatchAppointment={handleEditPatchAppointment}
           viewName={calendarViewName}
-          calendarEvents={fetchedCalendarEvents}
-          isCalendarLoading={isCalendarLoading}
+          calendarEvents={eventsForSchedular}
+          isCalendarLoading={eventsAreLoading}
           openDeleteOverlay={handleOpenDeleteDialog}
           maxHeight={isOnMobile ? 600 : 770}
         />
@@ -315,4 +323,4 @@ const CalendarScreen = () => {
   );
 };
 
-export default CalendarScreen;
+export default memo(CalendarScreen);

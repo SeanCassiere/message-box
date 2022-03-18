@@ -1,3 +1,4 @@
+import { memo } from "react";
 import classNames from "clsx";
 import { styled } from "@mui/material/styles";
 import { Appointments } from "@devexpress/dx-react-scheduler-material-ui";
@@ -54,4 +55,4 @@ const AppointmentContentComponent = ({ data, ...restProps }: Appointments.Appoin
   );
 };
 
-export default AppointmentContentComponent;
+export default memo(AppointmentContentComponent);
