@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import Moment from "react-moment";
+// import Moment from "react-moment";
 
 import { client } from "../../../shared/api/client";
 
@@ -401,9 +401,12 @@ const TaskModifyDialog = (props: Props) => {
                             Completed date
                           </InputLabel>
                           <Typography fontSize="1rem" fontWeight={400} mt={3}>
-                            <Moment format={formats.shortDateTimeFormat}>
+                            {formik.values.completedDate
+                              ? new Date(formik.values.completedDate).toISOString()
+                              : new Date().toISOString()}
+                            {/* <Moment format={formats.shortDateTimeFormat}>
                               {formik.values.completedDate ?? new Date()}
-                            </Moment>
+                            </Moment> */}
                           </Typography>
                         </FormControl>
                       </Grid>

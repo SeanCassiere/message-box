@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import Moment from "react-moment";
+// import Moment from "react-moment";
 import { useSelector } from "react-redux";
 
 import Grid from "@mui/material/Grid";
@@ -142,12 +142,14 @@ const TaskCard = (props: Props) => {
                 {mode === "Today" ? (
                   <>
                     time:&nbsp;
-                    <Moment format={formats.timeFormat}>{task.dueDate}</Moment>
+                    {new Date(task.dueDate).toISOString()}
+                    {/* <Moment format={formats.timeFormat}>{task.dueDate}</Moment> */}
                   </>
                 ) : (
                   <>
                     date:&nbsp;
-                    <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment>
+                    {new Date(task.dueDate).toISOString()}
+                    {/* <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment> */}
                   </>
                 )}
               </Typography>

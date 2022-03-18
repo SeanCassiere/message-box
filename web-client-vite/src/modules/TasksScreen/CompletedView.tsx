@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSnackbar } from "notistack";
-import Moment from "react-moment";
+// import Moment from "react-moment";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -182,13 +182,15 @@ const CompletedView = (props: Props) => {
                     {viewingTasks.map((task) => (
                       <StyledTableRow key={`completed-view-${task.taskId}`}>
                         <StyledTableCell component="th" scope="row">
-                          <Moment format={formats.shortDateTimeFormat}>
+                          {task.completedDate ? new Date(task.completedDate).toISOString() : new Date().toISOString()}
+                          {/* <Moment format={formats.shortDateTimeFormat}>
                             {task.completedDate ? task.completedDate : new Date().toISOString()}
-                          </Moment>
+                          </Moment> */}
                         </StyledTableCell>
                         <StyledTableCell>{task.title}</StyledTableCell>
                         <StyledTableCell component="th" scope="row">
-                          <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment>
+                          {task.completedDate ? new Date(task.dueDate).toISOString() : new Date().toISOString()}
+                          {/* <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment> */}
                         </StyledTableCell>
                         <StyledTableCell>{renderColorBox(task.bgColor)}</StyledTableCell>
                         <StyledTableCell>
