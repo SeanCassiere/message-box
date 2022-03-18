@@ -29,6 +29,8 @@
     "timestamptz",
     "topbar",
     "totp",
-    "typeorm"
+    "typeorm",
+    "vite",
+    "vitejs"
   ]
 }
