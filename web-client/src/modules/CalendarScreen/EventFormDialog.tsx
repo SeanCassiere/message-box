@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useFormik } from "formik";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as yup from "yup";
 
@@ -20,14 +21,14 @@ import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 
 import TextField from "../../shared/components/Form/TextField/TextField";
-
 import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
 import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButtonFooter";
 
 import { selectLookupListsState, selectUserState } from "../../shared/redux/store";
-import { getDummyCalendarEvents } from "./demoAppointments";
 import { ICalendarEventGuestUser } from "../../shared/interfaces/CalendarEvent.interfaces";
-import { dummyPromise } from "../../shared/util/testingUtils";
+import { client } from "../../shared/api/client";
+import { MESSAGES } from "../../shared/util/messages";
+import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
 
 const validationSchema = yup.object({
   title: yup.string().required("Event name is required"),
@@ -70,11 +71,12 @@ interface IProps {
 }
 
 const EventFormDialog = (props: IProps) => {
+  const { enqueueSnackbar } = useSnackbar();
   const location = useLocation();
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [isDisabled, setIsDisabled] = useState(true);
-  const { formats } = useSelector(selectUserState);
+  const { formats, userProfile } = useSelector(selectUserState);
   const { usersList } = useSelector(selectLookupListsState);
 
   const { eventId, showDialog, handleClose } = props;
@@ -94,24 +96,49 @@ const EventFormDialog = (props: IProps) => {
     },
     validationSchema,
     validateOnBlur: true,
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
       const { id, originalStartDate, originalEndDate, ...rest } = values;
       const payload = { ...rest, startDate: rest.startDate.toISOString(), endDate: rest.endDate.toISOString() };
-      console.dir(payload);
 
-      await dummyPromise(1500);
+      setIsDisabled(true);
 
-      setSubmitting(false);
-      props.handleRefreshList();
-      props.handleClose();
+      client[eventId.toLowerCase() === "new" ? "post" : "put"](
+        eventId.toLowerCase() === "new" ? `/CalendarEvent` : `/CalendarEvent/${eventId}`,
+        payload
+      )
+        .then((response) => {
+          if (response.status === 200) {
+            enqueueSnackbar("Event saved successfully", { variant: "success" });
+            setSubmitting(false);
+            props.handleRefreshList();
+            props.handleClose();
+          } else {
+            enqueueSnackbar(MESSAGES.INPUT_VALIDATION, { variant: "warning" });
+            setErrors(formatErrorsToFormik(response.data.errors));
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+        })
+        .finally(() => {
+          setIsDisabled(false);
+          setSubmitting(false);
+        });
     },
   });
+
+  const passThroughClose = useCallback(() => {
+    formik.resetForm();
+    handleClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleClose]);
 
   useEffect(() => {
     setIsDisabled(true);
     if (!showDialog) return;
 
-    if (eventId === "new") {
+    if (eventId.toLowerCase() === "new") {
       formik.resetForm();
 
       // getting from the navigation state
@@ -139,39 +166,35 @@ const EventFormDialog = (props: IProps) => {
       formik.initialErrors = {};
       setIsDisabled(false);
       return;
+    } else {
+      client
+        .get(`/CalendarEvent/${eventId}`)
+        .then((res) => {
+          if (res.status !== 200) {
+            enqueueSnackbar("Could not find the calendar event", { variant: "error" });
+            passThroughClose();
+            return;
+          } else {
+            formik.setValues(res.data);
+            //
+            formik.setFieldValue("startDate", new Date(res.data.startDate));
+            formik.setFieldValue("endDate", new Date(res.data.endDate));
+            //
+            formik.setFieldValue("originalStartDate", new Date(res.data.startDate));
+            formik.setFieldValue("originalEndDate", new Date(res.data.endDate));
+          }
+        })
+        .catch((e) => {
+          console.log(`Error getting calendar event ${eventId}`, e);
+          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+        })
+        .finally(() => {
+          setIsDisabled(false);
+        });
     }
 
-    (async () => {
-      const fetchItem = () =>
-        new Promise((resolve: any) => {
-          setTimeout(() => {
-            resolve({ success: true });
-            const date = new Date();
-            const selected =
-              eventId === "3"
-                ? getDummyCalendarEvents(date.getMonth() + 1)[2]
-                : (getDummyCalendarEvents(date.getMonth() + 1)[0] as any);
-            formik.setValues(selected);
-            //
-            formik.setFieldValue("startDate", new Date(selected.startDate));
-            formik.setFieldValue("endDate", new Date(selected.endDate));
-            //
-            formik.setFieldValue("originalStartDate", new Date(selected.startDate));
-            formik.setFieldValue("originalEndDate", new Date(selected.endDate));
-          }, 500);
-        });
-
-      await fetchItem();
-      setIsDisabled(false);
-    })();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventId, showDialog, location]);
-
-  const passThroughClose = () => {
-    formik.resetForm();
-    handleClose();
-  };
+  }, [eventId, showDialog, location, enqueueSnackbar, passThroughClose]);
 
   const handleToggleIsAllDay = (_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     formik.setFieldValue("isAllDay", checked);
@@ -245,7 +268,9 @@ const EventFormDialog = (props: IProps) => {
   };
 
   const guestOptions = useMemo(() => {
-    const mappedList = usersList.map((u) => ({ label: `${u.firstName} ${u.lastName}`, id: u.userId }));
+    const mappedList = usersList
+      .filter((u) => u.userId !== userProfile?.userId)
+      .map((u) => ({ label: `${u.firstName} ${u.lastName}`, id: u.userId }));
 
     const existingIds = formik.values.sharedWith.map((item) => item.userId);
     const filterOutOptions = mappedList.filter((item) => !existingIds.includes(item.id));
@@ -255,7 +280,9 @@ const EventFormDialog = (props: IProps) => {
     }
 
     return filterOutOptions;
-  }, [formik.values.sharedWith, usersList]);
+  }, [formik.values.sharedWith, userProfile?.userId, usersList]);
+
+  const isSubmitLoading = useMemo(() => isDisabled || formik.isSubmitting, [formik.isSubmitting, isDisabled]);
 
   return (
     <Dialog open={showDialog} onClose={() => ({})} disableEscapeKeyDown fullScreen={isOnMobile} fullWidth>
@@ -439,7 +466,8 @@ const EventFormDialog = (props: IProps) => {
         </DialogContent>
         <DialogBigButtonFooter
           submitButtonText={eventId === "new" ? "CREATE EVENT" : "UPDATE EVENT"}
-          isLoading={isDisabled || formik.isSubmitting}
+          isLoading={isSubmitLoading}
+          hideButton={formik.values.ownerId !== userProfile?.userId}
         />
       </Box>
     </Dialog>

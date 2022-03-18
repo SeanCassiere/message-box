@@ -29,7 +29,7 @@ const AppointmentContentComponent = ({ data, ...restProps }: Appointments.Appoin
     <StyledAppointmentsAppointmentContent {...restProps} data={data}>
       <div className={classes.container}>
         <div className={classes.text}>{data.title}</div>
-        {restProps.type === "vertical" && data.description.length > 0 && (
+        {restProps.type === "vertical" && data.description?.length > 0 && (
           <div className={classNames(classes.text, classes.content)}>{`Description: ${data.description}`}</div>
         )}
       </div>

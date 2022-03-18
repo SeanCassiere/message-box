@@ -44,6 +44,7 @@ import { updateTeamById } from "./controllers/teams/updateTeamById";
 import { deleteTeamById } from "./controllers/teams/deleteTeamById";
 import { changePasswordForUser } from "./controllers/users/changePasswordForUser";
 import { changePasswordByUserId } from "./controllers/users/changePasswordByUserId";
+import { getBasicUsersForIdsArray } from "./controllers/users/getBasicUsersForIdsArray";
 
 import { getAllUserIdsForClient } from "./controllers/clients/getAllUserIdsForClient";
 import { adminSetDefaultRolePermissions } from "./controllers/roles/adminSetDefaultRolePermissions";
@@ -83,6 +84,7 @@ expressApp.post("/users/resendConfirmationEmail", resendConfirmationEmail);
 expressApp.post("/users/changePasswordForUser", changePasswordForUser);
 expressApp.post("/users/changePasswordByUserId", changePasswordByUserId);
 expressApp.post("/users/logoutUserToken", logoutUserToken);
+expressApp.post("/users/getBasicUsersForIdsArray", getBasicUsersForIdsArray);
 
 /**
  * Client routes

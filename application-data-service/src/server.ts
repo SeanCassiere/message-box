@@ -8,6 +8,12 @@ import { getTaskById } from "./controllers/tasks/getTaskById";
 import { deleteTaskById } from "./controllers/tasks/deleteTaskById";
 import { updateTaskById } from "./controllers/tasks/updateTaskById";
 
+import { createCalendarEventForUser } from "./controllers/calendar/createCalendarEventForUser";
+import { getCalendarEventsForUser } from "./controllers/calendar/getCalendarEventsForUser";
+import { deleteCalendarEventById } from "./controllers/calendar/deleteCalendarEventById";
+import { getCalendarEventById } from "./controllers/calendar/getCalendarEventById";
+import { fullUpdateCalendarEventById } from "./controllers/calendar/fullUpdateCalendarEventById";
+
 const expressApp = express();
 
 expressApp.use(cors({ origin: (_, cb) => cb(null, true), credentials: true }));
@@ -22,5 +28,14 @@ expressApp.post("/tasks/createTaskForUser", createTaskForUser);
 expressApp.post("/tasks/getTaskById", getTaskById);
 expressApp.post("/tasks/deleteTaskById", deleteTaskById);
 expressApp.post("/tasks/updateTaskById", updateTaskById);
+
+/**
+ * All calendar-event related routes
+ */
+expressApp.post("/calendar-events/createCalendarEventForUser", createCalendarEventForUser);
+expressApp.post("/calendar-events/getCalendarEventsForUser", getCalendarEventsForUser);
+expressApp.post("/calendar-events/deleteCalendarEventById", deleteCalendarEventById);
+expressApp.post("/calendar-events/getCalendarEventById", getCalendarEventById);
+expressApp.post("/calendar-events/fullUpdateCalendarEventById", fullUpdateCalendarEventById);
 
 export default expressApp;

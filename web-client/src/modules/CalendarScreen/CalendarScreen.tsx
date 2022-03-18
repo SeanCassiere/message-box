@@ -2,12 +2,15 @@ import { useState, useCallback, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 
 import EventIcon from "@mui/icons-material/Event";
 
@@ -16,13 +19,15 @@ import CalendarSchedular from "./SchedularWidget";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import DeleteEventConfirmationDialog from "./DeleteEventConfirmationDialog";
 
-import { ICalendarEvent } from "../../shared/interfaces/CalendarEvent.interfaces";
+import { ICalendarEventComponentDevExpress } from "../../shared/interfaces/CalendarEvent.interfaces";
 import { selectUserState } from "../../shared/redux/store";
-import { getDummyCalendarEvents } from "./demoAppointments";
-import { dummyPromise } from "../../shared/util/testingUtils";
 import { getDateRangeFromViewName } from "../../shared/components/Calendar/common";
+import { client } from "../../shared/api/client";
+import { MESSAGES } from "../../shared/util/messages";
+import { remapCalendarEventsForApplication } from "../../shared/util/responseRemap";
 
 const CalendarScreen = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -36,29 +41,43 @@ const CalendarScreen = () => {
   const [openDeleteId, setOpenDeleteId] = useState<string | null>(null);
 
   const [isCalendarLoading, setIsCalendarLoading] = useState(false);
-  const [fetchedCalendarEvents, setFetchedCalendarEvents] = useState<ICalendarEvent[]>([]);
+  const [fetchedCalendarEvents, setFetchedCalendarEvents] = useState<ICalendarEventComponentDevExpress[]>([]);
 
   /**
    * API CALL
    */
-  const fetchCalendarEvents = useCallback(async (date: Date, viewName: string) => {
-    const [startDate, endDate] = getDateRangeFromViewName(viewName, date);
-    console.group(`fetchCalendarEvents(${date.toDateString()}, ${viewName})`);
-    console.log("viewName", viewName);
-    console.log("startDate", `${startDate.toDateString()} ${startDate.toTimeString()}`);
-    console.log("endDate", `${endDate.toDateString()} ${endDate.toTimeString()}`);
-    console.groupEnd();
+  const fetchCalendarEvents = useCallback(
+    async (date: Date, viewName: string, abort?: AbortController) => {
+      const signal = abort ? abort.signal : undefined;
 
-    setIsCalendarLoading(true);
+      setIsCalendarLoading(true);
+      const [startDate, endDate] = getDateRangeFromViewName(viewName, date);
 
-    await dummyPromise(1500);
+      client
+        .get("/CalendarEvent", {
+          params: { startDate: startDate.toISOString(), endDate: endDate.toISOString() },
+          signal: signal,
+        })
+        .then((response) => {
+          if (response.status !== 200) {
+            enqueueSnackbar(`Error fetching calendar events`, { variant: "error" });
+            return;
+          }
 
-    /** */
-    const month = date.getMonth();
-    /** */
-    setFetchedCalendarEvents(getDummyCalendarEvents(month + 1));
-    setIsCalendarLoading(false);
-  }, []);
+          setFetchedCalendarEvents(remapCalendarEventsForApplication(response.data));
+        })
+        .catch((e) => {
+          if (e.message !== "canceled") {
+            console.log(`Error fetching calendar events`);
+            enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+          }
+        })
+        .finally(() => {
+          setIsCalendarLoading(false);
+        });
+    },
+    [enqueueSnackbar]
+  );
 
   const [calendarViewName, setCalendarViewName] = useState("Week");
   const [calendarDate, setCalendarDate] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
@@ -75,17 +94,27 @@ const CalendarScreen = () => {
     [fetchCalendarEvents]
   );
 
-  const handleChangeViewName = useCallback((viewName: string) => {
-    setCalendarDate(new Date());
-    setCalendarViewName(viewName);
-  }, []);
+  const handleChangeViewName = useCallback(
+    (viewName: string) => {
+      const setDate = new Date();
+      setCalendarDate(setDate);
+      setCalendarViewName(viewName);
+      fetchCalendarEvents(setDate, viewName);
+    },
+    [fetchCalendarEvents]
+  );
 
   //
   useEffect(() => {
+    const abort = new AbortController();
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
-    fetchCalendarEvents(currentDate, calendarViewName);
-  }, [calendarViewName, fetchCalendarEvents]);
+    fetchCalendarEvents(currentDate, "Week", abort);
+
+    return () => {
+      abort.abort();
+    };
+  }, [fetchCalendarEvents]);
 
   useEffect(() => {
     if (id) {
@@ -144,6 +173,13 @@ const CalendarScreen = () => {
           </Grid>
           <Grid item xs={12} md={7}>
             <Stack spacing={2} direction="row" justifyContent={{ sx: "start", md: "end" }} alignItems="center">
+              <IconButton
+                sx={{ mr: 1 }}
+                aria-label="refresh"
+                onClick={() => fetchCalendarEvents(calendarDate, calendarViewName)}
+              >
+                <RefreshOutlinedIcon />
+              </IconButton>
               <Button aria-label="New Event" startIcon={<EventIcon />} onClick={handleShowNewDialog}>
                 New Event
               </Button>

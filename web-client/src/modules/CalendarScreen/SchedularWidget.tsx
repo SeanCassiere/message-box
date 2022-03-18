@@ -36,14 +36,14 @@ import {
   DayViewTimeTableCell,
 } from "../../shared/components/Calendar/TimeTableCell";
 
-import { ICalendarEvent } from "../../shared/interfaces/CalendarEvent.interfaces";
+import { ICalendarEventBase } from "../../shared/interfaces/CalendarEvent.interfaces";
 import { resources } from "../../shared/components/Calendar/common";
 import { COMMON_ITEM_BORDER_STYLING } from "../../shared/util/constants";
 
 interface ICustomCalendarSchedularProps {
   maxHeight?: number;
   isCalendarLoading: boolean;
-  calendarEvents: ICalendarEvent[];
+  calendarEvents: ICalendarEventBase[];
   viewName: string;
   openDeleteOverlay?: (id: string | null) => void;
   calendarViewingDate: Date;
@@ -80,7 +80,14 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
           currentViewName={parentProps.viewName}
           onCurrentViewNameChange={parentProps.setCalendarViewName}
         />
-        <DayView timeTableCellComponent={DayViewTimeTableCell} startDayHour={1} endDayHour={23} />
+        <DayView timeTableCellComponent={DayViewTimeTableCell} name="Day" displayName="One Day" cellDuration={60} />
+        <DayView
+          timeTableCellComponent={DayViewTimeTableCell}
+          name="3-days"
+          displayName="3 Days"
+          intervalCount={3}
+          cellDuration={60}
+        />
         <WeekView timeTableCellComponent={WeekViewTimeTableCell} startDayHour={7} endDayHour={20} />
         <AllDayPanel cellComponent={AllDayViewCell} />
         <MonthView timeTableCellComponent={MonthViewTimeTableCell} />

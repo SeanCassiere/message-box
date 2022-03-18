@@ -1,6 +1,8 @@
 import { AppointmentTooltip } from "@devexpress/dx-react-scheduler-material-ui";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
+import { useSelector } from "react-redux";
+import { selectUserState } from "../../redux/store";
 
 const AppointmentTooltipHeaderComponent = (
   props: AppointmentTooltip.HeaderProps & {
@@ -8,6 +10,7 @@ const AppointmentTooltipHeaderComponent = (
     customOnOpenClose?: (eventId: string) => void;
   }
 ) => {
+  const { userProfile } = useSelector(selectUserState);
   const CommandButton = props.commandButtonComponent;
 
   const openClose = () => {
@@ -34,7 +37,11 @@ const AppointmentTooltipHeaderComponent = (
     <Paper sx={{ pt: 1, pb: 1, pr: 1 }}>
       <Grid container spacing={1} justifyContent="end">
         <Grid item>{props.showOpenButton && <CommandButton id="open" onExecute={openClose} />}</Grid>
-        <Grid item>{props.showDeleteButton && <CommandButton id="delete" onExecute={openDelete} />}</Grid>
+        <Grid item>
+          {props.appointmentData?.ownerId === userProfile?.userId && props.showDeleteButton && (
+            <CommandButton id="delete" onExecute={openDelete} />
+          )}
+        </Grid>
         <Grid item>{props.showCloseButton && <CommandButton id="close" onExecute={props.onHide} />}</Grid>
       </Grid>
     </Paper>
