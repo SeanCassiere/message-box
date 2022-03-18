@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
@@ -10,21 +10,24 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
+import Autocomplete from "@mui/material/Autocomplete";
 
+import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 import EventIcon from "@mui/icons-material/Event";
 
 import EventFormDialog from "./EventFormDialog";
 import CalendarSchedular from "./SchedularWidget";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import DeleteEventConfirmationDialog from "./DeleteEventConfirmationDialog";
+import TextField from "../../shared/components/Form/TextField";
 
 import { ICalendarEventComponentDevExpress } from "../../shared/interfaces/CalendarEvent.interfaces";
-import { selectUserState } from "../../shared/redux/store";
+import { selectLookupListsState, selectUserState } from "../../shared/redux/store";
 import { getDateRangeFromViewName } from "../../shared/components/Calendar/common";
 import { client } from "../../shared/api/client";
 import { MESSAGES } from "../../shared/util/messages";
 import { remapCalendarEventsForApplication } from "../../shared/util/responseRemap";
+import { usePermission } from "../../shared/hooks/usePermission";
 
 const CalendarScreen = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -33,6 +36,11 @@ const CalendarScreen = () => {
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { id } = useParams<{ id: string }>();
   const { userProfile } = useSelector(selectUserState);
+  const { usersList } = useSelector(selectLookupListsState);
+
+  const isCalendarAdmin = usePermission("calendar:admin");
+
+  const [currentViewingUserId, setCurrentViewingUserId] = useState<string>(userProfile?.userId ?? "");
 
   const [eventEditId, setEventEditId] = useState<string | "new">("new");
   const [showEditOverlay, setShowEditOverlay] = useState(false);
@@ -53,9 +61,14 @@ const CalendarScreen = () => {
       setIsCalendarLoading(true);
       const [startDate, endDate] = getDateRangeFromViewName(viewName, date);
 
+      let urlParams: Object = { startDate: startDate.toISOString(), endDate: endDate.toISOString() };
+      if (userProfile?.userId !== currentViewingUserId) {
+        urlParams = { ...urlParams, ownerId: currentViewingUserId };
+      }
+
       client
         .get("/CalendarEvent", {
-          params: { startDate: startDate.toISOString(), endDate: endDate.toISOString() },
+          params: urlParams,
           signal: signal,
         })
         .then((response) => {
@@ -76,7 +89,7 @@ const CalendarScreen = () => {
           setIsCalendarLoading(false);
         });
     },
-    [enqueueSnackbar]
+    [enqueueSnackbar, userProfile, currentViewingUserId]
   );
 
   const [calendarViewName, setCalendarViewName] = useState("Week");
@@ -149,6 +162,56 @@ const CalendarScreen = () => {
     setEventEditId("new");
   }, [navigate]);
 
+  const userSelectOptions = useMemo(() => {
+    return usersList.map((user) => {
+      return {
+        id: user.userId,
+        label: `${user.firstName} ${user.lastName}`,
+      };
+    });
+  }, [usersList]);
+
+  const selectedUserValue = useMemo(() => {
+    const user = usersList.find((u) => u.userId === currentViewingUserId);
+
+    if (!user) {
+      return { label: `${userProfile?.firstName} ${userProfile?.lastName}`, id: userProfile?.userId ?? "" };
+    }
+
+    return { label: `${user.firstName} ${user.lastName}`, id: user.userId };
+  }, [currentViewingUserId, userProfile?.firstName, userProfile?.lastName, userProfile?.userId, usersList]);
+
+  const handleSelectCurrentUserId = useCallback(
+    (
+      evt: any,
+      value:
+        | string
+        | {
+            id: string;
+            label: string;
+          }
+        | null
+    ) => {
+      if (!value) return;
+
+      if (typeof value === "string") {
+        const split = value.split(" ");
+        const user = usersList.find((u) => u.firstName === split[0] && u.lastName === split[1]);
+
+        if (!user) {
+          return;
+        }
+
+        setCurrentViewingUserId(user.userId);
+      }
+
+      if (typeof value === "object") {
+        setCurrentViewingUserId(value.id);
+      }
+    },
+    [usersList]
+  );
+
   return (
     <>
       <EventFormDialog
@@ -180,6 +243,25 @@ const CalendarScreen = () => {
               >
                 <RefreshOutlinedIcon />
               </IconButton>
+              {isCalendarAdmin && (
+                <Autocomplete
+                  id="user-calendar-view-options"
+                  options={userSelectOptions}
+                  value={selectedUserValue}
+                  freeSolo
+                  autoSelect
+                  onChange={handleSelectCurrentUserId}
+                  sx={{ width: 250 }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      InputProps={{ ...params.InputProps, endAdornment: <></> }}
+                      fullWidth
+                    />
+                  )}
+                />
+              )}
               <Button aria-label="New Event" startIcon={<EventIcon />} onClick={handleShowNewDialog}>
                 New Event
               </Button>
