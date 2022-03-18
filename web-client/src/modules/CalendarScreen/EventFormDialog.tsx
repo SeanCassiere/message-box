@@ -97,12 +97,13 @@ const EventFormDialog = (props: IProps) => {
     validationSchema,
     validateOnBlur: true,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
-      setSubmitting(true);
       const { id, originalStartDate, originalEndDate, ...rest } = values;
       const payload = { ...rest, startDate: rest.startDate.toISOString(), endDate: rest.endDate.toISOString() };
 
-      client[id.toLowerCase() === "new" ? "post" : "put"](
-        id.toLowerCase() === "new" ? `/CalendarEvent` : `/CalendarEvent/${id}`,
+      setIsDisabled(true);
+
+      client[eventId.toLowerCase() === "new" ? "post" : "put"](
+        eventId.toLowerCase() === "new" ? `/CalendarEvent` : `/CalendarEvent/${eventId}`,
         payload
       )
         .then((response) => {
@@ -121,6 +122,7 @@ const EventFormDialog = (props: IProps) => {
           enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
         })
         .finally(() => {
+          setIsDisabled(false);
           setSubmitting(false);
         });
     },
@@ -279,6 +281,8 @@ const EventFormDialog = (props: IProps) => {
 
     return filterOutOptions;
   }, [formik.values.sharedWith, userProfile?.userId, usersList]);
+
+  const isSubmitLoading = useMemo(() => isDisabled || formik.isSubmitting, [formik.isSubmitting, isDisabled]);
 
   return (
     <Dialog open={showDialog} onClose={() => ({})} disableEscapeKeyDown fullScreen={isOnMobile} fullWidth>
@@ -462,7 +466,7 @@ const EventFormDialog = (props: IProps) => {
         </DialogContent>
         <DialogBigButtonFooter
           submitButtonText={eventId === "new" ? "CREATE EVENT" : "UPDATE EVENT"}
-          isLoading={isDisabled || formik.isSubmitting}
+          isLoading={isSubmitLoading}
           hideButton={formik.values.ownerId !== userProfile?.userId}
         />
       </Box>
