@@ -400,7 +400,7 @@
           }
         ],
         "requestBody": {
-          "description": "Details required to create a calendar event.",
+          "description": "Details required to update a calendar event.",
           "content": {
             "application/json": {
               "schema": {
@@ -417,6 +417,58 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CalendarEventSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body",
+        "parameters": []
+      },
+      "patch": {
+        "tags": ["CalendarEvent"],
+        "summary": "Patch a calendar event details by its Event Id",
+        "description": "Patch a calendar event details by its Event Id",
+        "operationId": "PatchCalendarEventById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Details required to patch a calendar event.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "startDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully created a new calendar event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
                 }
               }
             }

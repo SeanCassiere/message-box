@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import { MonthView, WeekView, AllDayPanel, DayView } from "@devexpress/dx-react-scheduler-material-ui";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +21,7 @@ const StyledMonthViewTimeTableCell = styled(MonthView.TimeTableCell)(({ theme: {
   },
 }));
 
-export const MonthViewTimeTableCell = ({ startDate, ...restProps }: MonthView.TimeTableCellProps) => {
+export const MonthViewTimeTableCell = memo(({ startDate, ...restProps }: MonthView.TimeTableCellProps) => {
   const navigate = useNavigate();
 
   const customOnDoubleClick = () => {
@@ -43,7 +44,7 @@ export const MonthViewTimeTableCell = ({ startDate, ...restProps }: MonthView.Ti
       onDoubleClick={customOnDoubleClick}
     />
   );
-};
+});
 
 /**
  * @description use for styling the time table cell in the week view
@@ -59,7 +60,7 @@ const StyledWeekViewTimeTableCell = styled(WeekView.TimeTableCell)(({ theme: { p
     },
   },
 }));
-export const WeekViewTimeTableCell = ({ startDate, onDoubleClick, ...restProps }: WeekView.TimeTableCellProps) => {
+export const WeekViewTimeTableCell = memo(({ startDate, onDoubleClick, ...restProps }: WeekView.TimeTableCellProps) => {
   const navigate = useNavigate();
 
   const customOnDoubleClick = () => {
@@ -82,7 +83,7 @@ export const WeekViewTimeTableCell = ({ startDate, onDoubleClick, ...restProps }
       {...restProps}
     />
   );
-};
+});
 
 /**
  * @description use for styling the cell in the all-day view
@@ -98,7 +99,7 @@ const StyledAllDayViewCell = styled(AllDayPanel.Cell)(({ theme: { palette } }) =
     },
   },
 }));
-export const AllDayViewCell = ({ startDate, ...restProps }: AllDayPanel.CellProps) => {
+export const AllDayViewCell = memo(({ startDate, ...restProps }: AllDayPanel.CellProps) => {
   const navigate = useNavigate();
 
   const customOnDoubleClick = () => {
@@ -121,7 +122,7 @@ export const AllDayViewCell = ({ startDate, ...restProps }: AllDayPanel.CellProp
       onDoubleClick={customOnDoubleClick}
     />
   );
-};
+});
 
 /**
  * @description use for styling the cell in the single-day view
@@ -137,7 +138,7 @@ const StyledDayViewTimeTableCell = styled(DayView.TimeTableCell)(({ theme: { pal
     },
   },
 }));
-export const DayViewTimeTableCell = ({ startDate, ...restProps }: DayView.TimeTableCellProps) => {
+export const DayViewTimeTableCell = memo(({ startDate, ...restProps }: DayView.TimeTableCellProps) => {
   const navigate = useNavigate();
 
   const customOnDoubleClick = () => {
@@ -160,4 +161,4 @@ export const DayViewTimeTableCell = ({ startDate, ...restProps }: DayView.TimeTa
       onDoubleClick={customOnDoubleClick}
     />
   );
-};
+});

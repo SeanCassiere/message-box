@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -7,8 +7,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Autocomplete from "@mui/material/Autocomplete";
 
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
@@ -25,6 +24,7 @@ import TaskModifyDialog from "./TaskModifyDialog/TaskModifyDialog";
 import TaskTodayView from "./TodayView";
 import TaskCompletedView from "./CompletedView";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
+import TextField from "../../shared/components/Form/TextField";
 
 export const inactiveTabBgColor = "#FCFCFC";
 const primaryOptions = ["today", "completed"];
@@ -45,10 +45,6 @@ const TasksScreen = () => {
   const [currentViewingOwnerId, setCurrentViewingOwnerId] = useState<string>(userProfile?.userId ?? "");
   const [allStateRender, setAllStateRender] = useState(0);
   const [primaryTabValue, setPrimaryTabValue] = useState("today");
-
-  const handleChangeCurrentViewingOwnerId = useCallback((evt: SelectChangeEvent<string>) => {
-    setCurrentViewingOwnerId(evt.target.value);
-  }, []);
 
   const handleOpenEditTaskDialog = useCallback((editOwnerId: string) => {
     setOpenEditTaskId(editOwnerId);
@@ -92,6 +88,58 @@ const TasksScreen = () => {
     }
   }, [id, navigate, tab]);
 
+  const userSelectOptions = useMemo(() => {
+    return usersList
+      .filter((user) => user.isActive)
+      .map((user) => {
+        return {
+          id: user.userId,
+          label: `${user.firstName} ${user.lastName}`,
+        };
+      });
+  }, [usersList]);
+
+  const selectedUserValue = useMemo(() => {
+    const user = usersList.find((u) => u.userId === currentViewingOwnerId);
+
+    if (!user) {
+      return { label: `${userProfile?.firstName} ${userProfile?.lastName}`, id: userProfile?.userId ?? "" };
+    }
+
+    return { label: `${user.firstName} ${user.lastName}`, id: user.userId };
+  }, [currentViewingOwnerId, userProfile?.firstName, userProfile?.lastName, userProfile?.userId, usersList]);
+
+  const handleSelectCurrentUserId = useCallback(
+    (
+      evt: any,
+      value:
+        | string
+        | {
+            id: string;
+            label: string;
+          }
+        | null
+    ) => {
+      if (!value) return;
+
+      if (typeof value === "string") {
+        const split = value.split(" ");
+        const user = usersList.find((u) => u.firstName === split[0] && u.lastName === split[1]);
+
+        if (!user) {
+          return;
+        }
+
+        setCurrentViewingOwnerId(user.userId);
+      }
+
+      if (typeof value === "object") {
+        setCurrentViewingOwnerId(value.id);
+      }
+    },
+    [usersList]
+  );
+
   return (
     <>
       <TaskModifyDialog
@@ -118,33 +166,32 @@ const TasksScreen = () => {
                 },
               }}
             >
-              {isUserSwitcherAccessible && (
-                <Grid item xs={12} md={4} alignItems="center">
-                  <Select
-                    labelId="ownerId-label"
-                    id="ownerId"
-                    name="ownerId"
-                    variant="standard"
-                    value={currentViewingOwnerId}
-                    onChange={handleChangeCurrentViewingOwnerId}
-                    sx={{ mr: 1, minWidth: "9.5em" }}
-                    fullWidth
-                  >
-                    {usersList
-                      .filter((user) => user.isActive)
-                      .map((user) => (
-                        <MenuItem key={`select-root-rol-${user.userId}`} value={user.userId}>
-                          {`${user.firstName} ${user.lastName}`}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </Grid>
-              )}
               <Grid item>
                 <IconButton sx={{ mr: 1 }} aria-label="refresh" onClick={handleRefreshAllItems}>
                   <RefreshOutlinedIcon />
                 </IconButton>
               </Grid>
+              {isUserSwitcherAccessible && (
+                <Grid item xs={12} md={4} alignItems="center">
+                  <Autocomplete
+                    id="user-tasks-view-options"
+                    options={userSelectOptions}
+                    value={selectedUserValue}
+                    freeSolo
+                    autoSelect
+                    onChange={handleSelectCurrentUserId}
+                    sx={{ mr: 2, width: "100%" }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        size="small"
+                        InputProps={{ ...params.InputProps, endAdornment: <></> }}
+                        fullWidth
+                      />
+                    )}
+                  />
+                </Grid>
+              )}
               {isTaskWriteAccessible && (
                 <>
                   <Grid item>

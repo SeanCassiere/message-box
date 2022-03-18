@@ -1,8 +1,12 @@
+import { memo } from "react";
 import classNames from "clsx";
 import { styled } from "@mui/material/styles";
 import { Appointments } from "@devexpress/dx-react-scheduler-material-ui";
 
 import { classes } from "./common";
+import { useSelector } from "react-redux";
+import { selectLookupListsState, selectUserState } from "../../redux/store";
+import { useMemo } from "react";
 
 const StyledAppointmentsAppointmentContent = styled(Appointments.AppointmentContent)(({ theme: { palette } }) => ({
   [`& .${classes.text}`]: {
@@ -25,6 +29,13 @@ const StyledAppointmentsAppointmentContent = styled(Appointments.AppointmentCont
 }));
 
 const AppointmentContentComponent = ({ data, ...restProps }: Appointments.AppointmentContentProps) => {
+  const { userProfile } = useSelector(selectUserState);
+  const { usersList } = useSelector(selectLookupListsState);
+
+  const name = useMemo(() => {
+    const user = usersList.find((u) => u.userId === data.ownerId);
+    return user ? `${user.firstName} ${user.lastName}` : "No name";
+  }, [data.ownerId, usersList]);
   return (
     <StyledAppointmentsAppointmentContent {...restProps} data={data}>
       <div className={classes.container}>
@@ -32,9 +43,17 @@ const AppointmentContentComponent = ({ data, ...restProps }: Appointments.Appoin
         {restProps.type === "vertical" && data.description?.length > 0 && (
           <div className={classNames(classes.text, classes.content)}>{`Description: ${data.description}`}</div>
         )}
+        {restProps.type === "vertical" && (
+          <div className={classNames(classes.text, classes.content)}>
+            Guests:&nbsp;{data.sharedWith.length === 0 ? "None" : "Yes"}
+          </div>
+        )}
+        {restProps.type === "vertical" && data.ownerId !== userProfile?.userId && (
+          <div className={classNames(classes.text, classes.content)}>By:&nbsp;{name}</div>
+        )}
       </div>
     </StyledAppointmentsAppointmentContent>
   );
 };
 
-export default AppointmentContentComponent;
+export default memo(AppointmentContentComponent);

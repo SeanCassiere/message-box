@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { ViewSwitcher } from "@devexpress/dx-react-scheduler-material-ui";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -29,4 +30,4 @@ const ViewSwitcherComponent = ({
   );
 };
 
-export default ViewSwitcherComponent;
+export default memo(ViewSwitcherComponent);

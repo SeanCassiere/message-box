@@ -1,7 +1,8 @@
+import { memo } from "react";
 import classNames from "clsx";
 import { styled } from "@mui/material/styles";
 import { Appointments } from "@devexpress/dx-react-scheduler-material-ui";
-import { indigo, deepPurple, teal, lightGreen } from "@mui/material/colors";
+import { indigo, deepPurple, deepOrange, lightGreen } from "@mui/material/colors";
 import { useSelector } from "react-redux";
 
 import { selectUserState } from "../../../shared/redux/store";
@@ -13,11 +14,11 @@ const StyledAppointmentsAppointment = styled(Appointments.Appointment)(({ theme 
     borderBottom: `1px solid ${indigo[100]}`,
   },
   [`&.${classes.ownEventAlone}`]: {
-    borderLeft: `4px solid ${teal[600]}`,
-    backgroundColor: teal[300],
+    borderLeft: `4px solid ${deepOrange[600]}`,
+    backgroundColor: deepOrange[300],
     transition: "background-color 0.15s ease-in-out",
     "&:hover": {
-      backgroundColor: teal[200],
+      backgroundColor: deepOrange[200],
     },
   },
   [`&.${classes.ownEventWithGuests}`]: {
@@ -68,4 +69,4 @@ const AppointmentComponent = ({
   );
 };
 
-export default AppointmentComponent;
+export default memo(AppointmentComponent);

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, memo } from "react";
 import { useSnackbar } from "notistack";
 
 import Dialog from "@mui/material/Dialog";
@@ -63,4 +63,4 @@ const DeleteEventConfirmationDialog = (props: IProps) => {
   );
 };
 
-export default DeleteEventConfirmationDialog;
+export default memo(DeleteEventConfirmationDialog);
