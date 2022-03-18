@@ -29,11 +29,23 @@ calendarEventRouter
       endDate = Array.from(req.query.endDate as any)[0];
     }
 
+    let queryOwnerId: string | null = null;
+    if (req.query.ownerId) {
+      if (typeof req.query.ownerId === "string") {
+        queryOwnerId = req.query.ownerId;
+      } else {
+        queryOwnerId = Array.from(req.query.ownerId as any)[0] as string;
+      }
+    }
+
+    const ownerId = queryOwnerId ?? request.auth!.message_box_userId;
+
     try {
       const { data: response } = await client.post("/calendar-events/getCalendarEventsForUser", {
         variables: {
           clientId: request.auth!.message_box_clientId,
           userId: request.auth!.message_box_userId,
+          ownerId: ownerId,
         },
         body: {
           startDate: startDate,

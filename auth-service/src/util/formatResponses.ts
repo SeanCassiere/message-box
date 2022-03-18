@@ -67,8 +67,6 @@ export async function formatTeamResponse({
     }
   }
 
-  console.log("\n\n", mappingsToReturn, "\n\n");
-
   return {
     teamId: team.teamId,
     rootName: team.rootName,

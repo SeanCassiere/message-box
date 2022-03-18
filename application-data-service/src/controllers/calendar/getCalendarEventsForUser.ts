@@ -12,6 +12,7 @@ const validationSchema = yup.object().shape({
   variables: yup.object().shape({
     clientId: yup.string().required("ClientId is required"),
     userId: yup.string().required("UserId is required"),
+    ownerId: yup.string().required("OwnerId is required"),
   }),
   body: yup.object().shape({
     startDate: yup.date().required("startDate is required"),
@@ -73,7 +74,7 @@ export async function getCalendarEventsForUser(req: Request, res: Response) {
     const endDate = new Date(body.endDate);
 
     const findEvents = await CalendarEvent.createQueryBuilder()
-      .where("owner_id = :ownerId", { ownerId: variables.userId })
+      .where("owner_id = :ownerId", { ownerId: variables.ownerId })
       .andWhere("start_date >= :startDate", { startDate: startDate })
       .andWhere("end_date <= :endDate", { endDate: endDate })
       .getMany();
@@ -101,7 +102,7 @@ export async function getCalendarEventsForUser(req: Request, res: Response) {
     const endDate = new Date(body.endDate);
 
     const myGuestEvents = await CalendarEventShareMapping.createQueryBuilder()
-      .where("user_id = :userId", { userId: variables.userId })
+      .where("user_id = :userId", { userId: variables.ownerId })
       .andWhere("start_date >= :startDate", { startDate: startDate })
       .andWhere("end_date <= :endDate", { endDate: endDate })
       .getMany();
