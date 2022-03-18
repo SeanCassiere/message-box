@@ -6,7 +6,6 @@ import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-// import Moment from "react-moment";
 
 import { client } from "../../../shared/api/client";
 
@@ -43,6 +42,7 @@ import { usePermission } from "../../../shared/hooks/usePermission";
 import { colorsMap, IColorMap } from "../../../shared/util/colorsMap";
 import { taskColorOpacity } from "../../../shared/util/constants";
 import { MESSAGES } from "../../../shared/util/messages";
+import { formatDateTimeShort } from "../../../shared/util/dateTime";
 
 interface Props {
   handleCloseFunction: () => void;
@@ -401,12 +401,7 @@ const TaskModifyDialog = (props: Props) => {
                             Completed date
                           </InputLabel>
                           <Typography fontSize="1rem" fontWeight={400} mt={3}>
-                            {formik.values.completedDate
-                              ? new Date(formik.values.completedDate).toISOString()
-                              : new Date().toISOString()}
-                            {/* <Moment format={formats.shortDateTimeFormat}>
-                              {formik.values.completedDate ?? new Date()}
-                            </Moment> */}
+                            {formatDateTimeShort(formik.values.completedDate ?? new Date())}
                           </Typography>
                         </FormControl>
                       </Grid>

@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import { useSelector } from "react-redux";
-import Moment from "react-moment";
 
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -8,16 +7,14 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import { selectUserState } from "../../../redux/store";
+import { formatDateTimeLong } from "../../../util/dateTime";
 
 interface Props {
   bottomElement?: ReactNode;
 }
 
 const BasicCompanyDetailsBlock = (props: Props) => {
-  const {
-    clientProfile,
-    formats: { longDateTimeFormat },
-  } = useSelector(selectUserState);
+  const { clientProfile } = useSelector(selectUserState);
 
   return (
     <Grid container spacing={2}>
@@ -31,7 +28,7 @@ const BasicCompanyDetailsBlock = (props: Props) => {
             </Box>
             <Box>
               <Typography fontSize={14}>
-                Last updated on <Moment format={longDateTimeFormat}>{clientProfile?.updatedAt}</Moment>.
+                Last updated on {formatDateTimeLong(clientProfile?.updatedAt ?? "")}
               </Typography>
             </Box>
           </Stack>
