@@ -18,9 +18,14 @@ export function formatTaskResponseWithUsers({ task, userIds }: { task: Task; use
   };
 }
 
+export interface ICalendarEventGuest {
+  userId: string;
+  name: string | null;
+}
+
 export interface IFormatCalendarEventResponse {
   event: CalendarEvent;
-  guestUsers: { userId: string; name: string | null }[];
+  guestUsers: ICalendarEventGuest[];
 }
 
 export function formatCalendarEventResponse({ event, guestUsers }: IFormatCalendarEventResponse) {

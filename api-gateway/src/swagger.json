@@ -349,8 +349,8 @@
     "/CalendarEvent/{id}": {
       "get": {
         "tags": ["CalendarEvent"],
-        "summary": "Get a calendar event by its ID",
-        "description": "Get a calendar event by its ID",
+        "summary": "Get a calendar event by its Event Id",
+        "description": "Get a calendar event by its Event Id",
         "operationId": "GetCalendarEventById",
         "parameters": [
           {
@@ -389,10 +389,52 @@
         },
         "x-codegen-request-body-name": "body"
       },
+      "put": {
+        "tags": ["CalendarEvent"],
+        "summary": "Update a calendar event details by its Event Id",
+        "description": "Update a calendar event details by its Event Id",
+        "operationId": "UpdateCalendarEventById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Details required to create a calendar event.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarEventSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully created a new calendar event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarEventSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body",
+        "parameters": []
+      },
       "delete": {
         "tags": ["CalendarEvent"],
-        "summary": "Delete a calendar event by its eventID",
-        "description": "Delete a calendar event by its event ID",
+        "summary": "Delete a calendar event by its Event Id",
+        "description": "Delete a calendar event by its Event Id",
         "operationId": "DeleteCalendarEventById",
         "parameters": [
           {

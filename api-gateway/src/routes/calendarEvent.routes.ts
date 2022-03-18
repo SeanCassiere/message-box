@@ -102,6 +102,31 @@ calendarEventRouter
       return res.status(500).json({ message: "application-data-service /calendar-events network error" });
     }
   })
+  .put(async (req, res) => {
+    const request = req as CustomRequest<{}>;
+
+    const eventId = request.params.id;
+    try {
+      const { data: response } = await client.post("/calendar-events/fullUpdateCalendarEventById", {
+        variables: {
+          clientId: request.auth!.message_box_clientId,
+          userId: request.auth!.message_box_userId,
+          eventId: eventId,
+        },
+        body: {
+          ...request.body,
+        },
+      });
+
+      if (response.statusCode === 200) {
+        return res.json({ ...response.data });
+      }
+
+      return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
+    } catch (error) {
+      return res.status(500).json({ message: "application-data-service /calendar-events network error" });
+    }
+  })
   .delete(async (req, res) => {
     const request = req as CustomRequest<{}>;
     const { message_box_clientId, message_box_userId } = request.auth!;
