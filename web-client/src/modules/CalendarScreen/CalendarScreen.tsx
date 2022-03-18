@@ -212,6 +212,37 @@ const CalendarScreen = () => {
     [usersList]
   );
 
+  const handleEditPatchAppointment = useCallback(
+    ({ id, startDate, endDate }: { id: string; startDate: string; endDate: string }) => {
+      const withoutEventList = fetchedCalendarEvents.filter((e) => e.id !== id);
+      const findEvent = fetchedCalendarEvents.find((e) => e.id === id);
+
+      if (findEvent) {
+        const newEvent = { ...findEvent, startDate: startDate, endDate: endDate };
+        withoutEventList.push(newEvent);
+        setFetchedCalendarEvents(withoutEventList);
+        //
+        client
+          .patch(`/CalendarEvent/${newEvent.id}`, { startDate: newEvent.startDate, endDate: newEvent.endDate })
+          .then((response) => {
+            if (response.status !== 200) {
+              enqueueSnackbar(`Error updating calendar event`, { variant: "error" });
+              return;
+            }
+          })
+          .catch((error) => {
+            if (error.message !== "canceled") {
+              enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+            }
+          })
+          .finally(() => {
+            fetchCalendarEvents(calendarDate, calendarViewName);
+          });
+      }
+    },
+    [calendarDate, calendarViewName, enqueueSnackbar, fetchCalendarEvents, fetchedCalendarEvents]
+  );
+
   return (
     <>
       <EventFormDialog
@@ -272,6 +303,7 @@ const CalendarScreen = () => {
           calendarViewingDate={calendarDate}
           setCalendarViewName={handleChangeViewName}
           setCalendarViewingDate={handleSetCalendarDate}
+          handlePatchAppointment={handleEditPatchAppointment}
           viewName={calendarViewName}
           calendarEvents={fetchedCalendarEvents}
           isCalendarLoading={isCalendarLoading}

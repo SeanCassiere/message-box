@@ -13,6 +13,7 @@ import { getCalendarEventsForUser } from "./controllers/calendar/getCalendarEven
 import { deleteCalendarEventById } from "./controllers/calendar/deleteCalendarEventById";
 import { getCalendarEventById } from "./controllers/calendar/getCalendarEventById";
 import { fullUpdateCalendarEventById } from "./controllers/calendar/fullUpdateCalendarEventById";
+import { patchCalendarEventDetailsById } from "./controllers/calendar/patchCalendarEventDetailsById";
 
 const expressApp = express();
 
@@ -37,5 +38,6 @@ expressApp.post("/calendar-events/getCalendarEventsForUser", getCalendarEventsFo
 expressApp.post("/calendar-events/deleteCalendarEventById", deleteCalendarEventById);
 expressApp.post("/calendar-events/getCalendarEventById", getCalendarEventById);
 expressApp.post("/calendar-events/fullUpdateCalendarEventById", fullUpdateCalendarEventById);
+expressApp.post("/calendar-events/patchCalendarEventDetailsById", patchCalendarEventDetailsById);
 
 export default expressApp;
