@@ -80,7 +80,14 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
           currentViewName={parentProps.viewName}
           onCurrentViewNameChange={parentProps.setCalendarViewName}
         />
-        <DayView timeTableCellComponent={DayViewTimeTableCell} startDayHour={1} endDayHour={23} />
+        <DayView timeTableCellComponent={DayViewTimeTableCell} name="Day" displayName="One Day" cellDuration={60} />
+        <DayView
+          timeTableCellComponent={DayViewTimeTableCell}
+          name="3-days"
+          displayName="3 Days"
+          intervalCount={3}
+          cellDuration={60}
+        />
         <WeekView timeTableCellComponent={WeekViewTimeTableCell} startDayHour={7} endDayHour={20} />
         <AllDayPanel cellComponent={AllDayViewCell} />
         <MonthView timeTableCellComponent={MonthViewTimeTableCell} />

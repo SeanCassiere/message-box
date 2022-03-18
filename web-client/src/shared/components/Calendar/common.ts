@@ -44,6 +44,10 @@ export const getDateRangeFromViewName = (viewName: string, date: Date): [Date, D
     // gets the start of the today to the start of the next day
     startDate = new Date(new Date(date).setHours(0, 0, 0, 0));
     endDate = new Date(new Date(new Date(date).setDate(date.getDate() + 1)).setHours(0, 1, 0, 0));
+  } else if (viewName.toLowerCase() === "3-days") {
+    // gets the start of the yesterday and the start of 3 days from now
+    startDate = new Date(new Date(new Date(date).setDate(date.getDate() - 1)).setHours(0, 1, 0, 0));
+    endDate = new Date(new Date(new Date(date).setDate(date.getDate() + 4)).setHours(0, 1, 0, 0));
   }
 
   return [startDate, endDate];

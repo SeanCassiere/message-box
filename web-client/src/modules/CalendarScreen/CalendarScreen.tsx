@@ -9,6 +9,8 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 
 import EventIcon from "@mui/icons-material/Event";
 
@@ -171,6 +173,13 @@ const CalendarScreen = () => {
           </Grid>
           <Grid item xs={12} md={7}>
             <Stack spacing={2} direction="row" justifyContent={{ sx: "start", md: "end" }} alignItems="center">
+              <IconButton
+                sx={{ mr: 1 }}
+                aria-label="refresh"
+                onClick={() => fetchCalendarEvents(calendarDate, calendarViewName)}
+              >
+                <RefreshOutlinedIcon />
+              </IconButton>
               <Button aria-label="New Event" startIcon={<EventIcon />} onClick={handleShowNewDialog}>
                 New Event
               </Button>
