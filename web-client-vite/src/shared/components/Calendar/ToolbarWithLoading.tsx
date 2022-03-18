@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { styled } from "@mui/material/styles";
 import LinearProgress from "@mui/material/LinearProgress";
 import { Toolbar } from "@devexpress/dx-react-scheduler-material-ui";

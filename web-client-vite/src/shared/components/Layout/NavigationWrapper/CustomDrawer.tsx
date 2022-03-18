@@ -1,7 +1,8 @@
-import { drawerWidth } from "../../../util/constants";
-
+import React from "react";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
+
+import { drawerWidth } from "../../../util/constants";
 
 const openedMixin = (theme: Theme): CSSObject => ({
   transition: theme.transitions.create("width", {

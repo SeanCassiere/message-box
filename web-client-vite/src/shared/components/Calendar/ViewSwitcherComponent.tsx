@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { ViewSwitcher } from "@devexpress/dx-react-scheduler-material-ui";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";

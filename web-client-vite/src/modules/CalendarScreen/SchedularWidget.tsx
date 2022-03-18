@@ -1,7 +1,7 @@
 // ref: https://devexpress.github.io/devextreme-reactive/react/scheduler/demos/featured/remote-data/
 // ref: https://devexpress.github.io/devextreme-reactive/react/scheduler/docs/guides/appointments/
-import useMediaQuery from "@mui/material/useMediaQuery";
 import React, { useCallback, memo } from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useNavigate } from "react-router-dom";
 import { ViewState, EditingState, IntegratedEditing } from "@devexpress/dx-react-scheduler";
 import { useTheme } from "@mui/material/styles";

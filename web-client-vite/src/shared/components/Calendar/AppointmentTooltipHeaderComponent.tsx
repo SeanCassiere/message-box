@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { useSelector } from "react-redux";
 import { AppointmentTooltip } from "@devexpress/dx-react-scheduler-material-ui";
 import Paper from "@mui/material/Paper";
