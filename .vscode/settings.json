@@ -10,6 +10,7 @@
     "DDTHH",
     "deletable",
     "devexpress",
+    "esbuild",
     "etsc",
     "formik",
     "genrsa",
@@ -29,6 +30,8 @@
     "timestamptz",
     "topbar",
     "totp",
-    "typeorm"
+    "typeorm",
+    "vite",
+    "vitejs"
   ]
 }

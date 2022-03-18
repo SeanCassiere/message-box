@@ -19,7 +19,6 @@ export const ALLOWED_PUBLIC_PATHS = [
   pathToRegexp(`${API_PREFIX}/Authentication/2FA/Code/Login`),
   pathToRegexp(`${API_PREFIX}/Authentication/2FA/Code/ConfirmUser`),
   pathToRegexp(`${API_PREFIX}/Clients`),
-  pathToRegexp(`${API_PREFIX}/Users/:id/ChangePassword`),
   pathToRegexp(`${API_PREFIX}/Users/ConfirmUser`),
   pathToRegexp(`${API_PREFIX}/Users/ConfirmUser/ResendConfirmationEmail`),
   pathToRegexp(`${API_PREFIX}/Users/ResetPassword`),
