@@ -43,13 +43,14 @@ const AppointmentContentComponent = ({ data, ...restProps }: Appointments.Appoin
         {restProps.type === "vertical" && data.description?.length > 0 && (
           <div className={classNames(classes.text, classes.content)}>{`Description: ${data.description}`}</div>
         )}
-        <div className={classNames(classes.text, classes.content)}>
-          Guests:&nbsp;{data.sharedWith.length === 0 ? "None" : "Yes"}
-        </div>
-        {data.ownerId !== userProfile?.userId && (
+        {restProps.type === "vertical" && (
+          <div className={classNames(classes.text, classes.content)}>
+            Guests:&nbsp;{data.sharedWith.length === 0 ? "None" : "Yes"}
+          </div>
+        )}
+        {restProps.type === "vertical" && data.ownerId !== userProfile?.userId && (
           <div className={classNames(classes.text, classes.content)}>By:&nbsp;{name}</div>
         )}
-        <div></div>
       </div>
     </StyledAppointmentsAppointmentContent>
   );

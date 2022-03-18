@@ -1,9 +1,11 @@
 import { memo } from "react";
+import { useSelector } from "react-redux";
 import { AppointmentTooltip } from "@devexpress/dx-react-scheduler-material-ui";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { useSelector } from "react-redux";
+
 import { selectUserState } from "../../redux/store";
+import { usePermission } from "../../hooks/usePermission";
 
 const AppointmentTooltipHeaderComponent = (
   props: AppointmentTooltip.HeaderProps & {
@@ -13,6 +15,9 @@ const AppointmentTooltipHeaderComponent = (
 ) => {
   const { userProfile } = useSelector(selectUserState);
   const CommandButton = props.commandButtonComponent;
+
+  const hasDeleteAccess = usePermission("calendar:delete");
+  const hasAdminAccess = usePermission("calendar:admin");
 
   const openClose = () => {
     if (props.customOnOpenClose) {
@@ -39,8 +44,14 @@ const AppointmentTooltipHeaderComponent = (
       <Grid container spacing={1} justifyContent="end">
         <Grid item>{props.showOpenButton && <CommandButton id="open" onExecute={openClose} />}</Grid>
         <Grid item>
-          {props.appointmentData?.ownerId === userProfile?.userId && props.showDeleteButton && (
+          {hasAdminAccess ? (
             <CommandButton id="delete" onExecute={openDelete} />
+          ) : (
+            <>
+              {hasDeleteAccess && props.appointmentData?.ownerId === userProfile?.userId && props.showDeleteButton && (
+                <CommandButton id="delete" onExecute={openDelete} />
+              )}
+            </>
           )}
         </Grid>
         <Grid item>{props.showCloseButton && <CommandButton id="close" onExecute={props.onHide} />}</Grid>
