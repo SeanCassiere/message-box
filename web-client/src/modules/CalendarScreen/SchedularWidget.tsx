@@ -88,7 +88,7 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
           intervalCount={3}
           cellDuration={60}
         />
-        <WeekView timeTableCellComponent={WeekViewTimeTableCell} startDayHour={7} endDayHour={20} />
+        <WeekView timeTableCellComponent={WeekViewTimeTableCell} cellDuration={60} />
         <AllDayPanel cellComponent={AllDayViewCell} />
         <MonthView timeTableCellComponent={MonthViewTimeTableCell} />
         <Appointments
