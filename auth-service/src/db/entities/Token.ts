@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { v4 } from "uuid";
 
-import { addMinsToCurrentDate } from "#root/util/addMinsToCurrentDate";
+import { addMinsToCurrentDate } from "#root/utils/addMinsToCurrentDate";
 
 @Entity("user_tokens")
 export default class Token extends BaseEntity {

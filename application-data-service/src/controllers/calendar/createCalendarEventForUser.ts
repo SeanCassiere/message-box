@@ -8,6 +8,7 @@ import CalendarEventShareMapping from "#root/db/entities/CalendarEventShareMappi
 import { formatCalendarEventResponse } from "#root/utils/formatResponses";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
 import { calendarEventBodySchema } from "./common";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -46,7 +47,7 @@ export async function createCalendarEventForUser(req: Request, res: Response) {
 
     savedEvent = calendarEvent;
   } catch (error) {
-    console.log("createCalendarEventForUser: Error creating the event");
+    log.error(`createCalendarEventForUser: Error creating the event`);
   }
 
   if (!savedEvent) {
@@ -76,9 +77,8 @@ export async function createCalendarEventForUser(req: Request, res: Response) {
       }
     }
   } catch (error) {
-    console.error(
-      `POST /clients/createCalendarEventForUser -> ${AUTH_SERVICE_URI}/clients/getAllUserIdsForClient\ncould not fetch the user ids for this client`,
-      error
+    log.error(
+      `POST /clients/createCalendarEventForUser -> ${AUTH_SERVICE_URI}/clients/getAllUserIdsForClient\ncould not fetch the user ids for this client\n${error}`
     );
   }
 
@@ -97,7 +97,7 @@ export async function createCalendarEventForUser(req: Request, res: Response) {
         savedGuestsToReturn.push({ userId: savedGuestRecord.userId, name: "" });
       }
     } catch (error) {
-      console.log(`createCalendarEventForUser: Error creating the guest record for ${guestId}`);
+      log.error(`createCalendarEventForUser: Error creating the guest record for ${guestId}`);
     }
     //
   }

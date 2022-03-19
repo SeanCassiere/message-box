@@ -1,14 +1,26 @@
 version: "3"
 services:
+  redis:
+    container_name: redis
+    image: redis:7.0-rc2-alpine
+    networks:
+      - webnet
+    ports:
+      - "6378:6379"
+
   api-gateway:
     container_name: api-gateway
+    networks:
+      - webnet
     environment:
       RANDOM_ENV_VARIABLE: RANDOM_ENV_VARIABLE_VALUE
+      REDIS_HOST: redis
     build:
       context: ./api-gateway
       dockerfile: "./api-gateway/Dockerfile"
       target: base
     depends_on:
+      - redis
       - auth-service
     ports:
       - "4000:5000"
@@ -18,6 +30,8 @@ services:
 
   auth-service:
     container_name: auth-service
+    networks:
+      - webnet
     build:
       context: ./auth-service
       dockerfile: "Dockerfile"
@@ -31,8 +45,11 @@ services:
     command: yarn watch
 
   auth-service-db:
+    container_name: auth-service-db
     image: postgres
     user: postgres
+    networks:
+      - webnet
     environment:
       POSTGRES_DB: auth-service-db
       POSTGRES_USER: postgres
@@ -41,3 +58,6 @@ services:
       - ./pgdata/auth-service:/var/lib/postgresql/data/
     ports:
       - "7200:5432"
+
+networks:
+  webnet:

@@ -4,7 +4,7 @@ import User from "#root/db/entities/User";
 import RoleMapping from "#root/db/entities/RoleMapping";
 
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
-import { formatUserResponseWithRoles } from "#root/util/formatResponses";
+import { formatUserResponseWithRoles } from "#root/utils/formatResponses";
 import TeamMapping from "#root/db/entities/TeamMapping";
 
 export async function getAllUsers(req: CustomRequest<{ clientId: string }>, res: Response, next: NextFunction) {

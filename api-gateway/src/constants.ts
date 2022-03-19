@@ -1,5 +1,6 @@
 import dotenv from "dotenv-safe";
 import { pathToRegexp } from "path-to-regexp";
+import { SwaggerUiOptions } from "swagger-ui-express";
 
 dotenv.config();
 
@@ -28,3 +29,24 @@ export const ALLOWED_PUBLIC_PATHS = [
   pathToRegexp(`${API_PREFIX}/Users/Reset2FA/RequestEmail`),
   pathToRegexp(`${API_PREFIX}/Users/Reset2FA/:token`),
 ];
+
+export const swaggerOptions: SwaggerUiOptions = {
+  swaggerOptions: {
+    url: `/docs/swagger.json`,
+  },
+  customSiteTitle: "MessageBox API Gateway",
+  customCss: `
+  .swagger-ui .topbar .topbar-wrapper img[alt="Swagger UI"] { visibility: hidden }
+  .swagger-ui .topbar .topbar-wrapper .link::after { 
+    content: 'MessageBox';
+    color: #fff;
+    visibility: visible;
+    display: block;
+    position: absolute;
+    padding: 0px;
+  }
+  .swagger-ui .info .title small.version-stamp {
+    background-color: #0d9488;
+  }
+  `,
+};

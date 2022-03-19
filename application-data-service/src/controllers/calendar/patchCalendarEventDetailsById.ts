@@ -4,6 +4,7 @@ import * as yup from "yup";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import CalendarEvent from "#root/db/entities/CalendarEvent";
 import CalendarEventShareMapping from "#root/db/entities/CalendarEventShareMappings";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -22,8 +23,6 @@ const validationSchema = yup.object().shape({
           if (!value) return true;
 
           const startDate = new Date(ctx?.parent?.startDate as string);
-          console.log("testing startDate", startDate, "\n\n");
-          console.log("testing endDate", value, "\n\n");
 
           if (Number(new Date(value)) <= Number(startDate)) {
             return false;
@@ -57,7 +56,6 @@ export async function patchCalendarEventDetailsById(req: Request, res: Response)
 
     foundCalendarEvent = event ?? null;
   } catch (error) {
-    console.log();
     return res.json({
       statusCode: 400,
       data: {
@@ -79,11 +77,8 @@ export async function patchCalendarEventDetailsById(req: Request, res: Response)
 
   const savePromises = [];
 
-  console.log("\npre-save\n", body.startDate, "\n", body.endDate);
-
   const saveStartDate = new Date(body.startDate);
   const saveEndDate = new Date(body.endDate);
-  console.log("\nfor save\n", saveStartDate, "\n", saveEndDate);
 
   foundCalendarEvent.startDate = saveStartDate;
   foundCalendarEvent.endDate = saveEndDate;
@@ -100,7 +95,7 @@ export async function patchCalendarEventDetailsById(req: Request, res: Response)
       savePromises.push(mapping.save());
     }
   } catch (error) {
-    console.log("updating user mappings for a calendar event", error);
+    log.error(`Error updating user mappings for a calendar event\n${error}`);
     return res.json({
       statusCode: 400,
       data: {

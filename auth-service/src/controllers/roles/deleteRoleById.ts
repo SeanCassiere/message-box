@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import * as yup from "yup";
 
 import Role from "#root/db/entities/Role";
-import { validateYupSchema } from "#root/util/validateYupSchema";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
 import RoleMapping from "#root/db/entities/RoleMapping";
 
 const validationSchema = yup.object().shape({

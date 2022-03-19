@@ -2,9 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import * as yup from "yup";
 
 import EmailConfirmations from "#root/db/entities/EmailConfirmations";
-import User from "#root/db/entities/User";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
 import TwoFactorAuthMapping from "#root/db/entities/TwoFactorAuthMapping";
 
 const validationSchema = yup.object().shape({

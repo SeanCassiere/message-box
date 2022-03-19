@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import * as yup from "yup";
 
 import User from "#root/db/entities/User";
-import { validateYupSchema } from "#root/util/validateYupSchema";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({
@@ -32,7 +33,7 @@ export async function getBasicUsersForIdsArray(req: Request, res: Response, next
         usersToReturn.push({ ...data });
       }
     } catch (error) {
-      console.log("Could not find user");
+      log.error(`Could not find user with id: ${id}`);
     }
   }
 

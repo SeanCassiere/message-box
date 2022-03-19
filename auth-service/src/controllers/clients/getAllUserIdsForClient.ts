@@ -3,7 +3,7 @@ import * as yup from "yup";
 
 import User from "#root/db/entities/User";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({

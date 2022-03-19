@@ -8,6 +8,7 @@ import TaskShareMapping from "#root/db/entities/TaskShareMappings";
 import { formatTaskResponseWithUsers } from "#root/utils/formatResponses";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
 import { returnStringsNotInOriginalArray } from "#root/utils/minorUtils";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -50,7 +51,7 @@ export async function updateTaskById(req: Request, res: Response) {
 
     clientUserIds = data.data;
   } catch (error) {
-    console.error(
+    log.error(
       `POST /clients/updateTaskById -> ${AUTH_SERVICE_URI}/clients/getAllUserIdsForClient\ncould not fetch the user ids for this client`
     );
   }

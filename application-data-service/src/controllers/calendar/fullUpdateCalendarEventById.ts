@@ -9,6 +9,7 @@ import { returnStringsNotInOriginalArray } from "#root/utils/minorUtils";
 import { formatCalendarEventResponse, ICalendarEventGuest } from "#root/utils/formatResponses";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
 import axios from "axios";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -40,7 +41,6 @@ export async function fullUpdateCalendarEventById(req: Request, res: Response) {
 
     foundCalendarEvent = event ?? null;
   } catch (error) {
-    console.log();
     return res.json({
       statusCode: 500,
       data: null,
@@ -132,7 +132,7 @@ export async function fullUpdateCalendarEventById(req: Request, res: Response) {
 
     await Promise.all(savePromises);
   } catch (error) {
-    console.log("updating user mappings for a calendar event", error);
+    log.error(`updating user mappings for a calendar event\n${error}`);
     return res.json({
       statusCode: 400,
       data: null,
@@ -190,7 +190,7 @@ export async function fullUpdateCalendarEventById(req: Request, res: Response) {
         response?.data?.map((u: any) => ({ userId: u.userId, name: `${u.firstName} ${u.lastName}` })) ?? [];
     }
   } catch (error) {
-    console.log("could not fetch users details for the ids array");
+    log.error("could not fetch users details for the ids array");
   }
 
   const formattedResponse = formatCalendarEventResponse({ event: foundCalendarEvent, guestUsers: usersToReturn });

@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express";
 
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
 import Role from "#root/db/entities/Role";
-import { formatRoleResponse } from "#root/util/formatResponses";
+import { formatRoleResponse } from "#root/utils/formatResponses";
 
 export async function getRoleById(req: CustomRequest<{ roleId: string }>, res: Response, next: NextFunction) {
   const { roleId } = req.body;

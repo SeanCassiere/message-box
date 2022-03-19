@@ -9,12 +9,11 @@ import EmailConfirmations from "#root/db/entities/EmailConfirmations";
 import Team from "#root/db/entities/Team";
 import TeamMapping from "#root/db/entities/TeamMapping";
 
-import { hashPassword } from "#root/util/hashPassword";
-import { validateYupSchema } from "#root/util/validateYupSchema";
-import { formatClientResponse } from "#root/util/formatResponses";
+import { hashPassword } from "#root/utils/hashPassword";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { formatClientResponse } from "#root/utils/formatResponses";
 import { sendEmail } from "#root/email/sendEmail";
 import { generateEmailConfirmationTemplate } from "#root/email/generateEmailConfirmationTemplate";
-import { DEFAULT_PERMISSIONS_MAP } from "#root/constants/default_permissions";
 import { DEFAULT_ROLES_ARRAY } from "#root/constants/default_roles";
 
 const validationSchema = yup.object().shape({

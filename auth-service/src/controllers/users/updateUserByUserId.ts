@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as yup from "yup";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
 
 import User from "#root/db/entities/User";
 import RoleMapping from "#root/db/entities/RoleMapping";
@@ -9,8 +9,8 @@ import Team from "#root/db/entities/Team";
 import TeamMapping from "#root/db/entities/TeamMapping";
 import Role from "#root/db/entities/Role";
 
-import { formatUserResponseWithRoles } from "#root/util/formatResponses";
-import { returnStringsNotInOriginalArray } from "#root/util/returnArray";
+import { formatUserResponseWithRoles } from "#root/utils/formatResponses";
+import { returnStringsNotInOriginalArray } from "#root/utils/returnArray";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({

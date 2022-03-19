@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 import Token from "#root/db/entities/Token";
 import User from "#root/db/entities/User";
-import { generateJWT } from "#root/util/generateJWT";
+import { generateJWT } from "#root/utils/generateJWT";
 
 export async function refreshUserAccessToken(req: Request, res: Response, next: NextFunction) {
   const { cookie } = req.body;

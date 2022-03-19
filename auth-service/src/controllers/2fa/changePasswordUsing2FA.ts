@@ -5,8 +5,8 @@ import speakeasy from "speakeasy";
 import User from "#root/db/entities/User";
 import TwoFactorAuthMapping from "#root/db/entities/TwoFactorAuthMapping";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
-import { hashPassword } from "#root/util/hashPassword";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { hashPassword } from "#root/utils/hashPassword";
 import { Secret2FA } from "#root/interfaces/2FA.interfaces";
 
 const validationSchema = yup.object().shape({

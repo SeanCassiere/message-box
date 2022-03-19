@@ -7,6 +7,7 @@ import CalendarEvent from "#root/db/entities/CalendarEvent";
 import CalendarEventShareMapping from "#root/db/entities/CalendarEventShareMappings";
 import { formatCalendarEventResponse, IFormatCalendarEventResponse } from "#root/utils/formatResponses";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -93,7 +94,7 @@ export async function getCalendarEventsForUser(req: Request, res: Response) {
       events.push({ event: gottenEvent, guestUsers: invitedGuestsToReturn });
     }
   } catch (error) {
-    console.log("there was an error getting the events", error);
+    log.error(`there was an error getting the events\n${error}`);
   }
 
   // events where user is a guest
@@ -125,7 +126,7 @@ export async function getCalendarEventsForUser(req: Request, res: Response) {
       }
     }
   } catch (error) {
-    console.log("there was an error getting the guest events", error);
+    log.error(`there was an error getting the guest events\n${error}`);
   }
 
   const formattedResponse = events.map((e) => formatCalendarEventResponse(e));
