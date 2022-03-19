@@ -3,7 +3,7 @@ import cors, { CorsOptions } from "cors";
 import { createServer } from "http";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import swaggerUI, { SwaggerUiOptions } from "swagger-ui-express";
+import swaggerUI from "swagger-ui-express";
 import morgan from "morgan";
 import axios from "axios";
 import jwt from "express-jwt";
@@ -12,7 +12,7 @@ import { Server } from "socket.io";
 
 import { log } from "./utils/logger";
 import { socket } from "./controllers/socketController";
-import { ALLOWED_PUBLIC_PATHS, AUTH_SERVICE_URI } from "./constants";
+import { ALLOWED_PUBLIC_PATHS, AUTH_SERVICE_URI, swaggerOptions } from "./constants";
 
 import swaggerDocument from "./swagger.json";
 
@@ -24,27 +24,7 @@ import teamRouter from "./routes/teams.routes";
 import tasksRouter from "./routes/task.routes";
 import hiddenRouter from "./routes/hidden.routes";
 import calendarEventRouter from "./routes/calendarEvent.routes";
-
-const swaggerOptions: SwaggerUiOptions = {
-  swaggerOptions: {
-    url: `/docs/swagger.json`,
-  },
-  customSiteTitle: "MessageBox API Gateway",
-  customCss: `
-  .swagger-ui .topbar .topbar-wrapper img[alt="Swagger UI"] { visibility: hidden }
-  .swagger-ui .topbar .topbar-wrapper .link::after { 
-    content: 'MessageBox';
-    color: #fff;
-    visibility: visible;
-    display: block;
-    position: absolute;
-    padding: 0px;
-  }
-  .swagger-ui .info .title small.version-stamp {
-    background-color: #0d9488;
-  }
-  `,
-};
+import { authorizationErrorMiddleware } from "./middleware/errorMiddleware";
 
 const corsOptions: CorsOptions = {
   origin: (_, cb) => cb(null, true),
@@ -100,14 +80,8 @@ function startServer(port: number) {
     }).unless({ path: [...ALLOWED_PUBLIC_PATHS] })
   );
 
-  /**
-   * @description used to trigger actions in a microservice
-   */
   expressApp.use("/Api/Hidden", hiddenRouter);
 
-  /**
-   * @description public application routes
-   */
   expressApp.use("/Api/Authentication", authenticationRouter);
   expressApp.use("/Api/Users", userRouter);
   expressApp.use("/Api/Clients", clientRouter);
@@ -116,12 +90,7 @@ function startServer(port: number) {
   expressApp.use("/Api/Tasks", tasksRouter);
   expressApp.use("/Api/CalendarEvent", calendarEventRouter);
 
-  expressApp.use(function (err: Error, req: express.Request, res: express.Response, next: express.NextFunction) {
-    if (err.name === "UnauthorizedError") {
-      res.status(401).json({ message: "Invalid access token" });
-    }
-  });
-
+  expressApp.use(authorizationErrorMiddleware);
   httpServer.listen(PORT, () => {
     log.info(`api-gateway is powered up and listening on port ${PORT} 🚀`);
 
