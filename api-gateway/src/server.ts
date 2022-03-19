@@ -123,7 +123,7 @@ function startServer(port: number) {
   });
 
   httpServer.listen(PORT, () => {
-    log.info(`🚀 -> api-gateway is powered up and listening on port ${PORT}`);
+    log.info(`api-gateway is powered up and listening on port ${PORT} 🚀`);
 
     socket({ io });
   });
