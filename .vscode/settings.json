@@ -21,6 +21,7 @@
     "notistack",
     "openapi",
     "otpauth",
+    "pino",
     "PSTN",
     "qrcode",
     "reduxjs",

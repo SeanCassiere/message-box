@@ -1,9 +1,5 @@
 import { createServer } from "http";
 
-import expressApp from "./server";
+import startServer from "./server";
 
-const httpServer = createServer(expressApp);
-
-httpServer.listen(5000, () => {
-  console.log("🚀🚀 api-gateway is powered up");
-});
+startServer(5000);
