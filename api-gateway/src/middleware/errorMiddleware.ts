@@ -1,12 +1,4 @@
 import express from "express";
-import { CustomRequest } from "#root/interfaces/Express.interfaces";
-import { NextFunction, Response } from "express";
-import jwt from "jsonwebtoken";
-import jwkClient from "jwks-rsa";
-import jwkToPem, { JWK } from "jwk-to-pem";
-import { Socket } from "socket.io";
-import { ExtendedError } from "socket.io/dist/namespace";
-import { log } from "#root/utils/logger";
 
 export async function authorizationErrorMiddleware(
   err: Error,
@@ -15,6 +7,27 @@ export async function authorizationErrorMiddleware(
   next: express.NextFunction
 ) {
   if (err.name === "UnauthorizedError") {
-    res.status(401).json({ message: "Invalid access token" });
+    return res.status(401).json({ message: "Invalid access token" });
   }
+  next();
 }
+
+export function notFoundMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const error = new Error(`Not Found - ${req.originalUrl}`);
+  res.status(404);
+  next(error);
+}
+
+export const errorHandlerMiddleware = (
+  err: Error,
+  _: express.Request,
+  res: express.Response,
+  __: express.NextFunction
+) => {
+  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  res.status(statusCode);
+  res.json({
+    success: false,
+    message: err.message,
+  });
+};

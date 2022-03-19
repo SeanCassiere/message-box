@@ -24,7 +24,7 @@ import teamRouter from "./routes/teams.routes";
 import tasksRouter from "./routes/task.routes";
 import hiddenRouter from "./routes/hidden.routes";
 import calendarEventRouter from "./routes/calendarEvent.routes";
-import { authorizationErrorMiddleware } from "./middleware/errorMiddleware";
+import { authorizationErrorMiddleware, errorHandlerMiddleware, notFoundMiddleware } from "./middleware/errorMiddleware";
 
 const corsOptions: CorsOptions = {
   origin: (_, cb) => cb(null, true),
@@ -34,8 +34,8 @@ const corsOptions: CorsOptions = {
 function startServer(port: number) {
   const PORT = port;
   // server setup
-  const expressApp = express();
-  const httpServer = createServer(expressApp);
+  const app = express();
+  const httpServer = createServer(app);
 
   // socket-io setup
   const io = new Server(httpServer, {
@@ -45,19 +45,19 @@ function startServer(port: number) {
   });
 
   // express middleware setup
-  expressApp.use(cors(corsOptions));
-  expressApp.use(morgan("tiny"));
-  expressApp.use(helmet());
-  expressApp.use(cookieParser(process.env.COOKIE_SECRET));
-  expressApp.use(express.json());
+  app.use(cors(corsOptions));
+  app.use(morgan("tiny"));
+  app.use(helmet());
+  app.use(cookieParser(process.env.COOKIE_SECRET));
+  app.use(express.json());
 
-  expressApp.get("/docs/swagger.json", (_, res) => {
+  app.get("/docs/swagger.json", (_, res) => {
     return res.status(200).send(swaggerDocument);
   });
 
-  expressApp.use("/docs", swaggerUI.serveFiles(undefined, swaggerOptions), swaggerUI.setup(undefined, swaggerOptions));
+  app.use("/docs", swaggerUI.serveFiles(undefined, swaggerOptions), swaggerUI.setup(undefined, swaggerOptions));
 
-  expressApp.get("/.well-known/jwks.json", async (_, res) => {
+  app.get("/.well-known/jwks.json", async (_, res) => {
     try {
       const request = await axios.get(`http://auth-service:4000/.well-known/jwks.json`);
 
@@ -67,7 +67,7 @@ function startServer(port: number) {
     }
   });
 
-  expressApp.use(
+  app.use(
     jwt({
       secret: jwksRsa.expressJwtSecret({
         cache: true,
@@ -80,17 +80,19 @@ function startServer(port: number) {
     }).unless({ path: [...ALLOWED_PUBLIC_PATHS] })
   );
 
-  expressApp.use("/Api/Hidden", hiddenRouter);
+  app.use("/Api/Hidden", hiddenRouter);
+  app.use("/Api/Authentication", authenticationRouter);
+  app.use("/Api/Users", userRouter);
+  app.use("/Api/Clients", clientRouter);
+  app.use("/Api/Roles", roleRouter);
+  app.use("/Api/Teams", teamRouter);
+  app.use("/Api/Tasks", tasksRouter);
+  app.use("/Api/CalendarEvent", calendarEventRouter);
 
-  expressApp.use("/Api/Authentication", authenticationRouter);
-  expressApp.use("/Api/Users", userRouter);
-  expressApp.use("/Api/Clients", clientRouter);
-  expressApp.use("/Api/Roles", roleRouter);
-  expressApp.use("/Api/Teams", teamRouter);
-  expressApp.use("/Api/Tasks", tasksRouter);
-  expressApp.use("/Api/CalendarEvent", calendarEventRouter);
+  app.use(authorizationErrorMiddleware);
+  app.use(notFoundMiddleware);
+  app.use(errorHandlerMiddleware);
 
-  expressApp.use(authorizationErrorMiddleware);
   httpServer.listen(PORT, () => {
     log.info(`api-gateway is powered up and listening on port ${PORT} 🚀`);
 
