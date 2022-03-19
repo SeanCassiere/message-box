@@ -5,7 +5,8 @@
   "scripts": {
     "prepare": "husky prepare",
     "test": "echo \"This project does not have testing set up.\n\"",
-    "web-client": "npm start --prefix web-client",
+    "web-client-old": "npm start --prefix web-client",
+    "web-client": "npm run dev --prefix web-client-vite",
     "build:auth-service": "npm run build --prefix auth-service",
     "build:app-data-service": "npm run build --prefix application-data-service",
     "build:api-gateway": "npm run build --prefix api-gateway",
@@ -16,7 +17,8 @@
     "setup:app-data-service": "npm install --prefix application-data-service",
     "setup:api-gateway": "npm install --prefix api-gateway",
     "setup:server": "npm run setup:auth-service && npm run setup:app-data-service && npm run setup:api-gateway",
-    "setup:web-client": "npm install --prefix web-client"
+    "setup:web-client": "npm install --prefix web-client",
+    "view:web-client": "npm run preview --prefix web-client-vite"
   },
   "keywords": [],
   "author": "SeanCassiere",
