@@ -74,6 +74,7 @@ export const socketTokenAuth = async (socket: Socket, next: (err?: ExtendedError
 
       log.info(`Access token verified for socket id ( ${socket.id} )`);
       socket.handshake.auth.userId = decoded.message_box_userId;
+      socket.handshake.auth.clientId = decoded.message_box_clientId;
       next();
     } catch (e) {
       log.warn(`Authorization failed for socket id ( ${socket.id} )`);
