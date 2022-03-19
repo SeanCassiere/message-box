@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
-import { formatUserResponseWithRoles } from "#root/util/formatResponses";
+import { formatUserResponseWithRoles } from "#root/utils/formatResponses";
 
 import User from "#root/db/entities/User";
 import RoleMapping from "#root/db/entities/RoleMapping";

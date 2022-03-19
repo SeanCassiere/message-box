@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import * as yup from "yup";
-import bcrypt from "bcryptjs";
 
 import User from "#root/db/entities/User";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
-import { hashPassword } from "#root/util/hashPassword";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { hashPassword } from "#root/utils/hashPassword";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({

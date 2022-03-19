@@ -3,8 +3,8 @@ import * as yup from "yup";
 
 import Client from "#root/db/entities/Client";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
-import { formatClientResponse } from "#root/util/formatResponses";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { formatClientResponse } from "#root/utils/formatResponses";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({

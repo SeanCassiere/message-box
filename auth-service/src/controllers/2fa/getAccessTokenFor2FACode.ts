@@ -8,10 +8,10 @@ import speakeasy from "speakeasy";
 import User from "#root/db/entities/User";
 import TwoFactorAuthMapping from "#root/db/entities/TwoFactorAuthMapping";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { Secret2FA } from "#root/interfaces/2FA.interfaces";
-import { generateJWT } from "#root/util/generateJWT";
-import { generate2faSecret } from "#root/util/generate2faSecret";
+import { generateJWT } from "#root/utils/generateJWT";
+import { generate2faSecret } from "#root/utils/generate2faSecret";
 import Token from "#root/db/entities/Token";
 
 const validationSchema = yup.object().shape({

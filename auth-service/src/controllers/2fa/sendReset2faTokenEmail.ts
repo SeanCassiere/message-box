@@ -8,8 +8,8 @@ import User from "#root/db/entities/User";
 import TwoFactorAuthMapping from "#root/db/entities/TwoFactorAuthMapping";
 import EmailConfirmations from "#root/db/entities/EmailConfirmations";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
-import { generate2faSecret } from "#root/util/generate2faSecret";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { generate2faSecret } from "#root/utils/generate2faSecret";
 import { sendEmail } from "#root/email/sendEmail";
 import { generate2faResetRequestTemplate } from "#root/email/generate2faResetRequestTemplate";
 

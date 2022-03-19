@@ -4,7 +4,7 @@ import Client from "#root/db/entities/Client";
 import Role from "#root/db/entities/Role";
 
 import { DEFAULT_ROLES_ARRAY } from "#root/constants/default_roles";
-import { returnStringsNotInOriginalArray } from "#root/util/returnArray";
+import { returnStringsNotInOriginalArray } from "#root/utils/returnArray";
 
 export async function adminSetDefaultRoles(req: Request, res: Response, next: NextFunction) {
   try {

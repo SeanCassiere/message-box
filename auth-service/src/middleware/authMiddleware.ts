@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 
 import User from "#root/db/entities/User";
-import { CustomRequest } from "#root/interfaces/Express.interfaces";
 
 export async function jwtValidator(req: Request, res: Response, next: NextFunction) {
   let token: string = "";

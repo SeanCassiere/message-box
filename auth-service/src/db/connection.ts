@@ -1,6 +1,8 @@
 import dotenv from "dotenv-safe";
 import { Connection, createConnection } from "typeorm";
 
+import { log } from "#root/utils/logger";
+
 import User from "./entities/User";
 import Client from "./entities/Client";
 import Role from "./entities/Role";
@@ -28,9 +30,9 @@ export async function initConnection(retries = 5) {
       isError = false;
       return connection;
     } catch (err) {
-      console.error(`auth-service db failed: ${err}`);
+      log.error(`auth-service db failed: ${err}`);
       retries--;
-      console.log(`retries remaining: ${retries}`);
+      log.error(`retries remaining: ${retries}`);
       await new Promise((res) => setTimeout(res, 5000));
     }
   }

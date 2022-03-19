@@ -8,8 +8,8 @@ import bcrypt from "bcryptjs";
 import User from "#root/db/entities/User";
 import TwoFactorAuthMapping from "#root/db/entities/TwoFactorAuthMapping";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
-import { generate2faSecret } from "#root/util/generate2faSecret";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { generate2faSecret } from "#root/utils/generate2faSecret";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({

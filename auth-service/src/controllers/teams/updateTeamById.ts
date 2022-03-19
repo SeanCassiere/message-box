@@ -5,9 +5,9 @@ import User from "#root/db/entities/User";
 import Team from "#root/db/entities/Team";
 import TeamMapping from "#root/db/entities/TeamMapping";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
-import { formatTeamResponse } from "#root/util/formatResponses";
-import { returnStringsNotInOriginalArray } from "#root/util/returnArray";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { formatTeamResponse } from "#root/utils/formatResponses";
+import { returnStringsNotInOriginalArray } from "#root/utils/returnArray";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({

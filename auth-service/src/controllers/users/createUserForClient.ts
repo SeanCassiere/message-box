@@ -6,8 +6,8 @@ import Role from "#root/db/entities/Role";
 import EmailConfirmations from "#root/db/entities/EmailConfirmations";
 import RoleMapping from "#root/db/entities/RoleMapping";
 
-import { hashPassword } from "#root/util/hashPassword";
-import { validateYupSchema } from "#root/util/validateYupSchema";
+import { hashPassword } from "#root/utils/hashPassword";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { sendEmail } from "#root/email/sendEmail";
 import { generateEmailConfirmationTemplate } from "#root/email/generateEmailConfirmationTemplate";
 import Team from "#root/db/entities/Team";

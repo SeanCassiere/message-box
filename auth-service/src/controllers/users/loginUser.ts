@@ -3,9 +3,9 @@ import * as yup from "yup";
 import bcrypt from "bcryptjs";
 
 import User from "#root/db/entities/User";
-import { generateJWT, generateRefreshJWT } from "#root/util/generateJWT";
-import { addMinsToCurrentDate } from "#root/util/addMinsToCurrentDate";
-import { validateYupSchema } from "#root/util/validateYupSchema";
+import { generateJWT, generateRefreshJWT } from "#root/utils/generateJWT";
+import { addMinsToCurrentDate } from "#root/utils/addMinsToCurrentDate";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({

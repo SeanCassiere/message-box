@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 import Client from "#root/db/entities/Client";
-import { formatClientResponse } from "#root/util/formatResponses";
+import { formatClientResponse } from "#root/utils/formatResponses";
 
 export async function getAllClients(req: Request, res: Response, next: NextFunction) {
   try {

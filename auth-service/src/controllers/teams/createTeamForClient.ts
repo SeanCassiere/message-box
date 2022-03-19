@@ -4,8 +4,8 @@ import * as yup from "yup";
 import Team from "#root/db/entities/Team";
 import TeamMapping from "#root/db/entities/TeamMapping";
 
-import { validateYupSchema } from "#root/util/validateYupSchema";
-import { formatTeamResponse } from "#root/util/formatResponses";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { formatTeamResponse } from "#root/utils/formatResponses";
 import User from "#root/db/entities/User";
 
 const validationSchema = yup.object().shape({

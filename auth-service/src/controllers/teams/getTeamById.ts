@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express";
 
 import Team from "#root/db/entities/Team";
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
-import { formatTeamResponse } from "#root/util/formatResponses";
+import { formatTeamResponse } from "#root/utils/formatResponses";
 import TeamMapping from "#root/db/entities/TeamMapping";
 
 export async function getTeamById(req: CustomRequest<{ teamId: string }>, res: Response, next: NextFunction) {
