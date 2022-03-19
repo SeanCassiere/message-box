@@ -5,8 +5,9 @@ import axios from "axios";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import CalendarEvent from "#root/db/entities/CalendarEvent";
 import CalendarEventShareMapping from "#root/db/entities/CalendarEventShareMappings";
-import { formatCalendarEventResponse, IFormatCalendarEventResponse } from "#root/utils/formatResponses";
+import { formatCalendarEventResponse } from "#root/utils/formatResponses";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -72,7 +73,7 @@ export async function getCalendarEventById(req: Request, res: Response) {
       usersToReturn =
         response?.data?.map((u: any) => ({ userId: u.userId, name: `${u.firstName} ${u.lastName}` })) ?? [];
     } catch (error) {
-      console.log("could not fetch users details for the ids array");
+      log.error("could not fetch users details for the ids array");
     }
   }
 

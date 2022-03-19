@@ -2,16 +2,17 @@ import "reflect-metadata";
 import { createServer } from "http";
 import { initConnection } from "#root/db/connection";
 import expressApp from "./server";
+import { log } from "./utils/logger";
 
 const httpServer = createServer(expressApp);
 
 initConnection()
   .then(() => {
     httpServer.listen(4000, () => {
-      console.log("application-data-service is up and running 🚀");
+      log.info(`application-data-service is powered up and listening on port ${4000} 🚀`);
     });
   })
   .catch((err) => {
-    console.error(`application-data-service had a fatal death\n\n${err}\n\n`);
+    log.error(`application-data-service has an error and couldn't start up`);
     process.exit(1);
   });

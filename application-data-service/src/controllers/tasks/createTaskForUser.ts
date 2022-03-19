@@ -7,6 +7,7 @@ import Task from "#root/db/entities/Task";
 import TaskShareMapping from "#root/db/entities/TaskShareMappings";
 import { formatTaskResponseWithUsers } from "#root/utils/formatResponses";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -47,7 +48,7 @@ export async function createTaskForUser(req: Request, res: Response) {
 
     clientUserIds = data;
   } catch (error) {
-    console.error(
+    log.error(
       `POST /clients/createTaskForUser -> ${AUTH_SERVICE_URI}/clients/getAllUserIdsForClient\ncould not fetch the user ids for this client`
     );
   }

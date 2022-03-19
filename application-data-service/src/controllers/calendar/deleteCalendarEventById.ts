@@ -4,6 +4,7 @@ import * as yup from "yup";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import CalendarEvent from "#root/db/entities/CalendarEvent";
 import CalendarEventShareMapping from "#root/db/entities/CalendarEventShareMappings";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -49,7 +50,7 @@ export async function deleteCalendarEventById(req: Request, res: Response) {
 
     await Promise.all(promisesToExecute);
   } catch (error) {
-    console.log();
+    log.error(`Something went wrong in POST /calendarEvents /deleteCalendarEventById`);
     return res.json({
       statusCode: 500,
       data: null,
