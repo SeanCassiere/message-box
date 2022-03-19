@@ -1,5 +1,7 @@
 import { Server, Socket } from "socket.io";
+
 import { redis } from "../redis";
+import { log } from "#root/utils/logger";
 
 interface I_RedisIdentifierProps {
   client_namespace: string;
@@ -21,6 +23,7 @@ export async function redisClearUserSockets(namespaceValues: I_RedisIdentifierPr
 
   if (actualOnlineSocketsForUser.length === 0) {
     await redis.hdel(namespaceValues.client_namespace, namespaceValues.user_namespace);
+    log.info(`${socket.handshake.auth.userId}'s sockets were cleared/deleted from redis`);
 
     // if no more users are connected to the client, remove the user from the client pool
     const onlineUsers = await redis.hget(
@@ -34,11 +37,13 @@ export async function redisClearUserSockets(namespaceValues: I_RedisIdentifierPr
       namespaceValues.client_online_users_namespace,
       JSON.stringify(nowOnlineUsersArray)
     );
+    log.info(`${socket.handshake.auth.userId}'s was removed from the client online users pool in redis`);
   } else {
     await redis.hset(
       namespaceValues.client_namespace,
       namespaceValues.user_namespace,
       JSON.stringify(actualOnlineSocketsForUser)
     );
+    log.info(`socket id ${socket.id} was removed from ${socket.handshake.auth.userId}'s socket pool in redis`);
   }
 }
