@@ -141,7 +141,7 @@ const ChatContentPane = (props: Props) => {
                     borderRadius: 4,
                   }}
                 >
-                  I'm a {index % 2 === 0 ? "left" : "right"} message
+                  I&apos;m a {index % 2 === 0 ? "left" : "right"} message
                 </span>
               </Typography>
             </Box>
