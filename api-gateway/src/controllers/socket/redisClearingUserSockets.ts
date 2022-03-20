@@ -1,13 +1,8 @@
 import { Server, Socket } from "socket.io";
 
-import { redis } from "../redis";
+import { redis, pubRedis, subRedis } from "../redis";
 import { log } from "#root/utils/logger";
-
-interface I_RedisIdentifierProps {
-  client_namespace: string;
-  user_namespace: string;
-  client_online_users_namespace: string;
-}
+import { I_RedisIdentifierProps } from "./allEvents";
 
 export async function redisClearUserSockets(namespaceValues: I_RedisIdentifierProps, io: Server, socket: Socket) {
   // remove socket from redis
