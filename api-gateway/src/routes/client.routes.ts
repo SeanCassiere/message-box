@@ -1,8 +1,10 @@
 import express from "express";
 import axios from "axios";
+import { redis } from "#root/controllers/redis";
 
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
 import { AUTH_SERVICE_URI } from "#root/constants";
+import { REDIS_CONSTANTS } from "#root/controllers/redis/constants";
 
 const clientRouter = express.Router();
 
@@ -86,6 +88,25 @@ clientRouter
       return res.status(500).json({ message: "auth-service /client network error" });
     }
   });
+
+clientRouter.route("/Users/Online").get(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+  try {
+    let usersToReturn = [];
+
+    const redisResponse = await redis.hget(
+      `${REDIS_CONSTANTS.PARENT_CLIENT_HASH_KEY}:${request.auth?.message_box_clientId}`,
+      `${REDIS_CONSTANTS.CLIENT_ONLINE_USERS_HASH_KEY}`
+    );
+    if (redisResponse) {
+      usersToReturn = JSON.parse(redisResponse);
+    }
+
+    res.json([...usersToReturn]);
+  } catch (error) {
+    res.status(500).json({ message: "Could not get the online users from redis" });
+  }
+});
 
 clientRouter
   .route("/Roles")
