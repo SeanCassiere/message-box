@@ -4,22 +4,25 @@ import { useNavigate } from "react-router-dom";
 
 import BackdropLoader from "../../shared/components/SuspenseLoadingWrapper/BackdropLoader";
 
+import { useSocket } from "../../shared/hooks/useSocket";
 import { userLogoutThunk } from "../../shared/redux/slices/auth/thunks";
 
 const LogoutScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { disconnectSocket } = useSocket();
 
   useEffect(() => {
     dispatch(userLogoutThunk());
     const timeout = setTimeout(() => {
       navigate("/");
+      disconnectSocket();
     }, 1000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [dispatch, navigate]);
+  }, [disconnectSocket, dispatch, navigate]);
 
   return <BackdropLoader />;
 };

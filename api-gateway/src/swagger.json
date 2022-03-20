@@ -1029,6 +1029,38 @@
         "parameters": []
       }
     },
+    "/Clients/Users/Online": {
+      "get": {
+        "tags": ["Client", "User"],
+        "summary": "Get a list of the online users for the client",
+        "description": "Get a list of the online users for the client.",
+        "operationId": "GetAllOnlineUsers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All users in the system",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserOnlineStatusSchema"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
     "/Roles/Permissions": {
       "get": {
         "tags": ["Role"],
@@ -2393,6 +2425,19 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "UserOnlineStatusSchema": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "default": "Online"
           }
         }
       },
