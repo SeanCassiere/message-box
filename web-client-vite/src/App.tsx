@@ -19,6 +19,7 @@ import { selectUserState, selectAuthState, selectLookupListsState } from "./shar
 import { getProfilesThunk } from "./shared/redux/slices/user/thunks";
 import { getRefreshedAccessTokenThunk } from "./shared/redux/slices/auth/thunks";
 import { getAllLookupListsThunk } from "./shared/redux/slices/lookup/thunks";
+import { useSocket } from "./shared/hooks/useSocket";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,8 @@ const App = () => {
   const { isLoadingLookupData } = useSelector(selectLookupListsState);
   const { isLoggedIn, expiresAt, access_token } = useSelector(selectAuthState);
 
+  const { connectSocket, listenForOnlineUsers } = useSocket();
+
   useEffect(() => {
     if (isLoggedIn) {
       dispatch(getProfilesThunk());
@@ -36,6 +39,23 @@ const App = () => {
       dispatch(getRefreshedAccessTokenThunk());
     }
   }, [dispatch, isLoggedIn]);
+
+  // setup socket listeners
+  useEffect(() => {
+    if (!isLoggedIn || !expiresAt || !access_token || isLoadingProfileData || isLoadingLookupData) {
+      return;
+    }
+    connectSocket(access_token);
+    listenForOnlineUsers();
+  }, [
+    access_token,
+    isLoggedIn,
+    expiresAt,
+    isLoadingLookupData,
+    isLoadingProfileData,
+    connectSocket,
+    listenForOnlineUsers,
+  ]);
 
   // auto refresh token
   useEffect(() => {

@@ -1,0 +1,7 @@
+{
+  "globals": {
+    "React": true,
+    "react": true
+  },
+  "extends": ["react-app"]
+}
