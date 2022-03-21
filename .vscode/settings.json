@@ -25,6 +25,7 @@
     "notistack",
     "openapi",
     "otpauth",
+    "Passwordless",
     "pino",
     "PSTN",
     "qrcode",
