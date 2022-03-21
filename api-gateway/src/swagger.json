@@ -106,6 +106,48 @@
         "parameters": []
       }
     },
+    "/Authentication/Login/Passwordless": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Check if the user can login using a passwordless method",
+        "description": "Check if the user can login using a passwordless method.",
+        "operationId": "GetAccountPasswordlessStatusByEmail",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "User account email (e.g. `msc@msc.com`)",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If the user can login using a password less method, the userId (UUID) will be returned in the body.<br />If the user does not exist, `null` will be returned for the userId. If account has not been setup, a HTTP Status Code of `400` will be returned with the validation errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/Authentication/Login/Refresh": {
       "get": {
         "tags": ["Authentication"],
