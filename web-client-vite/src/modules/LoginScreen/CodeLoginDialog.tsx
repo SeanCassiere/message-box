@@ -45,8 +45,20 @@ const CodeLoginDialog = (props: IProps) => {
             helperText={formik.touched.code && formik.errors.code}
             autoFocus
           />
-          <Link variant="body2" sx={{ cursor: "pointer" }} onClick={props.handleClickRequest2faReset}>
-            I no longer have access to my 2FA code
+          <Link
+            variant="body2"
+            sx={{ cursor: "pointer", textDecoration: "none" }}
+            onClick={props.handleClickRequest2faReset}
+          >
+            I no longer have access to my authenticator app.
+          </Link>
+          <br />
+          <Link
+            variant="body2"
+            sx={{ cursor: "pointer", textDecoration: "none" }}
+            onClick={() => alert("functionality not implemented")}
+          >
+            Send a temporary pin via email.
           </Link>
         </DialogContent>
         <DialogBigButtonFooter submitButtonText="SUBMIT" isLoading={formik.isSubmitting} />

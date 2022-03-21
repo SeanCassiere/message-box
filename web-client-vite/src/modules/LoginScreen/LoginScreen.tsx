@@ -25,9 +25,12 @@ import { selectAuthState } from "../../shared/redux/store";
 import { JwtPayload, TwoFactorSecretPair } from "../../shared/interfaces/AccessToken.interfaces";
 import { setPermissionsAndRoles } from "../../shared/redux/slices/user/userSlice";
 import { MESSAGES } from "../../shared/util/messages";
+import { useDebounce } from "../../shared/hooks/useDebounceValue";
+import { checkAccountPasswordlessStatus } from "../../shared/api/commonMethods";
+import { validateEmailUtil } from "../../shared/util/checkFunctions";
 
 const credentialsLoginSchema = yup.object().shape({
-  email: yup.string().email("Please enter a valid email").required("Username is required"),
+  email: yup.string().email("Please enter a valid email").required("Email is required"),
   password: yup.string().required("Password is required"),
 });
 
@@ -103,6 +106,44 @@ const LoginScreen = () => {
     },
   });
 
+  // debounced email calling for passwordless login
+  const debouncedEmail = useDebounce<string>(formikCredentialsLogin.values.email, 500);
+
+  // using debounced email trigger the call for the passwordless login
+  useEffect(() => {
+    if (debouncedEmail.trim() === "" || !validateEmailUtil(debouncedEmail)) return;
+
+    const abortController = new AbortController();
+
+    (async () => {
+      const response = await checkAccountPasswordlessStatus(debouncedEmail, abortController);
+
+      if (typeof response === "object") {
+        const formikErrors = formatErrorsToFormik(response);
+        formikCredentialsLogin.setErrors(formikErrors);
+
+        return;
+      }
+
+      if (response === "not-found") {
+        formikCredentialsLogin.setFieldError("email", "Account not found");
+        formikCredentialsLogin.setFieldTouched("email");
+        return;
+      }
+
+      if (typeof response === "string") {
+        setUserId(response);
+        setShowLogin2fa(true);
+        return;
+      }
+    })();
+
+    return () => {
+      abortController.abort();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedEmail]);
+
   // using the 2fa challenge code to get the access token
   const formik2faCodeLogin = useFormik({
     initialValues: {
@@ -169,11 +210,16 @@ const LoginScreen = () => {
   });
 
   // handle closing of the 2fa code login dialog
-  const handleClose2faDialog = useCallback(() => {
-    formikCredentialsLogin.resetForm();
-    setUserId(null);
-    setShowLogin2fa(false);
-  }, [formikCredentialsLogin]);
+  const handleClose2faDialog = useCallback(
+    () => {
+      setUserId(null);
+      // formikCredentialsLogin.resetForm();
+      setShowLogin2fa(false);
+    },
+    [
+      // formikCredentialsLogin
+    ]
+  );
 
   // handle closing of the verify account 2fa dialog
   const handleCloseQrConfirmDialog = useCallback(() => {
