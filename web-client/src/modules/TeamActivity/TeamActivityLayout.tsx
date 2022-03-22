@@ -33,8 +33,6 @@ const TeamActivityLayout = () => {
       </Grid>
       <Stack direction="column" gap={2} sx={{ mt: 3 }}>
         <ActivityBlock />
-        <ActivityBlock />
-        <ActivityBlock />
       </Stack>
     </PagePaperWrapper>
   );
