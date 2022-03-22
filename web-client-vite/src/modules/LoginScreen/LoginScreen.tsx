@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
@@ -106,11 +106,14 @@ const LoginScreen = () => {
     },
   });
 
+  const [credentialsLoginErrors, setCredentialsLoginErrors] = useState<{ [key: string]: string }>({});
+
   // debounced email calling for passwordless login
   const debouncedEmail = useDebounce<string>(formikCredentialsLogin.values.email, 500);
 
   // using debounced email trigger the call for the passwordless login
   useEffect(() => {
+    setCredentialsLoginErrors({});
     if (debouncedEmail.trim() === "" || !validateEmailUtil(debouncedEmail)) return;
 
     const abortController = new AbortController();
@@ -120,14 +123,12 @@ const LoginScreen = () => {
 
       if (typeof response === "object") {
         const formikErrors = formatErrorsToFormik(response);
-        formikCredentialsLogin.setErrors(formikErrors);
-
+        setCredentialsLoginErrors(formikErrors);
         return;
       }
 
       if (response === "not-found") {
-        formikCredentialsLogin.setFieldError("email", "Account not found");
-        formikCredentialsLogin.setFieldTouched("email");
+        setCredentialsLoginErrors({ email: "Account not found" });
         return;
       }
 
@@ -141,8 +142,13 @@ const LoginScreen = () => {
     return () => {
       abortController.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedEmail]);
+
+  // based on the passwordless response, show the full login form
+  const showFullCredentialsForm = useMemo(() => {
+    const emailCheck = Boolean(credentialsLoginErrors.email);
+    return !showLogin2fa && !showGenerateQR && !showForgotPassword && !showRequestConfirmation && emailCheck;
+  }, [credentialsLoginErrors?.email, showForgotPassword, showGenerateQR, showLogin2fa, showRequestConfirmation]);
 
   // using the 2fa challenge code to get the access token
   const formik2faCodeLogin = useFormik({
@@ -302,6 +308,7 @@ const LoginScreen = () => {
             </Typography>
             <UserCredentialsForm
               formik={formikCredentialsLogin}
+              showFullForm={showFullCredentialsForm}
               forgotPasswordTrigger={handleShowForgotPasswordDialog}
               isShowingConfirmationRetryLink={showRequestConfirmation}
             />
