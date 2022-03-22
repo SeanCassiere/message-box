@@ -1,6 +1,7 @@
 {
   "name": "message-box-application-data-service",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "start": "node dist/index.js",
     "build:killDist": "rimraf ./dist",

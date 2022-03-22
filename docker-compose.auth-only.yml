@@ -30,6 +30,8 @@ services:
 
   auth-service:
     container_name: auth-service
+    environment:
+      REDIS_HOST: redis
     networks:
       - webnet
     build:
