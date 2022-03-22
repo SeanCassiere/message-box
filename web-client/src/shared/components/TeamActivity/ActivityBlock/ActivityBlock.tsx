@@ -16,10 +16,14 @@ const LG_GRID_COL_SPAN = 2;
 
 const MAX_SINGLE_LINE = 6;
 
-const ActivityBlock = () => {
-  const [showMore, setShowMore] = React.useState(false);
+interface IProps {
+  teamName: string;
+  items: any[];
+}
 
-  const items = Array.from(Array(10).keys());
+const ActivityBlock = (props: IProps) => {
+  const { items } = props;
+  const [showMore, setShowMore] = React.useState(false);
 
   return (
     <Paper
@@ -44,7 +48,7 @@ const ActivityBlock = () => {
         <Grid container>
           <Grid item xs={12} md={7}>
             <Typography variant="h6" fontWeight={500} component="h4">
-              {String("Management team")}
+              {String(props.teamName)}
             </Typography>
           </Grid>
           <Grid item xs={12} md={5}>
@@ -59,7 +63,13 @@ const ActivityBlock = () => {
         </Grid>
         <Grid container>
           {items.slice(0, MAX_SINGLE_LINE).map((key) => (
-            <Grid key={`team-name-${key}`} xs={12} md={MD_GRID_COL_SPAN} lg={LG_GRID_COL_SPAN} item>
+            <Grid
+              key={`team-activity-${props.teamName.replace(" ", "-")}-${key}`}
+              xs={12}
+              md={MD_GRID_COL_SPAN}
+              lg={LG_GRID_COL_SPAN}
+              item
+            >
               <EmployeeCard />
             </Grid>
           ))}
@@ -69,7 +79,14 @@ const ActivityBlock = () => {
             {items.length > MAX_SINGLE_LINE && (
               <>
                 {items.slice(MAX_SINGLE_LINE).map((key) => (
-                  <Grid key={`team-name-${key}`} xs={12} md={MD_GRID_COL_SPAN} lg={LG_GRID_COL_SPAN} item>
+                  <Grid
+                    key={`team-name-${key}`}
+                    xs={12}
+                    md={MD_GRID_COL_SPAN}
+                    lg={LG_GRID_COL_SPAN}
+                    item
+                    sx={{ mb: 2 }}
+                  >
                     <EmployeeCard />
                   </Grid>
                 ))}

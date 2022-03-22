@@ -32,7 +32,9 @@ const TeamActivityLayout = () => {
         </Grid>
       </Grid>
       <Stack direction="column" gap={2} sx={{ mt: 3 }}>
-        <ActivityBlock />
+        <ActivityBlock items={Array.from(Array(10).keys())} teamName="Management Team" />
+        <ActivityBlock items={Array.from(Array(5).keys())} teamName="Business Analyst Team" />
+        <ActivityBlock items={Array.from(Array(15).keys())} teamName="Development Team" />
       </Stack>
     </PagePaperWrapper>
   );
