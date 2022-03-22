@@ -270,6 +270,7 @@ const LoginScreen = () => {
       />
       <ForgotPasswordDialog open={showForgotPassword} handleDismiss={handleCloseForgotPasswordDialog} />
       <CodeLoginDialog
+        userId={userId}
         formik={formik2faCodeLogin}
         showDialog={showLogin2fa}
         handleClose={handleClose2faDialog}
