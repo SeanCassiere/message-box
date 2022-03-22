@@ -35,19 +35,18 @@ export function connectSocket(token: string) {
   });
 
   socket.on(EVENTS.connection, () => {
-    console.log("connected");
+    console.log("Connecting to the socket.io instance");
   });
 }
 
 export const disconnectSocket = () => {
   socket.disconnect();
-  console.log("Disconnecting socket...");
+  console.log("Disconnecting from the socket.io instance");
 };
 
 export const listenForOnlineUsers = () => {
   socket.on(EVENTS.SERVER.SEND_ONLINE_USERS, (users) => {
     const response = JSON.parse(users) as ISocketUserStatus[];
-    console.log("online users", response);
     store.dispatch(setOnlineUsersLookupList(response));
   });
 };

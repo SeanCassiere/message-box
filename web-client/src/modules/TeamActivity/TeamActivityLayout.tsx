@@ -1,33 +1,40 @@
 import React from "react";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 
-import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 
-import { selectLookupListsState } from "../../shared/redux/store";
+import BusinessIcon from "@mui/icons-material/Business";
+
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
+import ActivityBlock from "../../shared/components/TeamActivity/ActivityBlock";
+
+// import { selectLookupListsState } from "../../shared/redux/store";
 
 const TeamActivityLayout = () => {
-  const { usersList, onlineUsersList } = useSelector(selectLookupListsState);
+  // const { usersList, onlineUsersList } = useSelector(selectLookupListsState);
   return (
     <PagePaperWrapper>
-      <Typography variant="h4" fontWeight={500} component="h1">
-        Team Activity
-      </Typography>
-      <Stack direction={{ xs: "column", md: "row" }} justifyContent="space-between">
-        <Box sx={{ maxWidth: "400px" }}>
-          <Typography variant="h5" fontWeight={400} component="h4">
-            All Users
+      <Grid container>
+        <Grid item xs={12} md={7}>
+          <Typography variant="h4" fontWeight={500} component="h1">
+            Team Activity
           </Typography>
-          <Typography component="pre">{JSON.stringify(usersList, null, 2)}</Typography>
-        </Box>
-        <Box sx={{ maxWidth: "400px" }}>
-          <Typography variant="h5" fontWeight={400} component="h4">
-            Online Users
-          </Typography>
-          <Typography component="pre">{JSON.stringify(onlineUsersList, null, 2)}</Typography>
-        </Box>
+        </Grid>
+        <Grid item xs={12} md={5}>
+          <Stack alignItems="end">
+            <Button startIcon={<BusinessIcon />} disableElevation={false}>
+              View company
+            </Button>
+          </Stack>
+        </Grid>
+      </Grid>
+      <Stack direction="column" gap={2} sx={{ mt: 3 }}>
+        <ActivityBlock />
+        <ActivityBlock />
+        <ActivityBlock />
       </Stack>
     </PagePaperWrapper>
   );

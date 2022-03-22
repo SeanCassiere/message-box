@@ -73,7 +73,7 @@ const CompanyProfile = () => {
           <Box sx={{ display: "inline-flex", columnGap: "1rem" }}>
             {canEditCompany && (
               <>
-                <Button startIcon={<EditOutlinedIcon />} onClick={handleOpenEditor}>
+                <Button startIcon={<EditOutlinedIcon />} onClick={handleOpenEditor} disableElevation={false}>
                   Edit
                 </Button>
               </>

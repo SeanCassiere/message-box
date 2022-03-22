@@ -105,6 +105,7 @@ const PageLayout = () => {
           }}
         >
           <LoadingButton
+            disableElevation={false}
             variant="contained"
             color="secondary"
             startIcon={<QrCodeScannerIcon />}
@@ -115,6 +116,7 @@ const PageLayout = () => {
             Reset 2FA
           </LoadingButton>
           <LoadingButton
+            disableElevation={false}
             variant="contained"
             startIcon={<MarkEmailReadIcon />}
             size="large"
