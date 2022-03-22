@@ -13,6 +13,9 @@ import { Secret2FA } from "#root/interfaces/2FA.interfaces";
 import { generateJWT } from "#root/utils/generateJWT";
 import { generate2faSecret } from "#root/utils/generate2faSecret";
 import Token from "#root/db/entities/Token";
+import { redis } from "#root/redis";
+import { REDIS_CONSTANTS } from "#root/utils/redisConstants";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({
@@ -50,45 +53,59 @@ export async function getAccessTokenFor2FACode(req: Request, res: Response, next
         errors: [],
       });
     }
-
-    // the 2fa record
-    let secretRecord: TwoFactorAuthMapping;
-    const findUser2FARecord = await TwoFactorAuthMapping.findOne({ where: { userId: userId, is_temp: false } });
-
-    // if user does not have a 2fa record, create one
-    if (!findUser2FARecord || !user.is2faActive) {
-      const tempSecret = generate2faSecret({ email: user.email });
-      const newSecretRecord = await TwoFactorAuthMapping.create({ userId, secret: JSON.stringify(tempSecret) }).save();
-      secretRecord = newSecretRecord;
-
-      return res.json({
-        statusCode: 200,
-        pagination: null,
-        data: {
-          message: "This account is not setup for 2FA authentication",
-          accessToken: null,
-          expiresIn: 0,
-        },
-        errors: [],
-      });
+    // passwordless temporary one-time pin check
+    let isPasswordPinSuccess = false;
+    const pin = await redis.get(`${REDIS_CONSTANTS.PASSWORDLESS}:${user.userId}`);
+    // check the pin against any available passwordless pin
+    if (pin && code === pin) {
+      log.info(`${user.userId} logged-in using a  passwordless pin`);
+      isPasswordPinSuccess = true;
     }
 
-    // continue with validation the two-factor code
-    secretRecord = findUser2FARecord;
-    const fullUserSecret = JSON.parse(secretRecord.secret) as Secret2FA;
-    const isTotpValid = speakeasy.totp.verify({ secret: fullUserSecret.base32, encoding: "base32", token: code });
+    // if passwordlessPin did not succeed, check the 2fa code
+    if (!isPasswordPinSuccess) {
+      // the 2fa record
+      let secretRecord: TwoFactorAuthMapping;
+      const findUser2FARecord = await TwoFactorAuthMapping.findOne({ where: { userId: userId, is_temp: false } });
 
-    if (!isTotpValid) {
-      return res.json({
-        statusCode: 400,
-        pagination: null,
-        data: {
-          message: "2FA Code is invalid",
-          accessToken: null,
-          expiresIn: 0,
-        },
-        errors: [{ propertyPath: "code", message: "Two-factor code is invalid" }],
-      });
+      // if user does not have a 2fa record, create one
+      if (!findUser2FARecord || !user.is2faActive) {
+        const tempSecret = generate2faSecret({ email: user.email });
+        const newSecretRecord = await TwoFactorAuthMapping.create({
+          userId,
+          secret: JSON.stringify(tempSecret),
+        }).save();
+        secretRecord = newSecretRecord;
+
+        return res.json({
+          statusCode: 200,
+          pagination: null,
+          data: {
+            message: "This account is not setup for 2FA authentication",
+            accessToken: null,
+            expiresIn: 0,
+          },
+          errors: [],
+        });
+      }
+
+      // continue with validation the two-factor code
+      secretRecord = findUser2FARecord;
+      const fullUserSecret = JSON.parse(secretRecord.secret) as Secret2FA;
+      const isTotpValid = speakeasy.totp.verify({ secret: fullUserSecret.base32, encoding: "base32", token: code });
+
+      if (!isTotpValid) {
+        return res.json({
+          statusCode: 400,
+          pagination: null,
+          data: {
+            message: "2FA Code is invalid",
+            accessToken: null,
+            expiresIn: 0,
+          },
+          errors: [{ propertyPath: "code", message: "Two-factor code is invalid" }],
+        });
+      }
     }
 
     // return the access token

@@ -37,6 +37,7 @@ import { changePasswordUsing2FA } from "./controllers/2fa/changePasswordUsing2FA
 import { sendReset2faTokenEmail } from "./controllers/2fa/sendReset2faTokenEmail";
 import { getReset2faDetailsFromEmailToken } from "./controllers/2fa/getReset2faDetailsFromEmailToken";
 import { checkForPasswordlessAccessibleByEmail } from "./controllers/users/checkForPasswordlessAccessibleByEmail";
+import { sendPasswordlessPin } from "./controllers/2fa/sendPasswordlessPin";
 
 import { getAllTeamsForClient } from "./controllers/teams/getAllTeamsForClient";
 import { getTeamById } from "./controllers/teams/getTeamById";
@@ -121,6 +122,7 @@ expressApp.post("/2fa/getAccessTokenFor2FACode", getAccessTokenFor2FACode);
 expressApp.post("/2fa/changePasswordUsing2FA", changePasswordUsing2FA);
 expressApp.post("/2fa/sendReset2faTokenEmail", sendReset2faTokenEmail);
 expressApp.post("/2fa/getReset2faDetailsFromEmailToken", getReset2faDetailsFromEmailToken);
+expressApp.post("/2fa/sendPasswordlessPin", sendPasswordlessPin);
 
 expressApp.post("/email/markEmailConfirmationIdAsUsed", markEmailConfirmationIdAsUsed);
 
