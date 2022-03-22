@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
 import { SnackbarProvider } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import "moment-timezone";
@@ -20,8 +18,6 @@ import { getProfilesThunk } from "./shared/redux/slices/user/thunks";
 import { getRefreshedAccessTokenThunk } from "./shared/redux/slices/auth/thunks";
 import { getAllLookupListsThunk } from "./shared/redux/slices/lookup/thunks";
 import { useSocket } from "./shared/hooks/useSocket";
-
-const queryClient = new QueryClient();
 
 const App = () => {
   const dispatch = useDispatch();
@@ -88,31 +84,22 @@ const App = () => {
   return (
     <ThemeWrapper>
       <CssBaseline />
-      <QueryClientProvider client={queryClient}>
-        <LocalizationProvider dateAdapter={DateAdapter}>
-          <SnackbarProvider
-            maxSnack={4}
-            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            ref={notistackRef}
-            action={(key) => (
-              <IconButton
-                aria-label="Close"
-                onClick={onClickDismiss(key)}
-                size="small"
-                onMouseDown={onClickDismiss(key)}
-              >
-                <CloseIcon sx={{ color: "#fff", fontSize: "1.3rem" }} />
-              </IconButton>
-            )}
-            disableWindowBlurListener
-            preventDuplicate
-          >
-            <AppRoutes />
-          </SnackbarProvider>
-        </LocalizationProvider>
-        {import.meta.env.MODE !== "production" && <ReactQueryDevtools initialIsOpen={false} />}
-        {/** only show devtools in development */}
-      </QueryClientProvider>
+      <LocalizationProvider dateAdapter={DateAdapter}>
+        <SnackbarProvider
+          maxSnack={4}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          ref={notistackRef}
+          action={(key) => (
+            <IconButton aria-label="Close" onClick={onClickDismiss(key)} size="small" onMouseDown={onClickDismiss(key)}>
+              <CloseIcon sx={{ color: "#fff", fontSize: "1.3rem" }} />
+            </IconButton>
+          )}
+          disableWindowBlurListener
+          preventDuplicate
+        >
+          <AppRoutes />
+        </SnackbarProvider>
+      </LocalizationProvider>
     </ThemeWrapper>
   );
 };
