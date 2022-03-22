@@ -83,7 +83,6 @@ authenticationRouter.route("/2FA/Code/ConfirmUser").post(async (req, res) => {
   try {
     const { data: response } = await client.post("/2fa/verifyUser2FAStatus", { body: request.body });
 
-    console.log("\n\n\ntoken", request.body.token, "\n\n\n");
     if (request.body.token) {
       await client.post("/email/markEmailConfirmationIdAsUsed", { body: { confirmationId: request.body.token } });
     }
@@ -97,6 +96,46 @@ authenticationRouter.route("/2FA/Code/ConfirmUser").post(async (req, res) => {
     return res.status(500).json({ message: "auth-service /users network error" });
   }
 });
+
+authenticationRouter
+  .route("/Login/Passwordless")
+  .get(async (req, res) => {
+    let email = "";
+    if (typeof req.query.email === "string") {
+      email = req.query.email;
+    } else {
+      email = Array.from(req.query.email as any)[0] as string;
+    }
+
+    try {
+      const { data: response } = await client.post("/users/checkForPasswordlessAccessibleByEmail", {
+        body: { email: email.toLowerCase() },
+      });
+
+      if (response.statusCode === 200) {
+        return res.json(response.data);
+      }
+
+      return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
+    } catch (error) {
+      return res.status(500).json({ message: "auth-service /users network error" });
+    }
+  })
+  .post(async (req, res) => {
+    try {
+      const { data: response } = await client.post("/2fa/sendPasswordlessPin", {
+        body: { ...req.body },
+      });
+
+      if (response.statusCode === 200) {
+        return res.json(response.data);
+      }
+
+      return res.status(response.statusCode).json({ data: response.data, errors: response.errors });
+    } catch (error) {
+      return res.status(500).json({ message: "auth-service /2fa network error" });
+    }
+  });
 
 authenticationRouter.route("/Login/Refresh").get(async (req, res) => {
   const request = req as CustomRequest<{}>;

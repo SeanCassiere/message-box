@@ -106,10 +106,95 @@
         "parameters": []
       }
     },
+    "/Authentication/Login/Passwordless": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Check if the user can login using a passwordless method",
+        "description": "Check if the user can login using a passwordless method.",
+        "operationId": "GetAccountPasswordlessStatusByEmail",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "User account email (e.g. `msc@msc.com`)",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If the user can login using a password less method, the userId (UUID) will be returned in the body.<br />If the user does not exist, `null` will be returned for the userId. If account has not been setup, a HTTP Status Code of `400` will be returned with the validation errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Request a one-time passwordless login pin to be sent",
+        "description": "If the user does not want to enter their TOTP generated from their authenticator app, they may request a one-time PIN to be sent to them using a supported method.",
+        "operationId": "RequestPasswordlessPin",
+        "requestBody": {
+          "description": "Method of sending the one-time pin, and the userId of the user.<br /><br />Supported methods are: <br /><ul><li>email</li></ul>",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "default": "email"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully sent the one-time PIN to the user via the method specified in the request body.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "parameters": []
+      }
+    },
     "/Authentication/Login/Refresh": {
       "get": {
         "tags": ["Authentication"],
-        "summary": "Refresh access token for user",
+        "summary": "Refresh the users's access token",
         "description": "Generate a new access token for the user based on the cookies.",
         "operationId": "LoginRefreshUser",
         "responses": {
@@ -175,8 +260,8 @@
     "/Authentication/2FA/Code/ConfirmUser": {
       "post": {
         "tags": ["Authentication"],
-        "summary": "Confirm the user's 2FA account status using the code and the user's id",
-        "description": "Confirm the user's 2FA account status using the code and the user's id",
+        "summary": "Confirm the user's 2FA account status using the code and the userId",
+        "description": "Confirm the user's 2FA account status using the code and the userId",
         "operationId": "2FAValidateAccountCode",
         "requestBody": {
           "description": "Get access token using 2FA code",
@@ -1813,7 +1898,7 @@
     "/Users/ConfirmUser": {
       "post": {
         "tags": ["User"],
-        "summary": "Confirm the user account using the token sent via email.",
+        "summary": "Confirm the user account using the token sent via email",
         "description": "Confirm the user account using the token sent via email.",
         "operationId": "ConfirmUserWithEmailToken",
         "parameters": [],
@@ -1854,7 +1939,7 @@
     "/Users/ConfirmUser/ResendConfirmationEmail": {
       "post": {
         "tags": ["User"],
-        "summary": "Resend the account confirmation email.",
+        "summary": "Resend the account confirmation email",
         "description": "Resend the account confirmation email.",
         "operationId": "ResendConfirmationEmail",
         "parameters": [],
@@ -1904,7 +1989,7 @@
     "/Users/Reset2FA/RequestEmail": {
       "post": {
         "tags": ["User"],
-        "summary": "Request an email to reset a user's 2fa access.",
+        "summary": "Request an email to reset a user's 2fa access",
         "description": "Request an email to reset the user's 2fa access.",
         "operationId": "Request2FAResetWithEmail",
         "parameters": [],
@@ -1988,7 +2073,7 @@
     "/Users/ResetPassword/RequestEmail": {
       "post": {
         "tags": ["User"],
-        "summary": "Request an email to reset the user password.",
+        "summary": "Request an email to reset the user password",
         "description": "Request an email to reset the user password.",
         "operationId": "RequestPasswordResetWithEmail",
         "parameters": [],
@@ -2038,7 +2123,7 @@
     "/Users/ResetPassword/With2FA": {
       "post": {
         "tags": ["User"],
-        "summary": "Change the user's password using the 2FA code.",
+        "summary": "Change the user's password using the 2FA code",
         "description": "Change the user's password using the 2FA code.",
         "operationId": "ChangePasswordWith2FA",
         "parameters": [],
@@ -2088,7 +2173,7 @@
     "/Users/ResetPassword/WithToken": {
       "post": {
         "tags": ["User"],
-        "summary": "Change the user's password using a token.",
+        "summary": "Change the user's password using a token",
         "description": "Change the user's password using a token.",
         "operationId": "ChangePasswordWithToken",
         "parameters": [],
@@ -2133,7 +2218,7 @@
     "/Users/Profile": {
       "get": {
         "tags": ["User"],
-        "summary": "Get the logged-in user's details.",
+        "summary": "Get the logged-in user's details",
         "description": "Get the logged-in user's details.",
         "operationId": "GetLoggedInUserProfile",
         "security": [
@@ -2161,7 +2246,7 @@
       "put": {
         "tags": ["User"],
         "summary": "Update user the logged-in user profile",
-        "description": "Update the logged-in user.",
+        "description": "Update the logged-in user",
         "operationId": "UpdateLoggedInUserProfile",
         "parameters": [],
         "security": [

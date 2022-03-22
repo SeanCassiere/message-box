@@ -15,7 +15,7 @@ export const ALLOWED_PUBLIC_PATHS = [
   pathToRegexp(`/docs`),
   pathToRegexp(`${API_PREFIX}/Authentication/Login`),
   pathToRegexp(`${API_PREFIX}/Authentication/Logout`),
-  pathToRegexp(`${API_PREFIX}/Authentication/Refresh`),
+  pathToRegexp(`${API_PREFIX}/Authentication/Login/Passwordless`),
   pathToRegexp(`${API_PREFIX}/Authentication/Login/Refresh`),
   pathToRegexp(`${API_PREFIX}/Authentication/2FA/Code/Login`),
   pathToRegexp(`${API_PREFIX}/Authentication/2FA/Code/ConfirmUser`),

@@ -31,7 +31,7 @@ export function generateEmailConfirmationTemplate({
 				<tbody>
 					<tr>
 						<td style="text-align: center">
-						<h1 style="margin: 0"><a href="https://rentallsoftware.com" style="
+						<h1 style="margin: 0"><a href="https://message-box.netlify.app/" style="
 															color: #36D1B7;
 															font-size: 24px;
 															font-weight: 700;

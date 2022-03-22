@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,9 +25,12 @@ import { selectAuthState } from "../../shared/redux/store";
 import { JwtPayload, TwoFactorSecretPair } from "../../shared/interfaces/AccessToken.interfaces";
 import { setPermissionsAndRoles } from "../../shared/redux/slices/user/userSlice";
 import { MESSAGES } from "../../shared/util/messages";
+import { useDebounce } from "../../shared/hooks/useDebounceValue";
+import { checkAccountPasswordlessStatus } from "../../shared/api/commonMethods";
+import { validateEmailUtil } from "../../shared/util/checkFunctions";
 
 const credentialsLoginSchema = yup.object().shape({
-  email: yup.string().email("Please enter a valid email").required("Username is required"),
+  email: yup.string().email("Please enter a valid email").required("Email is required"),
   password: yup.string().required("Password is required"),
 });
 
@@ -103,6 +106,50 @@ const LoginScreen = () => {
     },
   });
 
+  const [credentialsLoginErrors, setCredentialsLoginErrors] = useState<{ [key: string]: string }>({});
+
+  // debounced email calling for passwordless login
+  const debouncedEmail = useDebounce<string>(formikCredentialsLogin.values.email, 500);
+
+  // using debounced email trigger the call for the passwordless login
+  useEffect(() => {
+    setCredentialsLoginErrors({});
+    if (debouncedEmail.trim() === "" || !validateEmailUtil(debouncedEmail)) return;
+
+    const abortController = new AbortController();
+
+    (async () => {
+      const response = await checkAccountPasswordlessStatus(debouncedEmail, abortController);
+
+      if (typeof response === "object") {
+        const formikErrors = formatErrorsToFormik(response);
+        setCredentialsLoginErrors(formikErrors);
+        return;
+      }
+
+      if (response === "not-found") {
+        setCredentialsLoginErrors({ email: "Account not found" });
+        return;
+      }
+
+      if (typeof response === "string") {
+        setUserId(response);
+        setShowLogin2fa(true);
+        return;
+      }
+    })();
+
+    return () => {
+      abortController.abort();
+    };
+  }, [debouncedEmail]);
+
+  // based on the passwordless response, show the full login form
+  const showFullCredentialsForm = useMemo(() => {
+    const emailCheck = Boolean(credentialsLoginErrors.email);
+    return !showLogin2fa && !showGenerateQR && !showForgotPassword && !showRequestConfirmation && emailCheck;
+  }, [credentialsLoginErrors?.email, showForgotPassword, showGenerateQR, showLogin2fa, showRequestConfirmation]);
+
   // using the 2fa challenge code to get the access token
   const formik2faCodeLogin = useFormik({
     initialValues: {
@@ -169,11 +216,16 @@ const LoginScreen = () => {
   });
 
   // handle closing of the 2fa code login dialog
-  const handleClose2faDialog = useCallback(() => {
-    formikCredentialsLogin.resetForm();
-    setUserId(null);
-    setShowLogin2fa(false);
-  }, [formikCredentialsLogin]);
+  const handleClose2faDialog = useCallback(
+    () => {
+      setUserId(null);
+      // formikCredentialsLogin.resetForm();
+      setShowLogin2fa(false);
+    },
+    [
+      // formikCredentialsLogin
+    ]
+  );
 
   // handle closing of the verify account 2fa dialog
   const handleCloseQrConfirmDialog = useCallback(() => {
@@ -218,6 +270,7 @@ const LoginScreen = () => {
       />
       <ForgotPasswordDialog open={showForgotPassword} handleDismiss={handleCloseForgotPasswordDialog} />
       <CodeLoginDialog
+        userId={userId}
         formik={formik2faCodeLogin}
         showDialog={showLogin2fa}
         handleClose={handleClose2faDialog}
@@ -256,6 +309,7 @@ const LoginScreen = () => {
             </Typography>
             <UserCredentialsForm
               formik={formikCredentialsLogin}
+              showFullForm={showFullCredentialsForm}
               forgotPasswordTrigger={handleShowForgotPasswordDialog}
               isShowingConfirmationRetryLink={showRequestConfirmation}
             />
