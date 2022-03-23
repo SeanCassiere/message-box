@@ -23,7 +23,7 @@ export function socket({ io }: { io: Server }) {
     const parts = channel.split(":");
 
     if (parts.length === 3 && parts[2].toLowerCase() === REDIS_CONSTANTS.CLIENT_ONLINE_USERS_HASH_KEY.toLowerCase()) {
-      io.to(`${channel}`).emit(EVENTS.SERVER.SEND_ONLINE_USERS, message);
+      io.to(`${channel}`).emit(EVENTS.SERVER.SEND_ONLINE_USERS, JSON.parse(message));
     }
   });
 

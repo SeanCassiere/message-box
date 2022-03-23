@@ -46,7 +46,7 @@ export const disconnectSocket = () => {
 
 export const listenForOnlineUsers = () => {
   socket.on(EVENTS.SERVER.SEND_ONLINE_USERS, (users) => {
-    const response = JSON.parse(users) as ISocketUserStatus[];
+    const response = users as ISocketUserStatus[];
     store.dispatch(setOnlineUsersLookupList(response));
   });
 };

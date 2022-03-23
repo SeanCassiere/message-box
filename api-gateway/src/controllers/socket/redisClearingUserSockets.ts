@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 
-import { redis, pubRedis, subRedis } from "../redis";
+import { redis } from "../redis";
 import { log } from "#root/utils/logger";
 import { I_RedisIdentifierProps } from "./allEvents";
 import { I_RedisOnlineUserStatus } from "./redisJoiningUserSockets";
