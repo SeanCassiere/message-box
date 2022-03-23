@@ -1,6 +1,8 @@
 import removeMd from "remove-markdown";
+import { teal, red, orange } from "@mui/material/colors";
 
 import { ITask } from "../interfaces/Task.interfaces";
+import { ICurrentUserStatusInterface } from "../interfaces/User.interfaces";
 
 export function truncateTextByLength(
   textString: string,
@@ -66,3 +68,9 @@ export function sortTasksByDateForColumnReverse(tasks: ITask[]) {
   };
   return [...sortedTasks(inCompleteTasks), ...sortedTasks(completedTasks)];
 }
+
+export const DEFAULT_USER_STATUSES: ICurrentUserStatusInterface[] = [
+  { status: "Online", color: teal[300] },
+  { status: "Away", color: orange[300] },
+  { status: "Offline", color: red[300] },
+];

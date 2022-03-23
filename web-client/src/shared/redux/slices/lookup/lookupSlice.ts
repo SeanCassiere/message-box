@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IRoleProfile, ITeamProfile } from "../../../interfaces/Client.interfaces";
 import { ISocketUserStatus } from "../../../interfaces/Socket.interfaces";
 import { IUserProfile } from "../../../interfaces/User.interfaces";
+import { DEFAULT_USER_STATUSES } from "../../../util/general";
 
 import { getAllLookupListsThunk } from "./thunks";
 
