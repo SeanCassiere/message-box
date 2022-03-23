@@ -287,7 +287,6 @@ const CalendarScreen = () => {
                   id="user-calendar-view-options"
                   options={userSelectOptions}
                   value={selectedUserValue}
-                  freeSolo
                   autoSelect
                   onChange={handleSelectCurrentUserId}
                   sx={{ width: 250 }}
@@ -301,7 +300,12 @@ const CalendarScreen = () => {
                   )}
                 />
               )}
-              <Button aria-label="New Event" startIcon={<EventIcon />} onClick={handleShowNewDialog}>
+              <Button
+                aria-label="New Event"
+                startIcon={<EventIcon />}
+                onClick={handleShowNewDialog}
+                disableElevation={false}
+              >
                 New Event
               </Button>
             </Stack>

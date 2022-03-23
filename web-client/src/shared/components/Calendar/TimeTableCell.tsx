@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import { MonthView, WeekView, AllDayPanel, DayView } from "@devexpress/dx-react-scheduler-material-ui";
 import { useNavigate } from "react-router-dom";

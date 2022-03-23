@@ -1,8 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import Moment from "react-moment";
-import { useSelector } from "react-redux";
 
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -17,8 +15,8 @@ import CardContent from "@mui/material/CardContent";
 import { ITask } from "../../../interfaces/Task.interfaces";
 import { markdownToForHtmlInsert, truncateTextByLength } from "../../../util/general";
 import { client } from "../../../api/client";
-import { selectUserState } from "../../../redux/store";
 import { colorsMap } from "../../../util/colorsMap";
+import { formatDateTimeShort, formatTime } from "../../../util/dateTime";
 
 interface Props {
   task: ITask;
@@ -32,7 +30,6 @@ const TaskCard = (props: Props) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [data, setData] = useState<ITask>(task);
-  const { formats } = useSelector(selectUserState);
 
   const handleTaskClick = useCallback(
     (navTaskId: string) => {
@@ -142,12 +139,12 @@ const TaskCard = (props: Props) => {
                 {mode === "Today" ? (
                   <>
                     time:&nbsp;
-                    <Moment format={formats.timeFormat}>{task.dueDate}</Moment>
+                    {formatTime(task.dueDate)}
                   </>
                 ) : (
                   <>
                     date:&nbsp;
-                    <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment>
+                    {formatDateTimeShort(task.dueDate)}
                   </>
                 )}
               </Typography>

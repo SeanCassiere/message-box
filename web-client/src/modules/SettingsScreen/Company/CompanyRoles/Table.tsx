@@ -1,6 +1,4 @@
 import React from "react";
-import Moment from "react-moment";
-import { useSelector } from "react-redux";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -19,7 +17,7 @@ import StyledTableRow from "../../../../shared/components/Table/StyledTableRow";
 
 import { IRoleProfile } from "../../../../shared/interfaces/Client.interfaces";
 import { usePermission } from "../../../../shared/hooks/usePermission";
-import { selectUserState } from "../../../../shared/redux/store";
+import { formatDateFromNow } from "../../../../shared/util/dateTime";
 
 interface ITableProps {
   dataList: IRoleProfile[];
@@ -80,8 +78,6 @@ const RenderRowData = (props: {
 }) => {
   const { role, handleDeleteButton, handleEditButton } = props;
 
-  const { formats } = useSelector(selectUserState);
-
   const isDeleteAccessible = usePermission("role:admin");
   const isEditAccessible = usePermission("role:admin");
 
@@ -93,11 +89,7 @@ const RenderRowData = (props: {
       <StyledTableCell>
         {role.isUserDeletable ? <Chip label="User created" variant="outlined" /> : <Chip label="System generated" />}
       </StyledTableCell>
-      <StyledTableCell>
-        <Moment interval={formats.defaultDateRefreshInterval} fromNow>
-          {role.updatedAt}
-        </Moment>
-      </StyledTableCell>
+      <StyledTableCell>{formatDateFromNow(role.updatedAt)}</StyledTableCell>
       <StyledTableCell align="right">
         {role.isUserDeletable && isDeleteAccessible && (
           <>

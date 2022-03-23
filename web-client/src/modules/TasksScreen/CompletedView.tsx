@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSnackbar } from "notistack";
-import Moment from "react-moment";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -33,6 +32,7 @@ import { colorsMap } from "../../shared/util/colorsMap";
 import { taskColorOpacity } from "../../shared/util/constants";
 import { MESSAGES } from "../../shared/util/messages";
 import PageBlockItem from "../../shared/components/Layout/PageBlockItem";
+import { formatDateTimeShort } from "../../shared/util/dateTime";
 
 /**
  * @description this component houses the view "Completed" tab of the TaskScreen
@@ -182,13 +182,11 @@ const CompletedView = (props: Props) => {
                     {viewingTasks.map((task) => (
                       <StyledTableRow key={`completed-view-${task.taskId}`}>
                         <StyledTableCell component="th" scope="row">
-                          <Moment format={formats.shortDateTimeFormat}>
-                            {task.completedDate ? task.completedDate : new Date().toISOString()}
-                          </Moment>
+                          {formatDateTimeShort(task.completedDate ? task.completedDate : new Date().toISOString())}
                         </StyledTableCell>
                         <StyledTableCell>{task.title}</StyledTableCell>
                         <StyledTableCell component="th" scope="row">
-                          <Moment format={formats.shortDateTimeFormat}>{task.dueDate}</Moment>
+                          {formatDateTimeShort(task.dueDate ? task.dueDate : new Date().toISOString())}
                         </StyledTableCell>
                         <StyledTableCell>{renderColorBox(task.bgColor)}</StyledTableCell>
                         <StyledTableCell>

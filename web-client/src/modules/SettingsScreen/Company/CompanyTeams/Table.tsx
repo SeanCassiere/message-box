@@ -1,6 +1,4 @@
 import React from "react";
-import Moment from "react-moment";
-import { useSelector } from "react-redux";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -18,7 +16,7 @@ import StyledTableRow from "../../../../shared/components/Table/StyledTableRow";
 
 import { ITeamProfile } from "../../../../shared/interfaces/Client.interfaces";
 import { usePermission } from "../../../../shared/hooks/usePermission";
-import { selectUserState } from "../../../../shared/redux/store";
+import { formatDateFromNow } from "../../../../shared/util/dateTime";
 
 interface ITableProps {
   dataList: ITeamProfile[];
@@ -29,8 +27,6 @@ interface ITableProps {
 const ViewTable = ({ dataList, editItemHandler, deleteItemHandler }: ITableProps) => {
   const isEditButtonAccessible = usePermission("team:admin");
   const isDeleteButtonAccessible = usePermission("team:admin");
-
-  const { formats } = useSelector(selectUserState);
 
   const handleEditButton = (team: ITeamProfile) => {
     editItemHandler(team.teamId);
@@ -62,11 +58,7 @@ const ViewTable = ({ dataList, editItemHandler, deleteItemHandler }: ITableProps
                   <Chip label="System generated" />
                 )}
               </StyledTableCell>
-              <StyledTableCell>
-                <Moment interval={formats.defaultDateRefreshInterval} fromNow>
-                  {team.updatedAt}
-                </Moment>
-              </StyledTableCell>
+              <StyledTableCell>{formatDateFromNow(team.updatedAt)}</StyledTableCell>
               <StyledTableCell align="right">
                 {team.isUserDeletable && isDeleteButtonAccessible && (
                   <>

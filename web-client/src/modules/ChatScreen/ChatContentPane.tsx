@@ -88,7 +88,7 @@ const ChatContentPane = (props: Props) => {
           <Stack direction="row" alignItems="center" spacing={2} sx={{ px: { xs: 1, md: 2 }, py: { xs: 1, md: 0 } }}>
             <Box>
               <StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot">
-                <Avatar alt="Sean Cassiere" src="/static/images/avatar/1.jpg" />
+                <Avatar alt="Sean Cassiere" />
               </StyledBadge>
             </Box>
             <Box>
@@ -141,7 +141,7 @@ const ChatContentPane = (props: Props) => {
                     borderRadius: 4,
                   }}
                 >
-                  I'm a {index % 2 === 0 ? "left" : "right"} message
+                  I&apos;m a {index % 2 === 0 ? "left" : "right"} message
                 </span>
               </Typography>
             </Box>

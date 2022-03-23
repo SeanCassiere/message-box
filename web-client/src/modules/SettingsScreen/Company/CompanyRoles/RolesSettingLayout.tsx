@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Box from "@mui/material/Box";
@@ -122,7 +122,7 @@ const Layout = () => {
             </IconButton>
             {isAddButtonAccessible && (
               <>
-                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewRoleDialog}>
+                <Button startIcon={<AddOutlinedIcon />} onClick={handleOpenNewRoleDialog} disableElevation={false}>
                   Add
                 </Button>
               </>

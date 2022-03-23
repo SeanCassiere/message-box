@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import React, { lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import NoAuthOnlyRoute from "./NoAuthOnlyRoute";

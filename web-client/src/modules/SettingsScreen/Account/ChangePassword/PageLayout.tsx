@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
 import { useTheme } from "@mui/material/styles";
@@ -105,6 +105,7 @@ const PageLayout = () => {
           }}
         >
           <LoadingButton
+            disableElevation={false}
             variant="contained"
             color="secondary"
             startIcon={<QrCodeScannerIcon />}
@@ -115,6 +116,7 @@ const PageLayout = () => {
             Reset 2FA
           </LoadingButton>
           <LoadingButton
+            disableElevation={false}
             variant="contained"
             startIcon={<MarkEmailReadIcon />}
             size="large"

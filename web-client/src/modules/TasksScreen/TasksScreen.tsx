@@ -195,7 +195,7 @@ const TasksScreen = () => {
               {isTaskWriteAccessible && (
                 <>
                   <Grid item>
-                    <Button startIcon={<AddOutlinedIcon />} onClick={handleNewTaskDialog}>
+                    <Button startIcon={<AddOutlinedIcon />} onClick={handleNewTaskDialog} disableElevation={false}>
                       New task
                     </Button>
                   </Grid>

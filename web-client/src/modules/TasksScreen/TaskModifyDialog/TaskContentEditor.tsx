@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./RichEditor.css";
 import "draft-js/dist/Draft.css";
 

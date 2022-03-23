@@ -1,3 +1,4 @@
+import React from "react";
 import { IUserProfileWithSortedDetails } from "../../../../shared/interfaces/User.interfaces";
 
 import Table from "@mui/material/Table";

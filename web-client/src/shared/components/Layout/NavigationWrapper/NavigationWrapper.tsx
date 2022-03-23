@@ -219,7 +219,7 @@ const NavigationWrapper: React.FC = (props) => {
             {matchLargerThanPhone && (
               <Button
                 size="medium"
-                disableElevation
+                disableElevation={false}
                 style={{ textTransform: "none", paddingRight: "25px", paddingTop: "8px", paddingBottom: "8px" }}
                 endIcon={anchorElUser ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 onClick={handleOpenUserMenu}

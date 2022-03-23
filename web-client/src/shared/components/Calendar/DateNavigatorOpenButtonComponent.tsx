@@ -1,4 +1,4 @@
-import { memo } from "react";
+import React, { memo } from "react";
 import { DateNavigator } from "@devexpress/dx-react-scheduler-material-ui";
 import Button from "@mui/material/Button";
 
