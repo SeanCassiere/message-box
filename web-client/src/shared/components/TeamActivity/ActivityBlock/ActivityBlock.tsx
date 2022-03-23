@@ -61,7 +61,7 @@ const ActivityBlock = (props: IProps) => {
             .filter((m: ITeamMember) => !onlineUserIds.includes(m.userId))
             .sort(sortTeamNames);
 
-          dummyPromise(750).then(() => {
+          dummyPromise(350).then(() => {
             setFetchedTeamData({ ...res.data, members: [...onlineFirst, ...offlineFirst] });
             setHideView(false);
           });

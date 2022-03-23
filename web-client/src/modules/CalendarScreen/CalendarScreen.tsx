@@ -274,7 +274,12 @@ const CalendarScreen = () => {
             </Typography>
           </Grid>
           <Grid item xs={12} md={5}>
-            <Stack spacing={2} direction="row" justifyContent={{ sx: "start", md: "end" }} alignItems="center">
+            <Stack
+              gap={2}
+              flexDirection={{ sm: "column", md: "row" }}
+              justifyContent={{ sx: "start", md: "end" }}
+              alignItems={{ sm: "start", md: "center" }}
+            >
               <IconButton
                 sx={{ mr: 1 }}
                 aria-label="refresh"
