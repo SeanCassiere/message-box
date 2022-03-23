@@ -60,6 +60,7 @@ export async function getAccessTokenFor2FACode(req: Request, res: Response, next
     if (pin && code === pin) {
       log.info(`${user.userId} logged-in using a  passwordless pin`);
       isPasswordPinSuccess = true;
+      await redis.del(`${REDIS_CONSTANTS.PASSWORDLESS}:${user.userId}`);
     }
 
     // if passwordlessPin did not succeed, check the 2fa code

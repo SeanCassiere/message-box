@@ -179,12 +179,14 @@ const TasksScreen = () => {
                     value={selectedUserValue}
                     freeSolo
                     autoSelect
+                    openOnFocus
                     onChange={handleSelectCurrentUserId}
                     sx={{ mr: 2, width: "100%" }}
+                    size="small"
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        size="small"
+                        // size="small"
                         InputProps={{ ...params.InputProps, endAdornment: <></> }}
                         fullWidth
                       />
