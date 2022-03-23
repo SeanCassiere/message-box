@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 
-import { redis, pubRedis, subRedis } from "../redis";
+import { redis } from "../redis";
 import { log } from "#root/utils/logger";
 import { I_RedisIdentifierProps } from "./allEvents";
 import { I_RedisOnlineUserStatus } from "./redisJoiningUserSockets";
@@ -10,9 +10,15 @@ export async function redisClearUserSockets(namespaceValues: I_RedisIdentifierPr
   const key = (await redis.hget(namespaceValues.client_namespace, namespaceValues.user_namespace)) as string;
   const userSocketsWithoutCurrent = Array.from(JSON.parse(key)).filter((id) => id !== socket.id);
 
+  const clientRoom = io.sockets.adapter.rooms.get(
+    `${namespaceValues.client_namespace}:${namespaceValues.client_online_users_namespace}`
+  );
+  const clientRoomSockets = Array.from(clientRoom || []);
+
   let actualOnlineSocketsForUser = [];
-  for (const sock in userSocketsWithoutCurrent) {
-    if (io.sockets.sockets.hasOwnProperty(sock)) {
+
+  for (const sock of userSocketsWithoutCurrent as string[]) {
+    if (clientRoomSockets.includes(sock)) {
       actualOnlineSocketsForUser.push(sock);
     }
   }
