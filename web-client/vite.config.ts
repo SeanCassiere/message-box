@@ -11,10 +11,13 @@ import eslintPlugin from "vite-plugin-eslint";
 export default defineConfig(({ mode }) => ({
   server: {
     port: 3000,
-    https: {
-      key: fs.readFileSync("./.cert/key.pem"),
-      cert: fs.readFileSync("./.cert/cert.pem"),
-    },
+    https:
+      mode === "development"
+        ? {
+            key: fs.readFileSync("./.cert/key.pem"),
+            cert: fs.readFileSync("./.cert/cert.pem"),
+          }
+        : false,
   },
   plugins: mode === "development" ? [react(), eslintPlugin()] : [],
   build: {
