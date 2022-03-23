@@ -19,6 +19,7 @@ import { client } from "../../../../shared/api/client";
 import { setLookupTeams } from "../../../../shared/redux/slices/lookup/lookupSlice";
 import { usePermission } from "../../../../shared/hooks/usePermission";
 import { MESSAGES } from "../../../../shared/util/messages";
+import { getClientTeamsLookupListThunk } from "../../../../shared/redux/slices/lookup/thunks";
 
 const Layout = () => {
   const dispatch = useDispatch();
@@ -85,7 +86,8 @@ const Layout = () => {
   const handleCloseDelete = useCallback(() => {
     setOpenDeleteDialog(false);
     setOpenEditId(null);
-  }, []);
+    dispatch(getClientTeamsLookupListThunk());
+  }, [dispatch]);
 
   const handleOpenEditor = useCallback((roleId: string) => {
     setOpenEditId(roleId);
@@ -95,7 +97,8 @@ const Layout = () => {
   const handleCloseEditor = useCallback(() => {
     setOpenEditDrawer(false);
     setOpenEditId(null);
-  }, []);
+    dispatch(getClientTeamsLookupListThunk());
+  }, [dispatch]);
 
   return (
     <>
