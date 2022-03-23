@@ -10,20 +10,16 @@ import SuspenseLoadingWrapper from "../shared/components/SuspenseLoadingWrapper"
 import NavigateToNotFound from "./NavigateToNotFound";
 import RequireAuth from "./RequireAuth";
 
-const ChatScreen = lazy(() => import(/* webpackChunkName: 'ChatScreen' */ "../modules/ChatScreen"));
-const TasksScreen = lazy(() => import(/* webpackChunkName: 'TasksScreen' */ "../modules/TasksScreen"));
-const ReportsScreen = lazy(() => import(/* webpackChunkName: 'ReportsScreen' */ "../modules/ReportsScreen"));
-const CalendarScreen = lazy(() => import(/* webpackChunkName: 'CalendarScreen' */ "../modules/CalendarScreen"));
-const TeamActivityScreen = lazy(() => import(/* webpackChunkName: 'CalendarScreen' */ "../modules/TeamActivity"));
-const SettingsScreen = lazy(() => import(/* webpackChunkName: 'SettingsScreen' */ "../modules/SettingsScreen"));
-const RegisterScreen = lazy(() => import(/* webpackChunkName: 'RegisterScreen' */ "../modules/RegisterScreen"));
-const ForgotPasswordScreen = lazy(
-  () => import(/* webpackChunkName: 'ForgotPasswordScreen' */ "../modules/ForgotPasswordScreen")
-);
-const ConfirmAccountScreen = lazy(
-  () => import(/* webpackChunkName: 'ConfirmAccountScreen' */ "../modules/ConfirmAccountScreen")
-);
-const Reset2FAScreen = lazy(() => import(/* webpackChunkName: 'Reset2FAScreen' */ "../modules/Reset2FAScreen"));
+const ChatScreen = lazy(() => import("../modules/ChatScreen"));
+const TasksScreen = lazy(() => import("../modules/TasksScreen"));
+const ReportsScreen = lazy(() => import("../modules/ReportsScreen"));
+const CalendarScreen = lazy(() => import("../modules/CalendarScreen"));
+const TeamActivityScreen = lazy(() => import("../modules/TeamActivity"));
+const SettingsScreen = lazy(() => import("../modules/SettingsScreen"));
+const RegisterScreen = lazy(() => import("../modules/RegisterScreen"));
+const ForgotPasswordScreen = lazy(() => import("../modules/ForgotPasswordScreen"));
+const ConfirmAccountScreen = lazy(() => import("../modules/ConfirmAccountScreen"));
+const Reset2FAScreen = lazy(() => import("../modules/Reset2FAScreen"));
 
 const AppRoutes = () => {
   return (

@@ -1,12 +1,13 @@
 {
-  "name": "web-client",
+  "name": "message-box-web-client",
   "private": true,
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
-    "lint": "eslint --max-warnings=0 src"
+    "preview": "vite preview --port 3000",
+    "lint": "eslint --max-warnings=0 src",
+    "cert": "rm -rf .cert && mkdir -p .cert && mkcert -key-file ./.cert/key.pem -cert-file ./.cert/cert.pem 'localhost'"
   },
   "dependencies": {
     "@date-io/moment": "^2.13.1",
