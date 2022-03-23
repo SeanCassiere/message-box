@@ -13,6 +13,7 @@ import DrawerHeaderSpacer from "./DrawerHeaderSpacer";
 import CustomAppBar from "./CustomAppBar";
 import CustomDrawer from "./CustomDrawer";
 import SuspenseLoadingWrapper from "../../SuspenseLoadingWrapper";
+import NotificationPopoverContent from "./NotificationPopoverContent";
 
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -34,6 +35,7 @@ import Avatar from "@mui/material/Avatar";
 import MenuItem from "@mui/material/MenuItem";
 import Badge from "@mui/material/Badge";
 import TextField from "@mui/material/TextField";
+import Popover from "@mui/material/Popover";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -139,6 +141,19 @@ const NavigationWrapper: React.FC = (props) => {
     navigate(route);
   };
 
+  const [notificationAnchorEl, setNotificationAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleNotificationButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setNotificationAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseNotificationsTray = () => {
+    setNotificationAnchorEl(null);
+  };
+
+  const openNotificationTray = Boolean(notificationAnchorEl);
+  const notificationButtonId = openNotificationTray ? "simple-popover" : undefined;
+
   return (
     <Box sx={{ display: "flex", maxHeight: "100%", overflowY: "hidden" }}>
       <CustomAppBar position="fixed" open={open} elevation={0}>
@@ -190,6 +205,7 @@ const NavigationWrapper: React.FC = (props) => {
           )}
           <Box sx={{ flexGrow: 0 }}>
             <IconButton
+              aria-describedby={notificationButtonId}
               color="secondary"
               size="medium"
               sx={{
@@ -198,11 +214,28 @@ const NavigationWrapper: React.FC = (props) => {
                 bgcolor: secondaryNavigationColor,
                 ":hover": { bgcolor: secondaryNavigationColor },
               }}
+              onClick={handleNotificationButtonClick}
             >
-              <Badge badgeContent={1} color="primary" overlap="circular">
+              <Badge badgeContent={0} color="primary" overlap="circular">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
+            <Popover
+              id={notificationButtonId}
+              open={openNotificationTray}
+              anchorEl={notificationAnchorEl}
+              onClose={handleCloseNotificationsTray}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+            >
+              <NotificationPopoverContent />
+            </Popover>
             <IconButton
               color="secondary"
               size="medium"
