@@ -163,15 +163,15 @@ const CalendarScreen = () => {
   }, [navigate]);
 
   const userSelectOptions = useMemo(() => {
-    return usersList.map((user) => {
-      return {
-        id: user.userId,
-        label: `${user.firstName} ${user.lastName}`,
-      };
-    });
+    return usersList.map((user) => ({
+      id: user.userId,
+      label: `${user.firstName} ${user.lastName}`,
+    }));
   }, [usersList]);
 
   const selectedUserValue = useMemo(() => {
+    if (currentViewingUserId === "") return undefined;
+
     const user = usersList.find((u) => u.userId === currentViewingUserId);
 
     if (!user) {
@@ -268,12 +268,12 @@ const CalendarScreen = () => {
       />
       <PagePaperWrapper>
         <Grid container sx={{ marginBottom: 2 }}>
-          <Grid item xs={12} md={5} sx={{ mb: 1 }}>
+          <Grid item xs={12} md={7} sx={{ mb: 1 }}>
             <Typography variant="h4" fontWeight={500} component="h1">
               Calendar
             </Typography>
           </Grid>
-          <Grid item xs={12} md={7}>
+          <Grid item xs={12} md={5}>
             <Stack spacing={2} direction="row" justifyContent={{ sx: "start", md: "end" }} alignItems="center">
               <IconButton
                 sx={{ mr: 1 }}
@@ -287,13 +287,16 @@ const CalendarScreen = () => {
                   id="user-calendar-view-options"
                   options={userSelectOptions}
                   value={selectedUserValue}
+                  freeSolo
                   autoSelect
+                  openOnFocus
                   onChange={handleSelectCurrentUserId}
                   sx={{ width: 250 }}
+                  size="small"
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      size="small"
+                      // size="small"
                       InputProps={{ ...params.InputProps, endAdornment: <></> }}
                       fullWidth
                     />
