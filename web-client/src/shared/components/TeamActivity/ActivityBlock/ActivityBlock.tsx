@@ -30,6 +30,16 @@ interface IProps {
   liftShadow?: true;
 }
 
+function sortTeamNames(a: ITeamMember, b: ITeamMember) {
+  if (a.firstName && b.firstName && a.firstName < b.firstName) {
+    return -1;
+  }
+  if (a.firstName && b.firstName && a?.firstName > b?.firstName) {
+    return 1;
+  }
+  return 0;
+}
+
 const ActivityBlock = (props: IProps) => {
   const { overviewTeamData, initiallyShowFull } = props;
   const { onlineUsersList } = useSelector(selectLookupListsState);
@@ -44,8 +54,12 @@ const ActivityBlock = (props: IProps) => {
         if (res.status === 200) {
           // sort the online users to be shown first
           const onlineUserIds = onlineUsersList.map((u) => u.userId);
-          const onlineFirst = res.data.members.filter((m: ITeamMember) => onlineUserIds.includes(m.userId));
-          const offlineFirst = res.data.members.filter((m: ITeamMember) => !onlineUserIds.includes(m.userId));
+          const onlineFirst = res.data.members
+            .filter((m: ITeamMember) => onlineUserIds.includes(m.userId))
+            .sort(sortTeamNames);
+          const offlineFirst = res.data.members
+            .filter((m: ITeamMember) => !onlineUserIds.includes(m.userId))
+            .sort(sortTeamNames);
 
           dummyPromise(750).then(() => {
             setFetchedTeamData({ ...res.data, members: [...onlineFirst, ...offlineFirst] });
