@@ -3,7 +3,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { indigo } from "@mui/material/colors";
 
-import { selectUserState } from "../../../redux/store";
+import { selectLookupListsState, selectUserState } from "../../../redux/store";
 import { stringAvatar } from "./navUtils";
 import { secondaryNavigationColor } from "../../../util/constants";
 import { usePermission } from "../../../hooks/usePermission";
@@ -13,6 +13,7 @@ import DrawerHeaderSpacer from "./DrawerHeaderSpacer";
 import CustomAppBar from "./CustomAppBar";
 import CustomDrawer from "./CustomDrawer";
 import SuspenseLoadingWrapper from "../../SuspenseLoadingWrapper";
+import NotificationPopoverContent from "./NotificationPopoverContent";
 
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -34,6 +35,7 @@ import Avatar from "@mui/material/Avatar";
 import MenuItem from "@mui/material/MenuItem";
 import Badge from "@mui/material/Badge";
 import TextField from "@mui/material/TextField";
+import Popover from "@mui/material/Popover";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -54,7 +56,7 @@ const NavigationWrapper: React.FC = (props) => {
   const matchLargerThanTablet = useMediaQuery(theme.breakpoints.up("md"));
 
   const { children } = props;
-  const { userProfile } = useSelector(selectUserState);
+  const { userProfile, statusList } = useSelector(selectUserState);
 
   const isChatAccessible = usePermission("chat:read");
   const isTasksAccessible = usePermission("task:read");
@@ -102,7 +104,7 @@ const NavigationWrapper: React.FC = (props) => {
   const [currentLink, setCurrentLink] = React.useState<string>("");
   const [open, setOpen] = React.useState(false);
 
-  const [currentStatusValue, setCurrentStatusValue] = React.useState("30");
+  const [currentStatusValue, setCurrentStatusValue] = React.useState("Online");
 
   // handle the user dropdown menu
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -139,6 +141,19 @@ const NavigationWrapper: React.FC = (props) => {
     navigate(route);
   };
 
+  const [notificationAnchorEl, setNotificationAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleNotificationButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setNotificationAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseNotificationsTray = () => {
+    setNotificationAnchorEl(null);
+  };
+
+  const openNotificationTray = Boolean(notificationAnchorEl);
+  const notificationButtonId = openNotificationTray ? "simple-popover" : undefined;
+
   return (
     <Box sx={{ display: "flex", maxHeight: "100%", overflowY: "hidden" }}>
       <CustomAppBar position="fixed" open={open} elevation={0}>
@@ -165,7 +180,6 @@ const NavigationWrapper: React.FC = (props) => {
               <TextField
                 id="standard-select-currency"
                 select
-                // label='Select'
                 value={currentStatusValue}
                 onChange={(evt) => setCurrentStatusValue(evt.target.value)}
                 variant="standard"
@@ -182,14 +196,24 @@ const NavigationWrapper: React.FC = (props) => {
                   "& .MuiSelect-icon": { color: "primary.600" },
                 }}
               >
-                <MenuItem value="10">General work</MenuItem>
-                <MenuItem value="20">Busy</MenuItem>
-                <MenuItem value="30">Away from desk</MenuItem>
+                {statusList.map((status, idx) => (
+                  <MenuItem
+                    key={`${idx}-${String(status.status).toLowerCase().replace(" ", "-")}-${status.color}`}
+                    value={status.status}
+                  >
+                    <Box
+                      component="span"
+                      sx={{ width: 10, height: 10, bgcolor: status.color, borderRadius: 50, mr: 2 }}
+                    ></Box>
+                    {status.status}
+                  </MenuItem>
+                ))}
               </TextField>
             </Box>
           )}
           <Box sx={{ flexGrow: 0 }}>
             <IconButton
+              aria-describedby={notificationButtonId}
               color="secondary"
               size="medium"
               sx={{
@@ -198,11 +222,28 @@ const NavigationWrapper: React.FC = (props) => {
                 bgcolor: secondaryNavigationColor,
                 ":hover": { bgcolor: secondaryNavigationColor },
               }}
+              onClick={handleNotificationButtonClick}
             >
-              <Badge badgeContent={1} color="primary" overlap="circular">
+              <Badge badgeContent={0} color="primary" overlap="circular">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
+            <Popover
+              id={notificationButtonId}
+              open={openNotificationTray}
+              anchorEl={notificationAnchorEl}
+              onClose={handleCloseNotificationsTray}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+            >
+              <NotificationPopoverContent />
+            </Popover>
             <IconButton
               color="secondary"
               size="medium"

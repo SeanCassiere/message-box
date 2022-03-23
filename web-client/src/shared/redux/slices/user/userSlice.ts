@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IClientProfile } from "../../../interfaces/Client.interfaces";
-import { IUserProfile } from "../../../interfaces/User.interfaces";
+import { ICurrentUserStatusInterface, IUserProfile } from "../../../interfaces/User.interfaces";
+import { DEFAULT_USER_STATUSES } from "../../../util/general";
 
 import { getProfilesThunk } from "./thunks";
 
@@ -18,6 +19,7 @@ interface UserSliceState {
     timeFormat: string;
     defaultDateRefreshInterval: number;
   };
+  statusList: ICurrentUserStatusInterface[];
 }
 
 const initialState: UserSliceState = {
@@ -34,6 +36,7 @@ const initialState: UserSliceState = {
     timeFormat: "h:mm a",
     defaultDateRefreshInterval: 30000,
   },
+  statusList: DEFAULT_USER_STATUSES,
 };
 
 const userSlice = createSlice({
