@@ -93,7 +93,7 @@ const SelectChat = (props: Props) => {
           <Stack direction="row" alignItems="center" spacing={2} sx={{ minHeight: "3rem" }}>
             <Box>
               <StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot">
-                <Avatar alt={chat.conversationName} src="/static/images/avatar/1.jpg" />
+                <Avatar alt={chat.conversationName} />
               </StyledBadge>
             </Box>
             <Box flexGrow={1}>{chat.conversationName}</Box>
