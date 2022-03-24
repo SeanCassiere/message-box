@@ -1,25 +1,26 @@
-import React, { lazy } from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import NoAuthOnlyRoute from "./NoAuthOnlyRoute";
+import RequireAuth from "./RequireAuth";
+import RequirePermission from "./RequirePermission";
+import NavigateToNotFound from "./NavigateToNotFound";
 
 import NotFoundScreen from "../modules/NotFoundScreen";
 import LogoutScreen from "../modules/LogoutScreen";
 import LoginScreen from "../modules/LoginScreen";
 import SuspenseLoadingWrapper from "../shared/components/SuspenseLoadingWrapper";
-import NavigateToNotFound from "./NavigateToNotFound";
-import RequireAuth from "./RequireAuth";
 
-const ChatScreen = lazy(() => import("../modules/ChatScreen"));
-const TasksScreen = lazy(() => import("../modules/TasksScreen"));
-const ReportsScreen = lazy(() => import("../modules/ReportsScreen"));
-const CalendarScreen = lazy(() => import("../modules/CalendarScreen"));
-const TeamActivityScreen = lazy(() => import("../modules/TeamActivity"));
-const SettingsScreen = lazy(() => import("../modules/SettingsScreen"));
-const RegisterScreen = lazy(() => import("../modules/RegisterScreen"));
-const ForgotPasswordScreen = lazy(() => import("../modules/ForgotPasswordScreen"));
-const ConfirmAccountScreen = lazy(() => import("../modules/ConfirmAccountScreen"));
-const Reset2FAScreen = lazy(() => import("../modules/Reset2FAScreen"));
+const ChatScreen = React.lazy(() => import("../modules/ChatScreen"));
+const TasksScreen = React.lazy(() => import("../modules/TasksScreen"));
+const ReportsScreen = React.lazy(() => import("../modules/ReportsScreen"));
+const CalendarScreen = React.lazy(() => import("../modules/CalendarScreen"));
+const TeamActivityScreen = React.lazy(() => import("../modules/TeamActivity"));
+const SettingsScreen = React.lazy(() => import("../modules/SettingsScreen"));
+const RegisterScreen = React.lazy(() => import("../modules/RegisterScreen"));
+const ForgotPasswordScreen = React.lazy(() => import("../modules/ForgotPasswordScreen"));
+const ConfirmAccountScreen = React.lazy(() => import("../modules/ConfirmAccountScreen"));
+const Reset2FAScreen = React.lazy(() => import("../modules/Reset2FAScreen"));
 
 const AppRoutes = () => {
   return (
@@ -27,25 +28,38 @@ const AppRoutes = () => {
       <Routes>
         {/* All routes that require the user to be authenticated */}
         <Route element={<RequireAuth />}>
-          <Route path="tasks" element={<TasksScreen />}>
-            <Route path="view/:id" element={<TasksScreen />} />
-            <Route path=":tab" element={<TasksScreen />} />
+          <Route element={<RequirePermission requiredPermission="task:read" />}>
+            <Route path="tasks" element={<TasksScreen />}>
+              <Route path="view/:id" element={<TasksScreen />} />
+              <Route path=":tab" element={<TasksScreen />} />
+            </Route>
           </Route>
 
-          <Route path="team-activity" element={<TeamActivityScreen />}></Route>
-
-          <Route path="calendar" element={<CalendarScreen />}>
-            <Route path=":id" element={<CalendarScreen />} />
+          <Route element={<RequirePermission requiredPermission="team-activity:read" />}>
+            <Route path="team-activity" element={<TeamActivityScreen />}></Route>
           </Route>
 
-          <Route path="reports" element={<ReportsScreen />}></Route>
-
-          <Route path="chat" element={<ChatScreen />}></Route>
-
-          <Route path="settings" element={<SettingsScreen />}>
-            <Route path=":tab/:module" element={<SettingsScreen />} />
-            <Route path=":tab" element={<SettingsScreen />} />
+          <Route element={<RequirePermission requiredPermission="calendar:read" />}>
+            <Route path="calendar" element={<CalendarScreen />}>
+              <Route path=":id" element={<CalendarScreen />} />
+            </Route>
           </Route>
+
+          <Route element={<RequirePermission requiredPermission="report:read" />}>
+            <Route path="reports" element={<ReportsScreen />}></Route>
+          </Route>
+
+          <Route element={<RequirePermission requiredPermission="chat:read" />}>
+            <Route path="chat" element={<ChatScreen />}></Route>
+          </Route>
+
+          <Route element={<RequirePermission requiredPermission="profile:read" />}>
+            <Route path="settings" element={<SettingsScreen />}>
+              <Route path=":tab/:module" element={<SettingsScreen />} />
+              <Route path=":tab" element={<SettingsScreen />} />
+            </Route>
+          </Route>
+          {/** end of authenticated routes */}
         </Route>
 
         {/* wo/Auth -> only no-authenticated */}
