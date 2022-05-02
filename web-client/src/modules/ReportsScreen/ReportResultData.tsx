@@ -28,9 +28,9 @@ interface IProps {
 const ReportResultData = (props: IProps) => {
   const { selectedReport } = props;
 
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
 
-  const initialData = selectedReport.searchFields.reduce((prev, field) => {
+  const initialData = selectedReport?.searchFields.reduce((prev, field) => {
     if (field.fieldType === "form-date" && (field.defaultValue === "" || field.defaultValue === null)) {
       return { ...prev, [field.fieldName]: null };
     }
@@ -41,6 +41,7 @@ const ReportResultData = (props: IProps) => {
   const viewableFilters = selectedReport.searchFields.filter((f) => f.hidden === false);
   const setInitialFilters = React.useCallback(() => {
     setFilterData(initialData);
+    setLoading(true);
   }, [initialData]);
 
   const [reportData, setReportData] = React.useState([]);
@@ -53,7 +54,7 @@ const ReportResultData = (props: IProps) => {
       colData.headerName = field.label;
       if (field.fieldName === "timestamp") {
         colData.valueFormatter = (value: any) => {
-          return formatDateTimeShort(value);
+          return formatDateTimeShort(value.value);
         };
         colData.minWidth = 250;
       }
@@ -77,7 +78,7 @@ const ReportResultData = (props: IProps) => {
             const filterValues = removeEmptyQueryParamsToSend(filterData);
             setLoading(true);
             client
-              .post(`/Reports`, { procedure: selectedReport.procedureName, ...filterValues })
+              .post(`/Reports`, { procedure: selectedReport.procedureName, ...filterValues }, { timeout: 60000 })
               .then((res) => {
                 if (res.status === 200) {
                   setReportData(res.data);
@@ -100,14 +101,14 @@ const ReportResultData = (props: IProps) => {
               </Box>
             </Grid>
           ))}
-          <Grid item xs={12} md={1}>
+          <Grid item xs={12} md={2}>
             <Box>
               <Button fullWidth type="submit">
                 Search
               </Button>
             </Box>
           </Grid>
-          <Grid item xs={12} md={1}>
+          <Grid item xs={12} md={2}>
             <Box>
               <Button type="reset" color="secondary" fullWidth onClick={setInitialFilters}>
                 Clear
@@ -116,15 +117,17 @@ const ReportResultData = (props: IProps) => {
           </Grid>
         </Grid>
       </PageBlockItem>
-      <PageBlockItem height={800}>
-        <DataGrid
-          sx={{ minHeight: "200px" }}
-          columns={columns}
-          rows={reportData}
-          loading={loading}
-          components={{ Toolbar: CustomToolBar, LoadingOverlay: LinearProgress }}
-        />
-      </PageBlockItem>
+      {loading === false && (
+        <PageBlockItem height={650}>
+          <DataGrid
+            sx={{ minHeight: "200px" }}
+            columns={columns}
+            rows={reportData}
+            loading={loading}
+            components={{ Toolbar: CustomToolBar, LoadingOverlay: LinearProgress }}
+          />
+        </PageBlockItem>
+      )}
     </>
   );
 };

@@ -57,7 +57,7 @@ const ReportsScreen = () => {
       <PageBlockItem title="Select report">
         <SearchForReports
           availableReports={availableReports}
-          currentReportId={selectedReportData?.reportId ?? ""}
+          selectedReport={selectedReportData}
           selectReportFunc={selectViewingReportId}
         />
       </PageBlockItem>

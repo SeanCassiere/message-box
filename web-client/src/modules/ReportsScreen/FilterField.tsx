@@ -41,6 +41,7 @@ const FilterField = React.memo(
               <TextField
                 variant="outlined"
                 fullWidth
+                label={field.label}
                 {...params}
                 name={field.fieldName}
                 size="small"
@@ -62,7 +63,6 @@ const FilterField = React.memo(
               filterData[field.fieldName] ? field.options.find((o) => o.value === filterData[field.fieldName]) : null
             }
             getOptionLabel={(option) => option.label}
-            openOnFocus
             onChange={(evt, value) => {
               if (!value) {
                 setFilterData((prev: any) => ({ ...prev, [field.fieldName]: "" }));
@@ -75,9 +75,8 @@ const FilterField = React.memo(
             renderInput={(params) => (
               <TextField
                 {...params}
-                placeholder={field.label}
-                InputLabelProps={{ disableAnimation: false, shrink: true }}
-                InputProps={{ ...params.InputProps, endAdornment: <></> }}
+                label={field.label}
+                InputLabelProps={{ disableAnimation: false, shrink: undefined }}
                 fullWidth
                 required={field.mandatory}
               />

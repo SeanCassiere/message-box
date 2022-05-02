@@ -11,12 +11,12 @@ import { IReportSchema } from "../../shared/interfaces/Reports.interfaces";
 
 interface Props {
   availableReports: IReportSchema[];
-  currentReportId: string;
+  selectedReport: IReportSchema | null;
   selectReportFunc: (reportId: string) => void;
 }
 
 const SearchForReports = (props: Props) => {
-  const { availableReports, currentReportId, selectReportFunc } = props;
+  const { availableReports, selectedReport, selectReportFunc } = props;
 
   const formattedReports = useMemo(() => {
     const reps = availableReports.map((report) => {
@@ -69,11 +69,11 @@ const SearchForReports = (props: Props) => {
                   cursor: "pointer",
                   px: 2,
                   py: 1,
-                  bgcolor: currentReportId === report.reportId ? "primary.50" : "#fff",
+                  bgcolor: selectedReport?.reportId === report.reportId ? "primary.50" : "#fff",
                   borderStyle: "solid",
-                  borderColor: currentReportId === report.reportId ? "primary.500" : COMMON_ITEM_BORDER_COLOR,
+                  borderColor: selectedReport?.reportId === report.reportId ? "primary.500" : COMMON_ITEM_BORDER_COLOR,
                   borderWidth: 2,
-                  borderRadius: 1,
+                  borderRadius: 0.5,
                 }}
               >
                 {report.label}

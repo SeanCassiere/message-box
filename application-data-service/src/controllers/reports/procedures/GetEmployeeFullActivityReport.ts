@@ -16,7 +16,7 @@ const validationSchema = yup.object().shape({
   }),
 });
 
-export async function procedure_GetEmployeeLoginReportForClient(req: Request, res: Response) {
+export async function procedure_GetEmployeeFullActivity(req: Request, res: Response) {
   const checkErrors = await validateYupSchema(validationSchema, req.body);
   if (checkErrors && checkErrors.length > 0) {
     return res.json({
@@ -43,7 +43,7 @@ export async function procedure_GetEmployeeLoginReportForClient(req: Request, re
     users = clientUsers.map((u) => ({ ...u, fullName: `${u.firstName} ${u.lastName}` }));
   } catch (error) {
     log.error(
-      `POST /reports/procedure_GetEmployeeLoginReportForClient -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\n
+      `POST /reports/procedure_GetEmployeeFullActivityReport -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\n
       could not fetch the user ids for this client\n
       ${error}`
     );
@@ -54,7 +54,6 @@ export async function procedure_GetEmployeeLoginReportForClient(req: Request, re
     dbQuery.andWhere("user_id = :user_id", { user_id: body.userId });
   }
 
-  dbQuery.andWhere("action IN (:...actionLogin)", { actionLogin: ["login", "logout"] });
   dbQuery.andWhere("created_at >= :startDate", { startDate: new Date(body.startDate).toISOString() });
   dbQuery.andWhere("created_at <= :endDate", { endDate: new Date(body.endDate).toISOString() });
   dbQuery.orderBy("created_at", "ASC");

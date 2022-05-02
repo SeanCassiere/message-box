@@ -27,7 +27,7 @@ export async function getReportsForClient(req: Request, res: Response) {
 
   const variables = req.body.variables;
 
-  const reports = await resolveReportsListForClient({ clientId: variables.clientId });
+  const reports = await resolveReportsListForClient({ clientId: variables.clientId, userId: variables.userId });
 
   return res.json({
     statusCode: 200,

@@ -43,7 +43,9 @@ export async function procedure_GetEmployeeLoginReportByTeam(req: Request, res: 
     users = clientUsers.map((u) => ({ ...u, fullName: `${u.firstName} ${u.lastName}` }));
   } catch (error) {
     log.error(
-      `POST /reports/procedure_GetEmployeeLoginByTeam -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\ncould not fetch the user ids for this client\n${error}`
+      `POST /reports/procedure_GetEmployeeLoginByTeam -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\n
+      could not fetch the user ids for this client\n
+      ${error}`
     );
   }
 
@@ -54,16 +56,20 @@ export async function procedure_GetEmployeeLoginReportByTeam(req: Request, res: 
     });
 
     userIdsInTeam = response.data;
-    console.log("response.data", response.data);
   } catch (error) {
     log.error(
-      `POST /reports/procedure_GetEmployeeLoginByTeam -> ${AUTH_SERVICE_URI}/clients/getUserIdsForTeamId\ncould not fetch the user ids for this client\n${error}`
+      `POST /reports/procedure_GetEmployeeLoginByTeam -> ${AUTH_SERVICE_URI}/clients/getUserIdsForTeamId\n
+      could not fetch the user ids for this client\n
+      ${error}`
     );
   }
 
   const dbQuery = ActivityLog.createQueryBuilder().where("client_id = :client_id", { client_id: body.clientId });
   dbQuery.andWhere("user_id IN (:...user_id)", { user_id: [...userIdsInTeam] });
   dbQuery.andWhere("action IN (:...actionLogin)", { actionLogin: ["login", "logout"] });
+  dbQuery.andWhere("created_at >= :startDate", { startDate: new Date(body.startDate).toISOString() });
+  dbQuery.andWhere("created_at <= :endDate", { endDate: new Date(body.endDate).toISOString() });
+  dbQuery.orderBy("created_at", "ASC");
 
   try {
     const results = await dbQuery.getMany();
