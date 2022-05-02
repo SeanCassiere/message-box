@@ -2,137 +2,15 @@ import { AUTH_SERVICE_URI } from "#root/utils/constants";
 import { log } from "#root/utils/logger";
 import axios from "axios";
 
+export const REPORT_PROCEDURES = {
+  GetEmployeeLoginReportForClient: "GetEmployeeLoginReportForClient",
+};
+
 const DEFAULT_REPORTS = [
   {
     reportId: "1",
-    reportName: "Report 1",
-    procedureName: "demoGetReportsForClient",
-    searchFields: [
-      {
-        fieldName: "clientId",
-        fieldType: "form-text",
-        label: "Client ID",
-        defaultValue: "",
-        options: [],
-        mandatory: true,
-        visible: false,
-        hidden: true,
-      },
-      {
-        fieldName: "name",
-        fieldType: "form-text",
-        defaultValue: "",
-        label: "Name",
-        options: [],
-        mandatory: true,
-        visible: true,
-        hidden: false,
-      },
-      {
-        fieldName: "userId",
-        fieldType: "form-select",
-        defaultValue: "",
-        label: "Users",
-        options: [],
-        mandatory: true,
-        visible: true,
-        hidden: false,
-      },
-      {
-        fieldName: "startDate",
-        fieldType: "form-date",
-        defaultValue: "",
-        label: "Start Date",
-        options: [],
-        mandatory: true,
-        visible: true,
-        hidden: false,
-      },
-      {
-        fieldName: "endDate",
-        fieldType: "form-date",
-        defaultValue: "",
-        label: "End Date",
-        options: [],
-        mandatory: true,
-        visible: true,
-        hidden: false,
-      },
-    ],
-    reportFields: [
-      {
-        fieldName: "startDate",
-        fieldType: "text",
-        label: "Start Date",
-        visible: true,
-      },
-    ],
-  },
-  {
-    reportId: "2",
-    reportName: "Report 2",
-    procedureName: "demoGetReportsForClient2",
-    searchFields: [
-      {
-        fieldName: "clientId",
-        fieldType: "form-text",
-        defaultValue: "",
-        label: "Client ID",
-        options: [],
-        mandatory: true,
-        visible: false,
-        hidden: true,
-      },
-      {
-        fieldName: "name",
-        fieldType: "form-text",
-        defaultValue: "",
-        label: "Name",
-        options: [],
-        mandatory: true,
-        visible: true,
-        hidden: false,
-      },
-      {
-        fieldName: "currentDate",
-        fieldType: "form-date",
-        defaultValue: "",
-        label: "Current Date",
-        options: [],
-        mandatory: false,
-        visible: true,
-        hidden: false,
-      },
-      {
-        fieldName: "userId",
-        fieldType: "form-select",
-        defaultValue: "",
-        label: "User",
-        options: [],
-        mandatory: false,
-        visible: true,
-        hidden: false,
-      },
-    ],
-    reportFields: [
-      {
-        fieldName: "startDate",
-        fieldType: "text",
-        label: "Start Date",
-        visible: true,
-      },
-      {
-        fieldName: "endDate",
-        fieldType: "text",
-        label: "End Date",
-        visible: true,
-      },
-    ],
-  },
-  {
-    reportId: "3",
     reportName: "Employee Login Report",
-    procedureName: "GetEmployeeLoginReportForClient",
+    procedureName: REPORT_PROCEDURES.GetEmployeeLoginReportForClient,
     searchFields: [
       {
         fieldName: "clientId",
@@ -148,9 +26,9 @@ const DEFAULT_REPORTS = [
         fieldName: "userId",
         fieldType: "form-select",
         defaultValue: "",
-        label: "Users",
+        label: "Employee",
         options: [],
-        mandatory: true,
+        mandatory: false,
         visible: true,
         hidden: false,
       },
@@ -183,13 +61,13 @@ const DEFAULT_REPORTS = [
         visible: true,
       },
       {
-        fieldName: "activityAction",
+        fieldName: "action",
         fieldType: "text",
         label: "Action",
         visible: true,
       },
       {
-        fieldName: "dateTime",
+        fieldName: "timestamp",
         fieldType: "date-time",
         label: "Timestamp",
         visible: true,
@@ -231,8 +109,13 @@ function enterOptionsValueIntoSearchField(reports: typeof DEFAULT_REPORTS, field
 }
 
 export async function resolveReportsListForClient({ clientId }: { clientId: string }) {
-  let users: any[] = [];
+  const date = new Date(),
+    y = date.getFullYear(),
+    m = date.getMonth();
+  const firstDay = new Date(y, m, 1);
+  const lastDay = new Date(y, m + 1, 0);
 
+  let users: any[] = [];
   try {
     let clientUsers: any[] = [];
     const { data: response } = await axios.post(`${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient`, {
@@ -245,15 +128,15 @@ export async function resolveReportsListForClient({ clientId }: { clientId: stri
     users = clientUsers.map((u) => ({ value: `${u.userId}`, label: `${u.firstName} ${u.lastName}` }));
   } catch (error) {
     log.error(
-      `POST /clients/createCalendarEventForUser -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\ncould not fetch the user ids for this client\n${error}`
+      `POST /reports/resolveReportsListForClient -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\ncould not fetch the user ids for this client\n${error}`
     );
   }
 
   const reports1 = enterDefaultValueIntoSearchField(DEFAULT_REPORTS, "clientId", clientId); // w/ clientId
-
   const reports2 = enterOptionsValueIntoSearchField(reports1, "userId", users); // w/ userIds
-
   const reports3 = enterDefaultValueIntoSearchField(reports2, "userId", null); // w/ default userId to null
+  const reports4 = enterDefaultValueIntoSearchField(reports3, "startDate", firstDay.toISOString().substring(0, 10)); // w/ startDate
+  const reports5 = enterDefaultValueIntoSearchField(reports4, "endDate", lastDay.toISOString().substring(0, 10)); // w/ endDate
 
-  return reports3;
+  return reports5;
 }

@@ -73,7 +73,7 @@ const SearchForReports = (props: Props) => {
                   borderStyle: "solid",
                   borderColor: currentReportId === report.reportId ? "primary.500" : COMMON_ITEM_BORDER_COLOR,
                   borderWidth: 2,
-                  borderRadius: 3,
+                  borderRadius: 1,
                 }}
               >
                 {report.label}

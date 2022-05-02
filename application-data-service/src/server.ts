@@ -15,6 +15,8 @@ import { getCalendarEventById } from "./controllers/calendar/getCalendarEventByI
 import { fullUpdateCalendarEventById } from "./controllers/calendar/fullUpdateCalendarEventById";
 import { patchCalendarEventDetailsById } from "./controllers/calendar/patchCalendarEventDetailsById";
 import { getReportsForClient } from "./controllers/reports/getReportsForClient";
+import { createActivityLog } from "./controllers/activity/createActivityLog";
+import { runReportForClient } from "./controllers/reports/runReportForClient";
 
 const expressApp = express();
 
@@ -45,5 +47,8 @@ expressApp.post("/calendar-events/patchCalendarEventDetailsById", patchCalendarE
  * All reports related routes
  */
 expressApp.post("/reports/getReportsForClient", getReportsForClient);
+expressApp.post("/reports/runReportForClient", runReportForClient);
+
+expressApp.post("/activity/createActivityLog", createActivityLog);
 
 export default expressApp;

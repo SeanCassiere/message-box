@@ -16,6 +16,8 @@ import Token from "#root/db/entities/Token";
 import { redis } from "#root/redis";
 import { REDIS_CONSTANTS } from "#root/utils/redisConstants";
 import { log } from "#root/utils/logger";
+import { APP_DATA_SERVICE_URI } from "#root/utils/constants";
+import { createActivityLog } from "#root/utils/createActivityLog";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({
@@ -112,10 +114,12 @@ export async function getAccessTokenFor2FACode(req: Request, res: Response, next
     // return the access token
     const accessToken = await generateJWT(user, "10min");
 
-    const newRefreshTokenObject = Token.create({ userId: user.userId });
+    const newRefreshTokenObject = Token.create({ userId: user.userId, clientId: user.clientId });
     newRefreshTokenObject.appendRefreshToken();
     await newRefreshTokenObject.save();
     newRefreshTokenObject.reload();
+
+    await createActivityLog({ clientId: user.clientId, userId, action: "login", description: "User logged in" });
 
     return res.json({
       statusCode: 200,

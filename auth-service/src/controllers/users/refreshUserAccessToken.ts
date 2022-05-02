@@ -99,7 +99,7 @@ export async function refreshUserAccessToken(req: Request, res: Response, next: 
 
     const accessToken = await generateJWT(user, "10min");
 
-    const newRefreshTokenObject = Token.create({ userId: user.userId });
+    const newRefreshTokenObject = Token.create({ userId: user.userId, clientId: user.clientId });
     newRefreshTokenObject.appendRefreshToken();
     await newRefreshTokenObject.save();
     newRefreshTokenObject.reload();

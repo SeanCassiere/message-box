@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@types/express-jwt": "^6.0.3",
+    "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.6",
     "cors": "^2.8.5",

@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 
 import Token from "#root/db/entities/Token";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 export async function logoutUserToken(req: Request, res: Response, next: NextFunction) {
   const { cookie } = req.body;
@@ -26,6 +28,15 @@ export async function logoutUserToken(req: Request, res: Response, next: NextFun
         errors: [],
       });
     }
+
+    createActivityLog({
+      clientId: token.clientId,
+      userId: token.userId,
+      action: "logout",
+      description: "User logged out",
+    }).then(() => {
+      log.info(`User ${token.userId} logged out stored as activity log`);
+    });
 
     token.isBlocked = true;
     await token.save();

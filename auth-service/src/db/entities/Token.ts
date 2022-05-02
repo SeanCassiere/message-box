@@ -8,6 +8,9 @@ export default class Token extends BaseEntity {
   @PrimaryGeneratedColumn("increment", { name: "token_id" })
   tokenId: number;
 
+  @Column("text", { name: "client_id", default: "none" })
+  clientId: string;
+
   @Column("text", { name: "user_id" })
   userId: string;
 

@@ -1,6 +1,7 @@
 import dotenv from "dotenv-safe";
 import { Connection, createConnection } from "typeorm";
 
+import ActivityLog from "./entities/ActivityLog";
 import CalendarEvent from "./entities/CalendarEvent";
 import CalendarEventShareMapping from "./entities/CalendarEventShareMappings";
 import Task from "./entities/Task";
@@ -16,7 +17,7 @@ export async function initConnection(retries = 5) {
   while (retries) {
     try {
       connection = await createConnection({
-        entities: [Task, TaskShareMapping, CalendarEvent, CalendarEventShareMapping],
+        entities: [ActivityLog, Task, TaskShareMapping, CalendarEvent, CalendarEventShareMapping],
         type: "postgres",
         url: process.env.APPLICATION_DATA_SERVICE_DB_URL,
         synchronize: true,
