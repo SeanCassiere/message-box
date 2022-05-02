@@ -16,7 +16,6 @@ const ReportsScreen = () => {
   const [reports, setReports] = React.useState<IReportSchema[]>([]);
 
   const availableReports = useMemo(() => reports, [reports]);
-  const selectedReport = useMemo(() => selectedReportData, [selectedReportData]);
 
   const selectViewingReportId = useCallback(
     (reportId: string) => {

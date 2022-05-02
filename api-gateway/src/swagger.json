@@ -2829,6 +2829,9 @@
                 "fieldType": {
                   "type": "string"
                 },
+                "label": {
+                  "type": "string"
+                },
                 "visible": {
                   "type": "boolean",
                   "default": true

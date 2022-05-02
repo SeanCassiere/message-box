@@ -6,10 +6,11 @@ import Chip from "@mui/material/Chip";
 
 import { COMMON_ITEM_BORDER_COLOR } from "../../../util/constants";
 
-const PageBlockItem: React.FC<{ title?: string | React.ReactNode; badgeText?: string }> = ({
+const PageBlockItem: React.FC<{ title?: string | React.ReactNode; badgeText?: string; height?: any }> = ({
   children,
   title,
   badgeText,
+  height,
 }) => {
   return (
     <Box
@@ -23,6 +24,7 @@ const PageBlockItem: React.FC<{ title?: string | React.ReactNode; badgeText?: st
         borderColor: COMMON_ITEM_BORDER_COLOR,
         borderWidth: 3,
         borderStyle: "solid",
+        height: height ?? "auto",
       }}
     >
       {title && (

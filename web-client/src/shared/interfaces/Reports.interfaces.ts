@@ -22,6 +22,7 @@ export interface IReportSearchFieldSchema {
 
 export interface IReportColumnFieldSchema {
   fieldName: string;
+  label: string;
   fieldType: string;
   visible: boolean;
 }

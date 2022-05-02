@@ -3,7 +3,7 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { GridColDef, DataGrid } from "@mui/x-data-grid";
 
 import PageBlockItem from "../../shared/components/Layout/PageBlockItem";
 import FilterField from "./FilterField";
@@ -30,6 +30,19 @@ const ReportResultData = (props: IProps) => {
   const setInitialFilters = React.useCallback(() => {
     setFilterData(initialData);
   }, [initialData]);
+
+  const [reportData] = React.useState([]);
+
+  const columns: GridColDef[] = React.useMemo(() => {
+    const cols: GridColDef[] = [];
+    selectedReport.reportFields.forEach((field) => {
+      cols.push({
+        field: field.fieldName,
+        headerName: field.label,
+      });
+    });
+    return cols;
+  }, [selectedReport]);
 
   return (
     <>
@@ -68,10 +81,8 @@ const ReportResultData = (props: IProps) => {
           </Grid>
         </Grid>
       </PageBlockItem>
-      <PageBlockItem>
-        <Box>
-          <Typography>Table Data</Typography>
-        </Box>
+      <PageBlockItem height={500}>
+        <DataGrid sx={{ minHeight: "200px" }} columns={columns} rows={reportData} />
       </PageBlockItem>
     </>
   );
