@@ -11,6 +11,7 @@ const DEFAULT_REPORTS = [
       {
         fieldName: "clientId",
         fieldType: "form-text",
+        label: "Client ID",
         defaultValue: "",
         options: [],
         mandatory: true,
@@ -18,18 +19,10 @@ const DEFAULT_REPORTS = [
         hidden: true,
       },
       {
-        fieldName: "startDate",
-        fieldType: "form-date",
+        fieldName: "name",
+        fieldType: "form-text",
         defaultValue: "",
-        options: [],
-        mandatory: true,
-        visible: true,
-        hidden: false,
-      },
-      {
-        fieldName: "endDate",
-        fieldType: "form-date",
-        defaultValue: "",
+        label: "Name",
         options: [],
         mandatory: true,
         visible: true,
@@ -39,6 +32,81 @@ const DEFAULT_REPORTS = [
         fieldName: "userId",
         fieldType: "form-select",
         defaultValue: "",
+        label: "Users",
+        options: [],
+        mandatory: true,
+        visible: true,
+        hidden: false,
+      },
+      {
+        fieldName: "startDate",
+        fieldType: "form-date",
+        defaultValue: "",
+        label: "Start Date",
+        options: [],
+        mandatory: true,
+        visible: true,
+        hidden: false,
+      },
+      {
+        fieldName: "endDate",
+        fieldType: "form-date",
+        defaultValue: "",
+        label: "End Date",
+        options: [],
+        mandatory: true,
+        visible: true,
+        hidden: false,
+      },
+    ],
+    reportFields: [
+      {
+        fieldName: "Field Name",
+        fieldType: "text",
+        visible: true,
+      },
+    ],
+  },
+  {
+    reportId: "2",
+    reportName: "Report 2",
+    procedureName: "demoGetReportsForClient2",
+    searchFields: [
+      {
+        fieldName: "clientId",
+        fieldType: "form-text",
+        defaultValue: "",
+        label: "Client ID",
+        options: [],
+        mandatory: true,
+        visible: false,
+        hidden: true,
+      },
+      {
+        fieldName: "name",
+        fieldType: "form-text",
+        defaultValue: "",
+        label: "Name",
+        options: [],
+        mandatory: true,
+        visible: true,
+        hidden: false,
+      },
+      {
+        fieldName: "currentDate",
+        fieldType: "form-date",
+        defaultValue: "",
+        label: "Current Date",
+        options: [],
+        mandatory: false,
+        visible: true,
+        hidden: false,
+      },
+      {
+        fieldName: "userId",
+        fieldType: "form-select",
+        defaultValue: "",
+        label: "User",
         options: [],
         mandatory: false,
         visible: true,
@@ -48,6 +116,11 @@ const DEFAULT_REPORTS = [
     reportFields: [
       {
         fieldName: "Field Name",
+        fieldType: "text",
+        visible: true,
+      },
+      {
+        fieldName: "Field Name 2",
         fieldType: "text",
         visible: true,
       },
@@ -110,7 +183,7 @@ export async function resolveReportsListForClient({ clientId }: { clientId: stri
 
   const reports2 = enterOptionsValueIntoSearchField(reports1, "userId", users); // w/ userIds
 
-  const reports3 = enterDefaultValueIntoSearchField(reports2, "userId", "Select"); // w/ default userId
+  const reports3 = enterDefaultValueIntoSearchField(reports2, "userId", null); // w/ default userId to null
 
   return reports3;
 }
