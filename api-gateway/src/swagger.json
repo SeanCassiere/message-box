@@ -2811,7 +2811,7 @@
           "procedureName": {
             "type": "string"
           },
-          "searchField": {
+          "searchFields": {
             "type": "array",
             "items": {
               "type": "object",
@@ -2857,7 +2857,7 @@
               }
             }
           },
-          "reportField": {
+          "reportFields": {
             "type": "array",
             "items": {
               "type": "object",

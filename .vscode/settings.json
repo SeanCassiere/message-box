@@ -40,5 +40,6 @@
     "typeorm",
     "vite",
     "vitejs"
-  ]
+  ],
+  "conventionalCommits.scopes": ["api-gateway", "web-client", "auth-service", "app-data-service"]
 }
