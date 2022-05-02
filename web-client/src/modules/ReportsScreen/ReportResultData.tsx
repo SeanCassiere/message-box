@@ -52,6 +52,9 @@ const ReportResultData = (props: IProps) => {
       let colData = {} as GridColDef;
       colData.field = field.fieldName;
       colData.headerName = field.label;
+      colData.resizable = true;
+      colData.description = field.label;
+
       if (field.fieldName === "timestamp") {
         colData.valueFormatter = (value: any) => {
           return formatDateTimeShort(value.value);
@@ -119,13 +122,30 @@ const ReportResultData = (props: IProps) => {
       </PageBlockItem>
       {loading === false && (
         <PageBlockItem height={650}>
-          <DataGrid
-            sx={{ minHeight: "200px" }}
-            columns={columns}
-            rows={reportData}
-            loading={loading}
-            components={{ Toolbar: CustomToolBar, LoadingOverlay: LinearProgress }}
-          />
+          <Box
+            sx={{
+              height: "100%",
+            }}
+          >
+            <DataGrid
+              sx={{
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: "primary.300",
+                  borderRadius: 0,
+                  fontWeight: 900,
+                  color: "white",
+                },
+                "& .MuiDataGrid-columnSeparator": {
+                  color: "primary.600",
+                },
+              }}
+              columns={columns}
+              rows={reportData}
+              loading={loading}
+              components={{ Toolbar: CustomToolBar, LoadingOverlay: LinearProgress }}
+              disableSelectionOnClick
+            />
+          </Box>
         </PageBlockItem>
       )}
     </>
@@ -134,10 +154,12 @@ const ReportResultData = (props: IProps) => {
 
 function CustomToolBar() {
   return (
-    <GridToolbarContainer style={{ display: "flex", gap: 3 }}>
+    <GridToolbarContainer
+      style={{ display: "flex", gap: 3, paddingTop: "0.5rem", paddingBottom: "0.5rem", paddingLeft: "0.5rem" }}
+    >
       <GridToolbarFilterButton {...({ variant: "text" } as any)} />
       <GridToolbarColumnsButton variant="text" />
-      <GridToolbarExport variant="text" />
+      <GridToolbarExport variant="text" printOptions={{ disableToolbarButton: true }} />
     </GridToolbarContainer>
   );
 }
