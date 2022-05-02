@@ -43,6 +43,10 @@
       "description": "endpoints relating to clients"
     },
     {
+      "name": "Report",
+      "description": "endpoints relating to the running system reports"
+    },
+    {
       "name": "Role",
       "description": "endpoints relating to the user roles"
     },
@@ -1138,6 +1142,80 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/Reports": {
+      "get": {
+        "tags": ["Report"],
+        "summary": "Get all the reports for a user",
+        "description": "Get all the reports for a user",
+        "operationId": "GetReports",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All the reports for a user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "post": {
+        "tags": ["Report"],
+        "summary": "Run a report procedure",
+        "description": "Run a report procedure",
+        "operationId": "RunReportProcedure",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "The body MUST include the procedure name the variables specified in the report schema.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "procedure": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Report has been run successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -2718,6 +2796,87 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "ReportSchema": {
+        "type": "object",
+        "properties": {
+          "reportId": {
+            "type": "string"
+          },
+          "reportName": {
+            "type": "string"
+          },
+          "procedureName": {
+            "type": "string"
+          },
+          "searchField": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fieldName": {
+                  "type": "string"
+                },
+                "fieldType": {
+                  "type": "string"
+                },
+                "defaultValue": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "mandatory": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "visible": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "hidden": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          },
+          "reportField": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fieldName": {
+                  "type": "string"
+                },
+                "fieldType": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "visible": {
+                  "type": "boolean",
+                  "default": true
+                }
+              }
+            }
           }
         }
       }

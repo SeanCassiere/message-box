@@ -1,6 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
-
-import { REPORT_LIST_TYPE } from "./ReportsScreen";
+import React, { useCallback, useMemo } from "react";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -9,21 +7,22 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "../../shared/components/Form/TextField";
 
 import { COMMON_ITEM_BORDER_COLOR } from "../../shared/util/constants";
+import { IReportSchema } from "../../shared/interfaces/Reports.interfaces";
 
 interface Props {
-  availableReports: REPORT_LIST_TYPE;
+  availableReports: IReportSchema[];
+  currentReportId: string;
+  selectReportFunc: (reportId: string) => void;
 }
 
 const SearchForReports = (props: Props) => {
-  const { availableReports } = props;
-
-  const [selectedReportId, setSelectedReportId] = useState("");
+  const { availableReports, currentReportId, selectReportFunc } = props;
 
   const formattedReports = useMemo(() => {
     const reps = availableReports.map((report) => {
-      return { label: report.name, reportId: report.id };
+      return { label: report.reportName, reportId: report.reportId };
     });
-    setSelectedReportId(reps[0].reportId);
+    // selectReportFunc(reps[0]?.reportId);
     return reps;
   }, [availableReports]);
 
@@ -33,9 +32,9 @@ const SearchForReports = (props: Props) => {
 
       const selectedReport = formattedReports.find((report) => report.label === evt.target.value);
 
-      if (selectedReport) setSelectedReportId(selectedReport.reportId);
+      if (selectedReport) selectReportFunc(selectedReport.reportId);
     },
-    [formattedReports]
+    [formattedReports, selectReportFunc]
   );
 
   return (
@@ -65,16 +64,16 @@ const SearchForReports = (props: Props) => {
           {formattedReports.map((report) => (
             <Grid key={`report-item-${report.label}`} item xs={12} md={3}>
               <Box
-                onClick={() => setSelectedReportId(report.reportId)}
+                onClick={() => selectReportFunc(report.reportId)}
                 sx={{
                   cursor: "pointer",
                   px: 2,
                   py: 1,
-                  bgcolor: selectedReportId === report.reportId ? "primary.50" : "#fff",
+                  bgcolor: currentReportId === report.reportId ? "primary.50" : "#fff",
                   borderStyle: "solid",
-                  borderColor: selectedReportId === report.reportId ? "primary.500" : COMMON_ITEM_BORDER_COLOR,
+                  borderColor: currentReportId === report.reportId ? "primary.500" : COMMON_ITEM_BORDER_COLOR,
                   borderWidth: 2,
-                  borderRadius: 3,
+                  borderRadius: 1,
                 }}
               >
                 {report.label}
@@ -87,4 +86,4 @@ const SearchForReports = (props: Props) => {
   );
 };
 
-export default SearchForReports;
+export default React.memo(SearchForReports);

@@ -177,7 +177,9 @@ authenticationRouter.route("/Logout").get(async (req, res) => {
   const cookieToken = request.cookies[REFRESH_TOKEN_KEY];
 
   try {
-    await client.post("/users/logoutUserToken", { cookie: cookieToken ?? null });
+    await client.post("/users/logoutUserToken", {
+      cookie: cookieToken ?? null,
+    });
   } catch (error) {
     console.log(`Could not logout this refresh_token ${cookieToken}`);
   }

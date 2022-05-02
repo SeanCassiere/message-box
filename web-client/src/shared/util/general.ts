@@ -74,3 +74,13 @@ export const DEFAULT_USER_STATUSES: ICurrentUserStatusInterface[] = [
   { status: "Away", color: orange[300] },
   { status: "Offline", color: red[300] },
 ];
+
+export function removeEmptyQueryParamsToSend(params: { [key: string]: any }) {
+  const newParams = { ...params };
+  Object.keys(newParams).forEach((key) => {
+    if (newParams[key] === "" || newParams[key] === undefined || newParams[key] === null) {
+      delete newParams[key];
+    }
+  });
+  return newParams;
+}
