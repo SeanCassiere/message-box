@@ -4,6 +4,7 @@ import axios from "axios";
 
 export const REPORT_PROCEDURES = {
   GetEmployeeLoginReportForClient: "GetEmployeeLoginReportForClient",
+  GetEmployeeLoginReportByTeam: "GetEmployeeLoginReportByTeam",
 };
 
 const DEFAULT_REPORTS = [
@@ -57,7 +58,74 @@ const DEFAULT_REPORTS = [
       {
         fieldName: "name",
         fieldType: "text",
-        label: "Employee",
+        label: "Name",
+        visible: true,
+      },
+      {
+        fieldName: "action",
+        fieldType: "text",
+        label: "Action",
+        visible: true,
+      },
+      {
+        fieldName: "timestamp",
+        fieldType: "date-time",
+        label: "Timestamp",
+        visible: true,
+      },
+    ],
+  },
+  {
+    reportId: "2",
+    reportName: "Team Login Report",
+    procedureName: REPORT_PROCEDURES.GetEmployeeLoginReportByTeam,
+    searchFields: [
+      {
+        fieldName: "clientId",
+        fieldType: "form-text",
+        label: "Client ID",
+        defaultValue: "",
+        options: [],
+        mandatory: true,
+        visible: false,
+        hidden: true,
+      },
+      {
+        fieldName: "teamId",
+        fieldType: "form-select",
+        defaultValue: "",
+        label: "Team Name",
+        options: [],
+        mandatory: true,
+        visible: true,
+        hidden: false,
+      },
+      {
+        fieldName: "startDate",
+        fieldType: "form-date",
+        defaultValue: "",
+        label: "Start Date",
+        options: [],
+        mandatory: true,
+        visible: true,
+        hidden: false,
+      },
+      {
+        fieldName: "endDate",
+        fieldType: "form-date",
+        defaultValue: "",
+        label: "End Date",
+        options: [],
+        mandatory: true,
+        visible: true,
+        hidden: false,
+      },
+    ],
+    reportFields: [
+      {
+        fieldName: "name",
+        fieldType: "text",
+        label: "Employee Name",
         visible: true,
       },
       {
@@ -132,11 +200,31 @@ export async function resolveReportsListForClient({ clientId }: { clientId: stri
     );
   }
 
+  // resolve teams
+  let teams: any[] = [];
+  try {
+    let clientTeams: any[] = [];
+    const { data: response } = await axios.post(`${AUTH_SERVICE_URI}/teams/getAllTeamsForClient`, {
+      clientId: clientId,
+    });
+
+    clientTeams = response.data;
+    teams = clientTeams.map((t) => ({ value: `${t.teamId}`, label: `${t.teamName}` }));
+  } catch (error) {
+    log.error(
+      `POST /reports/resolveReportsListForClient -> ${AUTH_SERVICE_URI}/teams/getAllTeamsForClient\ncould not fetch the user ids for this client\n${error}`
+    );
+  }
+
   const reports1 = enterDefaultValueIntoSearchField(DEFAULT_REPORTS, "clientId", clientId); // w/ clientId
   const reports2 = enterOptionsValueIntoSearchField(reports1, "userId", users); // w/ userIds
   const reports3 = enterDefaultValueIntoSearchField(reports2, "userId", null); // w/ default userId to null
+
   const reports4 = enterDefaultValueIntoSearchField(reports3, "startDate", firstDay.toISOString().substring(0, 10)); // w/ startDate
   const reports5 = enterDefaultValueIntoSearchField(reports4, "endDate", lastDay.toISOString().substring(0, 10)); // w/ endDate
 
-  return reports5;
+  const reports6 = enterOptionsValueIntoSearchField(reports5, "teamId", teams); // w/ teamIds
+  const reports7 = enterDefaultValueIntoSearchField(reports6, "teamId", null); // w/ default teamId to null
+
+  return reports7;
 }

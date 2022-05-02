@@ -5,6 +5,7 @@ import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { REPORT_PROCEDURES } from "#root/constants/default_reports";
 
 import { procedure_GetEmployeeLoginReportForClient } from "./procedures/GetEmployeeLoginReportForClient";
+import { procedure_GetEmployeeLoginReportByTeam } from "./procedures/GetEmployeeLoginReportByTeam";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -32,6 +33,8 @@ export async function runReportForClient(req: Request, res: Response) {
   switch (procedure) {
     case REPORT_PROCEDURES.GetEmployeeLoginReportForClient:
       return await procedure_GetEmployeeLoginReportForClient(req, res);
+    case REPORT_PROCEDURES.GetEmployeeLoginReportByTeam:
+      return await procedure_GetEmployeeLoginReportByTeam(req, res);
     default:
       return res.json({
         statusCode: 400,

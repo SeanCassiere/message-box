@@ -53,6 +53,7 @@ import { adminSetDefaultRolePermissions } from "./controllers/roles/adminSetDefa
 import { adminSetDefaultRoles } from "./controllers/roles/adminSetDefaultRoles";
 import { markEmailConfirmationIdAsUsed } from "./controllers/email-related/markEmailConfirmationIdAsUsed";
 import { getAllBaseUsersForClient } from "./controllers/clients/getAllBaseUsersForClient";
+import { getUserIdsForTeamId } from "./controllers/teams/getUserIdsForTeamId";
 
 const expressApp = express();
 
@@ -117,6 +118,7 @@ expressApp.post("/teams/getTeamById", getTeamById as any);
 expressApp.post("/teams/createTeamForClient", createTeamForClient);
 expressApp.post("/teams/updateTeamById", updateTeamById);
 expressApp.post("/teams/deleteTeamById", deleteTeamById);
+expressApp.post("/teams/getUserIdsForTeamId", getUserIdsForTeamId as any);
 
 expressApp.post("/2fa/emailAndPasswordLogin2FA", emailAndPasswordLogin2FA);
 expressApp.post("/2fa/verifyUser2FAStatus", verifyUser2FAStatus);
