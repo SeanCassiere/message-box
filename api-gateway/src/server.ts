@@ -25,6 +25,7 @@ import tasksRouter from "./routes/task.routes";
 import hiddenRouter from "./routes/hidden.routes";
 import calendarEventRouter from "./routes/calendarEvent.routes";
 import { authorizationErrorMiddleware, errorHandlerMiddleware, notFoundMiddleware } from "./middleware/errorMiddleware";
+import reportsRouter from "./routes/reports.routes";
 
 const corsOptions: CorsOptions = {
   origin: (_, cb) => cb(null, true),
@@ -88,6 +89,7 @@ function startServer(port: number) {
   app.use("/Api/Teams", teamRouter);
   app.use("/Api/Tasks", tasksRouter);
   app.use("/Api/CalendarEvent", calendarEventRouter);
+  app.use("/Api/Reports", reportsRouter);
 
   app.use(authorizationErrorMiddleware);
   app.use(notFoundMiddleware);

@@ -52,6 +52,7 @@ import { getAllUserIdsForClient } from "./controllers/clients/getAllUserIdsForCl
 import { adminSetDefaultRolePermissions } from "./controllers/roles/adminSetDefaultRolePermissions";
 import { adminSetDefaultRoles } from "./controllers/roles/adminSetDefaultRoles";
 import { markEmailConfirmationIdAsUsed } from "./controllers/email-related/markEmailConfirmationIdAsUsed";
+import { getAllBaseUsersForClient } from "./controllers/clients/getAllBaseUsersForClient";
 
 const expressApp = express();
 
@@ -64,6 +65,7 @@ expressApp.use(express.static(__dirname + "/../public"));
 
 // private routes
 expressApp.post("/clients/getAllUserIdsForClient", getAllUserIdsForClient);
+expressApp.post("/clients/getAllBaseUsersForClient", getAllBaseUsersForClient);
 expressApp.get("/admin/roles/adminSetDefaultRoles", adminSetDefaultRoles);
 expressApp.get("/admin/roles/adminSetDefaultRolePermissions", adminSetDefaultRolePermissions);
 
