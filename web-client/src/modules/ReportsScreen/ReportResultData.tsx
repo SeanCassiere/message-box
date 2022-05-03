@@ -38,7 +38,7 @@ const ReportResultData = (props: IProps) => {
   }, {});
   const [filterData, setFilterData] = React.useState<{ [key: string]: any }>(initialData);
 
-  const viewableFilters = selectedReport.searchFields.filter((f) => f.hidden === false);
+  const viewableFilters = selectedReport.searchFields.filter((f) => f.hidden === false && f.visible === true);
   const setInitialFilters = React.useCallback(() => {
     setFilterData(initialData);
     setLoading(true);
@@ -59,6 +59,10 @@ const ReportResultData = (props: IProps) => {
           return formatDateTimeShort(value.value);
         };
         colData.minWidth = 250;
+      }
+
+      if (field.fieldName === "action") {
+        colData.minWidth = 200;
       }
 
       if (field.fieldName === "description") {

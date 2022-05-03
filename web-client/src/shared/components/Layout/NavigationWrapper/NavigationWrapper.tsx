@@ -48,6 +48,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import TodayIcon from "@mui/icons-material/Today";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import PeopleIcon from "@mui/icons-material/People";
+import { publishUserStatusChange } from "../../../api/socket.service";
 
 const NavigationWrapper: React.FC = (props) => {
   const navigate = useNavigate();
@@ -57,6 +58,7 @@ const NavigationWrapper: React.FC = (props) => {
 
   const { children } = props;
   const { userProfile, statusList } = useSelector(selectUserState);
+  const { onlineUsersList } = useSelector(selectLookupListsState);
 
   const isChatAccessible = usePermission("chat:read");
   const isTasksAccessible = usePermission("task:read");
@@ -104,7 +106,9 @@ const NavigationWrapper: React.FC = (props) => {
   const [currentLink, setCurrentLink] = React.useState<string>("");
   const [open, setOpen] = React.useState(false);
 
-  const [currentStatusValue, setCurrentStatusValue] = React.useState("Online");
+  const [currentStatusValue, setCurrentStatusValue] = React.useState(
+    onlineUsersList.find((u) => u.userId === userProfile?.userId)?.status ?? "Online"
+  );
 
   // handle the user dropdown menu
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -180,8 +184,17 @@ const NavigationWrapper: React.FC = (props) => {
               <TextField
                 id="standard-select-currency"
                 select
-                value={currentStatusValue}
-                onChange={(evt) => setCurrentStatusValue(evt.target.value)}
+                value={statusList.find((s) => s.status === currentStatusValue)?.status ? currentStatusValue : "Online"}
+                onChange={(evt) => {
+                  const value = evt?.target?.value;
+                  const findStatus = statusList.filter((s) => s.status === value);
+
+                  if (findStatus.length > 0) {
+                    publishUserStatusChange(findStatus[0]?.status, findStatus[0]?.color);
+                  }
+
+                  setCurrentStatusValue(value);
+                }}
                 variant="standard"
                 fullWidth
                 size="medium"
@@ -199,7 +212,7 @@ const NavigationWrapper: React.FC = (props) => {
                 {statusList.map((status, idx) => (
                   <MenuItem
                     key={`${idx}-${String(status.status).toLowerCase().replace(" ", "-")}-${status.color}`}
-                    value={status.status}
+                    value={`${status.status}`}
                   >
                     <Box
                       component="span"

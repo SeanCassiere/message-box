@@ -6,6 +6,7 @@ export const REPORT_PROCEDURES = {
   GetEmployeeLoginReportForClient: "GetEmployeeLoginReportForClient",
   GetEmployeeLoginReportByTeam: "GetEmployeeLoginReportByTeam",
   GetEmployeeFullActivity: "GetEmployeeFullActivity",
+  GetEmployeeStatusChange: "GetEmployeeStatusChange",
 };
 
 const DEFAULT_REPORTS = [
@@ -216,6 +217,89 @@ const DEFAULT_REPORTS = [
       },
     ],
   },
+  {
+    reportId: "4",
+    reportName: "Employee Status Change Report",
+    procedureName: REPORT_PROCEDURES.GetEmployeeStatusChange,
+    searchFields: [
+      {
+        fieldName: "clientId",
+        fieldType: "form-text",
+        label: "Client ID",
+        defaultValue: "",
+        options: [],
+        mandatory: true,
+        visible: false,
+        hidden: true,
+      },
+      {
+        fieldName: "userId",
+        fieldType: "form-select",
+        defaultValue: "",
+        label: "Employee",
+        options: [],
+        mandatory: true,
+        visible: true,
+        hidden: false,
+      },
+      {
+        fieldName: "currentDate",
+        fieldType: "form-date",
+        defaultValue: "",
+        label: "Date",
+        options: [],
+        mandatory: true,
+        visible: true,
+        hidden: false,
+      },
+      {
+        fieldName: "startDate",
+        fieldType: "form-date",
+        defaultValue: "",
+        label: "Start Date",
+        options: [],
+        mandatory: false,
+        visible: false,
+        hidden: false,
+      },
+      {
+        fieldName: "endDate",
+        fieldType: "form-date",
+        defaultValue: "",
+        label: "End Date",
+        options: [],
+        mandatory: false,
+        visible: false,
+        hidden: false,
+      },
+    ],
+    reportFields: [
+      {
+        fieldName: "name",
+        fieldType: "text",
+        label: "Employee Name",
+        visible: true,
+      },
+      {
+        fieldName: "timestamp",
+        fieldType: "date-time",
+        label: "Timestamp",
+        visible: true,
+      },
+      {
+        fieldName: "fromStatus",
+        fieldType: "text",
+        label: "From Status",
+        visible: true,
+      },
+      {
+        fieldName: "toStatus",
+        fieldType: "text",
+        label: "To Status",
+        visible: true,
+      },
+    ],
+  },
 ];
 
 function enterDefaultValueIntoSearchField(
@@ -408,6 +492,18 @@ export async function resolveReportsListForClient({ clientId, userId }: { client
     REPORT_PROCEDURES.GetEmployeeFullActivity
   ); // w/ endDate
 
+  /**
+   * REPORT>>>
+   * REPORT_PROCEDURES.GetEmployeeStatusChange
+   */
+  reports = enterOptionsValueIntoSearchField(reports, "userId", users, REPORT_PROCEDURES.GetEmployeeStatusChange); // userId & labels
+  reports = enterDefaultValueIntoSearchField(reports, "userId", userId, REPORT_PROCEDURES.GetEmployeeStatusChange); // w/ default userId to null
+  reports = enterDefaultValueIntoSearchField(
+    reports,
+    "currentDate",
+    new Date().toISOString().substring(0, 10),
+    REPORT_PROCEDURES.GetEmployeeStatusChange
+  ); // w/ startDate
   //
   return reports;
 }

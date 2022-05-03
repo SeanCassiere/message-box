@@ -17,6 +17,7 @@ export const EVENTS = {
   disconnection: "disconnect",
   CLIENT: {
     FETCH_ONLINE_USERS: "client-fetch-online-users",
+    PUBLISH_USER_STATUS: "client-publish-user-status",
   },
   SERVER: {
     SEND_ONLINE_USERS: "server-send-online-users",
@@ -49,4 +50,8 @@ export const listenForOnlineUsers = () => {
     const response = users as ISocketUserStatus[];
     store.dispatch(setOnlineUsersLookupList(response));
   });
+};
+
+export const publishUserStatusChange = (status: string, color: string) => {
+  socket.emit(EVENTS.CLIENT.PUBLISH_USER_STATUS, { status, color });
 };

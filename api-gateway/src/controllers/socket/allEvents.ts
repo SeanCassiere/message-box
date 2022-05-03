@@ -3,6 +3,7 @@ export const EVENTS = {
   disconnection: "disconnect",
   CLIENT: {
     FETCH_ONLINE_USERS: "client-fetch-online-users",
+    PUBLISH_USER_STATUS: "client-publish-user-status",
   },
   SERVER: {
     SEND_ONLINE_USERS: "server-send-online-users",
