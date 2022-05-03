@@ -15,13 +15,11 @@ const FilterField = React.memo(
     const { formats } = useSelector(selectUserState);
     const dateMemoed = React.useMemo(() => {
       try {
-        return (
-          filterData[field.fieldName] !== "" &&
-          filterData[field.fieldName] !== null &&
-          new Date(filterData[field.fieldName]).toISOString()
-        );
+        return filterData[field.fieldName] !== "" && filterData[field.fieldName] !== null
+          ? new Date(filterData[field.fieldName]).toISOString()
+          : null;
       } catch (error) {
-        return false;
+        return null;
       }
     }, [field.fieldName, filterData]);
 
@@ -34,7 +32,6 @@ const FilterField = React.memo(
             inputFormat={formats.shortDateFormat}
             onChange={(date, keyboardValue) => {
               const momentDate = date as any;
-              console.log({ date, keyboardValue });
               if (momentDate && momentDate._isValid) {
                 setFilterData((prev: any) => ({
                   ...prev,

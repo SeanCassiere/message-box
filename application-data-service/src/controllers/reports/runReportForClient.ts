@@ -10,6 +10,7 @@ import { procedure_GetEmployeeLoginReportByTeam } from "./procedures/GetEmployee
 import { procedure_GetEmployeeFullActivity } from "./procedures/GetEmployeeFullActivityReport";
 import { createDbActivityLog } from "#root/utils/createDbActivityLog";
 import { procedure_GetEmployeeStatusChange } from "./procedures/GetEmployeeStatusChange";
+import { procedure_GetEmployeeTasksSummary } from "./procedures/GetEmployeeTasksSummary";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -53,6 +54,8 @@ export async function runReportForClient(req: Request, res: Response) {
       return await procedure_GetEmployeeFullActivity(req, res);
     case REPORT_PROCEDURES.GetEmployeeStatusChange:
       return await procedure_GetEmployeeStatusChange(req, res);
+    case REPORT_PROCEDURES.GetEmployeeTasksSummary:
+      return await procedure_GetEmployeeTasksSummary(req, res);
     default:
       return res.json({
         statusCode: 400,

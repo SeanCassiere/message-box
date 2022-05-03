@@ -13,14 +13,23 @@ import {
 } from "@mui/x-data-grid";
 import LinearProgress from "@mui/material/LinearProgress";
 
+import FormControl from "@mui/material/FormControl";
+import Checkbox from "@mui/material/Checkbox";
+import Autocomplete from "@mui/material/Autocomplete";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+
 import PageBlockItem from "../../shared/components/Layout/PageBlockItem";
 import FilterField from "./FilterField";
+import TextField from "../../shared/components/Form/TextField";
 
 import { IReportSchema } from "../../shared/interfaces/Reports.interfaces";
 import { removeEmptyQueryParamsToSend } from "../../shared/util/general";
 import { client } from "../../shared/api/client";
-import { formatDateTimeShort } from "../../shared/util/dateTime";
+import { formatDateTimeShort, formatDateShort } from "../../shared/util/dateTime";
 
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 interface IProps {
   selectedReport: IReportSchema;
 }
@@ -38,11 +47,13 @@ const ReportResultData = (props: IProps) => {
   }, {});
   const [filterData, setFilterData] = React.useState<{ [key: string]: any }>(initialData);
 
-  const viewableFilters = selectedReport.searchFields.filter((f) => f.hidden === false && f.visible === true);
+  const viewableFilters = selectedReport.searchFields.filter((f) => f.hidden === false);
+  const [currentFilters, setCurrentFilers] = React.useState(viewableFilters);
   const setInitialFilters = React.useCallback(() => {
     setFilterData(initialData);
+    setCurrentFilers(viewableFilters);
     setLoading(true);
-  }, [initialData]);
+  }, [initialData, viewableFilters]);
 
   const [reportData, setReportData] = React.useState([]);
 
@@ -55,15 +66,28 @@ const ReportResultData = (props: IProps) => {
       colData.description = field.label;
       colData.minWidth = 150;
 
-      if (field.fieldName === "timestamp") {
+      if (field.fieldType === "date-time") {
         colData.valueFormatter = (value: any) => {
-          return formatDateTimeShort(value.value);
+          const dateValue = formatDateTimeShort(value.value);
+          return dateValue !== "Invalid date" ? dateValue : "";
+        };
+        colData.minWidth = 250;
+      }
+
+      if (field.fieldType === "date") {
+        colData.valueFormatter = (value: any) => {
+          const dateValue = formatDateShort(value.value);
+          return dateValue !== "Invalid date" ? dateValue : "";
         };
         colData.minWidth = 250;
       }
 
       if (field.fieldName === "action") {
         colData.minWidth = 200;
+      }
+
+      if (field.fieldName === "taskName") {
+        colData.minWidth = 300;
       }
 
       if (field.fieldName === "description") {
@@ -119,13 +143,61 @@ const ReportResultData = (props: IProps) => {
               });
           }}
         >
-          {viewableFilters.map((filter) => (
-            <Grid item xs={12} md={2} key={filter.fieldName}>
-              <Box>
-                <FilterField field={filter} filterData={filterData} setFilterData={setFilterData} />
-              </Box>
+          {currentFilters
+            .filter((f) => f.visible)
+            .map((filter) => (
+              <Grid item xs={12} md={2} key={filter.fieldName}>
+                <Box>
+                  <FilterField field={filter} filterData={filterData} setFilterData={setFilterData} />
+                </Box>
+              </Grid>
+            ))}
+          {selectedReport.searchFields.filter((f) => f.hidden === false).filter((f) => f.visible === false).length >
+            0 && (
+            <Grid item xs={12} md={2}>
+              <FormControl fullWidth>
+                <Autocomplete
+                  size="small"
+                  limitTags={2}
+                  renderInput={(params) => <TextField {...params} label="Other filters" />}
+                  multiple
+                  options={currentFilters.filter((r) => r.hidden === false)}
+                  getOptionLabel={(option) => option.label}
+                  disableCloseOnSelect
+                  disableClearable
+                  renderOption={(props, option) => {
+                    return (
+                      <li
+                        {...props}
+                        onClick={() => {
+                          if (option.mandatory) return;
+                          const newOption = { ...option, visible: option.visible ? false : true };
+                          const currentVisible = currentFilters
+                            .filter((f) => f.fieldName !== option.fieldName)
+                            .filter((f) => f.visible);
+                          const currentHidden = currentFilters
+                            .filter((f) => f.fieldName !== option.fieldName)
+                            .filter((f) => f.visible === false);
+                          setCurrentFilers([...currentVisible, newOption, ...currentHidden]);
+                        }}
+                      >
+                        <Checkbox
+                          icon={icon}
+                          checkedIcon={checkedIcon}
+                          style={{ marginRight: 8 }}
+                          disabled={option.mandatory}
+                          checked={option.mandatory || option.visible}
+                        />
+                        {option.label}
+                      </li>
+                    );
+                  }}
+                  renderTags={(value, getTagProps) => <span></span>}
+                  disableListWrap
+                />
+              </FormControl>
             </Grid>
-          ))}
+          )}
           <Grid item xs={12} md={2}>
             <Box>
               <Button fullWidth type="submit">
