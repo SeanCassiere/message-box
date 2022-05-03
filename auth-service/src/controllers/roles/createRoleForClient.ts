@@ -5,10 +5,13 @@ import Role from "#root/db/entities/Role";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { formatRoleResponse } from "#root/utils/formatResponses";
 import { ALL_AVAILABLE_ROLE_PERMISSIONS } from "#root/constants/allPermissions";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
     clientId: yup.string().required("ClientId is required"),
+    userId: yup.string().required("UserId is required"),
   }),
   body: yup.object().shape({
     rootName: yup.string().required("Root name is required"),
@@ -27,7 +30,7 @@ export async function createRoleForClient(req: Request, res: Response, next: Nex
     });
   }
 
-  const { clientId } = req.body.variables;
+  const { clientId, userId } = req.body.variables;
   const { rootName, viewName, permissions } = req.body.body;
 
   try {
@@ -67,6 +70,15 @@ export async function createRoleForClient(req: Request, res: Response, next: Nex
       viewName: viewName,
       permissions: saveablePermissions,
     }).save();
+
+    createActivityLog({
+      clientId: clientId,
+      userId: userId,
+      action: "update-role",
+      description: `Updated access role ${role.viewName}:${role.roleId}`,
+    }).then(() => {
+      log.info(`Activity log created for user ${userId}`);
+    });
 
     return res.json({
       statusCode: 200,

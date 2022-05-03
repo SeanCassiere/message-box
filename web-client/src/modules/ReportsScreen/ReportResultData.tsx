@@ -52,7 +52,6 @@ const ReportResultData = (props: IProps) => {
       let colData = {} as GridColDef;
       colData.field = field.fieldName;
       colData.headerName = field.label;
-      colData.resizable = true;
       colData.description = field.label;
 
       if (field.fieldName === "timestamp") {
@@ -61,6 +60,12 @@ const ReportResultData = (props: IProps) => {
         };
         colData.minWidth = 250;
       }
+
+      if (field.fieldName === "description") {
+        colData.minWidth = 450;
+        colData.flex = 1;
+      }
+
       cols.push(colData);
     });
 
@@ -133,6 +138,7 @@ const ReportResultData = (props: IProps) => {
                   backgroundColor: "primary.300",
                   borderRadius: 0,
                   fontWeight: 900,
+                  fontSize: "1em",
                   color: "white",
                 },
                 "& .MuiDataGrid-columnSeparator": {
@@ -157,8 +163,8 @@ function CustomToolBar() {
     <GridToolbarContainer
       style={{ display: "flex", gap: 3, paddingTop: "0.5rem", paddingBottom: "0.5rem", paddingLeft: "0.5rem" }}
     >
-      <GridToolbarFilterButton {...({ variant: "text" } as any)} />
       <GridToolbarColumnsButton variant="text" />
+      <GridToolbarFilterButton {...({ variant: "text" } as any)} />
       <GridToolbarExport variant="text" printOptions={{ disableToolbarButton: true }} />
     </GridToolbarContainer>
   );

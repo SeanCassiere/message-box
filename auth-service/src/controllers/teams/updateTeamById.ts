@@ -8,6 +8,8 @@ import TeamMapping from "#root/db/entities/TeamMapping";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { formatTeamResponse } from "#root/utils/formatResponses";
 import { returnStringsNotInOriginalArray } from "#root/utils/returnArray";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -37,7 +39,7 @@ export async function updateTeamById(req: Request, res: Response, next: NextFunc
     });
   }
 
-  const { teamId } = req.body.variables;
+  const { teamId, ...otherVariables } = req.body.variables;
   const { teamName, rootName, members } = req.body.body;
 
   try {
@@ -93,6 +95,15 @@ export async function updateTeamById(req: Request, res: Response, next: NextFunc
     }
 
     const mappings = await TeamMapping.find({ where: { teamId: teamId } });
+
+    createActivityLog({
+      clientId: otherVariables?.clientId,
+      userId: otherVariables?.userId,
+      action: "update-team",
+      description: `Updated team details ${team.teamName}:${team.teamId}`,
+    }).then(() => {
+      log.info(`Activity log created for user ${otherVariables?.userId}`);
+    });
 
     const response = await formatTeamResponse({ team, members: mappings, resolveUsers: true });
     return res.json({

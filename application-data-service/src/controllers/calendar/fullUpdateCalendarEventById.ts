@@ -10,6 +10,7 @@ import { formatCalendarEventResponse, ICalendarEventGuest } from "#root/utils/fo
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
 import axios from "axios";
 import { log } from "#root/utils/logger";
+import { createDbActivityLog } from "#root/utils/createDbActivityLog";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -192,6 +193,15 @@ export async function fullUpdateCalendarEventById(req: Request, res: Response) {
   } catch (error) {
     log.error("could not fetch users details for the ids array");
   }
+
+  createDbActivityLog({
+    clientId: variables.clientId,
+    userId: variables.userId,
+    action: "calendar-event-updated",
+    description: `Updated a calendar event: ${foundCalendarEvent.eventId}`,
+  }).then(() => {
+    log.info(`Activity log created for userId: ${variables?.userId}`);
+  });
 
   const formattedResponse = formatCalendarEventResponse({ event: foundCalendarEvent, guestUsers: usersToReturn });
 

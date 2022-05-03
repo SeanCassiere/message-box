@@ -4,6 +4,7 @@ import { redis } from "../redis";
 import { log } from "#root/utils/logger";
 import { I_RedisIdentifierProps } from "./allEvents";
 import { REDIS_CONSTANTS } from "../redis/constants";
+import { createActivityLog } from "#root/utils/createActivityLog";
 
 export interface I_RedisOnlineUserStatus {
   userId: string;
@@ -20,6 +21,15 @@ export async function redisJoiningUserSockets(namespaceValues: I_RedisIdentifier
   } else {
     await redis.hset(namespaceValues.client_namespace, namespaceValues.user_namespace, JSON.stringify([socket.id]));
     log.info(`socket id ${socket.id} was added to a user new socket pool in redis for ${socket.handshake.auth.userId}`);
+
+    createActivityLog({
+      clientId: socket.handshake.auth.clientId,
+      userId: socket.handshake.auth.userId,
+      action: "login",
+      description: "User logged in to websocket server",
+    }).then(() => {
+      log.info(`ACTIVITY-LOG was created for ${socket.handshake.auth.userId} during login`);
+    });
   }
 
   let allUserStatusOnline: I_RedisOnlineUserStatus[] = [];

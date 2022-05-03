@@ -8,6 +8,7 @@ import TaskShareMapping from "#root/db/entities/TaskShareMappings";
 import { formatTaskResponseWithUsers } from "#root/utils/formatResponses";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
 import { log } from "#root/utils/logger";
+import { createDbActivityLog } from "#root/utils/createDbActivityLog";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -82,6 +83,15 @@ export async function createTaskForUser(req: Request, res: Response) {
         }
       }
     }
+
+    createDbActivityLog({
+      clientId: variables.clientId,
+      userId: variables.userId,
+      action: "user-task-created",
+      description: `Create a user task:${task.taskId}`,
+    }).then(() => {
+      log.info(`Activity log created for userId: ${variables?.userId}`);
+    });
 
     return res.json({
       statusCode: 200,

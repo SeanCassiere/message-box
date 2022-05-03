@@ -65,6 +65,7 @@ export async function procedure_GetEmployeeFullActivity(req: Request, res: Respo
       name: users.find((u) => u.userId === result.userId)?.fullName ?? "NO NAME",
       action: result.action,
       timestamp: result.createdAt,
+      description: result.description,
     }));
     return res.json({
       statusCode: 200,

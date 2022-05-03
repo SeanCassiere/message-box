@@ -6,6 +6,8 @@ import User from "#root/db/entities/User";
 
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { formatClientResponse } from "#root/utils/formatResponses";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -75,6 +77,15 @@ export async function updateClientById(req: Request, res: Response, next: NextFu
 
     await findClient.save();
     await findClient.reload();
+
+    createActivityLog({
+      clientId: variables.clientId,
+      userId: variables.userId,
+      action: "company-profile-updated",
+      description: `Updated the company profile:${findClient.clientId}`,
+    }).then(() => {
+      log.info(`Activity log created for userId: ${variables?.userId}`);
+    });
 
     return res.json({
       statusCode: 200,

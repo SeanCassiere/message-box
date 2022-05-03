@@ -10,6 +10,7 @@ import { redis } from "#root/redis";
 import { REDIS_CONSTANTS } from "#root/utils/redisConstants";
 import { sendEmail } from "#root/email/sendEmail";
 import { generatePasswordlessPinEmailTemplate } from "#root/email/generatePasswordlessPinEmailTemplate";
+import { createActivityLog } from "#root/utils/createActivityLog";
 
 const supportedMethods = ["email"];
 
@@ -66,6 +67,15 @@ export async function sendPasswordlessPin(req: Request, res: Response, next: Nex
         recipient: user.email,
         subject: "One-Time PIN",
         html: generatePasswordlessPinEmailTemplate({ code: pin }),
+      });
+
+      createActivityLog({
+        clientId: user.clientId,
+        userId: user.userId,
+        action: "login-passwordless",
+        description: "Sent passwordless pin",
+      }).then(() => {
+        log.info(`Activity log created for userId: ${user?.userId}`);
       });
 
       return res.json({ statusCode: 200, data: { success: true, message: "PIN has been sent" }, errors: [] });

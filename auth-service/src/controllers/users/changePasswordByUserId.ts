@@ -5,6 +5,8 @@ import User from "#root/db/entities/User";
 
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { hashPassword } from "#root/utils/hashPassword";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -52,6 +54,15 @@ export async function changePasswordByUserId(req: Request, res: Response, next: 
 
     user.password = await hashPassword(password);
     await user.save();
+
+    createActivityLog({
+      clientId: variables?.clientId,
+      userId: variables?.userId,
+      action: "profile-change-password",
+      description: `Changed user password ${user.firstName} ${user.lastName}:${user.userId}`,
+    }).then(() => {
+      log.info(`Activity log created for user ${user?.userId}`);
+    });
 
     return res.json({
       statusCode: 200,

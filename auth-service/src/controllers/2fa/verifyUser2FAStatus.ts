@@ -10,6 +10,8 @@ import TwoFactorAuthMapping from "#root/db/entities/TwoFactorAuthMapping";
 
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { Secret2FA } from "#root/interfaces/2FA.interfaces";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({
@@ -82,6 +84,15 @@ export async function verifyUser2FAStatus(req: Request, res: Response, next: Nex
       // Set the user to active
       userRecord.is2faActive = true;
       await userRecord.save();
+
+      createActivityLog({
+        clientId: userRecord.clientId,
+        userId: userRecord.userId,
+        action: "verify-account-2fa",
+        description: "Verified account 2fa",
+      }).then(() => {
+        log.info(`Activity log created for user ${userRecord.userId}`);
+      });
 
       return res.json({
         statusCode: 200,

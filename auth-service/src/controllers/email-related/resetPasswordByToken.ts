@@ -6,6 +6,8 @@ import { validateYupSchema } from "#root/utils/validateYupSchema";
 import User from "#root/db/entities/User";
 import EmailConfirmations from "#root/db/entities/EmailConfirmations";
 import { hashPassword } from "#root/utils/hashPassword";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({
@@ -62,6 +64,15 @@ export async function resetPasswordByToken(req: Request, res: Response, next: Ne
 
     emailConfirmation.is_used = true;
     await emailConfirmation.save();
+
+    createActivityLog({
+      clientId: user?.clientId,
+      userId: user?.userId,
+      action: "reset-password-email",
+      description: "Reset password by email",
+    }).then(() => {
+      log.info(`Activity log created for user ${user?.userId}`);
+    });
 
     return res.json({
       statusCode: 200,

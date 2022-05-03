@@ -5,6 +5,8 @@ import { validateYupSchema } from "#root/utils/validateYupSchema";
 import Task from "#root/db/entities/Task";
 import TaskShareMapping from "#root/db/entities/TaskShareMappings";
 import { formatTaskResponseWithUsers } from "#root/utils/formatResponses";
+import { log } from "#root/utils/logger";
+import { createDbActivityLog } from "#root/utils/createDbActivityLog";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -53,6 +55,15 @@ export async function deleteTaskById(req: Request, res: Response) {
     });
 
     await Promise.all(sharePromises);
+
+    createDbActivityLog({
+      clientId: variables.clientId,
+      userId: variables.userId,
+      action: "user-task-deleted",
+      description: `Deleted a user task:${task.taskId}`,
+    }).then(() => {
+      log.info(`Activity log created for userId: ${variables?.userId}`);
+    });
 
     return res.json({
       statusCode: 200,

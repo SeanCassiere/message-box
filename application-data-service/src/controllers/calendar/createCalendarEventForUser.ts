@@ -9,6 +9,7 @@ import { formatCalendarEventResponse } from "#root/utils/formatResponses";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
 import { calendarEventBodySchema } from "./common";
 import { log } from "#root/utils/logger";
+import { createDbActivityLog } from "#root/utils/createDbActivityLog";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -101,6 +102,15 @@ export async function createCalendarEventForUser(req: Request, res: Response) {
     }
     //
   }
+
+  createDbActivityLog({
+    clientId: variables.clientId,
+    userId: variables.userId,
+    action: "calendar-event-created",
+    description: `Created a calendar event:${savedEvent.eventId}`,
+  }).then(() => {
+    log.info(`Activity log created for userId: ${variables?.userId}`);
+  });
 
   const formattedResponse = formatCalendarEventResponse({ event: savedEvent, guestUsers: savedGuestsToReturn });
   return res.json({

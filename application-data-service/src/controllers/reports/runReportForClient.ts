@@ -7,6 +7,8 @@ import { REPORT_PROCEDURES } from "#root/constants/default_reports";
 import { procedure_GetEmployeeLoginReportForClient } from "./procedures/GetEmployeeLoginReportForClient";
 import { procedure_GetEmployeeLoginReportByTeam } from "./procedures/GetEmployeeLoginReportByTeam";
 import { procedure_GetEmployeeFullActivity } from "./procedures/GetEmployeeFullActivityReport";
+import { createDbActivityLog } from "#root/utils/createDbActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -29,7 +31,17 @@ export async function runReportForClient(req: Request, res: Response) {
     });
   }
 
+  const variables = req.body.variables;
   const { procedure } = req.body.body;
+
+  createDbActivityLog({
+    clientId: variables.clientId,
+    userId: variables.userId,
+    action: "run-report",
+    description: `Ran report procedure:${procedure}`,
+  }).then(() => {
+    log.info(`Activity log created for userId: ${variables?.userId}`);
+  });
 
   switch (procedure) {
     case REPORT_PROCEDURES.GetEmployeeLoginReportForClient:

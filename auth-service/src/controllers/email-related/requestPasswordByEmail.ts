@@ -7,6 +7,8 @@ import User from "#root/db/entities/User";
 import EmailConfirmations from "#root/db/entities/EmailConfirmations";
 import { sendEmail } from "#root/email/sendEmail";
 import { generatePasswordResetRequestTemplate } from "#root/email/generatePasswordResetRequestTemplate";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -52,6 +54,16 @@ export async function requestPasswordByEmail(req: Request, res: Response, next: 
         token: emailConfirmation.confirmationId,
       }),
     });
+
+    createActivityLog({
+      clientId: user?.clientId,
+      userId: user?.userId,
+      action: "login-request-passwordless",
+      description: "Request passwordless email login",
+    }).then(() => {
+      log.info(`Activity log created for user ${user?.userId}`);
+    });
+
     return res.json({
       statusCode: 200,
       data: {

@@ -11,6 +11,8 @@ import Role from "#root/db/entities/Role";
 
 import { formatUserResponseWithRoles } from "#root/utils/formatResponses";
 import { returnStringsNotInOriginalArray } from "#root/utils/returnArray";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -122,6 +124,15 @@ export async function updateUserByUserId(req: Request, res: Response, next: Next
     }
 
     await foundUser.reload();
+
+    createActivityLog({
+      clientId: foundUser?.clientId,
+      userId: foundUser?.userId,
+      action: "update-profile",
+      description: `Updated user profile ${foundUser?.firstName} ${foundUser?.lastName}:${foundUser?.userId}`,
+    }).then(() => {
+      log.info(`Activity log created for user ${foundUser?.userId}`);
+    });
 
     return res.json({
       statusCode: 200,
