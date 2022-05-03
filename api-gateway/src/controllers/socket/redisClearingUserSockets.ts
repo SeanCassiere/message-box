@@ -50,6 +50,15 @@ export async function redisClearUserSockets(namespaceValues: I_RedisIdentifierPr
     }).then(() => {
       log.info(`ACTIVITY-LOG was created for ${socket.handshake.auth.userId} during logout`);
     });
+
+    createActivityLog({
+      clientId: socket.handshake.auth.clientId,
+      userId: socket.handshake.auth.userId,
+      action: "online-status-change",
+      description: `Changed status from Online to Offline::Online:Offline`,
+    }).then(() => {
+      log.info(`ACTIVITY-LOG was created for ${socket.handshake.auth.userId} during full disconnect`);
+    });
   } else {
     await redis.hset(
       namespaceValues.client_namespace,

@@ -32,6 +32,15 @@ export async function redisJoiningUserSockets(namespaceValues: I_RedisIdentifier
     }).then(() => {
       log.info(`ACTIVITY-LOG was created for ${socket.handshake.auth.userId} during login`);
     });
+
+    createActivityLog({
+      clientId: socket.handshake.auth.clientId,
+      userId: socket.handshake.auth.userId,
+      action: "online-status-change",
+      description: `Changed status from Offline to Online::Offline:Online`,
+    }).then(() => {
+      log.info(`ACTIVITY-LOG was created for ${socket.handshake.auth.userId} during initial connection`);
+    });
   }
 
   let allUserStatusOnline: I_RedisOnlineUserStatus[] = [];

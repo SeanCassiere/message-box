@@ -141,6 +141,11 @@ const NavigationWrapper: React.FC = (props) => {
 
   const handleNavigatePress = (route: string) => {
     const split = route.split("/");
+
+    if (split[1] === "logout") {
+      publishUserStatusChange(statusList[2].status, statusList[2].color);
+    }
+
     setCurrentLink(`/${split[1]}`);
     navigate(route);
   };
