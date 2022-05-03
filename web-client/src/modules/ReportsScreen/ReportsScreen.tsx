@@ -11,9 +11,13 @@ import ReportResultData from "./ReportResultData";
 import { IReportSchema } from "../../shared/interfaces/Reports.interfaces";
 import { client } from "../../shared/api/client";
 
+export interface ExtendedReportSchema extends IReportSchema {
+  label: string;
+}
+
 const ReportsScreen = () => {
-  const [selectedReportData, setSelectedReportData] = React.useState<IReportSchema | null>(null);
-  const [reports, setReports] = React.useState<IReportSchema[]>([]);
+  const [selectedReportData, setSelectedReportData] = React.useState<ExtendedReportSchema | null>(null);
+  const [reports, setReports] = React.useState<ExtendedReportSchema[]>([]);
 
   const availableReports = useMemo(() => reports, [reports]);
 
@@ -40,7 +44,8 @@ const ReportsScreen = () => {
         if (res.status !== 200) {
           console.log("get reports failed");
         } else {
-          setReports(res.data);
+          const map = res.data.map((r: any) => ({ ...r, label: r.reportName }));
+          setReports(map);
         }
       })
       .catch((error) => {

@@ -199,18 +199,16 @@ const ReportResultData = (props: IProps) => {
             </Grid>
           )}
           <Grid item xs={12} md={2}>
-            <Box>
-              <Button fullWidth type="submit">
-                Search
-              </Button>
-            </Box>
+            <Button fullWidth type="submit" sx={{ height: "100%" }}>
+              Search
+            </Button>
+            {/* <Box>
+            </Box> */}
           </Grid>
           <Grid item xs={12} md={2}>
-            <Box>
-              <Button type="reset" color="secondary" fullWidth onClick={setInitialFilters}>
-                Clear
-              </Button>
-            </Box>
+            <Button type="reset" color="secondary" fullWidth onClick={setInitialFilters} sx={{ height: "100%" }}>
+              Clear
+            </Button>
           </Grid>
         </Grid>
       </PageBlockItem>
