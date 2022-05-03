@@ -5,6 +5,8 @@ import Role from "#root/db/entities/Role";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { formatRoleResponse } from "#root/utils/formatResponses";
 import { ALL_AVAILABLE_ROLE_PERMISSIONS } from "#root/constants/allPermissions";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -28,7 +30,7 @@ export async function updateRoleById(req: Request, res: Response, next: NextFunc
     });
   }
 
-  const { roleId } = req.body.variables;
+  const { roleId, ...otherVariables } = req.body.variables;
   const { viewName, permissions } = req.body.body;
 
   try {
@@ -53,6 +55,15 @@ export async function updateRoleById(req: Request, res: Response, next: NextFunc
     role.permissions = saveablePermissions;
 
     await role.save();
+
+    createActivityLog({
+      clientId: otherVariables?.clientId,
+      userId: otherVariables?.userId,
+      action: "update-role",
+      description: `Updated access role ${role.viewName}:${role.roleId}`,
+    }).then(() => {
+      log.info(`Activity log created for user ${otherVariables?.userId}`);
+    });
 
     return res.json({
       statusCode: 200,

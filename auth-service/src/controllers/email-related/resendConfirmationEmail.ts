@@ -8,6 +8,8 @@ import EmailConfirmations from "#root/db/entities/EmailConfirmations";
 
 import { generateEmailConfirmationTemplate } from "#root/email/generateEmailConfirmationTemplate";
 import { sendEmail } from "#root/email/sendEmail";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -65,6 +67,15 @@ export async function resendConfirmationEmail(req: Request, res: Response, next:
         path: variables.path,
         token: newConfirmation.confirmationId,
       }),
+    });
+
+    createActivityLog({
+      clientId: user?.clientId,
+      userId: user?.userId,
+      action: "resend-confirmation-email",
+      description: `Resent confirmation email`,
+    }).then(() => {
+      log.info(`Activity log created for user ${user?.userId}`);
     });
 
     return res.json({

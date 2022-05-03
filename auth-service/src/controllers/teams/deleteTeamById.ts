@@ -4,6 +4,8 @@ import * as yup from "yup";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import Team from "#root/db/entities/Team";
 import TeamMapping from "#root/db/entities/TeamMapping";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -23,6 +25,7 @@ export async function deleteTeamById(req: Request, res: Response, next: NextFunc
     });
   }
 
+  const variables = req.body.variables;
   const { teamId } = req.body.variables;
 
   try {
@@ -51,6 +54,15 @@ export async function deleteTeamById(req: Request, res: Response, next: NextFunc
     }
 
     await team.remove();
+
+    createActivityLog({
+      clientId: variables?.clientId,
+      userId: variables?.userId,
+      action: "delete-team",
+      description: `Deleted team ${team.teamName}:${team.teamId}`,
+    }).then(() => {
+      log.info(`Activity log created for user ${variables?.userId}`);
+    });
 
     return res.json({
       statusCode: 200,

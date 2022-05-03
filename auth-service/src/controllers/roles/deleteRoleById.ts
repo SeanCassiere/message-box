@@ -4,6 +4,8 @@ import * as yup from "yup";
 import Role from "#root/db/entities/Role";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import RoleMapping from "#root/db/entities/RoleMapping";
+import { log } from "#root/utils/logger";
+import { createActivityLog } from "#root/utils/createActivityLog";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -23,6 +25,7 @@ export async function deleteRoleById(req: Request, res: Response, next: NextFunc
     });
   }
 
+  const variables = req.body.variables;
   const { roleId } = req.body.variables;
 
   try {
@@ -51,6 +54,15 @@ export async function deleteRoleById(req: Request, res: Response, next: NextFunc
     }
 
     await role.remove();
+
+    createActivityLog({
+      clientId: variables?.clientId,
+      userId: variables?.userId,
+      action: "create-role",
+      description: `Created access role ${role.viewName}:${role.roleId}`,
+    }).then(() => {
+      log.info(`Activity log created for user ${variables?.userId}`);
+    });
 
     return res.json({
       statusCode: 200,

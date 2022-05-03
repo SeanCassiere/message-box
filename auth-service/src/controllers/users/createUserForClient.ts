@@ -12,6 +12,8 @@ import { sendEmail } from "#root/email/sendEmail";
 import { generateEmailConfirmationTemplate } from "#root/email/generateEmailConfirmationTemplate";
 import Team from "#root/db/entities/Team";
 import TeamMapping from "#root/db/entities/TeamMapping";
+import { log } from "#root/utils/logger";
+import { createActivityLog } from "#root/utils/createActivityLog";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -93,6 +95,15 @@ export async function createUserForClient(req: Request, res: Response, next: Nex
         path: req.body.variables.path,
         token: confirmationEmail.confirmationId,
       }),
+    });
+
+    createActivityLog({
+      clientId: user?.clientId,
+      userId: user?.userId,
+      action: "add-user-to-company",
+      description: "Added an employee",
+    }).then(() => {
+      log.info(`Activity log created for user ${user?.userId}`);
     });
 
     return res.json({

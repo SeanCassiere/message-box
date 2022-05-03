@@ -10,13 +10,14 @@ import { AUTH_SERVICE_URI } from "#root/utils/constants";
 const validationSchema = yup.object().shape({
   body: yup.object().shape({
     clientId: yup.string().required("ClientId is required"),
-    userId: yup.string(),
-    startDate: yup.date().required("StartDate is required"),
-    endDate: yup.date().required("EndDate is required"),
+    userId: yup.string().required("UserId is required"),
+    currentDate: yup.date().required("CurrentDate is required"),
+    startDate: yup.date(),
+    endDate: yup.date(),
   }),
 });
 
-export async function procedure_GetEmployeeFullActivity(req: Request, res: Response) {
+export async function procedure_GetEmployeeStatusChange(req: Request, res: Response) {
   const checkErrors = await validateYupSchema(validationSchema, req.body);
   if (checkErrors && checkErrors.length > 0) {
     return res.json({
@@ -43,30 +44,37 @@ export async function procedure_GetEmployeeFullActivity(req: Request, res: Respo
     users = clientUsers.map((u) => ({ ...u, fullName: `${u.firstName} ${u.lastName}` }));
   } catch (error) {
     log.error(
-      `POST /reports/procedure_GetEmployeeFullActivityReport -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\n
+      `POST /reports/procedure_GetEmployeeStatusChange -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\n
       could not fetch the user ids for this client\n
       ${error}`
     );
   }
 
   const dbQuery = ActivityLog.createQueryBuilder().where("client_id = :client_id", { client_id: body.clientId });
-  if (body?.userId) {
-    dbQuery.andWhere("user_id = :user_id", { user_id: body.userId });
-  }
+  dbQuery.andWhere("user_id = :user_id", { user_id: body.userId });
+  dbQuery.andWhere("action = :action", { action: "online-status-change" });
 
-  dbQuery.andWhere("created_at >= :startDate", { startDate: new Date(body.startDate).toISOString() });
-  dbQuery.andWhere("created_at <= :endDate", { endDate: new Date(body.endDate).toISOString() });
+  const startDate = new Date(body.currentDate).setHours(0, 0, 0, 0);
+  const endDate = new Date(body.currentDate).setHours(23, 59, 59, 999);
+
+  dbQuery.andWhere("created_at >= :startDate", { startDate: new Date(startDate).toISOString() });
+  dbQuery.andWhere("created_at <= :endDate", { endDate: new Date(endDate).toISOString() });
   dbQuery.orderBy("created_at", "ASC");
 
   try {
     const results = await dbQuery.getMany();
-    const mapped = results.map((result) => ({
-      id: result.id,
-      name: users.find((u) => u.userId === result.userId)?.fullName ?? "NO NAME",
-      action: result.action,
-      timestamp: result.createdAt,
-      description: result.description,
-    }));
+    const mapped = results.map((result) => {
+      const descriptionBroken = result.description.split("::");
+      const [fromStatus, toStatus] = descriptionBroken[1].split(":");
+      return {
+        id: result.id,
+        name: users.find((u) => u.userId === result.userId)?.fullName ?? "NO NAME",
+        action: result.action,
+        timestamp: result.createdAt,
+        fromStatus: fromStatus,
+        toStatus: toStatus,
+      };
+    });
     return res.json({
       statusCode: 200,
       data: mapped,

@@ -3,9 +3,9 @@ import * as yup from "yup";
 import axios from "axios";
 
 import { validateYupSchema } from "#root/utils/validateYupSchema";
-import ActivityLog from "#root/db/entities/ActivityLog";
 import { log } from "#root/utils/logger";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
+import Task from "#root/db/entities/Task";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({
@@ -16,7 +16,7 @@ const validationSchema = yup.object().shape({
   }),
 });
 
-export async function procedure_GetEmployeeFullActivity(req: Request, res: Response) {
+export async function procedure_GetEmployeeTasksSummary(req: Request, res: Response) {
   const checkErrors = await validateYupSchema(validationSchema, req.body);
   if (checkErrors && checkErrors.length > 0) {
     return res.json({
@@ -49,27 +49,50 @@ export async function procedure_GetEmployeeFullActivity(req: Request, res: Respo
     );
   }
 
-  const dbQuery = ActivityLog.createQueryBuilder().where("client_id = :client_id", { client_id: body.clientId });
-  if (body?.userId) {
-    dbQuery.andWhere("user_id = :user_id", { user_id: body.userId });
-  }
-
-  dbQuery.andWhere("created_at >= :startDate", { startDate: new Date(body.startDate).toISOString() });
-  dbQuery.andWhere("created_at <= :endDate", { endDate: new Date(body.endDate).toISOString() });
-  dbQuery.orderBy("created_at", "ASC");
+  const dbQuery = Task.createQueryBuilder().where("client_id = :client_id", { client_id: body.clientId });
+  dbQuery.andWhere("owner_id = :owner_id", { owner_id: body.userId });
+  dbQuery.andWhere("is_deleted = :is_deleted", { is_deleted: false });
+  dbQuery.andWhere("due_date >= :startDate", { startDate: new Date(body.startDate).toISOString() });
+  dbQuery.andWhere("due_date <= :endDate", { endDate: new Date(body.endDate).toISOString() });
+  dbQuery.orderBy("due_date", "ASC");
 
   try {
     const results = await dbQuery.getMany();
     const mapped = results.map((result) => ({
-      id: result.id,
-      name: users.find((u) => u.userId === result.userId)?.fullName ?? "NO NAME",
-      action: result.action,
-      timestamp: result.createdAt,
-      description: result.description,
+      id: result.taskId,
+      name: users.find((u) => u.userId === result.ownerId)?.fullName ?? "NO NAME",
+      taskName: result.title,
+      isCompleted: result.isCompleted ? "Yes" : "No",
+      dueDate: result.dueDate,
+      completedDate: result.completedDate,
     }));
+    const summary = mapped.reduce(
+      (acc, curr) => {
+        acc.totalTasks++;
+        if (curr.isCompleted === "Yes") {
+          acc.completedTasks++;
+        }
+        return acc;
+      },
+      { totalTasks: 0, completedTasks: 0 }
+    );
+    const summaryRow = {
+      id: "-1",
+      name: "--Summary--",
+      taskName: "",
+      isCompleted: `${summary.completedTasks}/${summary.totalTasks}`,
+      dueDate: null,
+      completedDate: null,
+    };
+
+    const allRows = [...mapped];
+    if (allRows.length > 0) {
+      allRows.push(summaryRow as any);
+    }
+
     return res.json({
       statusCode: 200,
-      data: mapped,
+      data: allRows,
       errors: [],
       pagination: null,
     });

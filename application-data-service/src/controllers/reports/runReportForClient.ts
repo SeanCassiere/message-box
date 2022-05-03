@@ -3,10 +3,14 @@ import * as yup from "yup";
 
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { REPORT_PROCEDURES } from "#root/constants/default_reports";
+import { log } from "#root/utils/logger";
 
 import { procedure_GetEmployeeLoginReportForClient } from "./procedures/GetEmployeeLoginReportForClient";
 import { procedure_GetEmployeeLoginReportByTeam } from "./procedures/GetEmployeeLoginReportByTeam";
 import { procedure_GetEmployeeFullActivity } from "./procedures/GetEmployeeFullActivityReport";
+import { createDbActivityLog } from "#root/utils/createDbActivityLog";
+import { procedure_GetEmployeeStatusChange } from "./procedures/GetEmployeeStatusChange";
+import { procedure_GetEmployeeTasksSummary } from "./procedures/GetEmployeeTasksSummary";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -29,7 +33,17 @@ export async function runReportForClient(req: Request, res: Response) {
     });
   }
 
+  const variables = req.body.variables;
   const { procedure } = req.body.body;
+
+  createDbActivityLog({
+    clientId: variables.clientId,
+    userId: variables.userId,
+    action: "run-report",
+    description: `Ran report procedure:${procedure}`,
+  }).then(() => {
+    log.info(`Activity log created for userId: ${variables?.userId}`);
+  });
 
   switch (procedure) {
     case REPORT_PROCEDURES.GetEmployeeLoginReportForClient:
@@ -38,6 +52,10 @@ export async function runReportForClient(req: Request, res: Response) {
       return await procedure_GetEmployeeLoginReportByTeam(req, res);
     case REPORT_PROCEDURES.GetEmployeeFullActivity:
       return await procedure_GetEmployeeFullActivity(req, res);
+    case REPORT_PROCEDURES.GetEmployeeStatusChange:
+      return await procedure_GetEmployeeStatusChange(req, res);
+    case REPORT_PROCEDURES.GetEmployeeTasksSummary:
+      return await procedure_GetEmployeeTasksSummary(req, res);
     default:
       return res.json({
         statusCode: 400,

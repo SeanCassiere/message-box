@@ -5,6 +5,8 @@ import EmailConfirmations from "#root/db/entities/EmailConfirmations";
 import User from "#root/db/entities/User";
 
 import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({
@@ -41,6 +43,15 @@ export async function confirmUserAccountByToken(req: Request, res: Response, nex
 
     findUser.isEmailConfirmed = true;
     await findUser.save();
+
+    createActivityLog({
+      clientId: findUser.clientId,
+      userId: findUser.userId,
+      action: "verify-account-email",
+      description: "Verified account email",
+    }).then(() => {
+      log.info(`Activity log created for user ${findUser.userId}`);
+    });
 
     return res.json({ statusCode: 200, data: { success: true, message: "Account confirmed" }, errors: [] });
   } catch (error) {

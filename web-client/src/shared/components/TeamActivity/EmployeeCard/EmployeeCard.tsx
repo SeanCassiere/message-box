@@ -16,6 +16,7 @@ import Skeleton from "@mui/material/Skeleton";
 import { ITeamMember } from "../../../interfaces/Client.interfaces";
 import { selectLookupListsState } from "../../../redux/store";
 import { stringAvatar } from "../../Layout/NavigationWrapper/navUtils";
+import { socket_activateInactivityPromptForUser } from "../../../api/socket.service";
 
 const employeeCardStyling: CSSObject = {
   mx: 1,
@@ -45,6 +46,8 @@ const EmployeeCard = (props: IProps) => {
 
   const currentStatus = onlineMember ? onlineMember.status : "Offline";
   const badgeColor = currentStatus === "Offline" ? red[300] : currentStatus === "Online" ? ONLINE_COLOR : orange[300];
+
+  const [messageSent, setSentMessage] = React.useState(false);
 
   return (
     <Paper sx={employeeCardStyling} elevation={0}>
@@ -102,7 +105,22 @@ const EmployeeCard = (props: IProps) => {
           </Typography>
         </Stack>
         <Stack direction="column" gap={1}>
-          <Button variant="outlined">ALERT</Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              socket_activateInactivityPromptForUser(
+                props.member.userId,
+                `${props.member.firstName} ${props.member.lastName}`
+              );
+              setSentMessage(true);
+
+              setTimeout(() => {
+                setSentMessage(false);
+              }, 2000);
+            }}
+          >
+            {messageSent ? "DONE" : "ALERT"}
+          </Button>
           <Button>MESSAGE</Button>
         </Stack>
       </Stack>

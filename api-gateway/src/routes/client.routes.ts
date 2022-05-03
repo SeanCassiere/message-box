@@ -132,7 +132,7 @@ clientRouter
 
     try {
       const { data: response } = await client.post("/roles/createRoleForClient", {
-        variables: { clientId: request.auth?.message_box_clientId },
+        variables: { clientId: request.auth?.message_box_clientId, userId: request.auth?.message_box_userId },
         body: { ...req.body },
       });
 

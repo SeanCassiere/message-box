@@ -5,7 +5,7 @@ import axios from "axios";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
 import { log } from "#root/utils/logger";
-import { resolveReportsListForClient } from "#root/constants/default_reports";
+import { resolveReportsListForClient } from "#root/constants/report_helpers";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({

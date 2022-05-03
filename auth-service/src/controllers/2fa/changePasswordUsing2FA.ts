@@ -8,6 +8,8 @@ import TwoFactorAuthMapping from "#root/db/entities/TwoFactorAuthMapping";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { hashPassword } from "#root/utils/hashPassword";
 import { Secret2FA } from "#root/interfaces/2FA.interfaces";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   body: yup.object().shape({
@@ -83,6 +85,15 @@ export async function changePasswordUsing2FA(req: Request, res: Response) {
 
     user.password = newHashedPassword;
     await user.save();
+
+    createActivityLog({
+      clientId: user?.clientId,
+      userId: user?.userId,
+      action: "profile-change-password",
+      description: `Changed my password with 2fa ${user.firstName} ${user.lastName}:${user.userId}`,
+    }).then(() => {
+      log.info(`Activity log created for user ${user?.userId}`);
+    });
 
     return res.json({
       statusCode: 200,

@@ -12,6 +12,8 @@ import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { generate2faSecret } from "#root/utils/generate2faSecret";
 import { sendEmail } from "#root/email/sendEmail";
 import { generate2faResetRequestTemplate } from "#root/email/generate2faResetRequestTemplate";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -89,6 +91,15 @@ export async function sendReset2faTokenEmail(req: Request, res: Response, next: 
         token: emailConfirmation.confirmationId,
       }),
       subject: "Reset your 2FA access",
+    });
+
+    createActivityLog({
+      clientId: user.clientId,
+      userId: user.userId,
+      action: "reset-2fa-access",
+      description: "Reset 2FA access",
+    }).then(() => {
+      log.info(`Activity log created for user ${user.userId}`);
     });
 
     /**

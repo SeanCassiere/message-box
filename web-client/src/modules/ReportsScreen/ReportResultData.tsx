@@ -13,14 +13,23 @@ import {
 } from "@mui/x-data-grid";
 import LinearProgress from "@mui/material/LinearProgress";
 
+import FormControl from "@mui/material/FormControl";
+import Checkbox from "@mui/material/Checkbox";
+import Autocomplete from "@mui/material/Autocomplete";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+
 import PageBlockItem from "../../shared/components/Layout/PageBlockItem";
 import FilterField from "./FilterField";
+import TextField from "../../shared/components/Form/TextField";
 
 import { IReportSchema } from "../../shared/interfaces/Reports.interfaces";
 import { removeEmptyQueryParamsToSend } from "../../shared/util/general";
 import { client } from "../../shared/api/client";
-import { formatDateTimeShort } from "../../shared/util/dateTime";
+import { formatDateTimeShort, formatDateShort } from "../../shared/util/dateTime";
 
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 interface IProps {
   selectedReport: IReportSchema;
 }
@@ -39,10 +48,12 @@ const ReportResultData = (props: IProps) => {
   const [filterData, setFilterData] = React.useState<{ [key: string]: any }>(initialData);
 
   const viewableFilters = selectedReport.searchFields.filter((f) => f.hidden === false);
+  const [currentFilters, setCurrentFilers] = React.useState(viewableFilters);
   const setInitialFilters = React.useCallback(() => {
     setFilterData(initialData);
+    setCurrentFilers(viewableFilters);
     setLoading(true);
-  }, [initialData]);
+  }, [initialData, viewableFilters]);
 
   const [reportData, setReportData] = React.useState([]);
 
@@ -52,21 +63,56 @@ const ReportResultData = (props: IProps) => {
       let colData = {} as GridColDef;
       colData.field = field.fieldName;
       colData.headerName = field.label;
-      colData.resizable = true;
       colData.description = field.label;
+      colData.minWidth = 150;
 
-      if (field.fieldName === "timestamp") {
+      if (field.fieldType === "date-time") {
         colData.valueFormatter = (value: any) => {
-          return formatDateTimeShort(value.value);
+          const dateValue = formatDateTimeShort(value.value);
+          return dateValue !== "Invalid date" ? dateValue : "";
         };
         colData.minWidth = 250;
       }
+
+      if (field.fieldType === "date") {
+        colData.valueFormatter = (value: any) => {
+          const dateValue = formatDateShort(value.value);
+          return dateValue !== "Invalid date" ? dateValue : "";
+        };
+        colData.minWidth = 250;
+      }
+
+      if (field.fieldName === "action") {
+        colData.minWidth = 200;
+      }
+
+      if (field.fieldName === "taskName") {
+        colData.minWidth = 300;
+      }
+
+      if (field.fieldName === "description") {
+        colData.minWidth = 450;
+        colData.flex = 1;
+      }
+
       cols.push(colData);
     });
 
     cols[0].minWidth = 200;
     return cols;
   }, [selectedReport]);
+
+  const visibleColumns = React.useMemo(() => {
+    let fields = {};
+    selectedReport.reportFields.forEach((field) => {
+      fields = {
+        ...fields,
+        [field.fieldName]: field.visible,
+      };
+    });
+
+    return fields;
+  }, [selectedReport.reportFields]);
 
   return (
     <>
@@ -97,26 +143,72 @@ const ReportResultData = (props: IProps) => {
               });
           }}
         >
-          {viewableFilters.map((filter) => (
-            <Grid item xs={12} md={2} key={filter.fieldName}>
-              <Box>
-                <FilterField field={filter} filterData={filterData} setFilterData={setFilterData} />
-              </Box>
+          {currentFilters
+            .filter((f) => f.visible)
+            .map((filter) => (
+              <Grid item xs={12} md={2} key={filter.fieldName}>
+                <Box>
+                  <FilterField field={filter} filterData={filterData} setFilterData={setFilterData} />
+                </Box>
+              </Grid>
+            ))}
+          {selectedReport.searchFields.filter((f) => f.hidden === false).filter((f) => f.visible === false).length >
+            0 && (
+            <Grid item xs={12} md={2}>
+              <FormControl fullWidth>
+                <Autocomplete
+                  size="small"
+                  limitTags={2}
+                  renderInput={(params) => <TextField {...params} label="Other filters" />}
+                  multiple
+                  options={currentFilters.filter((r) => r.hidden === false)}
+                  getOptionLabel={(option) => option.label}
+                  disableCloseOnSelect
+                  disableClearable
+                  renderOption={(props, option) => {
+                    return (
+                      <li
+                        {...props}
+                        onClick={() => {
+                          if (option.mandatory) return;
+                          const newOption = { ...option, visible: option.visible ? false : true };
+                          const currentVisible = currentFilters
+                            .filter((f) => f.fieldName !== option.fieldName)
+                            .filter((f) => f.visible);
+                          const currentHidden = currentFilters
+                            .filter((f) => f.fieldName !== option.fieldName)
+                            .filter((f) => f.visible === false);
+                          setCurrentFilers([...currentVisible, newOption, ...currentHidden]);
+                        }}
+                      >
+                        <Checkbox
+                          icon={icon}
+                          checkedIcon={checkedIcon}
+                          style={{ marginRight: 8 }}
+                          disabled={option.mandatory}
+                          checked={option.mandatory || option.visible}
+                        />
+                        {option.label}
+                      </li>
+                    );
+                  }}
+                  renderTags={(value, getTagProps) => <span></span>}
+                  disableListWrap
+                />
+              </FormControl>
             </Grid>
-          ))}
+          )}
           <Grid item xs={12} md={2}>
-            <Box>
-              <Button fullWidth type="submit">
-                Search
-              </Button>
-            </Box>
+            <Button fullWidth type="submit" sx={{ height: "100%" }}>
+              Search
+            </Button>
+            {/* <Box>
+            </Box> */}
           </Grid>
           <Grid item xs={12} md={2}>
-            <Box>
-              <Button type="reset" color="secondary" fullWidth onClick={setInitialFilters}>
-                Clear
-              </Button>
-            </Box>
+            <Button type="reset" color="secondary" fullWidth onClick={setInitialFilters} sx={{ height: "100%" }}>
+              Clear
+            </Button>
           </Grid>
         </Grid>
       </PageBlockItem>
@@ -133,6 +225,7 @@ const ReportResultData = (props: IProps) => {
                   backgroundColor: "primary.300",
                   borderRadius: 0,
                   fontWeight: 900,
+                  fontSize: "1em",
                   color: "white",
                 },
                 "& .MuiDataGrid-columnSeparator": {
@@ -144,6 +237,11 @@ const ReportResultData = (props: IProps) => {
               loading={loading}
               components={{ Toolbar: CustomToolBar, LoadingOverlay: LinearProgress }}
               disableSelectionOnClick
+              initialState={{
+                columns: {
+                  columnVisibilityModel: visibleColumns,
+                },
+              }}
             />
           </Box>
         </PageBlockItem>
@@ -157,8 +255,8 @@ function CustomToolBar() {
     <GridToolbarContainer
       style={{ display: "flex", gap: 3, paddingTop: "0.5rem", paddingBottom: "0.5rem", paddingLeft: "0.5rem" }}
     >
-      <GridToolbarFilterButton {...({ variant: "text" } as any)} />
       <GridToolbarColumnsButton variant="text" />
+      <GridToolbarFilterButton {...({ variant: "text" } as any)} />
       <GridToolbarExport variant="text" printOptions={{ disableToolbarButton: true }} />
     </GridToolbarContainer>
   );

@@ -5,6 +5,7 @@ import { validateYupSchema } from "#root/utils/validateYupSchema";
 import CalendarEvent from "#root/db/entities/CalendarEvent";
 import CalendarEventShareMapping from "#root/db/entities/CalendarEventShareMappings";
 import { log } from "#root/utils/logger";
+import { createDbActivityLog } from "#root/utils/createDbActivityLog";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -116,6 +117,15 @@ export async function patchCalendarEventDetailsById(req: Request, res: Response)
       errors: [{ field: "eventId", message: "Error patching the calendar event" }],
     });
   }
+
+  createDbActivityLog({
+    clientId: variables.clientId,
+    userId: variables.userId,
+    action: "calendar-event-patched",
+    description: `Patched a calendar event:${foundCalendarEvent.eventId}`,
+  }).then(() => {
+    log.info(`Activity log created for userId: ${variables?.userId}`);
+  });
 
   return res.json({
     statusCode: 200,

@@ -4,6 +4,7 @@ import { redis } from "../redis";
 import { log } from "#root/utils/logger";
 import { I_RedisIdentifierProps } from "./allEvents";
 import { I_RedisOnlineUserStatus } from "./redisJoiningUserSockets";
+import { createActivityLog } from "#root/utils/createActivityLog";
 
 export async function redisClearUserSockets(namespaceValues: I_RedisIdentifierProps, io: Server, socket: Socket) {
   // remove socket from redis
@@ -40,6 +41,24 @@ export async function redisClearUserSockets(namespaceValues: I_RedisIdentifierPr
       JSON.stringify(nowOnlineUsersArray)
     );
     log.info(`${socket.handshake.auth.userId}'s was removed from the client online users pool in redis`);
+
+    createActivityLog({
+      clientId: socket.handshake.auth.clientId,
+      userId: socket.handshake.auth.userId,
+      action: "logout",
+      description: "User logged out from websocket server",
+    }).then(() => {
+      log.info(`ACTIVITY-LOG was created for ${socket.handshake.auth.userId} during logout`);
+    });
+
+    createActivityLog({
+      clientId: socket.handshake.auth.clientId,
+      userId: socket.handshake.auth.userId,
+      action: "online-status-change",
+      description: `Changed status from Online to Offline::Online:Offline`,
+    }).then(() => {
+      log.info(`ACTIVITY-LOG was created for ${socket.handshake.auth.userId} during full disconnect`);
+    });
   } else {
     await redis.hset(
       namespaceValues.client_namespace,

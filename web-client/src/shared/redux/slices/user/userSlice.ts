@@ -20,6 +20,7 @@ interface UserSliceState {
     defaultDateRefreshInterval: number;
   };
   statusList: ICurrentUserStatusInterface[];
+  showAwakeDialog: boolean;
 }
 
 const initialState: UserSliceState = {
@@ -37,6 +38,7 @@ const initialState: UserSliceState = {
     defaultDateRefreshInterval: 30000,
   },
   statusList: DEFAULT_USER_STATUSES,
+  showAwakeDialog: false,
 };
 
 const userSlice = createSlice({
@@ -57,6 +59,9 @@ const userSlice = createSlice({
       state.roles = action.payload.roles;
       state.permissions = action.payload.permissions;
     },
+    setAwakeDialogState(state, action: PayloadAction<boolean>) {
+      state.showAwakeDialog = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getProfilesThunk.pending, (state) => {
@@ -71,6 +76,11 @@ const userSlice = createSlice({
   },
 });
 
-export const { setClearedUserState, setClientProfileData, setUserProfileData, setPermissionsAndRoles } =
-  userSlice.actions;
+export const {
+  setClearedUserState,
+  setClientProfileData,
+  setUserProfileData,
+  setPermissionsAndRoles,
+  setAwakeDialogState,
+} = userSlice.actions;
 export default userSlice;

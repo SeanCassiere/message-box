@@ -4,4 +4,5 @@ export const REDIS_CONSTANTS = {
   USER_SOCKET_HASH_KEY: "user-sockets",
   USER_CURRENT_STATUS_HASH_KEY: "user-status",
   INITIAL_USER_STATUS: "Online",
+  INITIAL_USER_STATUS_COLOR: "#4db6ac",
 };

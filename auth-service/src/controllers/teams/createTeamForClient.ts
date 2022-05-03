@@ -7,6 +7,8 @@ import TeamMapping from "#root/db/entities/TeamMapping";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { formatTeamResponse } from "#root/utils/formatResponses";
 import User from "#root/db/entities/User";
+import { createActivityLog } from "#root/utils/createActivityLog";
+import { log } from "#root/utils/logger";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -34,6 +36,7 @@ export async function createTeamForClient(req: Request, res: Response, next: Nex
     });
   }
 
+  const variables = req.body.variables;
   const { clientId } = req.body.variables;
   const { rootName, teamName, members } = req.body.body;
 
@@ -57,6 +60,15 @@ export async function createTeamForClient(req: Request, res: Response, next: Nex
     }
 
     const mappings = await TeamMapping.find({ where: { teamId: team.teamId } });
+
+    createActivityLog({
+      clientId: variables?.clientId,
+      userId: variables?.userId,
+      action: "create-team",
+      description: `Created team details ${team.teamName}:${team.teamId}`,
+    }).then(() => {
+      log.info(`Activity log created for user ${variables?.userId}`);
+    });
 
     const response = await formatTeamResponse({ team, members: mappings, resolveUsers: true });
     return res.json({
