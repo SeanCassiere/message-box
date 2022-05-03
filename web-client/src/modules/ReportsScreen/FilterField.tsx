@@ -13,18 +13,24 @@ import { selectUserState } from "../../shared/redux/store";
 const FilterField = React.memo(
   ({ field, filterData, setFilterData }: { field: IReportSearchFieldSchema; filterData: any; setFilterData: any }) => {
     const { formats } = useSelector(selectUserState);
+    const dateMemoed = React.useMemo(() => {
+      try {
+        return (
+          filterData[field.fieldName] !== "" &&
+          filterData[field.fieldName] !== null &&
+          new Date(filterData[field.fieldName]).toISOString()
+        );
+      } catch (error) {
+        return false;
+      }
+    }, [field.fieldName, filterData]);
+
     if (field.fieldType === "form-date") {
       return (
         <FormControl fullWidth>
           <DesktopDatePicker
             label={field.label}
-            value={
-              filterData[field.fieldName] !== "" &&
-              filterData[field.fieldName] !== null &&
-              new Date(filterData[field.fieldName])
-                ? new Date(filterData[field.fieldName])
-                : null
-            }
+            value={dateMemoed}
             inputFormat={formats.shortDateFormat}
             onChange={(date, keyboardValue) => {
               const momentDate = date as any;
@@ -34,9 +40,10 @@ const FilterField = React.memo(
                   ...prev,
                   [field.fieldName]: new Date(momentDate).toISOString().substring(0, 10),
                 }));
+                return;
               }
             }}
-            showDaysOutsideCurrentMonth
+            // showDaysOutsideCurrentMonth
             renderInput={(params) => (
               <TextField
                 variant="outlined"

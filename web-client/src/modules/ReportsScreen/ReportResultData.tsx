@@ -77,6 +77,18 @@ const ReportResultData = (props: IProps) => {
     return cols;
   }, [selectedReport]);
 
+  const visibleColumns = React.useMemo(() => {
+    let fields = {};
+    selectedReport.reportFields.forEach((field) => {
+      fields = {
+        ...fields,
+        [field.fieldName]: field.visible,
+      };
+    });
+
+    return fields;
+  }, [selectedReport.reportFields]);
+
   return (
     <>
       <PageBlockItem title="Filters">
@@ -154,6 +166,11 @@ const ReportResultData = (props: IProps) => {
               loading={loading}
               components={{ Toolbar: CustomToolBar, LoadingOverlay: LinearProgress }}
               disableSelectionOnClick
+              initialState={{
+                columns: {
+                  columnVisibilityModel: visibleColumns,
+                },
+              }}
             />
           </Box>
         </PageBlockItem>

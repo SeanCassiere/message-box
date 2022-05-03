@@ -281,6 +281,12 @@ const DEFAULT_REPORTS = [
         visible: true,
       },
       {
+        fieldName: "action",
+        fieldType: "text",
+        label: "Action",
+        visible: false,
+      },
+      {
         fieldName: "timestamp",
         fieldType: "date-time",
         label: "Timestamp",
