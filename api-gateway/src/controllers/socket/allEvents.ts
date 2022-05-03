@@ -4,9 +4,11 @@ export const EVENTS = {
   CLIENT: {
     FETCH_ONLINE_USERS: "client-fetch-online-users",
     PUBLISH_USER_STATUS: "client-publish-user-status",
+    ACTIVATE_INACTIVITY_PROMPT: "client-activate-inactivity-prompt",
   },
   SERVER: {
     SEND_ONLINE_USERS: "server-send-online-users",
+    OPEN_INACTIVITY_PROMPT: "server-open-inactivity-prompt",
   },
 };
 

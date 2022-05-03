@@ -25,7 +25,7 @@ const App = () => {
   const { isLoadingLookupData } = useSelector(selectLookupListsState);
   const { isLoggedIn, expiresAt, access_token } = useSelector(selectAuthState);
 
-  const { connectSocket, listenForOnlineUsers } = useSocket();
+  const { connectSocket, listenForOnlineUsers, socket_listenForInactivityPrompt } = useSocket();
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -43,6 +43,7 @@ const App = () => {
     }
     connectSocket(access_token);
     listenForOnlineUsers();
+    socket_listenForInactivityPrompt();
   }, [
     access_token,
     isLoggedIn,
@@ -51,6 +52,7 @@ const App = () => {
     isLoadingProfileData,
     connectSocket,
     listenForOnlineUsers,
+    socket_listenForInactivityPrompt,
   ]);
 
   // auto refresh token

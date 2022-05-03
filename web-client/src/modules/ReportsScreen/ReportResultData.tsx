@@ -53,6 +53,7 @@ const ReportResultData = (props: IProps) => {
       colData.field = field.fieldName;
       colData.headerName = field.label;
       colData.description = field.label;
+      colData.minWidth = 150;
 
       if (field.fieldName === "timestamp") {
         colData.valueFormatter = (value: any) => {

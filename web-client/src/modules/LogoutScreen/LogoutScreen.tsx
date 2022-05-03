@@ -6,6 +6,7 @@ import BackdropLoader from "../../shared/components/SuspenseLoadingWrapper/Backd
 
 import { useSocket } from "../../shared/hooks/useSocket";
 import { userLogoutThunk } from "../../shared/redux/slices/auth/thunks";
+import { setAwakeDialogState } from "../../shared/redux/slices/user/userSlice";
 
 const LogoutScreen = () => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const LogoutScreen = () => {
       navigate("/");
       disconnectSocket();
     }, 1000);
+    dispatch(setAwakeDialogState(false));
 
     return () => {
       clearTimeout(timeout);

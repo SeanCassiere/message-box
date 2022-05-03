@@ -7,7 +7,7 @@ import { I_RedisOnlineUserStatus } from "./redisJoiningUserSockets";
 import { createActivityLog } from "#root/utils/createActivityLog";
 
 export function setupListenForUserStatusChange(namespaceValues: I_RedisIdentifierProps, io: Server, socket: Socket) {
-  socket.on(EVENTS.CLIENT.PUBLISH_USER_STATUS, async ({ status, color }) => {
+  socket.on(EVENTS.CLIENT.PUBLISH_USER_STATUS, async ({ status, color, kickedOut }) => {
     if (await redis.hexists(namespaceValues.client_namespace, namespaceValues.client_online_users_namespace)) {
       const users = await redis.hget(namespaceValues.client_namespace, namespaceValues.client_online_users_namespace);
       let usersArray = JSON.parse(users as string) as I_RedisOnlineUserStatus[];
@@ -34,7 +34,9 @@ export function setupListenForUserStatusChange(namespaceValues: I_RedisIdentifie
         clientId: socket.handshake.auth.clientId,
         userId: socket.handshake.auth.userId,
         action: "online-status-change",
-        description: `Changed status from ${currentStatus} to ${status}::${currentStatus}:${status}`,
+        description: kickedOut
+          ? `Kicked out for inactivity::${currentStatus}:In-active (${status})`
+          : `Changed status from ${currentStatus} to ${status}::${currentStatus}:${status}`,
       }).then(() => {
         log.info(`ACTIVITY-LOG was created for ${socket.handshake.auth.userId} during status-change`);
       });

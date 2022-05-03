@@ -11,6 +11,7 @@ import { redisOnJoinSubscribeToOnlineUsers } from "./socket/redisOnJoinSubscribe
 import { redisOnLeaveUnsubscribeFromOnlineUsers } from "./socket/redisOnLeaveUnsubscribeFromOnlineUsers";
 import { subRedis } from "./redis";
 import { setupListenForUserStatusChange } from "./socket/setupListenForUserStatusChange";
+import { setupListenForInactivityPrompt } from "./socket/setupListenForInactivityPrompt";
 
 export function socket({ io }: { io: Server }) {
   log.info("Socket.io is up and running 🌍");
@@ -41,6 +42,7 @@ export function socket({ io }: { io: Server }) {
     await redisOnJoinSubscribeToOnlineUsers(namespaceValues, io, socket);
 
     setupListenForUserStatusChange(namespaceValues, io, socket);
+    setupListenForInactivityPrompt(namespaceValues, io, socket);
 
     socket.on(EVENTS.disconnection, async () => {
       // handles removing the user from the online pool
