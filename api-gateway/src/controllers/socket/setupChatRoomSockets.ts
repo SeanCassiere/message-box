@@ -1,9 +1,10 @@
+import axios from "axios";
 import { Server, Socket } from "socket.io";
 
 import { log } from "#root/utils/logger";
 import { EVENTS, I_RedisIdentifierProps } from "./allEvents";
-import axios from "axios";
 import { APP_DATA_SERVICE_URI } from "#root/constants";
+import { createActivityLog } from "#root/utils/createActivityLog";
 
 type ClientMessageSent = {
   roomId: string;
@@ -14,11 +15,28 @@ export async function setupChatRoomSockets(namespaceValues: I_RedisIdentifierPro
   socket.on(EVENTS.CLIENT.JOIN_CHAT_ROOM, async ({ roomId }) => {
     socket.join(`${namespaceValues.client_namespace}:room:${roomId}`);
     log.error(`${socket.handshake.auth.userId} joined room ${roomId}`);
+
+    createActivityLog({
+      clientId: socket.handshake.auth.clientId,
+      userId: socket.handshake.auth.userId,
+      action: "chat-room-join",
+      description: `Joined chat room, where roomId:${roomId}`,
+    }).then(() => {
+      log.info(`Activity log created for userId: ${socket.handshake.auth.userId}`);
+    });
   });
 
   socket.on(EVENTS.CLIENT.LEAVE_CHAT_ROOM, async ({ roomId }) => {
     socket.leave(`${namespaceValues.client_namespace}:room:${roomId}`);
     log.error(`${socket.handshake.auth.userId} left room ${roomId}`);
+    createActivityLog({
+      clientId: socket.handshake.auth.clientId,
+      userId: socket.handshake.auth.userId,
+      action: "chat-room-leave",
+      description: `Left chat room, where roomId:${roomId}`,
+    }).then(() => {
+      log.info(`Activity log created for userId: ${socket.handshake.auth.userId}`);
+    });
   });
 
   socket.on(EVENTS.CLIENT.SEND_CHAT_MESSAGE, async ({ roomId, details }: ClientMessageSent) => {

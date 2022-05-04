@@ -10,7 +10,7 @@ import ChatRoom from "#root/db/entities/ChatRoom";
 import ChatRoomUserMapping from "#root/db/entities/ChatRoomUserMappings";
 import { formatChatRoomResponse } from "#root/utils/formatResponses";
 
-// import { createDbActivityLog } from "#root/utils/createDbActivityLog";
+import { createDbActivityLog } from "#root/utils/createDbActivityLog";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -146,6 +146,15 @@ export async function updateChatRoomForRoomId(req: Request, res: Response) {
       pagination: null,
     });
   }
+
+  createDbActivityLog({
+    clientId: variables.clientId,
+    userId: variables.userId,
+    action: "chat-room-update",
+    description: `Updated chat room with roomId:${chatRoomId}`,
+  }).then(() => {
+    log.info(`Activity log created for userId: ${variables?.userId}`);
+  });
 
   return res.json({
     statusCode: 200,

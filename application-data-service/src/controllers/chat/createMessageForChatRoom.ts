@@ -6,7 +6,7 @@ import { log } from "#root/utils/logger";
 import { formatChatMessagesResponse } from "#root/utils/formatResponses";
 import ChatMessage from "#root/db/entities/ChatMessage";
 
-// import { createDbActivityLog } from "#root/utils/createDbActivityLog";
+import { createDbActivityLog } from "#root/utils/createDbActivityLog";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -65,6 +65,15 @@ export async function createMessageForChatRoom(req: Request, res: Response) {
     const newFormat = await formatChatMessagesResponse({ messages: [formatted], clientId: variables.clientId });
     formatted = newFormat[0];
   }
+
+  createDbActivityLog({
+    clientId: variables.clientId,
+    userId: variables.userId,
+    action: "chat-message-create",
+    description: `Sent a chat message of ("${body.content}") to roomId:${variables?.roomId}`,
+  }).then(() => {
+    log.info(`Activity log created for userId: ${variables?.userId}`);
+  });
 
   return res.json({
     statusCode: 200,

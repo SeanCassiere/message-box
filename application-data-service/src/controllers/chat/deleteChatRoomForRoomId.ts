@@ -6,7 +6,7 @@ import { log } from "#root/utils/logger";
 import ChatRoom from "#root/db/entities/ChatRoom";
 import ChatRoomUserMapping from "#root/db/entities/ChatRoomUserMappings";
 
-// import { createDbActivityLog } from "#root/utils/createDbActivityLog";
+import { createDbActivityLog } from "#root/utils/createDbActivityLog";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -65,6 +65,15 @@ export async function deleteChatRoomForRoomId(req: Request, res: Response) {
   } catch (error) {
     log.error(`Error removing participants`);
   }
+
+  createDbActivityLog({
+    clientId: variables.clientId,
+    userId: variables.userId,
+    action: "chat-room-delete",
+    description: `Deleted chat room with roomId:${body.roomId}`,
+  }).then(() => {
+    log.info(`Activity log created for userId: ${variables?.userId}`);
+  });
 
   return res.json({
     statusCode: 200,
