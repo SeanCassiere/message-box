@@ -12,6 +12,7 @@ import { redisOnLeaveUnsubscribeFromOnlineUsers } from "./socket/redisOnLeaveUns
 import { subRedis } from "./redis";
 import { setupListenForUserStatusChange } from "./socket/setupListenForUserStatusChange";
 import { setupListenForInactivityPrompt } from "./socket/setupListenForInactivityPrompt";
+import { setupChatRoomSockets } from "./socket/setupChatRoomSockets";
 
 export function socket({ io }: { io: Server }) {
   log.info("Socket.io is up and running 🌍");
@@ -43,6 +44,8 @@ export function socket({ io }: { io: Server }) {
 
     setupListenForUserStatusChange(namespaceValues, io, socket);
     setupListenForInactivityPrompt(namespaceValues, io, socket);
+
+    setupChatRoomSockets(namespaceValues, io, socket);
 
     socket.on(EVENTS.disconnection, async () => {
       // handles removing the user from the online pool

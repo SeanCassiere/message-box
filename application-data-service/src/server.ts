@@ -17,6 +17,13 @@ import { patchCalendarEventDetailsById } from "./controllers/calendar/patchCalen
 import { getReportsForClient } from "./controllers/reports/getReportsForClient";
 import { createActivityLog } from "./controllers/activity/createActivityLog";
 import { runReportForClient } from "./controllers/reports/runReportForClient";
+import { createChatRoomForUser } from "./controllers/chat/createChatRoomForUser";
+import { getSingleChatRoomForUser } from "./controllers/chat/getSingleChatRoomForUser";
+import { getAllChatRoomsForUser } from "./controllers/chat/getAllChatRoomsForUser";
+import { deleteChatRoomForRoomId } from "./controllers/chat/deleteChatRoomForRoomId";
+import { updateChatRoomForRoomId } from "./controllers/chat/updateChatRoomForRoomId";
+import { getMessagesForRoomById } from "./controllers/chat/getMessagesForRoomById";
+import { createMessageForChatRoom } from "./controllers/chat/createMessageForChatRoom";
 
 const expressApp = express();
 
@@ -48,6 +55,17 @@ expressApp.post("/calendar-events/patchCalendarEventDetailsById", patchCalendarE
  */
 expressApp.post("/reports/getReportsForClient", getReportsForClient);
 expressApp.post("/reports/runReportForClient", runReportForClient);
+
+/**
+ * All chat related routes
+ */
+expressApp.post("/chat/createChatRoomForUser", createChatRoomForUser);
+expressApp.post("/chat/getSingleChatRoomForUser", getSingleChatRoomForUser);
+expressApp.post("/chat/getAllChatRoomsForUser", getAllChatRoomsForUser);
+expressApp.post("/chat/deleteChatRoomForRoomId", deleteChatRoomForRoomId);
+expressApp.post("/chat/updateChatRoomForRoomId", updateChatRoomForRoomId);
+expressApp.post("/chat/getMessagesForRoomById", getMessagesForRoomById);
+expressApp.post("/chat/createMessageForChatRoom", createMessageForChatRoom);
 
 expressApp.post("/activity/createActivityLog", createActivityLog);
 

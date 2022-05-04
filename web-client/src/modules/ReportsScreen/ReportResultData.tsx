@@ -47,13 +47,16 @@ const ReportResultData = (props: IProps) => {
   }, {});
   const [filterData, setFilterData] = React.useState<{ [key: string]: any }>(initialData);
 
-  const viewableFilters = selectedReport.searchFields.filter((f) => f.hidden === false);
-  const [currentFilters, setCurrentFilers] = React.useState(viewableFilters);
+  // filter options
+  const initialFilters = selectedReport.searchFields.filter((f) => f.hidden === false).map((r) => ({ ...r }));
+
+  const [currentFilters, setCurrentFilters] = React.useState(initialFilters);
   const setInitialFilters = React.useCallback(() => {
     setFilterData(initialData);
-    setCurrentFilers(viewableFilters);
+
+    setCurrentFilters(initialFilters);
     setLoading(true);
-  }, [initialData, viewableFilters]);
+  }, [initialData, initialFilters]);
 
   const [reportData, setReportData] = React.useState([]);
 
@@ -152,14 +155,13 @@ const ReportResultData = (props: IProps) => {
                 </Box>
               </Grid>
             ))}
-          {selectedReport.searchFields.filter((f) => f.hidden === false).filter((f) => f.visible === false).length >
-            0 && (
+          {selectedReport.searchFields.filter((f) => f.hidden === false).length > 0 && (
             <Grid item xs={12} md={2}>
               <FormControl fullWidth>
                 <Autocomplete
                   size="small"
                   limitTags={2}
-                  renderInput={(params) => <TextField {...params} label="Other filters" />}
+                  renderInput={(params) => <TextField {...params} label="Search filters" />}
                   multiple
                   options={currentFilters.filter((r) => r.hidden === false)}
                   getOptionLabel={(option) => option.label}
@@ -171,14 +173,14 @@ const ReportResultData = (props: IProps) => {
                         {...props}
                         onClick={() => {
                           if (option.mandatory) return;
-                          const newOption = { ...option, visible: option.visible ? false : true };
-                          const currentVisible = currentFilters
-                            .filter((f) => f.fieldName !== option.fieldName)
-                            .filter((f) => f.visible);
-                          const currentHidden = currentFilters
-                            .filter((f) => f.fieldName !== option.fieldName)
-                            .filter((f) => f.visible === false);
-                          setCurrentFilers([...currentVisible, newOption, ...currentHidden]);
+                          const allFilters = currentFilters;
+
+                          const indexOfOption = allFilters.findIndex((f) => f.fieldName === option.fieldName);
+
+                          if (indexOfOption > -1) {
+                            currentFilters[indexOfOption].visible = option.visible ? false : true;
+                            setCurrentFilters([...allFilters]);
+                          }
                         }}
                       >
                         <Checkbox

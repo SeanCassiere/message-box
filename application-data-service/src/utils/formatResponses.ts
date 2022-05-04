@@ -1,5 +1,11 @@
+import axios from "axios";
 import CalendarEvent from "#root/db/entities/CalendarEvent";
+import ChatRoom from "#root/db/entities/ChatRoom";
 import Task from "#root/db/entities/Task";
+import { BaseUserFromAuthServer } from "#root/types/users";
+import { log } from "#root/utils/logger";
+import { AUTH_SERVICE_URI } from "./constants";
+import ChatMessage from "#root/db/entities/ChatMessage";
 
 export function formatTaskResponseWithUsers({ task, userIds }: { task: Task; userIds: string[] }) {
   const isTaskOverdue = task.isCompleted === false && task.dueDate && task.dueDate < new Date();
@@ -48,4 +54,78 @@ export function formatCalendarEventResponse({ event, guestUsers }: IFormatCalend
     sharedWith: guestUsers.map((guest) => ({ userId: guest.userId, name: guest.name ?? "" })),
     updatedAt: event.updatedAt,
   };
+}
+
+interface IFormatChatRoomResponse {
+  chatRoom: ChatRoom;
+  participants: string[];
+}
+export async function formatChatRoomResponse({ chatRoom, participants }: IFormatChatRoomResponse) {
+  let users: BaseUserFromAuthServer[] = [];
+
+  if (participants.length > 0) {
+    try {
+      const { data: response } = await axios.post(`${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient`, {
+        variables: {
+          clientId: chatRoom.clientId,
+        },
+      });
+
+      users = response.data;
+    } catch (error) {
+      log.error(`${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient FAILED FOR FORMAT_CHAT_ROOM_RESPONSE`);
+    }
+  }
+
+  const filterParticipants: string[] = participants.map((participantId: string) => {
+    const user = users.find((user) => user.userId === participantId);
+    if (user) {
+      return participantId;
+    }
+    return "NOT";
+  });
+  const readyParticipants = filterParticipants.filter((participantId: string) => participantId !== "NOT");
+
+  return {
+    roomId: `${chatRoom.roomId}`,
+    clientId: chatRoom.clientId,
+    roomName: chatRoom.roomName,
+    participants: readyParticipants,
+  };
+}
+
+interface IFormatChatMessageResponse {
+  messages: ChatMessage[];
+  clientId: string;
+}
+export async function formatChatMessagesResponse({ messages, clientId }: IFormatChatMessageResponse) {
+  let users: BaseUserFromAuthServer[] = [];
+  if (messages.length > 0) {
+    try {
+      const { data: response } = await axios.post(`${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient`, {
+        variables: {
+          clientId: clientId,
+        },
+      });
+
+      users = response.data;
+    } catch (error) {
+      log.error(`${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient FAILED FOR FORMAT_CHAT_ROOM_RESPONSE`);
+    }
+  }
+
+  const readyMessages = messages.map((message) => {
+    const findUser = users.find((user) => user.userId === message.senderId);
+    const name = findUser ? `${findUser.firstName} ${findUser.lastName}` : "No Name";
+    return {
+      messageId: `${message.messageId}`,
+      senderId: message.senderId,
+      senderName: name,
+      content: message.content,
+      type: message.contentType,
+      timestamp: message.createdAt.toISOString(),
+    };
+  });
+
+  return readyMessages;
 }

@@ -39,6 +39,10 @@
       "description": "endpoints relating to calendar events"
     },
     {
+      "name": "Chat",
+      "description": "endpoints relating to chats within the system"
+    },
+    {
       "name": "Client",
       "description": "endpoints relating to clients"
     },
@@ -601,6 +605,265 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/Chats": {
+      "get": {
+        "tags": ["Chat"],
+        "summary": "Get the chats rooms for a user",
+        "description": "Get the chats rooms for a user",
+        "operationId": "GetPartialChatsForUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully fetched all the chat rooms for the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChatRoomSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "post": {
+        "tags": ["Chat"],
+        "summary": "Create a chat room user",
+        "description": "Create a chat room user.",
+        "operationId": "CreateChatRoomForUser",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Details required to create a chat room.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRoomSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully created a new chat room",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatRoomSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body",
+        "parameters": []
+      }
+    },
+    "/Chats/{id}": {
+      "get": {
+        "tags": ["Chat"],
+        "summary": "Get a chat rooms's full details",
+        "description": "Get a chat rooms's full details",
+        "operationId": "GetFullChatRoomDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Chat Room ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully fetched the chat room details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatRoomSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "put": {
+        "tags": ["Chat"],
+        "summary": "Update a chat room's details",
+        "description": "Update a chat room's details",
+        "operationId": "UpdateChatRoomDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Chat Room ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Details required to update a chat room.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRoomSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully updated the chat room details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatRoomSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "delete": {
+        "tags": ["Chat"],
+        "summary": "Delete a chat by its Room ID",
+        "description": "Delete a chat by its Room ID",
+        "operationId": "DeleteChatRoomById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Chat Room ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/Chats/{id}/Messages": {
+      "get": {
+        "tags": ["Chat"],
+        "summary": "Get messages for a chat room",
+        "description": "Get messages for a chat room",
+        "operationId": "GetMessagesForChatRoom",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Chat Room ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully fetched the messages for this chat room",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChatMessageSchema"
+                  }
                 }
               }
             }
@@ -2619,6 +2882,49 @@
             "format": "uuid"
           },
           "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ChatRoomSchema": {
+        "type": "object",
+        "properties": {
+          "roomId": {
+            "type": "string"
+          },
+          "roomName": {
+            "type": "string"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "ChatMessageSchema": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "type": "string"
+          },
+          "senderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "senderName": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "timestamp": {
             "type": "string",
             "format": "date-time"
           }

@@ -46,20 +46,20 @@ const SearchForReports = (props: Props) => {
     <Grid container spacing={2} sx={{ pt: 2 }}>
       <Grid item xs={12} md={12}>
         <Box sx={{ maxWidth: { sx: "80vw", md: "25vw" } }}>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={formattedReports}
-            value={selectedReport ?? availableReports[0]}
-            isOptionEqualToValue={(option, value) => option.label === value.label}
-            sx={{ width: isOnMobile ? "100%" : 450 }}
-            disableClearable
-            fullWidth
-            onSelect={handleSearchSelectItem}
-            renderInput={(params) => (
-              <TextField {...params} label="Search reports" size="small" InputProps={{ ...params.InputProps }} />
-            )}
-          />
+          {availableReports.length > 0 && (
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={formattedReports}
+              value={selectedReport ?? availableReports[0]}
+              isOptionEqualToValue={(option, value) => option.label === value.label}
+              sx={{ width: isOnMobile ? "100%" : 450 }}
+              disableClearable
+              fullWidth
+              onSelect={handleSearchSelectItem}
+              renderInput={(params) => <TextField {...params} label="Search reports" size="small" />}
+            />
+          )}
         </Box>
       </Grid>
       <Grid item xs={12} md={12} sx={{ mt: isOnMobile ? 2 : 1 }}>

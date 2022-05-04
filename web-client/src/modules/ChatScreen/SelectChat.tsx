@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 
 import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
@@ -6,8 +6,10 @@ import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 
+import CloseIcon from "@mui/icons-material/Close";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 import { ISelectedChat } from "./ChatScreen";
@@ -43,18 +45,19 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 interface Props {
-  setSelectedChatConversation: (chat: ISelectedChat) => void;
+  setSelectedChatConversation: (chat: ISelectedChat | null) => void;
   availableChatConversations: ISelectedChat[];
+  openDialogTrigger: () => void;
 }
 
 const SelectChat = (props: Props) => {
   const { setSelectedChatConversation } = props;
 
-  const [selectedId, setSelectedId] = useState("");
+  const [selectedId, setSelectedId] = React.useState("");
 
-  const handleSelectChat = useCallback(
+  const handleSelectChat = React.useCallback(
     (chat: ISelectedChat) => {
-      setSelectedId(chat.conversationId);
+      setSelectedId(chat.roomId);
       setSelectedChatConversation(chat);
     },
     [setSelectedChatConversation]
@@ -74,29 +77,37 @@ const SelectChat = (props: Props) => {
       }}
       component={Paper}
     >
-      {CHAT_PEOPLE.map((chat) => (
+      <Box sx={{ mb: 2 }}>
+        <Button
+          fullWidth
+          onClick={() => {
+            props.openDialogTrigger();
+          }}
+        >
+          New Chat
+        </Button>
+      </Box>
+      {props.availableChatConversations.map((chat) => (
         <Box
-          key={chat.conversationId}
-          onClick={() => handleSelectChat(chat)}
+          key={`chat-option-${chat.roomId}`}
           sx={{
-            cursor: "pointer",
             borderWidth: 3,
             borderRadius: 2,
             borderStyle: "solid",
-            borderColor: selectedId === chat.conversationId ? PRIMARY_BTN_COLOR : COMMON_ITEM_BORDER_COLOR,
+            borderColor: selectedId === chat.roomId ? PRIMARY_BTN_COLOR : COMMON_ITEM_BORDER_COLOR,
             my: "4px",
             py: 1,
             px: 2,
-            bgcolor: selectedId === chat.conversationId ? "#f0fdfa" : "#fff",
+            bgcolor: selectedId === chat.roomId ? "#f0fdfa" : "#fff",
           }}
         >
           <Stack direction="row" alignItems="center" spacing={2} sx={{ minHeight: "3rem" }}>
             <Box>
               <StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot">
-                <Avatar alt={chat.conversationName} />
+                <Avatar alt={chat.roomName} />
               </StyledBadge>
             </Box>
-            <Box flexGrow={1}>{chat.conversationName}</Box>
+            <Box flexGrow={1}>{chat.roomName}</Box>
             <Box>
               <IconButton
                 aria-label="View"
@@ -105,6 +116,17 @@ const SelectChat = (props: Props) => {
               >
                 {<KeyboardArrowRightIcon />}
               </IconButton>
+              {selectedId === chat.roomId && (
+                <IconButton
+                  aria-label="Close"
+                  onClick={() => {
+                    setSelectedChatConversation(null);
+                    setSelectedId("");
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              )}
             </Box>
           </Stack>
         </Box>
@@ -112,18 +134,5 @@ const SelectChat = (props: Props) => {
     </Stack>
   );
 };
-
-function createChatPeople(count: number): ISelectedChat[] {
-  const people = [];
-  for (let i = 1; i <= count; i++) {
-    people.push({
-      conversationId: `conversation-${i}`,
-      conversationName: `Chat ${i}`,
-    });
-  }
-  return people;
-}
-
-const CHAT_PEOPLE: ISelectedChat[] = createChatPeople(25);
 
 export default SelectChat;

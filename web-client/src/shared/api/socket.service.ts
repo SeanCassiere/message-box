@@ -20,10 +20,14 @@ export const EVENTS = {
     FETCH_ONLINE_USERS: "client-fetch-online-users",
     PUBLISH_USER_STATUS: "client-publish-user-status",
     ACTIVATE_INACTIVITY_PROMPT: "client-activate-inactivity-prompt",
+    JOIN_CHAT_ROOM: "client-join-chat-room",
+    LEAVE_CHAT_ROOM: "client-leave-chat-room",
+    SEND_CHAT_MESSAGE: "client-send-chat-message",
   },
   SERVER: {
     SEND_ONLINE_USERS: "server-send-online-users",
     OPEN_INACTIVITY_PROMPT: "server-open-inactivity-prompt",
+    SEND_CHAT_MESSAGE: "server-send-chat-message",
   },
 };
 
@@ -48,14 +52,14 @@ export const disconnectSocket = () => {
   console.log("Disconnecting from the socket.io instance");
 };
 
-export const listenForOnlineUsers = () => {
+export const socket_listenForOnlineUsers = () => {
   socket.on(EVENTS.SERVER.SEND_ONLINE_USERS, (users) => {
     const response = users as ISocketUserStatus[];
     store.dispatch(setOnlineUsersLookupList(response));
   });
 };
 
-export const publishUserStatusChange = (status: string, color: string, kickedOut: boolean = false) => {
+export const socket_publishUserStatusChange = (status: string, color: string, kickedOut: boolean = false) => {
   socket.emit(EVENTS.CLIENT.PUBLISH_USER_STATUS, { status, color, kickedOut });
 };
 
@@ -67,4 +71,30 @@ export const socket_listenForInactivityPrompt = () => {
   socket.on(EVENTS.SERVER.OPEN_INACTIVITY_PROMPT, () => {
     store.dispatch(setAwakeDialogState(true));
   });
+};
+
+export const socket_joinChatRoom = (roomId: string, cb?: (data: any) => void) => {
+  socket.emit(EVENTS.CLIENT.JOIN_CHAT_ROOM, { roomId });
+  socket.on(EVENTS.SERVER.SEND_CHAT_MESSAGE, (messageDto) => {
+    if (messageDto.roomId === roomId) {
+      if (cb) {
+        cb(messageDto);
+      }
+    }
+  });
+};
+
+export const socket_leaveChatRoom = (roomId: string) => {
+  socket.emit(EVENTS.CLIENT.LEAVE_CHAT_ROOM, { roomId });
+};
+
+type ClientMessageSent = {
+  type: string;
+  content: string;
+  senderId: string;
+  senderName: string;
+};
+
+export const socket_sendNewMessage = (roomId: string, details: ClientMessageSent) => {
+  socket.emit(EVENTS.CLIENT.SEND_CHAT_MESSAGE, { roomId, details });
 };

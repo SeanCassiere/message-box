@@ -3,7 +3,7 @@ import { CSSObject } from "@emotion/react";
 import { useSelector } from "react-redux";
 import { useTheme } from "@mui/material/styles";
 
-import { indigo, teal, red, orange } from "@mui/material/colors";
+import { indigo, red } from "@mui/material/colors";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
@@ -14,7 +14,7 @@ import Button from "@mui/material/Button";
 import Skeleton from "@mui/material/Skeleton";
 
 import { ITeamMember } from "../../../interfaces/Client.interfaces";
-import { selectLookupListsState } from "../../../redux/store";
+import { selectLookupListsState, selectUserState } from "../../../redux/store";
 import { stringAvatar } from "../../Layout/NavigationWrapper/navUtils";
 import { socket_activateInactivityPromptForUser } from "../../../api/socket.service";
 
@@ -32,20 +32,26 @@ const employeeCardStyling: CSSObject = {
   },
 };
 
-const ONLINE_COLOR = teal[300];
-
 interface IProps {
   member: ITeamMember;
 }
 
 const EmployeeCard = (props: IProps) => {
-  const { onlineUsersList } = useSelector(selectLookupListsState);
   const theme = useTheme();
+
+  const { onlineUsersList } = useSelector(selectLookupListsState);
+  const { statusList } = useSelector(selectUserState);
 
   const onlineMember = onlineUsersList.find((user) => user.userId === props.member.userId);
 
   const currentStatus = onlineMember ? onlineMember.status : "Offline";
-  const badgeColor = currentStatus === "Offline" ? red[300] : currentStatus === "Online" ? ONLINE_COLOR : orange[300];
+  const badgeColor = React.useMemo(() => {
+    const findStatus = statusList.find((status) => status.status === currentStatus);
+
+    if (!findStatus) return red[300];
+
+    return findStatus.color;
+  }, [currentStatus, statusList]);
 
   const [messageSent, setSentMessage] = React.useState(false);
 
