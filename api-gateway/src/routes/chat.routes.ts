@@ -57,6 +57,30 @@ chatsRouter
     }
   });
 
+chatsRouter.route("/:id/Messages").get(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+
+  const roomId = request.params.id;
+
+  try {
+    const { data: response } = await client.post("/chat/getMessagesForRoomById", {
+      variables: {
+        clientId: request.auth!.message_box_clientId,
+        userId: request.auth!.message_box_userId,
+        roomId: roomId,
+      },
+    });
+
+    if (response.statusCode === 200) {
+      return res.json([...response.data]);
+    }
+
+    return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
+  } catch (error) {
+    return res.status(500).json({ message: "application-data-service /chats network error" });
+  }
+});
+
 chatsRouter
   .route("/:id")
   .get(async (req, res) => {

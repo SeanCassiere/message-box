@@ -22,6 +22,8 @@ import { getSingleChatRoomForUser } from "./controllers/chat/getSingleChatRoomFo
 import { getAllChatRoomsForUser } from "./controllers/chat/getAllChatRoomsForUser";
 import { deleteChatRoomForRoomId } from "./controllers/chat/deleteChatRoomForRoomId";
 import { updateChatRoomForRoomId } from "./controllers/chat/updateChatRoomForRoomId";
+import { getMessagesForRoomById } from "./controllers/chat/getMessagesForRoomById";
+import { createMessageForChatRoom } from "./controllers/chat/createMessageForChatRoom";
 
 const expressApp = express();
 
@@ -62,6 +64,8 @@ expressApp.post("/chat/getSingleChatRoomForUser", getSingleChatRoomForUser);
 expressApp.post("/chat/getAllChatRoomsForUser", getAllChatRoomsForUser);
 expressApp.post("/chat/deleteChatRoomForRoomId", deleteChatRoomForRoomId);
 expressApp.post("/chat/updateChatRoomForRoomId", updateChatRoomForRoomId);
+expressApp.post("/chat/getMessagesForRoomById", getMessagesForRoomById);
+expressApp.post("/chat/createMessageForChatRoom", createMessageForChatRoom);
 
 expressApp.post("/activity/createActivityLog", createActivityLog);
 

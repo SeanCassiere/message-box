@@ -86,9 +86,27 @@ const ChatContentPane = (props: Props) => {
   const { socket_joinChatRoom, socket_leaveChatRoom, socket_sendNewMessage } = useSocket();
 
   const [typingMessageText, setTypingMessageText] = React.useState("");
+  const [loadingMessages, setLoadingMessages] = React.useState(true);
 
-  const [roomMessages, setRoomMessages] = React.useState<IChatMessage[]>(DEMO_MESSAGES);
+  const [roomMessages, setRoomMessages] = React.useState<IChatMessage[]>([]);
   const scrollBottomRef = React.useRef<HTMLAnchorElement>(null);
+
+  function fetchChatMessages(roomId: string) {
+    client
+      .get(`/Chats/${roomId}/Messages`)
+      .then((res) => {
+        if (res.status === 200) {
+          setRoomMessages([...res.data].map((r) => ({ ...r, message: r?.content })));
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        setLoadingMessages(false);
+        if (scrollBottomRef.current) {
+          scrollBottomRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+  }
 
   function pushNewChatToStack(newMessage: IChatMessage) {
     setRoomMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -99,6 +117,8 @@ const ChatContentPane = (props: Props) => {
 
   React.useEffect(() => {
     socket_joinChatRoom(selectedChatConversation.roomId, pushNewChatToStack);
+    fetchChatMessages(selectedChatConversation.roomId);
+
     return () => {
       socket_leaveChatRoom(selectedChatConversation.roomId);
     };
@@ -303,7 +323,20 @@ const ChatContentPane = (props: Props) => {
       >
         <Stack sx={{ minHeight: { md: "68vh" }, maxHeight: { xs: "35vh", md: "69vh" }, py: 2, overflow: "auto" }}>
           <List id="chat-window-messages" sx={{ width: "100%" }}>
-            {listChatMessages}
+            {loadingMessages ? (
+              <ListItem alignItems="center" sx={{ width: "100%" }}>
+                <ListItemText
+                  primary="Loading messages..."
+                  primaryTypographyProps={{
+                    sx: {
+                      textAlign: "center",
+                    },
+                  }}
+                />
+              </ListItem>
+            ) : (
+              <>{listChatMessages}</>
+            )}
             <ListItem ref={scrollBottomRef as any}></ListItem>
           </List>
         </Stack>
@@ -361,88 +394,5 @@ const ChatContentPane = (props: Props) => {
     </Stack>
   );
 };
-
-const DEMO_MESSAGES: IChatMessage[] = [
-  // {
-  //   messageId: "1",
-  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-  //   senderName: "Sean Cassiere",
-  //   message: "I'm a right message",
-  //   type: "text/text",
-  //   timestamp: "2022-05-04T07:32:16.633Z",
-  // },
-  // {
-  //   messageId: "2",
-  //   senderId: "2",
-  //   senderName: "Guest",
-  //   message: "Im a left message",
-  //   type: "text/text",
-  //   timestamp: "2022-05-04T07:33:20.633Z",
-  // },
-  // {
-  //   messageId: "4",
-  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-  //   senderName: "Sean Cassiere",
-  //   message: "Im a right message",
-  //   type: "text/text",
-  //   timestamp: "2022-05-04T07:35:34.633Z",
-  // },
-  // {
-  //   messageId: "5",
-  //   senderId: "1",
-  //   senderName: "Guest",
-  //   message: "Im a right message",
-  //   type: "text/text",
-  //   timestamp: "2022-05-04T07:35:34.633Z",
-  // },
-  // {
-  //   messageId: "6",
-  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-  //   senderName: "Sean Cassiere",
-  //   message: "Im a right message",
-  //   type: "text/text",
-  //   timestamp: "2022-05-04T07:35:34.633Z",
-  // },
-  // {
-  //   messageId: "7",
-  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-  //   senderName: "Sean Cassiere",
-  //   message: "Im a right message",
-  //   type: "text/text",
-  //   timestamp: "2022-05-04T07:35:34.633Z",
-  // },
-  // {
-  //   messageId: "8",
-  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-  //   senderName: "Sean Cassiere",
-  //   message: "Im a right message",
-  //   type: "text/text",
-  //   timestamp: "2022-05-04T07:35:34.633Z",
-  // },
-  // {
-  //   messageId: "9",
-  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-  //   senderName: "Sean Cassiere",
-  //   message: "Im a right message",
-  //   type: "text/text",
-  //   timestamp: "2022-05-04T07:35:34.633Z",
-  // },
-  // {
-  //   messageId: "10",
-  //   senderId: "2",
-  //   senderName: "Guest",
-  //   message: "Im a left message",
-  //   type: "text/text",
-  //   timestamp: "2022-05-04T07:33:20.633Z",
-  // },
-  // {
-  //   messageId: "11",
-  //   senderId: "2",
-  //   senderName: "Guest",
-  //   message: "Im a left message",
-  //   type: "text/text",
-  //   timestamp: "2022-05-04T07:33:20.633Z",
-  // },
-];
 
 export default ChatContentPane;

@@ -832,6 +832,52 @@
         "x-codegen-request-body-name": "body"
       }
     },
+    "/Chats/{id}/Messages": {
+      "get": {
+        "tags": ["Chat"],
+        "summary": "Get messages for a chat room",
+        "description": "Get messages for a chat room",
+        "operationId": "GetMessagesForChatRoom",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Chat Room ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully fetched the messages for this chat room",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChatMessageSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
     "/Clients": {
       "get": {
         "tags": ["Client"],
@@ -2856,6 +2902,31 @@
               "type": "string",
               "format": "uuid"
             }
+          }
+        }
+      },
+      "ChatMessageSchema": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "type": "string"
+          },
+          "senderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "senderName": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },

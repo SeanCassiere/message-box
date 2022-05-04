@@ -1,10 +1,9 @@
 import { Server, Socket } from "socket.io";
 
-import { redis } from "../redis";
 import { log } from "#root/utils/logger";
 import { EVENTS, I_RedisIdentifierProps } from "./allEvents";
-import { REDIS_CONSTANTS } from "../redis/constants";
-import { createActivityLog } from "#root/utils/createActivityLog";
+import axios from "axios";
+import { APP_DATA_SERVICE_URI } from "#root/constants";
 
 type ClientMessageSent = {
   roomId: string;
@@ -28,9 +27,38 @@ export async function setupChatRoomSockets(namespaceValues: I_RedisIdentifierPro
       ...details,
       roomId,
       timestamp: new Date().toISOString(),
-      messageId: `${new Date().toISOString()}`,
       message: `${details.content}`,
     };
-    io.to(`${namespaceValues.client_namespace}:room:${roomId}`).emit(EVENTS.SERVER.SEND_CHAT_MESSAGE, message);
+
+    axios
+      .post(`${APP_DATA_SERVICE_URI}/chat/createMessageForChatRoom`, {
+        variables: {
+          clientId: socket.handshake.auth.clientId,
+          userId: socket.handshake.auth.userId,
+          roomId,
+          sendResponse: false,
+        },
+        body: {
+          content: message.message,
+          type: message.type,
+          senderId: message.senderId,
+        },
+      })
+      .then((res) => {
+        if (res.status !== 200) {
+          log.error(
+            `Sending message failed for Room ID ${roomId} by ${socket.handshake.auth.userId}, Status Code: ${res.status}`
+          );
+        } else {
+          io.to(`${namespaceValues.client_namespace}:room:${roomId}`).emit(EVENTS.SERVER.SEND_CHAT_MESSAGE, {
+            ...message,
+            messageId: res.data?.data?.messageId,
+          });
+          log.info("new message Id is ", res.data?.data?.messageId);
+        }
+      })
+      .catch((err) => {
+        log.error(`Sending message failed for Room ID ${roomId} by ${socket.handshake.auth.userId}`, err);
+      });
   });
 }

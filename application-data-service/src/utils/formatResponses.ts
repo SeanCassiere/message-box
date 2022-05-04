@@ -5,6 +5,7 @@ import Task from "#root/db/entities/Task";
 import { BaseUserFromAuthServer } from "#root/types/users";
 import { log } from "#root/utils/logger";
 import { AUTH_SERVICE_URI } from "./constants";
+import ChatMessage from "#root/db/entities/ChatMessage";
 
 export function formatTaskResponseWithUsers({ task, userIds }: { task: Task; userIds: string[] }) {
   const isTaskOverdue = task.isCompleted === false && task.dueDate && task.dueDate < new Date();
@@ -91,4 +92,40 @@ export async function formatChatRoomResponse({ chatRoom, participants }: IFormat
     roomName: chatRoom.roomName,
     participants: readyParticipants,
   };
+}
+
+interface IFormatChatMessageResponse {
+  messages: ChatMessage[];
+  clientId: string;
+}
+export async function formatChatMessagesResponse({ messages, clientId }: IFormatChatMessageResponse) {
+  let users: BaseUserFromAuthServer[] = [];
+  if (messages.length > 0) {
+    try {
+      const { data: response } = await axios.post(`${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient`, {
+        variables: {
+          clientId: clientId,
+        },
+      });
+
+      users = response.data;
+    } catch (error) {
+      log.error(`${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient FAILED FOR FORMAT_CHAT_ROOM_RESPONSE`);
+    }
+  }
+
+  const readyMessages = messages.map((message) => {
+    const findUser = users.find((user) => user.userId === message.senderId);
+    const name = findUser ? `${findUser.firstName} ${findUser.lastName}` : "No Name";
+    return {
+      messageId: `${message.messageId}`,
+      senderId: message.senderId,
+      senderName: name,
+      content: message.content,
+      type: message.contentType,
+      timestamp: message.createdAt.toISOString(),
+    };
+  });
+
+  return readyMessages;
 }

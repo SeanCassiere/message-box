@@ -41,9 +41,6 @@ export async function getAllChatRoomsForUser(req: Request, res: Response) {
 
   let chatRooms: ChatRoom[] = [];
 
-  log.error("RoomIDS");
-  log.error(roomIds);
-
   const chatRoomQuery = ChatRoom.createQueryBuilder().where("client_id = :client_id", {
     client_id: variables.clientId,
   });

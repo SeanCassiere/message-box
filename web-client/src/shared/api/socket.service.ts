@@ -74,7 +74,6 @@ export const socket_listenForInactivityPrompt = () => {
 };
 
 export const socket_joinChatRoom = (roomId: string, cb?: (data: any) => void) => {
-  console.log(`Joining chat room ${roomId}`);
   socket.emit(EVENTS.CLIENT.JOIN_CHAT_ROOM, { roomId });
   socket.on(EVENTS.SERVER.SEND_CHAT_MESSAGE, (messageDto) => {
     if (messageDto.roomId === roomId) {
@@ -86,7 +85,6 @@ export const socket_joinChatRoom = (roomId: string, cb?: (data: any) => void) =>
 };
 
 export const socket_leaveChatRoom = (roomId: string) => {
-  console.log(`Leaving chat room ${roomId}`);
   socket.emit(EVENTS.CLIENT.LEAVE_CHAT_ROOM, { roomId });
 };
 
@@ -98,6 +96,5 @@ type ClientMessageSent = {
 };
 
 export const socket_sendNewMessage = (roomId: string, details: ClientMessageSent) => {
-  console.log(`Sending new message to room ${roomId}`, { details });
   socket.emit(EVENTS.CLIENT.SEND_CHAT_MESSAGE, { roomId, details });
 };

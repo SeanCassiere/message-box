@@ -4,6 +4,7 @@ import { Connection, createConnection } from "typeorm";
 import ActivityLog from "./entities/ActivityLog";
 import CalendarEvent from "./entities/CalendarEvent";
 import CalendarEventShareMapping from "./entities/CalendarEventShareMappings";
+import ChatMessage from "./entities/ChatMessage";
 import ChatRoom from "./entities/ChatRoom";
 import ChatRoomUserMapping from "./entities/ChatRoomUserMappings";
 import Task from "./entities/Task";
@@ -27,6 +28,7 @@ export async function initConnection(retries = 5) {
           CalendarEventShareMapping,
           ChatRoom,
           ChatRoomUserMapping,
+          ChatMessage,
         ],
         type: "postgres",
         url: process.env.APPLICATION_DATA_SERVICE_DB_URL,
