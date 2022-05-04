@@ -8,6 +8,7 @@ import {
   socket_publishUserStatusChange,
   socket_joinChatRoom,
   socket_leaveChatRoom,
+  socket_sendNewMessage,
 } from "../api/socket.service";
 
 interface ISocketContext {
@@ -18,6 +19,7 @@ interface ISocketContext {
   socket_publishUserStatusChange: typeof socket_publishUserStatusChange;
   socket_joinChatRoom: typeof socket_joinChatRoom;
   socket_leaveChatRoom: typeof socket_leaveChatRoom;
+  socket_sendNewMessage: typeof socket_sendNewMessage;
 }
 
 const initialValues: ISocketContext = {
@@ -28,6 +30,7 @@ const initialValues: ISocketContext = {
   socket_publishUserStatusChange,
   socket_joinChatRoom,
   socket_leaveChatRoom,
+  socket_sendNewMessage,
 };
 
 const SocketContext = React.createContext<ISocketContext>(initialValues);

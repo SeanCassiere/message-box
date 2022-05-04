@@ -22,10 +22,12 @@ export const EVENTS = {
     ACTIVATE_INACTIVITY_PROMPT: "client-activate-inactivity-prompt",
     JOIN_CHAT_ROOM: "client-join-chat-room",
     LEAVE_CHAT_ROOM: "client-leave-chat-room",
+    SEND_CHAT_MESSAGE: "client-send-chat-message",
   },
   SERVER: {
     SEND_ONLINE_USERS: "server-send-online-users",
     OPEN_INACTIVITY_PROMPT: "server-open-inactivity-prompt",
+    SEND_CHAT_MESSAGE: "server-send-chat-message",
   },
 };
 
@@ -71,10 +73,31 @@ export const socket_listenForInactivityPrompt = () => {
   });
 };
 
-export const socket_joinChatRoom = (roomId: string) => {
+export const socket_joinChatRoom = (roomId: string, cb?: (data: any) => void) => {
+  console.log(`Joining chat room ${roomId}`);
   socket.emit(EVENTS.CLIENT.JOIN_CHAT_ROOM, { roomId });
+  socket.on(EVENTS.SERVER.SEND_CHAT_MESSAGE, (messageDto) => {
+    if (messageDto.roomId === roomId) {
+      if (cb) {
+        cb(messageDto);
+      }
+    }
+  });
 };
 
 export const socket_leaveChatRoom = (roomId: string) => {
+  console.log(`Leaving chat room ${roomId}`);
   socket.emit(EVENTS.CLIENT.LEAVE_CHAT_ROOM, { roomId });
+};
+
+type ClientMessageSent = {
+  type: string;
+  content: string;
+  senderId: string;
+  senderName: string;
+};
+
+export const socket_sendNewMessage = (roomId: string, details: ClientMessageSent) => {
+  console.log(`Sending new message to room ${roomId}`, { details });
+  socket.emit(EVENTS.CLIENT.SEND_CHAT_MESSAGE, { roomId, details });
 };

@@ -5,10 +5,14 @@ export const EVENTS = {
     FETCH_ONLINE_USERS: "client-fetch-online-users",
     PUBLISH_USER_STATUS: "client-publish-user-status",
     ACTIVATE_INACTIVITY_PROMPT: "client-activate-inactivity-prompt",
+    JOIN_CHAT_ROOM: "client-join-chat-room",
+    LEAVE_CHAT_ROOM: "client-leave-chat-room",
+    SEND_CHAT_MESSAGE: "client-send-chat-message",
   },
   SERVER: {
     SEND_ONLINE_USERS: "server-send-online-users",
     OPEN_INACTIVITY_PROMPT: "server-open-inactivity-prompt",
+    SEND_CHAT_MESSAGE: "server-send-chat-message",
   },
 };
 

@@ -1,4 +1,6 @@
 import React, { useCallback } from "react";
+import { flushSync } from "react-dom";
+import { useSelector } from "react-redux";
 
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
@@ -8,14 +10,21 @@ import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 
 import ChatContentPane from "./ChatContentPane";
 import SelectChat from "./SelectChat";
+import { selectUserState } from "../../shared/redux/store";
 
-export type ISelectedChat = { conversationId: string; conversationName: string };
+export type ISelectedChat = { roomId: string; roomName: string };
 
 const ChatScreen = () => {
+  const { userProfile } = useSelector(selectUserState);
   const [selectedChatConversation, setSelectedChatConversation] = React.useState<ISelectedChat | null>(null);
 
-  const handleSetSelectedChat = useCallback((chat: ISelectedChat) => {
-    setSelectedChatConversation(chat);
+  const handleSetSelectedChat = useCallback((chat: ISelectedChat | null) => {
+    flushSync(() => {
+      setSelectedChatConversation(null);
+    });
+    if (chat) {
+      setSelectedChatConversation(chat);
+    }
   }, []);
 
   return (
@@ -55,7 +64,9 @@ const ChatScreen = () => {
             minHeight: "100%",
           }}
         >
-          <ChatContentPane selectedChatConversation={selectedChatConversation} />
+          {selectedChatConversation && userProfile && (
+            <ChatContentPane selectedChatConversation={selectedChatConversation} currentUser={userProfile} />
+          )}
         </Grid>
       </Grid>
     </PagePaperWrapper>
