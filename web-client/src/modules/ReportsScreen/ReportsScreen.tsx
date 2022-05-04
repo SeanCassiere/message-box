@@ -19,25 +19,7 @@ const ReportsScreen = () => {
   const [selectedReportData, setSelectedReportData] = React.useState<ExtendedReportSchema | null>(null);
   const [reports, setReports] = React.useState<ExtendedReportSchema[]>([]);
 
-  const availableReports = useMemo(() => reports, [reports]);
-
-  const selectViewingReportId = useCallback(
-    (reportId: string) => {
-      flushSync(() => {
-        setSelectedReportData(null);
-      });
-
-      if (!reportId) return;
-
-      const filtered = reports.find((r) => r.reportId === reportId);
-      if (filtered) {
-        setSelectedReportData(filtered);
-      }
-    },
-    [reports]
-  );
-
-  React.useEffect(() => {
+  const fetchReports = useCallback(async () => {
     client
       .get("/Reports")
       .then((res) => {
@@ -53,6 +35,29 @@ const ReportsScreen = () => {
       })
       .finally(() => {});
   }, []);
+
+  const availableReports = useMemo(() => reports, [reports]);
+
+  const selectViewingReportId = useCallback(
+    (reportId: string) => {
+      flushSync(() => {
+        setSelectedReportData(null);
+      });
+
+      if (!reportId) return;
+
+      const filtered = reports.find((r) => r.reportId === reportId);
+      if (filtered) {
+        setSelectedReportData(filtered);
+      }
+      fetchReports();
+    },
+    [fetchReports, reports]
+  );
+
+  React.useEffect(() => {
+    fetchReports();
+  }, [fetchReports]);
 
   return (
     <PagePaperWrapper>

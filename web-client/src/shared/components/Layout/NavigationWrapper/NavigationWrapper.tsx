@@ -112,6 +112,9 @@ const NavigationWrapper: React.FC = (props) => {
   const [currentStatusValue, setCurrentStatusValue] = React.useState(
     onlineUsersList.find((u) => u.userId === userProfile?.userId)?.status ?? "Online"
   );
+  const statusSetter = React.useCallback((newStatus: string) => {
+    setCurrentStatusValue(newStatus);
+  }, []);
 
   // handle the user dropdown menu
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -173,6 +176,8 @@ const NavigationWrapper: React.FC = (props) => {
         open={showAwakeDialog}
         close={() => dispatch(setAwakeDialogState(false))}
         currentStatus={currentStatusValue}
+        setCurrentStatus={statusSetter}
+        // dev
       />
       {/** navbar */}
       <Box sx={{ display: "flex", maxHeight: "100%", overflowY: "hidden" }}>
