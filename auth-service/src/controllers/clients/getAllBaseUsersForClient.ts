@@ -23,7 +23,10 @@ export async function getAllBaseUsersForClient(req: Request, res: Response, next
   const variables = req.body.variables;
 
   try {
-    const users = await User.find({ where: { clientId: variables.clientId, isActive: true } });
+    const users = await User.find({
+      where: { clientId: variables.clientId, isActive: true },
+      select: ["userId", "firstName", "lastName", "email"],
+    });
     return res.json({
       statusCode: 200,
       data: [...users],

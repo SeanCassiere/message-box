@@ -4,6 +4,8 @@ import { Connection, createConnection } from "typeorm";
 import ActivityLog from "./entities/ActivityLog";
 import CalendarEvent from "./entities/CalendarEvent";
 import CalendarEventShareMapping from "./entities/CalendarEventShareMappings";
+import ChatRoom from "./entities/ChatRoom";
+import ChatRoomUserMapping from "./entities/ChatRoomUserMappings";
 import Task from "./entities/Task";
 import TaskShareMapping from "./entities/TaskShareMappings";
 
@@ -17,7 +19,15 @@ export async function initConnection(retries = 5) {
   while (retries) {
     try {
       connection = await createConnection({
-        entities: [ActivityLog, Task, TaskShareMapping, CalendarEvent, CalendarEventShareMapping],
+        entities: [
+          ActivityLog,
+          Task,
+          TaskShareMapping,
+          CalendarEvent,
+          CalendarEventShareMapping,
+          ChatRoom,
+          ChatRoomUserMapping,
+        ],
         type: "postgres",
         url: process.env.APPLICATION_DATA_SERVICE_DB_URL,
         synchronize: true,

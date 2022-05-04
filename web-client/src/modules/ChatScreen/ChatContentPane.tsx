@@ -1,6 +1,8 @@
 import React from "react";
 import { grey } from "@mui/material/colors";
 import { styled } from "@mui/material/styles";
+import { useSnackbar } from "notistack";
+import { useSelector } from "react-redux";
 
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -16,6 +18,8 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SendIcon from "@mui/icons-material/Send";
@@ -25,6 +29,8 @@ import { COMMON_ITEM_BORDER_STYLING } from "../../shared/util/constants";
 import { useSocket } from "../../shared/hooks/useSocket";
 import { formatDateTimeShort } from "../../shared/util/dateTime";
 import { IUserProfile } from "../../shared/interfaces/User.interfaces";
+import { client } from "../../shared/api/client";
+import { selectLookupListsState } from "../../shared/redux/store";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -66,11 +72,17 @@ interface IChatMessage {
 
 interface Props {
   selectedChatConversation: ISelectedChat;
+  setSelectedChatConversation: (chat: ISelectedChat | null) => void;
   currentUser: IUserProfile;
+  openEditDialogTrigger: (id: string) => void;
 }
 
 const ChatContentPane = (props: Props) => {
+  const { enqueueSnackbar } = useSnackbar();
   const { selectedChatConversation } = props;
+
+  const { usersList } = useSelector(selectLookupListsState);
+
   const { socket_joinChatRoom, socket_leaveChatRoom, socket_sendNewMessage } = useSocket();
 
   const [typingMessageText, setTypingMessageText] = React.useState("");
@@ -113,48 +125,99 @@ const ChatContentPane = (props: Props) => {
     setTypingMessageText("");
   };
 
-  const listChatMessages = roomMessages.map((messageObj) => (
-    <ListItem alignItems="center" key={messageObj.messageId} sx={{ justifyContent: "flex-end", width: "100%" }}>
-      {messageObj.senderId !== props.currentUser.userId && (
-        <ListItemAvatar>
-          <Avatar alt={messageObj.senderName} />
-        </ListItemAvatar>
-      )}
-      <ListItemText
-        primary={
-          <Box sx={{ display: "inline-flex", flexDirection: "row", alignItems: "center" }}>
-            {messageObj.senderId === props.currentUser.userId ? (
-              <>
-                <Typography fontSize={13} color={grey[600]}>
-                  {formatDateTimeShort(messageObj.timestamp)}
-                </Typography>
-                &nbsp;-&nbsp;
-                <Typography>{messageObj.senderName}</Typography>
-              </>
-            ) : (
-              <>
-                <Typography>{messageObj.senderName}</Typography>&nbsp;-&nbsp;
-                <Typography fontSize={13} color={grey[600]}>
-                  {formatDateTimeShort(messageObj.timestamp)}
-                </Typography>
-              </>
-            )}
-          </Box>
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(menuAnchorEl);
+  const handleMenuOpenClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMenuAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = async () => {
+    setMenuAnchorEl(null);
+  };
+  const handleMenuDelete = async () => {
+    client
+      .delete(`/Chats/${selectedChatConversation.roomId}`)
+      .then((res) => {
+        if (res.status === 200) {
+          enqueueSnackbar("Deleted Chat", { variant: "success" });
+        } else {
+          enqueueSnackbar("An error occurred", { variant: "error" });
         }
-        secondary={messageObj.message}
-        primaryTypographyProps={{
-          sx: {
-            textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
-          },
-        }}
-        secondaryTypographyProps={{
-          sx: {
-            textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
-          },
-        }}
-      />
-    </ListItem>
-  ));
+      })
+      .catch((err) => {
+        console.log("Error occurred trying to delete a chat room", err);
+        enqueueSnackbar("An error occurred", { variant: "error" });
+      })
+      .finally(() => {
+        setMenuAnchorEl(null);
+        props.setSelectedChatConversation(null);
+      });
+  };
+
+  const listChatMessages =
+    roomMessages.length === 0 ? (
+      <ListItem alignItems="center" sx={{ width: "100%" }}>
+        <ListItemText
+          primary="No messages yet"
+          primaryTypographyProps={{
+            sx: {
+              textAlign: "center",
+            },
+          }}
+        />
+      </ListItem>
+    ) : (
+      roomMessages.map((messageObj) => (
+        <ListItem alignItems="center" key={messageObj.messageId} sx={{ justifyContent: "flex-end", width: "100%" }}>
+          {messageObj.senderId !== props.currentUser.userId && (
+            <ListItemAvatar>
+              <Avatar alt={messageObj.senderName} />
+            </ListItemAvatar>
+          )}
+          <ListItemText
+            primary={
+              <Box sx={{ display: "inline-flex", flexDirection: "row", alignItems: "center" }}>
+                {messageObj.senderId === props.currentUser.userId ? (
+                  <>
+                    <Typography fontSize={13} color={grey[600]}>
+                      {formatDateTimeShort(messageObj.timestamp)}
+                    </Typography>
+                    &nbsp;-&nbsp;
+                    <Typography>{messageObj.senderName}</Typography>
+                  </>
+                ) : (
+                  <>
+                    <Typography>{messageObj.senderName}</Typography>&nbsp;-&nbsp;
+                    <Typography fontSize={13} color={grey[600]}>
+                      {formatDateTimeShort(messageObj.timestamp)}
+                    </Typography>
+                  </>
+                )}
+              </Box>
+            }
+            secondary={messageObj.message}
+            primaryTypographyProps={{
+              sx: {
+                textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
+              },
+            }}
+            secondaryTypographyProps={{
+              sx: {
+                textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
+              },
+            }}
+          />
+        </ListItem>
+      ))
+    );
+
+  const renderUsersInChat = () => {
+    const participants = selectedChatConversation.participants;
+    const users = usersList
+      .filter((u) => participants.includes(u.userId))
+      .filter((u) => u.userId !== props.currentUser.userId);
+    const namesOnly = users.map((u) => `${u.firstName} ${u.lastName}`);
+    return namesOnly.join(", ");
+  };
 
   return (
     <Stack
@@ -190,14 +253,37 @@ const ChatContentPane = (props: Props) => {
                 {selectedChatConversation.roomName}
               </Typography>
               <Typography fontWeight={200} fontSize={13}>
-                Last seen 12 hours ago
+                {renderUsersInChat()}
               </Typography>
             </Box>
           </Stack>
           <Box sx={{ px: { xs: 1, md: 1 } }}>
-            <IconButton aria-label="More" onClick={() => ({})} onMouseDown={() => ({})}>
+            <IconButton aria-label="More" onClick={handleMenuOpenClick} onMouseDown={handleMenuOpenClick}>
               {<MoreVertIcon />}
             </IconButton>
+            <Menu
+              id="basic-menu"
+              anchorEl={menuAnchorEl}
+              open={menuOpen}
+              onClose={handleMenuClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              <MenuItem
+                onClick={() => {
+                  props.openEditDialogTrigger(props.selectedChatConversation.roomId);
+                  setMenuAnchorEl(null);
+                }}
+              >
+                Edit
+              </MenuItem>
+              <MenuItem onClick={handleMenuDelete}>Quick Delete</MenuItem>
+            </Menu>
           </Box>
         </Stack>
       </Box>
@@ -254,6 +340,8 @@ const ChatContentPane = (props: Props) => {
                   handleSendMessage();
                 }
               }}
+              autoComplete="off"
+              autoCapitalize="true"
             />
           </Grid>
           <Grid item xs={12} md={1}>
@@ -275,86 +363,86 @@ const ChatContentPane = (props: Props) => {
 };
 
 const DEMO_MESSAGES: IChatMessage[] = [
-  {
-    messageId: "1",
-    senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-    senderName: "Sean Cassiere",
-    message: "I'm a right message",
-    type: "text/text",
-    timestamp: "2022-05-04T07:32:16.633Z",
-  },
-  {
-    messageId: "2",
-    senderId: "2",
-    senderName: "Guest",
-    message: "Im a left message",
-    type: "text/text",
-    timestamp: "2022-05-04T07:33:20.633Z",
-  },
-  {
-    messageId: "4",
-    senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-    senderName: "Sean Cassiere",
-    message: "Im a right message",
-    type: "text/text",
-    timestamp: "2022-05-04T07:35:34.633Z",
-  },
-  {
-    messageId: "5",
-    senderId: "1",
-    senderName: "Guest",
-    message: "Im a right message",
-    type: "text/text",
-    timestamp: "2022-05-04T07:35:34.633Z",
-  },
-  {
-    messageId: "6",
-    senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-    senderName: "Sean Cassiere",
-    message: "Im a right message",
-    type: "text/text",
-    timestamp: "2022-05-04T07:35:34.633Z",
-  },
-  {
-    messageId: "7",
-    senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-    senderName: "Sean Cassiere",
-    message: "Im a right message",
-    type: "text/text",
-    timestamp: "2022-05-04T07:35:34.633Z",
-  },
-  {
-    messageId: "8",
-    senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-    senderName: "Sean Cassiere",
-    message: "Im a right message",
-    type: "text/text",
-    timestamp: "2022-05-04T07:35:34.633Z",
-  },
-  {
-    messageId: "9",
-    senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
-    senderName: "Sean Cassiere",
-    message: "Im a right message",
-    type: "text/text",
-    timestamp: "2022-05-04T07:35:34.633Z",
-  },
-  {
-    messageId: "10",
-    senderId: "2",
-    senderName: "Guest",
-    message: "Im a left message",
-    type: "text/text",
-    timestamp: "2022-05-04T07:33:20.633Z",
-  },
-  {
-    messageId: "11",
-    senderId: "2",
-    senderName: "Guest",
-    message: "Im a left message",
-    type: "text/text",
-    timestamp: "2022-05-04T07:33:20.633Z",
-  },
+  // {
+  //   messageId: "1",
+  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
+  //   senderName: "Sean Cassiere",
+  //   message: "I'm a right message",
+  //   type: "text/text",
+  //   timestamp: "2022-05-04T07:32:16.633Z",
+  // },
+  // {
+  //   messageId: "2",
+  //   senderId: "2",
+  //   senderName: "Guest",
+  //   message: "Im a left message",
+  //   type: "text/text",
+  //   timestamp: "2022-05-04T07:33:20.633Z",
+  // },
+  // {
+  //   messageId: "4",
+  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
+  //   senderName: "Sean Cassiere",
+  //   message: "Im a right message",
+  //   type: "text/text",
+  //   timestamp: "2022-05-04T07:35:34.633Z",
+  // },
+  // {
+  //   messageId: "5",
+  //   senderId: "1",
+  //   senderName: "Guest",
+  //   message: "Im a right message",
+  //   type: "text/text",
+  //   timestamp: "2022-05-04T07:35:34.633Z",
+  // },
+  // {
+  //   messageId: "6",
+  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
+  //   senderName: "Sean Cassiere",
+  //   message: "Im a right message",
+  //   type: "text/text",
+  //   timestamp: "2022-05-04T07:35:34.633Z",
+  // },
+  // {
+  //   messageId: "7",
+  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
+  //   senderName: "Sean Cassiere",
+  //   message: "Im a right message",
+  //   type: "text/text",
+  //   timestamp: "2022-05-04T07:35:34.633Z",
+  // },
+  // {
+  //   messageId: "8",
+  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
+  //   senderName: "Sean Cassiere",
+  //   message: "Im a right message",
+  //   type: "text/text",
+  //   timestamp: "2022-05-04T07:35:34.633Z",
+  // },
+  // {
+  //   messageId: "9",
+  //   senderId: "dd4662a8-33cc-41da-a095-6102dbf613e6",
+  //   senderName: "Sean Cassiere",
+  //   message: "Im a right message",
+  //   type: "text/text",
+  //   timestamp: "2022-05-04T07:35:34.633Z",
+  // },
+  // {
+  //   messageId: "10",
+  //   senderId: "2",
+  //   senderName: "Guest",
+  //   message: "Im a left message",
+  //   type: "text/text",
+  //   timestamp: "2022-05-04T07:33:20.633Z",
+  // },
+  // {
+  //   messageId: "11",
+  //   senderId: "2",
+  //   senderName: "Guest",
+  //   message: "Im a left message",
+  //   type: "text/text",
+  //   timestamp: "2022-05-04T07:33:20.633Z",
+  // },
 ];
 
 export default ChatContentPane;

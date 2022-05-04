@@ -6,6 +6,7 @@ import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -46,6 +47,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 interface Props {
   setSelectedChatConversation: (chat: ISelectedChat | null) => void;
   availableChatConversations: ISelectedChat[];
+  openDialogTrigger: () => void;
 }
 
 const SelectChat = (props: Props) => {
@@ -75,12 +77,20 @@ const SelectChat = (props: Props) => {
       }}
       component={Paper}
     >
-      {CHAT_PEOPLE.map((chat) => (
+      <Box sx={{ mb: 2 }}>
+        <Button
+          fullWidth
+          onClick={() => {
+            props.openDialogTrigger();
+          }}
+        >
+          New Chat
+        </Button>
+      </Box>
+      {props.availableChatConversations.map((chat) => (
         <Box
-          key={chat.roomId}
-          // onClick={() => handleSelectChat(chat)}
+          key={`chat-option-${chat.roomId}`}
           sx={{
-            // cursor: "pointer",
             borderWidth: 3,
             borderRadius: 2,
             borderStyle: "solid",
@@ -124,18 +134,5 @@ const SelectChat = (props: Props) => {
     </Stack>
   );
 };
-
-function createChatPeople(count: number): ISelectedChat[] {
-  const people = [];
-  for (let i = 1; i <= count; i++) {
-    people.push({
-      roomId: `conversation-${i}`,
-      roomName: `Chat ${i}`,
-    });
-  }
-  return people;
-}
-
-const CHAT_PEOPLE: ISelectedChat[] = createChatPeople(2);
 
 export default SelectChat;
