@@ -49,7 +49,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import TodayIcon from "@mui/icons-material/Today";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import PeopleIcon from "@mui/icons-material/People";
-import { publishUserStatusChange } from "../../../api/socket.service";
+import { socket_publishUserStatusChange } from "../../../api/socket.service";
 import { setAwakeDialogState } from "../../../redux/slices/user/userSlice";
 
 const NavigationWrapper: React.FC = (props) => {
@@ -149,7 +149,7 @@ const NavigationWrapper: React.FC = (props) => {
     const split = route.split("/");
 
     if (split[1] === "logout") {
-      publishUserStatusChange(statusList[2].status, statusList[2].color);
+      socket_publishUserStatusChange(statusList[2].status, statusList[2].color);
     }
 
     setCurrentLink(`/${split[1]}`);
@@ -213,7 +213,7 @@ const NavigationWrapper: React.FC = (props) => {
                     const findStatus = statusList.filter((s) => s.status === value);
 
                     if (findStatus.length > 0) {
-                      publishUserStatusChange(findStatus[0]?.status, findStatus[0]?.color);
+                      socket_publishUserStatusChange(findStatus[0]?.status, findStatus[0]?.color);
                     }
 
                     setCurrentStatusValue(value);

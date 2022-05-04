@@ -19,7 +19,7 @@ import FormLabel from "@mui/material/FormLabel";
 import DialogHeaderClose from "../../Dialog/DialogHeaderClose";
 
 import { selectUserState } from "../../../redux/store";
-import { publishUserStatusChange } from "../../../api/socket.service";
+import { socket_publishUserStatusChange } from "../../../api/socket.service";
 
 interface IProps {
   open: boolean;
@@ -66,7 +66,7 @@ const UserAwakeDialog = (props: IProps) => {
       } catch (error) {
         console.log("Notification sound failed");
       }
-      publishUserStatusChange(statusList[2].status, statusList[2].color, true);
+      socket_publishUserStatusChange(statusList[2].status, statusList[2].color, true);
       navigate("/logout");
       return;
     }
@@ -165,7 +165,7 @@ const UserAwakeDialog = (props: IProps) => {
                   const findStatus = statusList.filter((s) => s.status === props.currentStatus);
 
                   if (findStatus.length > 0) {
-                    publishUserStatusChange(findStatus[0]?.status, findStatus[0]?.color);
+                    socket_publishUserStatusChange(findStatus[0]?.status, findStatus[0]?.color);
                   }
 
                   if (!firstTime) {

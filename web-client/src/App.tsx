@@ -25,7 +25,11 @@ const App = () => {
   const { isLoadingLookupData } = useSelector(selectLookupListsState);
   const { isLoggedIn, expiresAt, access_token } = useSelector(selectAuthState);
 
-  const { connectSocket, listenForOnlineUsers, socket_listenForInactivityPrompt } = useSocket();
+  const {
+    connectSocket,
+    socket_listenForOnlineUsers: listenForOnlineUsers,
+    socket_listenForInactivityPrompt,
+  } = useSocket();
 
   useEffect(() => {
     if (isLoggedIn) {

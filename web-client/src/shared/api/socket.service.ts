@@ -20,6 +20,8 @@ export const EVENTS = {
     FETCH_ONLINE_USERS: "client-fetch-online-users",
     PUBLISH_USER_STATUS: "client-publish-user-status",
     ACTIVATE_INACTIVITY_PROMPT: "client-activate-inactivity-prompt",
+    JOIN_CHAT_ROOM: "client-join-chat-room",
+    LEAVE_CHAT_ROOM: "client-leave-chat-room",
   },
   SERVER: {
     SEND_ONLINE_USERS: "server-send-online-users",
@@ -48,14 +50,14 @@ export const disconnectSocket = () => {
   console.log("Disconnecting from the socket.io instance");
 };
 
-export const listenForOnlineUsers = () => {
+export const socket_listenForOnlineUsers = () => {
   socket.on(EVENTS.SERVER.SEND_ONLINE_USERS, (users) => {
     const response = users as ISocketUserStatus[];
     store.dispatch(setOnlineUsersLookupList(response));
   });
 };
 
-export const publishUserStatusChange = (status: string, color: string, kickedOut: boolean = false) => {
+export const socket_publishUserStatusChange = (status: string, color: string, kickedOut: boolean = false) => {
   socket.emit(EVENTS.CLIENT.PUBLISH_USER_STATUS, { status, color, kickedOut });
 };
 
@@ -67,4 +69,12 @@ export const socket_listenForInactivityPrompt = () => {
   socket.on(EVENTS.SERVER.OPEN_INACTIVITY_PROMPT, () => {
     store.dispatch(setAwakeDialogState(true));
   });
+};
+
+export const socket_joinChatRoom = (roomId: string) => {
+  socket.emit(EVENTS.CLIENT.JOIN_CHAT_ROOM, { roomId });
+};
+
+export const socket_leaveChatRoom = (roomId: string) => {
+  socket.emit(EVENTS.CLIENT.LEAVE_CHAT_ROOM, { roomId });
 };

@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { flushSync } from "react-dom";
+import { useSnackbar } from "notistack";
 
 import Typography from "@mui/material/Typography";
 
@@ -16,25 +17,39 @@ export interface ExtendedReportSchema extends IReportSchema {
 }
 
 const ReportsScreen = () => {
+  const { enqueueSnackbar } = useSnackbar();
+
   const [selectedReportData, setSelectedReportData] = React.useState<ExtendedReportSchema | null>(null);
   const [reports, setReports] = React.useState<ExtendedReportSchema[]>([]);
 
-  const fetchReports = useCallback(async () => {
-    client
-      .get("/Reports")
-      .then((res) => {
-        if (res.status !== 200) {
-          console.log("get reports failed");
-        } else {
-          const map = res.data.map((r: any) => ({ ...r, label: r.reportName }));
-          setReports(map);
-        }
-      })
-      .catch((error) => {
-        console.log("get reports by a fair amount");
-      })
-      .finally(() => {});
-  }, []);
+  const fetchReports = useCallback(
+    async (isInitial: boolean = false) => {
+      client
+        .get("/Reports")
+        .then((res) => {
+          if (res.status !== 200) {
+            console.log("get reports failed");
+            enqueueSnackbar(isInitial ? `Error loading reports` : `Could not refresh the reports`, {
+              variant: isInitial ? "error" : "warning",
+            });
+          } else {
+            const mappedFetchReports = res.data.map((r: any) => ({ ...r, label: r.reportName }));
+            setReports(mappedFetchReports);
+            if (isInitial && mappedFetchReports.length > 0) {
+              setSelectedReportData(mappedFetchReports[0]);
+            }
+          }
+        })
+        .catch((error) => {
+          enqueueSnackbar(isInitial ? `Error loading reports` : `Could not refresh the reports`, {
+            variant: isInitial ? "error" : "warning",
+          });
+          console.log(`FATAL ERROR LOADING REPORTS ${new Date().toDateString()}`, error);
+        })
+        .finally(() => {});
+    },
+    [enqueueSnackbar]
+  );
 
   const availableReports = useMemo(() => reports, [reports]);
 
@@ -56,7 +71,7 @@ const ReportsScreen = () => {
   );
 
   React.useEffect(() => {
-    fetchReports();
+    fetchReports(true);
   }, [fetchReports]);
 
   return (
