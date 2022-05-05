@@ -59,8 +59,13 @@ export function formatCalendarEventResponse({ event, guestUsers }: IFormatCalend
 interface IFormatChatRoomResponse {
   chatRoom: ChatRoom;
   participants: string[];
+  numberOfParticipants: number;
 }
-export async function formatChatRoomResponse({ chatRoom, participants }: IFormatChatRoomResponse) {
+export async function formatChatRoomResponse({
+  chatRoom,
+  participants,
+  numberOfParticipants,
+}: IFormatChatRoomResponse) {
   let users: BaseUserFromAuthServer[] = [];
 
   if (participants.length > 0) {
@@ -88,6 +93,7 @@ export async function formatChatRoomResponse({ chatRoom, participants }: IFormat
 
   return {
     roomId: `${chatRoom.roomId}`,
+    roomType: numberOfParticipants > 2 ? "group" : "private",
     clientId: chatRoom.clientId,
     roomName: chatRoom.roomName,
     participants: readyParticipants,

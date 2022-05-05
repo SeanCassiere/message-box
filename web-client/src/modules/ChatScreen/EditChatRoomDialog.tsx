@@ -30,11 +30,23 @@ import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
 import { MESSAGES } from "../../shared/util/messages";
 
 const validationSchema = yup.object({
-  roomName: yup.string().required("Room name is required"),
+  roomName: yup.string().required("Chat name is required"),
   participants: yup
     .array()
     .of(yup.string())
     .min(2, "At least 2 participants are required")
+    .test({
+      name: "3-participants-for-group-chat",
+      test: (values, ctx) => {
+        if (ctx.parent?.roomType === "group" && values && values.length < 3) {
+          return ctx.createError({
+            path: "participants",
+            message: "At least 3 participants are required for group chat",
+          });
+        }
+        return true;
+      },
+    })
     .required("Participants are required"),
 });
 
@@ -54,7 +66,9 @@ const EditChatRoomDialog = (props: IProps) => {
 
   const formik = useFormik({
     initialValues: {
+      roomId: null,
       roomName: "",
+      roomType: "",
       participants: [props.currentUserId],
     },
     validationSchema,
@@ -143,7 +157,7 @@ const EditChatRoomDialog = (props: IProps) => {
               <TextField
                 margin="normal"
                 fullWidth
-                label="Chat Room Name"
+                label="Chat Name"
                 id="roomName"
                 name="roomName"
                 autoComplete="off"
@@ -155,65 +169,78 @@ const EditChatRoomDialog = (props: IProps) => {
                 disabled={formik.isSubmitting}
               />
             </Grid>
-            <Grid item xs={12}>
+            {formik.values?.roomType !== "private" && (
               <Grid item xs={12}>
-                <Autocomplete
-                  id="participants"
-                  options={participantOptions}
-                  value={formik.values.participants}
-                  fullWidth
-                  freeSolo
-                  multiple
-                  disabled={formik.isSubmitting}
-                  onChange={(evt, value) => {
-                    const ids: string[] = [];
+                <Grid item xs={12}>
+                  <Autocomplete
+                    id="participants"
+                    options={participantOptions}
+                    value={formik.values.participants}
+                    fullWidth
+                    freeSolo
+                    multiple
+                    disabled={
+                      formik.isSubmitting ||
+                      (formik.values?.roomId && formik.values?.roomType === "private" ? true : false)
+                    }
+                    onChange={(evt, value) => {
+                      const ids: string[] = [];
 
-                    value.forEach((v) => {
-                      if (typeof v === "string") {
-                        ids.push(v);
-                      } else {
-                        ids.push(v.id);
-                      }
-                    });
+                      value.forEach((v) => {
+                        if (typeof v === "string") {
+                          ids.push(v);
+                        } else {
+                          ids.push(v.id);
+                        }
+                      });
 
-                    formik.setFieldValue("participants", ids);
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Participants"
-                      name="participants"
-                      error={formik.touched.participants && Boolean(formik.errors.participants)}
-                      helperText={formik.touched.participants && formik.errors.participants}
-                      disabled={formik.isSubmitting}
-                      InputProps={{ ...params.InputProps, endAdornment: <></> }}
-                      fullWidth
-                    />
-                  )}
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index: number) => {
-                      const userRenderOption = usersList.find((user) => user.userId === (option as unknown as string));
-                      return (
-                        <Chip
-                          // key={`chip-chat-${userRenderOption?.userId ?? index}`}
-                          {...getTagProps({ index })}
-                          label={`${userRenderOption?.firstName} ${userRenderOption?.lastName}`}
-                          color="secondary"
-                          avatar={
-                            <Avatar>
-                              {String(`${userRenderOption?.firstName} ${userRenderOption?.lastName}`)
-                                .substring(0, 1)
-                                .toUpperCase()}
-                            </Avatar>
-                          }
-                          disabled={(option as unknown as string) === props.currentUserId}
-                        />
-                      );
-                    })
-                  }
-                />
+                      formik.setFieldValue("participants", ids);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Participants"
+                        name="participants"
+                        error={formik.touched.participants && Boolean(formik.errors.participants)}
+                        helperText={formik.touched.participants && formik.errors.participants}
+                        disabled={
+                          formik.isSubmitting ||
+                          (formik.values?.roomId && formik.values?.roomType === "private" ? true : false)
+                        }
+                        InputProps={{ ...params.InputProps, endAdornment: <></> }}
+                        fullWidth
+                      />
+                    )}
+                    renderTags={(value, getTagProps) =>
+                      value.map((option, index: number) => {
+                        const userRenderOption = usersList.find(
+                          (user) => user.userId === (option as unknown as string)
+                        );
+                        return (
+                          <Chip
+                            // key={`chip-chat-${userRenderOption?.userId ?? index}`}
+                            {...getTagProps({ index })}
+                            label={`${userRenderOption?.firstName} ${userRenderOption?.lastName}`}
+                            color="secondary"
+                            avatar={
+                              <Avatar>
+                                {String(`${userRenderOption?.firstName} ${userRenderOption?.lastName}`)
+                                  .substring(0, 1)
+                                  .toUpperCase()}
+                              </Avatar>
+                            }
+                            disabled={
+                              (option as unknown as string) === props.currentUserId ||
+                              (formik.values?.roomId && formik.values?.roomType === "private" ? true : false)
+                            }
+                          />
+                        );
+                      })
+                    }
+                  />
+                </Grid>
               </Grid>
-            </Grid>
+            )}
           </Grid>
         </DialogContent>
         <DialogBigButtonFooter submitButtonText={props.roomId === "NOT" ? "CREATE CHAT ROOM" : "UPDATE CHAT ROOM"} />

@@ -158,7 +158,11 @@ export async function updateChatRoomForRoomId(req: Request, res: Response) {
 
   return res.json({
     statusCode: 200,
-    data: await formatChatRoomResponse({ chatRoom: foundChatRoom!, participants: readyParticipants }),
+    data: await formatChatRoomResponse({
+      chatRoom: foundChatRoom!,
+      participants: readyParticipants,
+      numberOfParticipants: readyParticipants.length,
+    }),
     errors: [],
     pagination: null,
   });

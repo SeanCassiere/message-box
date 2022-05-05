@@ -69,7 +69,11 @@ export async function getSingleChatRoomForUser(req: Request, res: Response) {
 
   return res.json({
     statusCode: 200,
-    data: await formatChatRoomResponse({ chatRoom, participants: participants }),
+    data: await formatChatRoomResponse({
+      chatRoom,
+      participants: participants,
+      numberOfParticipants: participants.length,
+    }),
     errors: [],
     pagination: null,
   });

@@ -10,20 +10,19 @@ import Stack from "@mui/material/Stack";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import ChatContentPane from "./ChatContentPane";
 import SelectChat from "./SelectChat";
+import EditChatRoomDialog from "./EditChatRoomDialog";
 
 import { selectUserState } from "../../shared/redux/store";
 import { client } from "../../shared/api/client";
-import EditChatRoomDialog from "./EditChatRoomDialog";
-
-export type ISelectedChat = { roomId: string; roomName: string; participants: string[] };
+import { IChatRoom } from "../../shared/interfaces/Chat.interfaces";
 
 const ChatScreen = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const { userProfile } = useSelector(selectUserState);
 
-  const [selectedChatConversation, setSelectedChatConversation] = React.useState<ISelectedChat | null>(null);
-  const [chatRooms, setChatRooms] = React.useState<ISelectedChat[]>([]);
+  const [selectedChatConversation, setSelectedChatConversation] = React.useState<IChatRoom | null>(null);
+  const [chatRooms, setChatRooms] = React.useState<IChatRoom[]>([]);
 
   const [showEditDialog, setShowEditDialog] = React.useState(false);
   const [showEditId, setShowEditId] = React.useState("NOT");
@@ -45,7 +44,7 @@ const ChatScreen = () => {
   }, [enqueueSnackbar]);
 
   const handleSetSelectedChat = useCallback(
-    (chat: ISelectedChat | null) => {
+    (chat: IChatRoom | null) => {
       flushSync(() => {
         setSelectedChatConversation(null);
       });

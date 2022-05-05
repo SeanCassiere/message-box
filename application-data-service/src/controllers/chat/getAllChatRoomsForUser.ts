@@ -59,7 +59,10 @@ export async function getAllChatRoomsForUser(req: Request, res: Response) {
 
   const formatted: any[] = [];
   for (const room of chatRooms) {
-    formatted.push(await formatChatRoomResponse({ chatRoom: room, participants: [] }));
+    const numberOfParticipants = await ChatRoomUserMapping.count({ where: { roomId: room.roomId, isDeleted: false } });
+    formatted.push(
+      await formatChatRoomResponse({ chatRoom: room, participants: [], numberOfParticipants: numberOfParticipants })
+    );
   }
 
   return res.json({

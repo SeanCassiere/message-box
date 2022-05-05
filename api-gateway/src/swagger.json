@@ -2893,6 +2893,10 @@
           "roomId": {
             "type": "string"
           },
+          "roomType": {
+            "type": "string",
+            "enum": ["group", "private"]
+          },
           "roomName": {
             "type": "string"
           },

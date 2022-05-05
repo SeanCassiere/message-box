@@ -23,14 +23,17 @@ import MenuItem from "@mui/material/MenuItem";
 
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SendIcon from "@mui/icons-material/Send";
+import PersonIcon from "@mui/icons-material/Person";
+import PeopleIcon from "@mui/icons-material/People";
 
-import { ISelectedChat } from "./ChatScreen";
 import { COMMON_ITEM_BORDER_STYLING } from "../../shared/util/constants";
 import { useSocket } from "../../shared/hooks/useSocket";
 import { formatDateTimeShort } from "../../shared/util/dateTime";
 import { IUserProfile } from "../../shared/interfaces/User.interfaces";
 import { client } from "../../shared/api/client";
 import { selectLookupListsState } from "../../shared/redux/store";
+import { IChatMessage, IChatRoom } from "../../shared/interfaces/Chat.interfaces";
+import { DEFAULT_USER_STATUSES } from "../../shared/util/general";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -61,18 +64,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-interface IChatMessage {
-  messageId: string;
-  senderId: string;
-  senderName: string;
-  type: string;
-  message: string;
-  timestamp: string;
-}
-
 interface Props {
-  selectedChatConversation: ISelectedChat;
-  setSelectedChatConversation: (chat: ISelectedChat | null) => void;
+  selectedChatConversation: IChatRoom;
+  setSelectedChatConversation: (chat: IChatRoom | null) => void;
   currentUser: IUserProfile;
   openEditDialogTrigger: (id: string) => void;
 }
@@ -81,7 +75,7 @@ const ChatContentPane = (props: Props) => {
   const { enqueueSnackbar } = useSnackbar();
   const { selectedChatConversation } = props;
 
-  const { usersList } = useSelector(selectLookupListsState);
+  const { usersList, onlineUsersList } = useSelector(selectLookupListsState);
 
   const { socket_joinChatRoom, socket_leaveChatRoom, socket_sendNewMessage } = useSocket();
 
@@ -239,6 +233,19 @@ const ChatContentPane = (props: Props) => {
     return namesOnly.join(", ");
   };
 
+  const currentAvatarIndicatorColor = React.useMemo(() => {
+    let currentColor = DEFAULT_USER_STATUSES[2].color;
+    const avatarUserId = selectedChatConversation.participants.filter((uId) => uId !== props.currentUser.userId)[0];
+
+    if (avatarUserId) {
+      const onlineUser = onlineUsersList.find((u) => u.userId === avatarUserId);
+      if (onlineUser) {
+        currentColor = onlineUser?.color ?? DEFAULT_USER_STATUSES[0].color;
+      }
+    }
+    return currentColor;
+  }, [onlineUsersList, props.currentUser.userId, selectedChatConversation.participants]);
+
   return (
     <Stack
       component={Paper}
@@ -264,16 +271,34 @@ const ChatContentPane = (props: Props) => {
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Stack direction="row" alignItems="center" spacing={2} sx={{ px: { xs: 1, md: 2 }, py: { xs: 1, md: 0 } }}>
             <Box>
-              <StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot">
-                <Avatar alt="Sean Cassiere" />
-              </StyledBadge>
+              {selectedChatConversation.roomType === "group" ? (
+                <Avatar alt={selectedChatConversation.roomName}>
+                  <PeopleIcon />
+                </Avatar>
+              ) : (
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      backgroundColor: currentAvatarIndicatorColor,
+                      color: currentAvatarIndicatorColor,
+                    },
+                  }}
+                >
+                  <Avatar alt={selectedChatConversation.roomName}>
+                    <PersonIcon />
+                  </Avatar>
+                </StyledBadge>
+              )}
             </Box>
             <Box>
               <Typography fontWeight={500} fontSize={16}>
-                {selectedChatConversation.roomName}
+                {selectedChatConversation.roomName.length > 0 ? selectedChatConversation.roomName : "No Name"}
               </Typography>
               <Typography fontWeight={200} fontSize={13}>
-                {renderUsersInChat()}
+                {selectedChatConversation.participants.length > 0 ? <>{renderUsersInChat()}</> : "No participants"}
               </Typography>
             </Box>
           </Stack>

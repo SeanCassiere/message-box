@@ -123,7 +123,11 @@ export async function createChatRoomForUser(req: Request, res: Response) {
 
   return res.json({
     statusCode: 200,
-    data: await formatChatRoomResponse({ chatRoom, participants: readyParticipants }),
+    data: await formatChatRoomResponse({
+      chatRoom,
+      participants: readyParticipants,
+      numberOfParticipants: readyParticipants.length,
+    }),
     errors: [],
     pagination: null,
   });
