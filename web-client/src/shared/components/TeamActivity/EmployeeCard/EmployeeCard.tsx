@@ -2,6 +2,7 @@ import React from "react";
 import { CSSObject } from "@emotion/react";
 import { useSelector } from "react-redux";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 
 import { indigo, red } from "@mui/material/colors";
 import Paper from "@mui/material/Paper";
@@ -38,6 +39,7 @@ interface IProps {
 
 const EmployeeCard = (props: IProps) => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const { onlineUsersList } = useSelector(selectLookupListsState);
   const { statusList } = useSelector(selectUserState);
@@ -127,7 +129,13 @@ const EmployeeCard = (props: IProps) => {
           >
             {messageSent ? "DONE" : "ALERT"}
           </Button>
-          <Button>MESSAGE</Button>
+          <Button
+            onClick={() => {
+              navigate("/chat");
+            }}
+          >
+            MESSAGE
+          </Button>
         </Stack>
       </Stack>
     </Paper>
