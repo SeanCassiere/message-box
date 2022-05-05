@@ -96,17 +96,13 @@ const ChatContentPane = (props: Props) => {
       .catch(() => {})
       .finally(() => {
         setLoadingMessages(false);
-        if (scrollBottomRef.current) {
-          scrollBottomRef.current.scrollIntoView({ behavior: "smooth" });
-        }
+        scrollBottomRef.current?.scrollIntoView();
       });
   }
 
   function pushNewChatToStack(newMessage: IChatMessage) {
     setRoomMessages((prevMessages) => [...prevMessages, newMessage]);
-    if (scrollBottomRef.current) {
-      scrollBottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    scrollBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }
 
   React.useEffect(() => {
@@ -119,9 +115,7 @@ const ChatContentPane = (props: Props) => {
   }, [selectedChatConversation.roomId, socket_joinChatRoom, socket_leaveChatRoom]);
 
   React.useEffect(() => {
-    if (scrollBottomRef.current) {
-      scrollBottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    scrollBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   const handleSendMessage = () => {

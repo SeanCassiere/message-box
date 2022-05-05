@@ -2,7 +2,6 @@ import React from "react";
 import { useFormik } from "formik";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as yup from "yup";
@@ -10,12 +9,7 @@ import * as yup from "yup";
 import Grid from "@mui/material/Grid";
 import DialogContent from "@mui/material/DialogContent";
 import Box from "@mui/material/Box";
-import FormControl from "@mui/material/FormControl";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Dialog from "@mui/material/Dialog";
-import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
-import DateTimePicker from "@mui/lab/DateTimePicker";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
@@ -30,18 +24,18 @@ import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
 import { MESSAGES } from "../../shared/util/messages";
 
 const validationSchema = yup.object({
-  roomName: yup.string().required("Chat name is required"),
+  roomName: yup.string().required("Required"),
   participants: yup
     .array()
     .of(yup.string())
-    .min(2, "At least 2 participants are required")
+    .min(2, "A minimum of 2 are required")
     .test({
       name: "3-participants-for-group-chat",
       test: (values, ctx) => {
         if (ctx.parent?.roomType === "group" && values && values.length < 3) {
           return ctx.createError({
             path: "participants",
-            message: "At least 3 participants are required for group chat",
+            message: "A minimum of 3 are needed for a group chat",
           });
         }
         return true;
@@ -150,14 +144,14 @@ const EditChatRoomDialog = (props: IProps) => {
       fullScreen={isOnMobile}
     >
       <Box component="form" onSubmit={formik.handleSubmit}>
-        <DialogHeaderClose title={`${props.roomId === "NOT" ? "New" : "Edit"} Chat Room`} onClose={passThroughClose} />
+        <DialogHeaderClose title={`${props.roomId === "NOT" ? "New" : "Edit"} chat`} onClose={passThroughClose} />
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 0 }}>
             <Grid item xs={12}>
               <TextField
                 margin="normal"
                 fullWidth
-                label="Chat Name"
+                label={formik.values.roomType === "private" ? "Conversation name" : "Chat name"}
                 id="roomName"
                 name="roomName"
                 autoComplete="off"
@@ -243,7 +237,7 @@ const EditChatRoomDialog = (props: IProps) => {
             )}
           </Grid>
         </DialogContent>
-        <DialogBigButtonFooter submitButtonText={props.roomId === "NOT" ? "CREATE CHAT ROOM" : "UPDATE CHAT ROOM"} />
+        <DialogBigButtonFooter submitButtonText={props.roomId === "NOT" ? "START CHAT" : "EDIT CHAT"} />
       </Box>
     </Dialog>
   );

@@ -108,7 +108,7 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
     <Paper
       elevation={0}
       sx={{
-        // height: parentProps.maxHeight ?? 780,
+        height: parentProps.maxHeight || undefined,
         border: COMMON_ITEM_BORDER_STYLING,
         borderRadius: 1,
         boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",

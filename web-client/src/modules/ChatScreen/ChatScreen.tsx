@@ -93,7 +93,7 @@ const ChatScreen = () => {
             <Stack
               sx={{
                 minHeight: {
-                  sm: "200px",
+                  sm: "600px",
                   md: "88vh",
                 },
                 maxHeight: {
@@ -106,6 +106,7 @@ const ChatScreen = () => {
                 Chat
               </Typography>
               <SelectChat
+                selectedChatConversation={selectedChatConversation}
                 setSelectedChatConversation={handleSetSelectedChat}
                 availableChatConversations={chatRooms}
                 openDialogTrigger={() => {

@@ -48,6 +48,7 @@ import { IChatRoom } from "../../shared/interfaces/Chat.interfaces";
 // }));
 
 interface Props {
+  selectedChatConversation: IChatRoom | null;
   setSelectedChatConversation: (chat: IChatRoom | null) => void;
   availableChatConversations: IChatRoom[];
   openDialogTrigger: () => void;
@@ -56,11 +57,8 @@ interface Props {
 const SelectChat = (props: Props) => {
   const { setSelectedChatConversation } = props;
 
-  const [selectedId, setSelectedId] = React.useState("");
-
   const handleSelectChat = React.useCallback(
     (chat: IChatRoom) => {
-      setSelectedId(chat.roomId);
       setSelectedChatConversation(chat);
     },
     [setSelectedChatConversation]
@@ -99,46 +97,13 @@ const SelectChat = (props: Props) => {
       {props.availableChatConversations
         .filter((c) => c.roomType === "group")
         .map((chat) => (
-          <Box
-            key={`chat-option-${chat.roomId}`}
-            sx={{
-              borderWidth: 3,
-              borderRadius: 2,
-              borderStyle: "solid",
-              borderColor: selectedId === chat.roomId ? PRIMARY_BTN_COLOR : COMMON_ITEM_BORDER_COLOR,
-              my: "4px",
-              py: 1,
-              px: 2,
-              bgcolor: selectedId === chat.roomId ? "#f0fdfa" : "#fff",
-            }}
-          >
-            <Stack direction="row" alignItems="center" spacing={2} sx={{ minHeight: "3rem" }}>
-              <Box>
-                <Avatar alt={chat.roomName}>{chat.roomType === "group" ? <PeopleIcon /> : <PersonIcon />}</Avatar>
-              </Box>
-              <Box flexGrow={1}>{chat.roomName}</Box>
-              <Box>
-                <IconButton
-                  aria-label="View"
-                  onClick={() => handleSelectChat(chat)}
-                  onMouseDown={() => handleSelectChat(chat)}
-                >
-                  {<KeyboardArrowRightIcon />}
-                </IconButton>
-                {selectedId === chat.roomId && (
-                  <IconButton
-                    aria-label="Close"
-                    onClick={() => {
-                      setSelectedChatConversation(null);
-                      setSelectedId("");
-                    }}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                )}
-              </Box>
-            </Stack>
-          </Box>
+          <ChatOption
+            key={`select-group-chat-${chat.roomId}`}
+            chatOption={chat}
+            selectedChatConversation={props.selectedChatConversation}
+            setSelectedChatConversation={setSelectedChatConversation}
+            handleSelectChat={handleSelectChat}
+          />
         ))}
       <Typography fontSize={18} fontWeight={500} color="primary.500" sx={{ pl: 1, mt: 2 }}>
         Conversations
@@ -146,49 +111,77 @@ const SelectChat = (props: Props) => {
       {props.availableChatConversations
         .filter((c) => c.roomType !== "group")
         .map((chat) => (
-          <Box
-            key={`chat-option-${chat.roomId}`}
-            sx={{
-              borderWidth: 3,
-              borderRadius: 2,
-              borderStyle: "solid",
-              borderColor: selectedId === chat.roomId ? PRIMARY_BTN_COLOR : COMMON_ITEM_BORDER_COLOR,
-              my: "4px",
-              py: 1,
-              px: 2,
-              bgcolor: selectedId === chat.roomId ? "#f0fdfa" : "#fff",
-            }}
-          >
-            <Stack direction="row" alignItems="center" spacing={2} sx={{ minHeight: "3rem" }}>
-              <Box>
-                <Avatar alt={chat.roomName}>{chat.roomType === "group" ? <PeopleIcon /> : <PersonIcon />}</Avatar>
-              </Box>
-              <Box flexGrow={1}>{chat.roomName}</Box>
-              <Box>
-                <IconButton
-                  aria-label="View"
-                  onClick={() => handleSelectChat(chat)}
-                  onMouseDown={() => handleSelectChat(chat)}
-                >
-                  {<KeyboardArrowRightIcon />}
-                </IconButton>
-                {selectedId === chat.roomId && (
-                  <IconButton
-                    aria-label="Close"
-                    onClick={() => {
-                      setSelectedChatConversation(null);
-                      setSelectedId("");
-                    }}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                )}
-              </Box>
-            </Stack>
-          </Box>
+          <ChatOption
+            key={`select-conversation-chat-${chat.roomId}`}
+            chatOption={chat}
+            selectedChatConversation={props.selectedChatConversation}
+            setSelectedChatConversation={setSelectedChatConversation}
+            handleSelectChat={handleSelectChat}
+          />
         ))}
     </Stack>
   );
 };
+
+const ChatOption = React.memo(
+  (props: {
+    chatOption: IChatRoom;
+    setSelectedChatConversation: (chat: IChatRoom | null) => void;
+    selectedChatConversation: IChatRoom | null;
+    handleSelectChat: (chat: IChatRoom) => void;
+  }) => {
+    const selectChatOption = React.useCallback(() => {
+      props.handleSelectChat(props.chatOption);
+    }, [props]);
+    return (
+      <>
+        <Box
+          key={`chat-option-${props.chatOption.roomId}`}
+          sx={{
+            borderWidth: 3,
+            borderRadius: 2,
+            borderStyle: "solid",
+            borderColor:
+              props.selectedChatConversation?.roomId === props.chatOption.roomId
+                ? PRIMARY_BTN_COLOR
+                : COMMON_ITEM_BORDER_COLOR,
+            my: "4px",
+            py: 1,
+            px: 2,
+            bgcolor: props.selectedChatConversation?.roomId === props.chatOption.roomId ? "#f0fdfa" : "#fff",
+          }}
+        >
+          <Stack direction="row" alignItems="center" spacing={2} sx={{ minHeight: "3rem" }}>
+            <Box onClick={selectChatOption} sx={{ cursor: "pointer" }}>
+              <Avatar alt={props.chatOption.roomName}>
+                {props.chatOption.roomType === "group" ? <PeopleIcon /> : <PersonIcon />}
+              </Avatar>
+            </Box>
+            <Box flexGrow={1} onClick={selectChatOption} sx={{ cursor: "pointer" }}>
+              {props.chatOption.roomName}
+            </Box>
+            <Box>
+              {props.selectedChatConversation?.roomId !== props.chatOption.roomId && (
+                <IconButton aria-label="View" onClick={selectChatOption} onMouseDown={selectChatOption}>
+                  {<KeyboardArrowRightIcon />}
+                </IconButton>
+              )}
+              {props.selectedChatConversation?.roomId === props.chatOption.roomId && (
+                <IconButton
+                  aria-label="Close"
+                  onClick={() => {
+                    props.setSelectedChatConversation(null);
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              )}
+            </Box>
+          </Stack>
+        </Box>
+      </>
+    );
+  }
+);
 
 export default SelectChat;

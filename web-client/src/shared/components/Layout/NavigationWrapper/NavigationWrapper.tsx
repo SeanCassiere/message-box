@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { indigo } from "@mui/material/colors";
 
@@ -125,9 +125,12 @@ const NavigationWrapper: React.FC = (props) => {
     setAnchorElUser(null);
   };
 
+  // accessing the constantly changing pathName otherwise gotten from window.location.pathname
+  const location = useLocation();
+
   // set the current page
   useEffect(() => {
-    const urlLocation = window.location.pathname.split("/");
+    const urlLocation = location.pathname.split("/");
     const pagesKeyList = routesList.map((r) => {
       const returnRoute = r.route.split("/")[1];
       return `/${returnRoute}`;
@@ -135,7 +138,7 @@ const NavigationWrapper: React.FC = (props) => {
     if (pagesKeyList.includes(`/${urlLocation[1].toLowerCase()}`)) {
       setCurrentLink(`/${urlLocation[1].toLowerCase()}`);
     }
-  }, [routesList]);
+  }, [location.pathname, routesList]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
