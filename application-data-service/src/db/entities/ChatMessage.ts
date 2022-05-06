@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, Index } from "typeorm";
 
 @Entity("chat_message")
 export default class ChatMessage extends BaseEntity {
@@ -24,6 +24,7 @@ export default class ChatMessage extends BaseEntity {
   isDeleted: boolean;
 
   @CreateDateColumn({ name: "created_at" })
+  @Index()
   createdAt: Date;
 
   @UpdateDateColumn({ name: "updated_at" })

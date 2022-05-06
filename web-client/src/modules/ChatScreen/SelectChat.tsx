@@ -111,9 +111,11 @@ const SelectChat = (props: Props) => {
           </Button>
         </Stack>
       </Box>
-      <Typography fontSize={18} fontWeight={500} color="primary.500" sx={{ pl: 1, mt: 3 }}>
-        Groups
-      </Typography>
+      {queriedChatConversations.filter((c) => c.roomType === "group").length > 0 && (
+        <Typography fontSize={18} fontWeight={500} color="primary.500" sx={{ pl: 1, mt: 3 }}>
+          Groups
+        </Typography>
+      )}
 
       {queriedChatConversations
         .filter((c) => c.roomType === "group")
@@ -126,9 +128,13 @@ const SelectChat = (props: Props) => {
             handleSelectChat={handleSelectChat}
           />
         ))}
-      <Typography fontSize={18} fontWeight={500} color="primary.500" sx={{ pl: 1, mt: 1.5 }}>
-        Conversations
-      </Typography>
+
+      {queriedChatConversations.filter((c) => c.roomType !== "group").length > 0 && (
+        <Typography fontSize={18} fontWeight={500} color="primary.500" sx={{ pl: 1, mt: 1.5 }}>
+          Conversations
+        </Typography>
+      )}
+
       {queriedChatConversations
         .filter((c) => c.roomType !== "group")
         .map((chat) => (

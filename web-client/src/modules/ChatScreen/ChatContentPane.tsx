@@ -34,6 +34,7 @@ import { client } from "../../shared/api/client";
 import { selectLookupListsState } from "../../shared/redux/store";
 import { IChatMessage, IChatRoom } from "../../shared/interfaces/Chat.interfaces";
 import { DEFAULT_USER_STATUSES } from "../../shared/util/general";
+import { usePermission } from "../../shared/hooks/usePermission";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -60,13 +61,20 @@ interface Props {
   openEditDialogTrigger: (id: string) => void;
 }
 
+const TAKE_SIZE_MESSAGES = 35;
+
 const ChatContentPane = (props: Props) => {
   const { enqueueSnackbar } = useSnackbar();
   const { selectedChatConversation } = props;
 
+  const PERM_CHAT_ADMIN = usePermission("chat:delete");
+  const PERM_CHAT_DELETE = usePermission("chat:delete");
+
   const { usersList, onlineUsersList } = useSelector(selectLookupListsState);
 
   const { socket_joinChatRoom, socket_leaveChatRoom, socket_sendNewMessage } = useSocket();
+
+  const [hasMoreMessages, setHasMoreMessages] = React.useState(true);
 
   const [typingMessageText, setTypingMessageText] = React.useState("");
   const [loadingMessages, setLoadingMessages] = React.useState(true);
@@ -74,20 +82,56 @@ const ChatContentPane = (props: Props) => {
   const [roomMessages, setRoomMessages] = React.useState<IChatMessage[]>([]);
   const scrollBottomRef = React.useRef<HTMLAnchorElement>(null);
 
-  function fetchChatMessages(roomId: string) {
+  function fetchChatMessages(roomId: string, cursor?: string) {
+    const urlParams = new URLSearchParams();
+    urlParams.append("size", `${TAKE_SIZE_MESSAGES}`);
+    if (cursor) {
+      urlParams.append("cursor", cursor);
+    }
     client
-      .get(`/Chats/${roomId}/Messages`)
+      .get(`/Chats/${roomId}/Messages`, { params: urlParams })
       .then((res) => {
         if (res.status === 200) {
-          setRoomMessages([...res.data].map((r) => ({ ...r, message: r?.content })));
+          const formattedNewMessages = [...res.data].map((r) => ({ ...r, message: r?.content }));
+          if (formattedNewMessages.length < TAKE_SIZE_MESSAGES) {
+            setHasMoreMessages(false);
+          } else {
+            setHasMoreMessages(true);
+          }
+          setRoomMessages((prev) => [...formattedNewMessages, ...prev]);
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        // enqueueSnackbar("Failed to fetch more messages", { variant: "error" });
+      })
       .finally(() => {
         setLoadingMessages(false);
-        scrollBottomRef.current?.scrollIntoView();
+        if (!cursor) {
+          scrollBottomRef.current?.scrollIntoView();
+        }
       });
   }
+
+  const observer = React.useRef<IntersectionObserver>();
+  const lastMessageCallback = React.useCallback(
+    (node: HTMLLIElement) => {
+      if (loadingMessages || hasMoreMessages === false) return;
+      if (observer?.current) observer?.current?.disconnect();
+
+      let options: IntersectionObserverInit = {
+        rootMargin: "250px",
+      };
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries.length > 0 && entries[0] && entries[0].isIntersecting && hasMoreMessages) {
+          fetchChatMessages(selectedChatConversation.roomId, roomMessages[0]?.timestamp);
+        }
+      }, options);
+
+      if (node) observer.current.observe(node);
+    },
+    [hasMoreMessages, loadingMessages, roomMessages, selectedChatConversation.roomId]
+  );
 
   function pushNewChatToStack(newMessage: IChatMessage) {
     setRoomMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -102,10 +146,7 @@ const ChatContentPane = (props: Props) => {
       socket_leaveChatRoom(selectedChatConversation.roomId);
     };
   }, [selectedChatConversation.roomId, socket_joinChatRoom, socket_leaveChatRoom]);
-
-  React.useEffect(() => {
-    scrollBottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const handleSendMessage = () => {
     const text = typingMessageText;
@@ -163,59 +204,65 @@ const ChatContentPane = (props: Props) => {
         />
       </ListItem>
     ) : (
-      roomMessages.map((messageObj) => (
-        <ListItem
-          alignItems="center"
-          key={messageObj.messageId}
-          sx={{
-            justifyContent: "flex-end",
-            width: "100%",
-            py: {
-              xs: 1,
-              sm: 0,
-            },
-          }}
-        >
-          {messageObj.senderId !== props.currentUser.userId && (
-            <ListItemAvatar>
-              <Avatar alt={messageObj.senderName} />
-            </ListItemAvatar>
-          )}
-          <ListItemText
-            primary={
-              <Box sx={{ display: "inline-flex", flexDirection: "row", alignItems: "center" }}>
-                {messageObj.senderId === props.currentUser.userId ? (
-                  <>
-                    <Typography fontSize={13} color={grey[600]}>
-                      {formatDateTimeShort(messageObj.timestamp)}
-                    </Typography>
-                    &nbsp;-&nbsp;
-                    <Typography>{messageObj.senderName}</Typography>
-                  </>
-                ) : (
-                  <>
-                    <Typography>{messageObj.senderName}</Typography>&nbsp;-&nbsp;
-                    <Typography fontSize={13} color={grey[600]}>
-                      {formatDateTimeShort(messageObj.timestamp)}
-                    </Typography>
-                  </>
-                )}
-              </Box>
-            }
-            secondary={messageObj.message}
-            primaryTypographyProps={{
-              sx: {
-                textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
+      roomMessages.map((messageObj, index) => {
+        return (
+          <ListItem
+            alignItems="center"
+            key={`message-${messageObj.messageId}`}
+            sx={{
+              justifyContent: "flex-end",
+              width: "100%",
+              py: {
+                xs: 1,
+                sm: 0,
               },
             }}
-            secondaryTypographyProps={{
-              sx: {
-                textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
-              },
-            }}
-          />
-        </ListItem>
-      ))
+            ref={index === 0 ? lastMessageCallback : undefined}
+          >
+            {messageObj.senderId !== props.currentUser.userId && (
+              <ListItemAvatar>
+                <Avatar alt={messageObj.senderName} />
+              </ListItemAvatar>
+            )}
+
+            <ListItemText
+              primary={
+                <Box sx={{ display: "inline-flex", flexDirection: "row", alignItems: "center" }}>
+                  {messageObj.senderId === props.currentUser.userId ? (
+                    <>
+                      <Typography fontSize={13} color={grey[600]}>
+                        {formatDateTimeShort(messageObj.timestamp)}
+                      </Typography>
+                      &nbsp;-&nbsp;
+                      <Typography>{messageObj.senderName}</Typography>
+                    </>
+                  ) : (
+                    <>
+                      <Typography>{messageObj.senderName}</Typography>&nbsp;-&nbsp;
+                      <Typography fontSize={13} color={grey[600]}>
+                        {formatDateTimeShort(messageObj.timestamp)}
+                      </Typography>
+                    </>
+                  )}
+                </Box>
+              }
+              secondary={messageObj.type === "text/text" ? messageObj.message : null}
+              primaryTypographyProps={{
+                sx: {
+                  textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
+                  pr: messageObj.senderId !== props.currentUser.userId ? 0 : 1,
+                },
+              }}
+              secondaryTypographyProps={{
+                sx: {
+                  textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
+                  pr: messageObj.senderId !== props.currentUser.userId ? 0 : 1,
+                },
+              }}
+            />
+          </ListItem>
+        );
+      })
     );
 
   const renderUsersInChat = () => {
@@ -297,9 +344,11 @@ const ChatContentPane = (props: Props) => {
             </Box>
           </Stack>
           <Box sx={{ px: { xs: 1, md: 1 } }}>
-            <IconButton aria-label="More" onClick={handleMenuOpenClick} onMouseDown={handleMenuOpenClick}>
-              {<MoreVertIcon />}
-            </IconButton>
+            {(PERM_CHAT_ADMIN || PERM_CHAT_DELETE) && (
+              <IconButton aria-label="More" onClick={handleMenuOpenClick} onMouseDown={handleMenuOpenClick}>
+                {<MoreVertIcon />}
+              </IconButton>
+            )}
             <Menu
               id="basic-menu"
               anchorEl={menuAnchorEl}
@@ -313,7 +362,7 @@ const ChatContentPane = (props: Props) => {
                 "aria-labelledby": "basic-button",
               }}
             >
-              {props.selectedChatConversation.roomType !== "private" && (
+              {props.selectedChatConversation.roomType !== "private" && PERM_CHAT_ADMIN && (
                 <MenuItem
                   onClick={() => {
                     props.openEditDialogTrigger(props.selectedChatConversation.roomId);
@@ -323,7 +372,7 @@ const ChatContentPane = (props: Props) => {
                   Edit
                 </MenuItem>
               )}
-              <MenuItem onClick={handleMenuDelete}>Quick Delete</MenuItem>
+              {PERM_CHAT_DELETE && <MenuItem onClick={handleMenuDelete}>Quick Delete</MenuItem>}
             </Menu>
           </Box>
         </Stack>
@@ -333,13 +382,6 @@ const ChatContentPane = (props: Props) => {
         flexGrow={1}
         sx={{
           borderBottom: COMMON_ITEM_BORDER_STYLING,
-          py: {
-            // xs: 1,
-            // md: 1,
-          },
-          px: {
-            // md: 2,
-          },
         }}
       >
         <Stack sx={{ minHeight: { md: "68vh" }, maxHeight: { xs: "35vh", md: "69vh" }, py: 1, overflow: "auto" }}>

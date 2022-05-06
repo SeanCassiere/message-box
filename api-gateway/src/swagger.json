@@ -847,6 +847,26 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "Timestamp of the oldest message",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of messages to get",
+            "schema": {
+              "type": "number",
+              "default": "35"
+            },
+            "required": false
           }
         ],
         "security": [

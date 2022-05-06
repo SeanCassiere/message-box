@@ -1,23 +1,21 @@
 import { Request, Response } from "express";
 import * as yup from "yup";
-import axios from "axios";
 
-import { validateYupSchema } from "#root/utils/validateYupSchema";
-import { AUTH_SERVICE_URI } from "#root/utils/constants";
-import { log } from "#root/utils/logger";
-import { BaseUserFromAuthServer } from "#root/types/users";
-import ChatRoom from "#root/db/entities/ChatRoom";
-import ChatRoomUserMapping from "#root/db/entities/ChatRoomUserMappings";
-import { formatChatMessagesResponse, formatChatRoomResponse } from "#root/utils/formatResponses";
 import ChatMessage from "#root/db/entities/ChatMessage";
 
-// import { createDbActivityLog } from "#root/utils/createDbActivityLog";
+import { validateYupSchema } from "#root/utils/validateYupSchema";
+import { log } from "#root/utils/logger";
+import { formatChatMessagesResponse } from "#root/utils/formatResponses";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
     clientId: yup.string().required("ClientId is required"),
     userId: yup.string().required("UserId is required"),
     roomId: yup.string().required("RoomId is required"),
+  }),
+  body: yup.object().shape({
+    size: yup.number().min(1).nullable(),
+    cursor: yup.date().nullable(),
   }),
 });
 
@@ -33,12 +31,20 @@ export async function getMessagesForRoomById(req: Request, res: Response) {
   }
 
   const variables = req.body.variables;
+  const body = req.body.body;
+
+  const takeSize = req.body?.body?.size || 35;
 
   const dbQuery = ChatMessage.createQueryBuilder()
     .where("client_id = :clientId", { clientId: variables.clientId })
-    .andWhere("room_id = :roomId", { roomId: variables.roomId })
-    .take(60)
-    .orderBy("created_at", "DESC");
+    .andWhere("room_id = :roomId", { roomId: variables.roomId });
+
+  if (body?.cursor) {
+    const cursor = new Date(body.cursor).toISOString();
+    dbQuery.andWhere("created_at < :cursor", { cursor: cursor });
+  }
+
+  dbQuery.take(takeSize).orderBy("created_at", "DESC");
 
   let preChatMessages: ChatMessage[] = [];
 

@@ -67,6 +67,8 @@ chatsRouter.route("/:id/Messages").get(async (req, res) => {
   const request = req as CustomRequest<{}>;
 
   const roomId = request.params.id;
+  const cursorValue = req.query.cursor;
+  const takeSize = req.query.size;
 
   try {
     const { data: response } = await client.post("/chat/getMessagesForRoomById", {
@@ -74,6 +76,10 @@ chatsRouter.route("/:id/Messages").get(async (req, res) => {
         clientId: request.auth!.message_box_clientId,
         userId: request.auth!.message_box_userId,
         roomId: roomId,
+      },
+      body: {
+        size: takeSize ?? null,
+        cursor: cursorValue || null,
       },
     });
 

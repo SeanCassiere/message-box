@@ -105,7 +105,11 @@ const ChatScreen = () => {
           container
           sx={{
             flexGrow: 1,
-            maxHeight: "88vh",
+            maxHeight: {
+              xs: "100%",
+              sm: "100%",
+              md: "88vh",
+            },
           }}
         >
           <Grid item xs={12} md={4}>
