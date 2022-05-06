@@ -21,12 +21,19 @@ export function socket({ io }: { io: Server }) {
 
   // setup the redis subscription for the entire socket.io server instance to emit to the rooms
   subRedis.on("message", (channel, message) => {
-    log.info(`Channel name is ${channel}`);
+    log.info(`\n\nSUBSCRIPTION REDIS - Channel -> ${channel}\n\n`);
 
     const parts = channel.split(":");
 
     if (parts.length === 3 && parts[2].toLowerCase() === REDIS_CONSTANTS.CLIENT_ONLINE_USERS_HASH_KEY.toLowerCase()) {
       io.to(`${channel}`).emit(EVENTS.SERVER.SEND_ONLINE_USERS, JSON.parse(message));
+    }
+
+    if (parts.length === 3 && parts[2].toLowerCase() === REDIS_CONSTANTS.CONNECTED_CHAT_USERS_SUBSCRIPTION_HASH_KEY) {
+      io.to(`${channel}`).emit(EVENTS.SERVER.REFRESH_STORED_CHAT_ROOM_CACHE);
+      console.log("\n\n\n ", { channel }, "\n\n\n ");
+      console.log("\n\n\n ", { message }, "\n\n\n ");
+      console.log("\n\n\n ", { parts }, "\n\n\n ");
     }
   });
 
@@ -37,6 +44,7 @@ export function socket({ io }: { io: Server }) {
       client_namespace: `${REDIS_CONSTANTS.PARENT_CLIENT_HASH_KEY}:${socket.handshake.auth.clientId}`,
       user_namespace: `${REDIS_CONSTANTS.USER_SOCKET_HASH_KEY}:${socket.handshake.auth.userId}`,
       client_online_users_namespace: `${REDIS_CONSTANTS.CLIENT_ONLINE_USERS_HASH_KEY}`,
+      connected_chat_users_updates_subscription: `${REDIS_CONSTANTS.CONNECTED_CHAT_USERS_SUBSCRIPTION_HASH_KEY}`,
     };
 
     await redisJoiningUserSockets(namespaceValues, io, socket);

@@ -2867,19 +2867,50 @@
           }
         }
       },
-      "ClientSchema": {
+      "CalendarEventSchema": {
         "type": "object",
         "properties": {
-          "clientId": {
+          "eventId": {
             "type": "string",
             "format": "uuid"
           },
-          "clientName": {
+          "ownerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
             "type": "string"
           },
-          "adminUserId": {
+          "description": {
+            "type": "string"
+          },
+          "startDate": {
             "type": "string",
-            "format": "uuid"
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isAllDay": {
+            "type": "boolean",
+            "default": false
+          },
+          "sharedWith": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
           },
           "updatedAt": {
             "type": "string",
@@ -2906,6 +2937,11 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          "participantUserId": {
+            "type": "string",
+            "nullable": true,
+            "description": "If a **private** chat room, this will return the userId of your counterpart/guest in the conversation"
           }
         }
       },
@@ -2929,6 +2965,26 @@
             "type": "string"
           },
           "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ClientSchema": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clientName": {
+            "type": "string"
+          },
+          "adminUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updatedAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -3046,57 +3102,6 @@
                   "nullable": true
                 },
                 "lastName": {
-                  "type": "string",
-                  "nullable": true
-                }
-              }
-            }
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "CalendarEventSchema": {
-        "type": "object",
-        "properties": {
-          "eventId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "ownerId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "isAllDay": {
-            "type": "boolean",
-            "default": false
-          },
-          "sharedWith": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "userId": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "name": {
                   "type": "string",
                   "nullable": true
                 }

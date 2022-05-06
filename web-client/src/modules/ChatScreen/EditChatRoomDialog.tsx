@@ -47,7 +47,7 @@ const validationSchema = yup.object({
 interface IProps {
   roomId: string | "NOT";
   currentUserId: string;
-  handleClose: () => void;
+  handleClose: (submitted?: boolean) => void;
   handleRefreshList: () => void;
   showDialog: boolean;
 }
@@ -66,7 +66,7 @@ const EditChatRoomDialog = (props: IProps) => {
       participants: [props.currentUserId],
     },
     validationSchema,
-    onSubmit: (values, { setSubmitting, setErrors, setValues, setFieldError }) => {
+    onSubmit: (values, { setSubmitting, setErrors, setValues, setFieldError, resetForm }) => {
       if ([...values.participants].length < 2) {
         setFieldError("participants", "At least 2 participants are required");
         return;
@@ -79,6 +79,9 @@ const EditChatRoomDialog = (props: IProps) => {
         .then((res) => {
           if (res.status === 200) {
             setValues(res.data);
+            resetForm();
+            props.handleRefreshList();
+            props.handleClose(true);
           } else if (res.status === 400) {
             enqueueSnackbar(MESSAGES.INPUT_VALIDATION, { variant: "warning" });
             setErrors(formatErrorsToFormik(res.data.errors));
@@ -90,15 +93,13 @@ const EditChatRoomDialog = (props: IProps) => {
         })
         .finally(() => {
           setSubmitting(false);
-          props.handleRefreshList();
-          props.handleClose();
         });
     },
   });
 
   const passThroughClose = React.useCallback(() => {
     formik.resetForm();
-    props.handleClose();
+    props.handleClose(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.handleClose]);
 
@@ -237,7 +238,7 @@ const EditChatRoomDialog = (props: IProps) => {
             )}
           </Grid>
         </DialogContent>
-        <DialogBigButtonFooter submitButtonText={props.roomId === "NOT" ? "START CHAT" : "EDIT CHAT"} />
+        <DialogBigButtonFooter submitButtonText={props.roomId === "NOT" ? "START CHAT" : "SAVE CHAT"} />
       </Box>
     </Dialog>
   );

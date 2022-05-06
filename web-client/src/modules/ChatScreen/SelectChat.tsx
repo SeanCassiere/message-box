@@ -1,8 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
-// import { styled } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-// import Badge from "@mui/material/Badge";
+import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -14,38 +15,33 @@ import CloseIcon from "@mui/icons-material/Close";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import PersonIcon from "@mui/icons-material/Person";
 import PeopleIcon from "@mui/icons-material/People";
+import MessageIcon from "@mui/icons-material/Message";
+import ClearIcon from "@mui/icons-material/Clear";
+
+import TextField from "../../shared/components/Form/TextField";
 
 import { COMMON_ITEM_BORDER_COLOR, COMMON_ITEM_BORDER_STYLING, PRIMARY_BTN_COLOR } from "../../shared/util/constants";
 import { IChatRoom } from "../../shared/interfaces/Chat.interfaces";
+import { selectLookupListsState } from "../../shared/redux/store";
+import { DEFAULT_USER_STATUSES } from "../../shared/util/general";
 
-// const StyledBadge = styled(Badge)(({ theme }) => ({
-//   "& .MuiBadge-badge": {
-//     backgroundColor: "#44b700",
-//     color: "#44b700",
-//     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-//     "&::after": {
-//       position: "absolute",
-//       top: 0,
-//       left: 0,
-//       width: "100%",
-//       height: "100%",
-//       borderRadius: "50%",
-//       animation: "ripple 1.2s infinite ease-in-out",
-//       border: "1px solid currentColor",
-//       content: '""',
-//     },
-//   },
-//   "@keyframes ripple": {
-//     "0%": {
-//       transform: "scale(.8)",
-//       opacity: 1,
-//     },
-//     "100%": {
-//       transform: "scale(2.4)",
-//       opacity: 0,
-//     },
-//   },
-// }));
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#44b700",
+    color: "#44b700",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+}));
 
 interface Props {
   selectedChatConversation: IChatRoom | null;
@@ -57,6 +53,8 @@ interface Props {
 const SelectChat = (props: Props) => {
   const { setSelectedChatConversation } = props;
 
+  const [searchQuery, setSearchQuery] = React.useState("");
+
   const handleSelectChat = React.useCallback(
     (chat: IChatRoom) => {
       setSelectedChatConversation(chat);
@@ -64,12 +62,23 @@ const SelectChat = (props: Props) => {
     [setSelectedChatConversation]
   );
 
+  const queriedChatConversations = React.useMemo(() => {
+    let chats = props.availableChatConversations;
+    if (props.availableChatConversations.length > 0 && searchQuery?.trim()?.length > 0) {
+      chats = props.availableChatConversations.filter((dto) =>
+        String(dto.roomName?.toLowerCase()).includes(searchQuery?.trim().toLowerCase())
+      );
+    }
+
+    return chats;
+  }, [props.availableChatConversations, searchQuery]);
+
   return (
     <Stack
       sx={{
         border: COMMON_ITEM_BORDER_STYLING,
-        px: 1,
-        py: 1,
+        px: 1.5,
+        py: 2,
         overflowY: "auto",
         height: {
           sm: "75vh",
@@ -80,21 +89,33 @@ const SelectChat = (props: Props) => {
       }}
       component={Paper}
     >
-      <Box sx={{ mb: 2 }}>
-        <Button
-          fullWidth
-          onClick={() => {
-            props.openDialogTrigger();
-          }}
-        >
-          New Chat
-        </Button>
+      <Box>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 1, md: 1 }}>
+          <TextField
+            size="small"
+            value={searchQuery}
+            onChange={(evt) => setSearchQuery(evt.target.value)}
+            placeholder="Search for a chat..."
+            InputProps={{
+              endAdornment:
+                searchQuery?.length > 0 ? (
+                  <IconButton sx={{ mr: -1.5, borderRadius: 0 }} aria-label="Clear" onClick={() => setSearchQuery("")}>
+                    <ClearIcon />
+                  </IconButton>
+                ) : null,
+            }}
+          />
+
+          <Button onClick={() => props.openDialogTrigger()}>
+            <MessageIcon />
+          </Button>
+        </Stack>
       </Box>
-      <Typography fontSize={18} fontWeight={500} color="primary.500" sx={{ pl: 1 }}>
+      <Typography fontSize={18} fontWeight={500} color="primary.500" sx={{ pl: 1, mt: 3 }}>
         Groups
       </Typography>
 
-      {props.availableChatConversations
+      {queriedChatConversations
         .filter((c) => c.roomType === "group")
         .map((chat) => (
           <ChatOption
@@ -105,10 +126,10 @@ const SelectChat = (props: Props) => {
             handleSelectChat={handleSelectChat}
           />
         ))}
-      <Typography fontSize={18} fontWeight={500} color="primary.500" sx={{ pl: 1, mt: 2 }}>
+      <Typography fontSize={18} fontWeight={500} color="primary.500" sx={{ pl: 1, mt: 1.5 }}>
         Conversations
       </Typography>
-      {props.availableChatConversations
+      {queriedChatConversations
         .filter((c) => c.roomType !== "group")
         .map((chat) => (
           <ChatOption
@@ -130,9 +151,26 @@ const ChatOption = React.memo(
     selectedChatConversation: IChatRoom | null;
     handleSelectChat: (chat: IChatRoom) => void;
   }) => {
+    const { onlineUsersList } = useSelector(selectLookupListsState);
     const selectChatOption = React.useCallback(() => {
       props.handleSelectChat(props.chatOption);
     }, [props]);
+
+    const avatarUserId = React.useMemo(() => {
+      let userId = props.chatOption?.participantUserId;
+      return userId;
+    }, [props.chatOption?.participantUserId]);
+
+    const currentAvatarIndicatorColor = React.useMemo(() => {
+      let currentColor = DEFAULT_USER_STATUSES[2].color;
+      if (avatarUserId) {
+        const onlineUser = onlineUsersList.find((u) => u.userId === avatarUserId);
+        if (onlineUser) {
+          currentColor = onlineUser?.color ?? DEFAULT_USER_STATUSES[0].color;
+        }
+      }
+      return currentColor;
+    }, [avatarUserId, onlineUsersList]);
     return (
       <>
         <Box
@@ -153,9 +191,27 @@ const ChatOption = React.memo(
         >
           <Stack direction="row" alignItems="center" spacing={2} sx={{ minHeight: "3rem" }}>
             <Box onClick={selectChatOption} sx={{ cursor: "pointer" }}>
-              <Avatar alt={props.chatOption.roomName}>
-                {props.chatOption.roomType === "group" ? <PeopleIcon /> : <PersonIcon />}
-              </Avatar>
+              {avatarUserId ? (
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      backgroundColor: currentAvatarIndicatorColor,
+                      color: currentAvatarIndicatorColor,
+                    },
+                  }}
+                >
+                  <Avatar alt={props.chatOption.roomName}>
+                    <PersonIcon />
+                  </Avatar>
+                </StyledBadge>
+              ) : (
+                <Avatar alt={props.chatOption.roomName}>
+                  <PeopleIcon />
+                </Avatar>
+              )}
             </Box>
             <Box flexGrow={1} onClick={selectChatOption} sx={{ cursor: "pointer" }}>
               {props.chatOption.roomName}

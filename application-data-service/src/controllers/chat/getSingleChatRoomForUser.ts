@@ -58,6 +58,23 @@ export async function getSingleChatRoomForUser(req: Request, res: Response) {
     });
   }
 
+  let usersFromAuthService: BaseUserFromAuthServer[] = [];
+  try {
+    const { data: response } = await axios.post(`${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient`, {
+      variables: {
+        clientId: variables.clientId,
+      },
+    });
+
+    usersFromAuthService = response.data;
+  } catch (error) {
+    log.error(
+      `POST /chat/createChatRoomForUser -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\n
+      could not fetch the user ids for this client\n
+      ${error}`
+    );
+  }
+
   let participants: string[] = [];
 
   try {
@@ -73,6 +90,8 @@ export async function getSingleChatRoomForUser(req: Request, res: Response) {
       chatRoom,
       participants: participants,
       numberOfParticipants: participants.length,
+      resolveUsersInChatName: usersFromAuthService,
+      currentUserId: variables.userId,
     }),
     errors: [],
     pagination: null,

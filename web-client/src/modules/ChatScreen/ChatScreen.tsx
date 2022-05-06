@@ -15,11 +15,17 @@ import EditChatRoomDialog from "./EditChatRoomDialog";
 import { selectUserState } from "../../shared/redux/store";
 import { client } from "../../shared/api/client";
 import { IChatRoom } from "../../shared/interfaces/Chat.interfaces";
+import { useSocket } from "../../shared/hooks/useSocket";
 
 const ChatScreen = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const { userProfile } = useSelector(selectUserState);
+  const {
+    socket_listenForChatRoomCacheUpdate,
+    socket_unsubscribeFromChatRoomCacheUpdate,
+    socket_unsubscribeFromLiveChatMessages,
+  } = useSocket();
 
   const [selectedChatConversation, setSelectedChatConversation] = React.useState<IChatRoom | null>(null);
   const [chatRooms, setChatRooms] = React.useState<IChatRoom[]>([]);
@@ -66,7 +72,17 @@ const ChatScreen = () => {
 
   React.useEffect(() => {
     fetchChatRooms();
-  }, [fetchChatRooms]);
+    socket_listenForChatRoomCacheUpdate(fetchChatRooms);
+    return () => {
+      socket_unsubscribeFromChatRoomCacheUpdate();
+      socket_unsubscribeFromLiveChatMessages();
+    };
+  }, [
+    fetchChatRooms,
+    socket_listenForChatRoomCacheUpdate,
+    socket_unsubscribeFromChatRoomCacheUpdate,
+    socket_unsubscribeFromLiveChatMessages,
+  ]);
 
   return (
     <>
@@ -75,10 +91,12 @@ const ChatScreen = () => {
         currentUserId={userProfile?.userId || "NOT"}
         showDialog={showEditDialog}
         handleRefreshList={fetchChatRooms}
-        handleClose={() => {
+        handleClose={(formSubmitted?: boolean) => {
           setShowEditDialog(false);
           setShowEditId("NOT");
-          setSelectedChatConversation(null);
+          if (formSubmitted) {
+            setSelectedChatConversation(null);
+          }
         }}
       />
       <PagePaperWrapper>
@@ -87,9 +105,10 @@ const ChatScreen = () => {
           container
           sx={{
             flexGrow: 1,
+            maxHeight: "88vh",
           }}
         >
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={4}>
             <Stack
               sx={{
                 minHeight: {
@@ -102,7 +121,7 @@ const ChatScreen = () => {
                 },
               }}
             >
-              <Typography variant="h4" fontWeight={500} component="h1" sx={{ mb: { xs: 2, md: 5 } }}>
+              <Typography variant="h4" fontWeight={500} component="h1" sx={{ mb: { xs: 2, md: 2 } }}>
                 Chat
               </Typography>
               <SelectChat
@@ -120,7 +139,7 @@ const ChatScreen = () => {
           <Grid
             item
             xs={12}
-            md={7}
+            md={8}
             sx={{
               minHeight: "100%",
             }}

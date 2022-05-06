@@ -13,6 +13,7 @@ export const EVENTS = {
     SEND_ONLINE_USERS: "server-send-online-users",
     OPEN_INACTIVITY_PROMPT: "server-open-inactivity-prompt",
     SEND_CHAT_MESSAGE: "server-send-chat-message",
+    REFRESH_STORED_CHAT_ROOM_CACHE: "server-refresh-stored-chat-room-cache",
   },
 };
 
@@ -20,4 +21,5 @@ export interface I_RedisIdentifierProps {
   client_namespace: string;
   user_namespace: string;
   client_online_users_namespace: string;
+  connected_chat_users_updates_subscription: string;
 }

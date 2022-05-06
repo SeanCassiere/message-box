@@ -2,15 +2,16 @@ import { Request, Response } from "express";
 import * as yup from "yup";
 import axios from "axios";
 
+import ChatRoom from "#root/db/entities/ChatRoom";
+import ChatRoomUserMapping from "#root/db/entities/ChatRoomUserMappings";
+
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { AUTH_SERVICE_URI } from "#root/utils/constants";
 import { log } from "#root/utils/logger";
 import { BaseUserFromAuthServer } from "#root/types/users";
-import ChatRoom from "#root/db/entities/ChatRoom";
-import ChatRoomUserMapping from "#root/db/entities/ChatRoomUserMappings";
 import { formatChatRoomResponse } from "#root/utils/formatResponses";
-
 import { createDbActivityLog } from "#root/utils/createDbActivityLog";
+import { createConversationChatRoomName } from "#root/utils/minorUtils";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -41,7 +42,7 @@ export async function createChatRoomForUser(req: Request, res: Response) {
   const variables = req.body.variables;
   const body = req.body.body;
 
-  let users: BaseUserFromAuthServer[] = [];
+  let usersFromAuthService: BaseUserFromAuthServer[] = [];
   try {
     const { data: response } = await axios.post(`${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient`, {
       variables: {
@@ -49,7 +50,7 @@ export async function createChatRoomForUser(req: Request, res: Response) {
       },
     });
 
-    users = response.data;
+    usersFromAuthService = response.data;
   } catch (error) {
     log.error(
       `POST /chat/createChatRoomForUser -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\n
@@ -59,15 +60,16 @@ export async function createChatRoomForUser(req: Request, res: Response) {
   }
 
   const filterParticipants: string[] = body.participants.map((participantId: string) => {
-    const user = users.find((user) => user.userId === participantId);
+    const user = usersFromAuthService.find((user) => user.userId === participantId);
     if (user) {
       return participantId;
     }
     return "NOT";
   });
   const readyParticipants = filterParticipants.filter((participantId: string) => participantId !== "NOT");
-
-  const chatRoom = ChatRoom.create({ roomName: body.roomName, clientId: variables.clientId });
+  let newRoomName =
+    filterParticipants.length === 2 ? createConversationChatRoomName(body.roomName, filterParticipants) : body.roomName;
+  const chatRoom = ChatRoom.create({ roomName: newRoomName, clientId: variables.clientId });
   try {
     await chatRoom.save();
   } catch (error) {
@@ -116,7 +118,7 @@ export async function createChatRoomForUser(req: Request, res: Response) {
     clientId: variables.clientId,
     userId: variables.userId,
     action: "chat-room-create",
-    description: `Create chat room with roomId:${chatRoomId}`,
+    description: `Create chat room with roomId:${chatRoomId}, room-name is ${body.roomName}`,
   }).then(() => {
     log.info(`Activity log created for userId: ${variables?.userId}`);
   });
@@ -127,6 +129,8 @@ export async function createChatRoomForUser(req: Request, res: Response) {
       chatRoom,
       participants: readyParticipants,
       numberOfParticipants: readyParticipants.length,
+      currentUserId: variables.userId,
+      resolveUsersInChatName: usersFromAuthService,
     }),
     errors: [],
     pagination: null,

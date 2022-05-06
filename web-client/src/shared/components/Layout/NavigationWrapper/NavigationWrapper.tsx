@@ -2,11 +2,8 @@ import React, { useEffect, useMemo } from "react";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { indigo } from "@mui/material/colors";
-
-import { selectLookupListsState, selectUserState } from "../../../redux/store";
-import { stringAvatar } from "./navUtils";
-import { secondaryNavigationColor } from "../../../util/constants";
-import { usePermission } from "../../../hooks/usePermission";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import ScrollTop from "./ScrollTop/ScrollTop";
 import DrawerHeaderSpacer from "./DrawerHeaderSpacer";
@@ -15,9 +12,6 @@ import CustomDrawer from "./CustomDrawer";
 import SuspenseLoadingWrapper from "../../SuspenseLoadingWrapper";
 import NotificationPopoverContent from "./NotificationPopoverContent";
 import UserAwakeDialog from "./UserAwakeDialog";
-
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Drawer from "@mui/material/Drawer";
 import Button from "@mui/material/Button";
@@ -49,15 +43,20 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import TodayIcon from "@mui/icons-material/Today";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import PeopleIcon from "@mui/icons-material/People";
+
+import { selectLookupListsState, selectUserState } from "../../../redux/store";
+import { stringAvatar } from "./navUtils";
+import { secondaryNavigationColor } from "../../../util/constants";
+import { usePermission } from "../../../hooks/usePermission";
 import { socket_publishUserStatusChange } from "../../../api/socket.service";
 import { setAwakeDialogState } from "../../../redux/slices/user/userSlice";
+import { DEFAULT_USER_STATUSES } from "../../../util/general";
 
 const NavigationWrapper: React.FC = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useTheme();
   const matchLargerThanPhone = useMediaQuery(theme.breakpoints.up("sm"));
-  const matchLargerThanTablet = useMediaQuery(theme.breakpoints.up("md"));
 
   const { children } = props;
   const { userProfile, statusList, showAwakeDialog } = useSelector(selectUserState);
@@ -172,6 +171,9 @@ const NavigationWrapper: React.FC = (props) => {
   const openNotificationTray = Boolean(notificationAnchorEl);
   const notificationButtonId = openNotificationTray ? "simple-popover" : undefined;
 
+  const currentOnlineIndicatorColor =
+    statusList.find((s) => s.status === currentStatusValue)?.color ?? DEFAULT_USER_STATUSES[2].color;
+
   return (
     <>
       {/** user awake dialog */}
@@ -203,53 +205,58 @@ const NavigationWrapper: React.FC = (props) => {
               </Box>
             )}
             <Box sx={{ flexGrow: 1 }}></Box>
-            {matchLargerThanTablet && (
-              <Box sx={{ flexGrow: 0, ml: 1, mr: 1, minWidth: "65ch" }}>
-                <TextField
-                  id="standard-select-currency"
-                  select
-                  value={
-                    statusList.find((s) => s.status === currentStatusValue)?.status ? currentStatusValue : "Online"
+            <Box sx={{ flexGrow: 0, ml: 1, mr: 1, minWidth: "30vw" }}>
+              <TextField
+                id="standard-select-currency"
+                select
+                value={statusList.find((s) => s.status === currentStatusValue)?.status ? currentStatusValue : "Online"}
+                onChange={(evt) => {
+                  const value = evt?.target?.value;
+                  const findStatus = statusList.filter((s) => s.status === value);
+
+                  if (findStatus.length > 0) {
+                    socket_publishUserStatusChange(findStatus[0]?.status, findStatus[0]?.color);
                   }
-                  onChange={(evt) => {
-                    const value = evt?.target?.value;
-                    const findStatus = statusList.filter((s) => s.status === value);
 
-                    if (findStatus.length > 0) {
-                      socket_publishUserStatusChange(findStatus[0]?.status, findStatus[0]?.color);
-                    }
+                  setCurrentStatusValue(value);
+                }}
+                variant="standard"
+                fullWidth
+                size="medium"
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <Box
+                      component="span"
+                      sx={{ width: 7, height: 7, bgcolor: currentOnlineIndicatorColor, borderRadius: 50 }}
+                    ></Box>
+                  ),
+                }}
+                sx={{
+                  px: 2,
+                  py: 0.5,
+                  backgroundColor: secondaryNavigationColor,
+                  borderRadius: "5px",
+                  // "& .MuiSelect-nativeInput": { border: "none" },
+                  "& .MuiSelect-select": { color: "primary.600", fontWeight: 500, fontSize: 15, border: "none" },
+                  "& .MuiSelect-icon": { color: "primary.600" },
+                }}
+              >
+                {statusList.map((status, idx) => (
+                  <MenuItem
+                    key={`${idx}-${String(status.status).toLowerCase().replace(" ", "-")}-${status.color}`}
+                    value={`${status.status}`}
+                  >
+                    <Box
+                      component="span"
+                      sx={{ width: 10, height: 10, bgcolor: status.color, borderRadius: 50, mr: 2 }}
+                    ></Box>
+                    {status.status}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
 
-                    setCurrentStatusValue(value);
-                  }}
-                  variant="standard"
-                  fullWidth
-                  size="medium"
-                  InputProps={{ disableUnderline: true }}
-                  sx={{
-                    px: 2,
-                    py: 0.5,
-                    backgroundColor: secondaryNavigationColor,
-                    borderRadius: "5px",
-                    // "& .MuiSelect-nativeInput": { border: "none" },
-                    "& .MuiSelect-select": { color: "primary.600", fontWeight: 500, fontSize: 15, border: "none" },
-                    "& .MuiSelect-icon": { color: "primary.600" },
-                  }}
-                >
-                  {statusList.map((status, idx) => (
-                    <MenuItem
-                      key={`${idx}-${String(status.status).toLowerCase().replace(" ", "-")}-${status.color}`}
-                      value={`${status.status}`}
-                    >
-                      <Box
-                        component="span"
-                        sx={{ width: 10, height: 10, bgcolor: status.color, borderRadius: 50, mr: 2 }}
-                      ></Box>
-                      {status.status}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Box>
-            )}
             <Box sx={{ flexGrow: 0 }}>
               <IconButton
                 aria-describedby={notificationButtonId}

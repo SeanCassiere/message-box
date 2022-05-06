@@ -328,7 +328,7 @@ const CalendarScreen = () => {
           calendarEvents={eventsForSchedular}
           isCalendarLoading={eventsAreLoading}
           openDeleteOverlay={handleOpenDeleteDialog}
-          maxHeight={isOnMobile ? 600 : 770}
+          maxHeight={isOnMobile ? 600 : 752}
         />
       </PagePaperWrapper>
     </>

@@ -9,6 +9,9 @@ import {
   socket_joinChatRoom,
   socket_leaveChatRoom,
   socket_sendNewMessage,
+  socket_listenForChatRoomCacheUpdate,
+  socket_unsubscribeFromChatRoomCacheUpdate,
+  socket_unsubscribeFromLiveChatMessages,
 } from "../api/socket.service";
 
 interface ISocketContext {
@@ -20,6 +23,9 @@ interface ISocketContext {
   socket_joinChatRoom: typeof socket_joinChatRoom;
   socket_leaveChatRoom: typeof socket_leaveChatRoom;
   socket_sendNewMessage: typeof socket_sendNewMessage;
+  socket_listenForChatRoomCacheUpdate: typeof socket_listenForChatRoomCacheUpdate;
+  socket_unsubscribeFromChatRoomCacheUpdate: typeof socket_unsubscribeFromChatRoomCacheUpdate;
+  socket_unsubscribeFromLiveChatMessages: typeof socket_unsubscribeFromLiveChatMessages;
 }
 
 const initialValues: ISocketContext = {
@@ -31,6 +37,9 @@ const initialValues: ISocketContext = {
   socket_joinChatRoom,
   socket_leaveChatRoom,
   socket_sendNewMessage,
+  socket_listenForChatRoomCacheUpdate,
+  socket_unsubscribeFromChatRoomCacheUpdate,
+  socket_unsubscribeFromLiveChatMessages,
 };
 
 const SocketContext = React.createContext<ISocketContext>(initialValues);

@@ -47,19 +47,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
       width: "100%",
       height: "100%",
       borderRadius: "50%",
-      animation: "ripple 1.2s infinite ease-in-out",
       border: "1px solid currentColor",
       content: '""',
-    },
-  },
-  "@keyframes ripple": {
-    "0%": {
-      transform: "scale(.8)",
-      opacity: 1,
-    },
-    "100%": {
-      transform: "scale(2.4)",
-      opacity: 0,
     },
   },
 }));
@@ -175,7 +164,18 @@ const ChatContentPane = (props: Props) => {
       </ListItem>
     ) : (
       roomMessages.map((messageObj) => (
-        <ListItem alignItems="center" key={messageObj.messageId} sx={{ justifyContent: "flex-end", width: "100%" }}>
+        <ListItem
+          alignItems="center"
+          key={messageObj.messageId}
+          sx={{
+            justifyContent: "flex-end",
+            width: "100%",
+            py: {
+              xs: 1,
+              sm: 0,
+            },
+          }}
+        >
           {messageObj.senderId !== props.currentUser.userId && (
             <ListItemAvatar>
               <Avatar alt={messageObj.senderName} />
@@ -249,7 +249,7 @@ const ChatContentPane = (props: Props) => {
         md: "space-between",
       }}
       sx={{
-        minHeight: "100%",
+        minHeight: "calc(100% - 2%)",
         border: COMMON_ITEM_BORDER_STYLING,
         borderRadius: 1,
       }}
@@ -313,14 +313,16 @@ const ChatContentPane = (props: Props) => {
                 "aria-labelledby": "basic-button",
               }}
             >
-              <MenuItem
-                onClick={() => {
-                  props.openEditDialogTrigger(props.selectedChatConversation.roomId);
-                  setMenuAnchorEl(null);
-                }}
-              >
-                Edit
-              </MenuItem>
+              {props.selectedChatConversation.roomType !== "private" && (
+                <MenuItem
+                  onClick={() => {
+                    props.openEditDialogTrigger(props.selectedChatConversation.roomId);
+                    setMenuAnchorEl(null);
+                  }}
+                >
+                  Edit
+                </MenuItem>
+              )}
               <MenuItem onClick={handleMenuDelete}>Quick Delete</MenuItem>
             </Menu>
           </Box>
@@ -332,15 +334,15 @@ const ChatContentPane = (props: Props) => {
         sx={{
           borderBottom: COMMON_ITEM_BORDER_STYLING,
           py: {
-            xs: 1,
-            md: 1,
+            // xs: 1,
+            // md: 1,
           },
           px: {
-            md: 2,
+            // md: 2,
           },
         }}
       >
-        <Stack sx={{ minHeight: { md: "68vh" }, maxHeight: { xs: "35vh", md: "69vh" }, py: 2, overflow: "auto" }}>
+        <Stack sx={{ minHeight: { md: "68vh" }, maxHeight: { xs: "35vh", md: "69vh" }, py: 1, overflow: "auto" }}>
           <List id="chat-window-messages" sx={{ width: "100%" }}>
             {loadingMessages ? (
               <ListItem alignItems="center" sx={{ width: "100%" }}>

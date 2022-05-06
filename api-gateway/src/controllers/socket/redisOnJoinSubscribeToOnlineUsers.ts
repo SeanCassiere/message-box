@@ -10,15 +10,32 @@ export async function redisOnJoinSubscribeToOnlineUsers(
   socket: Socket
 ) {
   socket.join(`${namespaceValues.client_namespace}:${namespaceValues.client_online_users_namespace}`);
+  socket.join(`${namespaceValues.client_namespace}:${namespaceValues.connected_chat_users_updates_subscription}`);
+  console.log({
+    JOINING: `${namespaceValues.client_namespace}:${namespaceValues.connected_chat_users_updates_subscription}`,
+  });
 
   subRedis.subscribe(
     `${namespaceValues.client_namespace}:${namespaceValues.client_online_users_namespace}`,
     (err, count) => {
       if (err) {
-        log.error(err);
+        log.error("SubRedis:online-users", err);
       } else {
         log.info(
           `${namespaceValues.client_namespace}:${namespaceValues.client_online_users_namespace} has ${count} subscribers`
+        );
+      }
+    }
+  );
+
+  subRedis.subscribe(
+    `${namespaceValues.client_namespace}:${namespaceValues.connected_chat_users_updates_subscription}`,
+    (err, count) => {
+      if (err) {
+        log.error("SubRedis:chat-connected-subscriptions", err);
+      } else {
+        log.info(
+          `${namespaceValues.client_namespace}:${namespaceValues.connected_chat_users_updates_subscription} has ${count} subscribers`
         );
       }
     }

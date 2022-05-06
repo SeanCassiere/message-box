@@ -3,6 +3,7 @@ export interface IChatRoom {
   roomType: "group" | "private";
   roomName: string;
   participants: string[];
+  participantUserId: string | null;
 }
 
 export interface IChatMessage {

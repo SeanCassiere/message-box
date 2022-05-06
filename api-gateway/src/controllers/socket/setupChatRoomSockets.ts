@@ -14,7 +14,7 @@ type ClientMessageSent = {
 export async function setupChatRoomSockets(namespaceValues: I_RedisIdentifierProps, io: Server, socket: Socket) {
   socket.on(EVENTS.CLIENT.JOIN_CHAT_ROOM, async ({ roomId }) => {
     socket.join(`${namespaceValues.client_namespace}:room:${roomId}`);
-    log.error(`${socket.handshake.auth.userId} joined room ${roomId}`);
+    log.info(`${socket.handshake.auth.userId} joined room ${roomId}`);
 
     createActivityLog({
       clientId: socket.handshake.auth.clientId,
@@ -40,7 +40,7 @@ export async function setupChatRoomSockets(namespaceValues: I_RedisIdentifierPro
   });
 
   socket.on(EVENTS.CLIENT.SEND_CHAT_MESSAGE, async ({ roomId, details }: ClientMessageSent) => {
-    log.error(`${socket.handshake.auth.userId} sent message to room ${roomId}`);
+    log.info(`${socket.handshake.auth.userId} sent message to room ${roomId}`);
     const message = {
       ...details,
       roomId,

@@ -3,6 +3,8 @@ import axios from "axios";
 
 import { CustomRequest } from "#root/interfaces/Express.interfaces";
 import { APP_DATA_SERVICE_URI } from "#root/constants";
+import { REDIS_CONSTANTS } from "#root/controllers/redis/constants";
+import { pubRedis } from "#root/controllers/redis";
 
 const chatsRouter = express.Router();
 
@@ -48,6 +50,10 @@ chatsRouter
       });
 
       if (response.statusCode === 200) {
+        const REDIS_KEY_ADDRESS = `${REDIS_CONSTANTS.PARENT_CLIENT_HASH_KEY}:${request.auth!.message_box_clientId}:${
+          REDIS_CONSTANTS.CONNECTED_CHAT_USERS_SUBSCRIPTION_HASH_KEY
+        }`;
+        await pubRedis.publish(REDIS_KEY_ADDRESS, "no-data-for-this-request");
         return res.json({ ...response.data });
       }
 
@@ -121,6 +127,10 @@ chatsRouter
       });
 
       if (response.statusCode === 200) {
+        const REDIS_KEY_ADDRESS = `${REDIS_CONSTANTS.PARENT_CLIENT_HASH_KEY}:${request.auth!.message_box_clientId}:${
+          REDIS_CONSTANTS.CONNECTED_CHAT_USERS_SUBSCRIPTION_HASH_KEY
+        }`;
+        await pubRedis.publish(REDIS_KEY_ADDRESS, "no-data-for-this-request");
         return res.json({ ...response.data });
       }
 
@@ -144,6 +154,12 @@ chatsRouter
       });
 
       if (response.statusCode === 200) {
+        // telling all connected users to refresh the cache
+        const REDIS_KEY_ADDRESS = `${REDIS_CONSTANTS.PARENT_CLIENT_HASH_KEY}:${request.auth!.message_box_clientId}:${
+          REDIS_CONSTANTS.CONNECTED_CHAT_USERS_SUBSCRIPTION_HASH_KEY
+        }`;
+        await pubRedis.publish(REDIS_KEY_ADDRESS, "no-data-for-this-request");
+
         return res.json({ ...response.data });
       }
 

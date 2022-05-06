@@ -6,6 +6,7 @@ import { BaseUserFromAuthServer } from "#root/types/users";
 import { log } from "#root/utils/logger";
 import { AUTH_SERVICE_URI } from "./constants";
 import ChatMessage from "#root/db/entities/ChatMessage";
+import { getUserIdsFromChatRoomName } from "./minorUtils";
 
 export function formatTaskResponseWithUsers({ task, userIds }: { task: Task; userIds: string[] }) {
   const isTaskOverdue = task.isCompleted === false && task.dueDate && task.dueDate < new Date();
@@ -60,13 +61,19 @@ interface IFormatChatRoomResponse {
   chatRoom: ChatRoom;
   participants: string[];
   numberOfParticipants: number;
+  resolveUsersInChatName?: BaseUserFromAuthServer[];
+  currentUserId?: string;
 }
 export async function formatChatRoomResponse({
   chatRoom,
   participants,
   numberOfParticipants,
+  currentUserId,
+  resolveUsersInChatName,
 }: IFormatChatRoomResponse) {
   let users: BaseUserFromAuthServer[] = [];
+  let roomNameFormatted = chatRoom.roomName;
+  let guestParticipantId: string | null = null;
 
   if (participants.length > 0) {
     try {
@@ -83,7 +90,8 @@ export async function formatChatRoomResponse({
   }
 
   const filterParticipants: string[] = participants.map((participantId: string) => {
-    const user = users.find((user) => user.userId === participantId);
+    const checkArray = resolveUsersInChatName && resolveUsersInChatName?.length > 0 ? resolveUsersInChatName : users;
+    const user = checkArray.find((user) => user.userId === participantId);
     if (user) {
       return participantId;
     }
@@ -91,12 +99,24 @@ export async function formatChatRoomResponse({
   });
   const readyParticipants = filterParticipants.filter((participantId: string) => participantId !== "NOT");
 
+  if (resolveUsersInChatName && resolveUsersInChatName.length > 0 && currentUserId) {
+    const { userIds, restOfRootName } = getUserIdsFromChatRoomName(chatRoom.roomName);
+    const idsWithoutCurrentUser = userIds.filter((id) => id !== currentUserId);
+    if (idsWithoutCurrentUser.length === 1) {
+      const findUser = resolveUsersInChatName.find((u) => u.userId === idsWithoutCurrentUser[0]);
+      if (findUser) {
+        roomNameFormatted = `${findUser.firstName} ${findUser.lastName}${restOfRootName}`;
+        guestParticipantId = findUser.userId;
+      }
+    }
+  }
+
   return {
     roomId: `${chatRoom.roomId}`,
     roomType: numberOfParticipants > 2 ? "group" : "private",
-    clientId: chatRoom.clientId,
-    roomName: chatRoom.roomName,
+    roomName: roomNameFormatted,
     participants: readyParticipants,
+    participantUserId: guestParticipantId,
   };
 }
 

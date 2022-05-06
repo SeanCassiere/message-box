@@ -28,6 +28,7 @@ export const EVENTS = {
     SEND_ONLINE_USERS: "server-send-online-users",
     OPEN_INACTIVITY_PROMPT: "server-open-inactivity-prompt",
     SEND_CHAT_MESSAGE: "server-send-chat-message",
+    REFRESH_STORED_CHAT_ROOM_CACHE: "server-refresh-stored-chat-room-cache",
   },
 };
 
@@ -97,4 +98,20 @@ type ClientMessageSent = {
 
 export const socket_sendNewMessage = (roomId: string, details: ClientMessageSent) => {
   socket.emit(EVENTS.CLIENT.SEND_CHAT_MESSAGE, { roomId, details });
+};
+
+export const socket_listenForChatRoomCacheUpdate = (cb?: () => void) => {
+  socket.on(EVENTS.SERVER.REFRESH_STORED_CHAT_ROOM_CACHE, () => {
+    if (cb) {
+      cb();
+    }
+  });
+};
+
+export const socket_unsubscribeFromChatRoomCacheUpdate = () => {
+  socket.off(EVENTS.SERVER.REFRESH_STORED_CHAT_ROOM_CACHE);
+};
+
+export const socket_unsubscribeFromLiveChatMessages = () => {
+  socket.off(EVENTS.SERVER.SEND_CHAT_MESSAGE);
 };

@@ -1,13 +1,15 @@
 import { Request, Response } from "express";
 import * as yup from "yup";
+import axios from "axios";
+
+import ChatRoom from "#root/db/entities/ChatRoom";
+import ChatRoomUserMapping from "#root/db/entities/ChatRoomUserMappings";
 
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { log } from "#root/utils/logger";
-import ChatRoom from "#root/db/entities/ChatRoom";
-import ChatRoomUserMapping from "#root/db/entities/ChatRoomUserMappings";
 import { formatChatRoomResponse } from "#root/utils/formatResponses";
-
-// import { createDbActivityLog } from "#root/utils/createDbActivityLog";
+import { BaseUserFromAuthServer } from "#root/types/users";
+import { AUTH_SERVICE_URI } from "#root/utils/constants";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
@@ -32,6 +34,23 @@ export async function getAllChatRoomsForUser(req: Request, res: Response) {
 
   const variables = req.body.variables;
   const body = req.body.body;
+
+  let usersFromAuthService: BaseUserFromAuthServer[] = [];
+  try {
+    const { data: response } = await axios.post(`${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient`, {
+      variables: {
+        clientId: variables.clientId,
+      },
+    });
+
+    usersFromAuthService = response.data;
+  } catch (error) {
+    log.error(
+      `POST /chat/createChatRoomForUser -> ${AUTH_SERVICE_URI}/clients/getAllBaseUsersForClient\n
+      could not fetch the user ids for this client\n
+      ${error}`
+    );
+  }
 
   let roomIds: string[] = [];
   try {
@@ -61,7 +80,13 @@ export async function getAllChatRoomsForUser(req: Request, res: Response) {
   for (const room of chatRooms) {
     const numberOfParticipants = await ChatRoomUserMapping.count({ where: { roomId: room.roomId, isDeleted: false } });
     formatted.push(
-      await formatChatRoomResponse({ chatRoom: room, participants: [], numberOfParticipants: numberOfParticipants })
+      await formatChatRoomResponse({
+        chatRoom: room,
+        participants: [],
+        numberOfParticipants: numberOfParticipants,
+        resolveUsersInChatName: usersFromAuthService,
+        currentUserId: variables.userId,
+      })
     );
   }
 
