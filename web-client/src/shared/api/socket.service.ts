@@ -69,8 +69,8 @@ export const socket_activateInactivityPromptForUser = (userId: string, name: str
 };
 
 export const socket_listenForInactivityPrompt = () => {
-  socket.on(EVENTS.SERVER.OPEN_INACTIVITY_PROMPT, () => {
-    store.dispatch(setAwakeDialogState(true));
+  socket.on(EVENTS.SERVER.OPEN_INACTIVITY_PROMPT, ({ openState }: { openState: boolean }) => {
+    store.dispatch(setAwakeDialogState(openState));
   });
 };
 

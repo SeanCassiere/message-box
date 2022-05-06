@@ -5,6 +5,7 @@ import { EVENTS, I_RedisIdentifierProps } from "./allEvents";
 import { log } from "#root/utils/logger";
 import { I_RedisOnlineUserStatus } from "./redisJoiningUserSockets";
 import { createActivityLog } from "#root/utils/createActivityLog";
+import { REDIS_CONSTANTS } from "../redis/constants";
 
 export function setupListenForUserStatusChange(namespaceValues: I_RedisIdentifierProps, io: Server, socket: Socket) {
   socket.on(EVENTS.CLIENT.PUBLISH_USER_STATUS, async ({ status, color, kickedOut }) => {
@@ -45,6 +46,18 @@ export function setupListenForUserStatusChange(namespaceValues: I_RedisIdentifie
         `${namespaceValues.client_namespace}:${namespaceValues.client_online_users_namespace}`,
         JSON.stringify(usersArray) ?? JSON.stringify([])
       );
+
+      const stringSocketIdsForUser = await redis.hget(
+        namespaceValues.client_namespace,
+        `${REDIS_CONSTANTS.USER_SOCKET_HASH_KEY}:${socket.handshake.auth?.userId}`
+      );
+
+      if (stringSocketIdsForUser) {
+        const sockets = JSON.parse(stringSocketIdsForUser) as string[];
+        for (const socketId of sockets) {
+          io.to(`${socketId}`).emit(EVENTS.SERVER.OPEN_INACTIVITY_PROMPT, { openState: false });
+        }
+      }
     }
   });
 }

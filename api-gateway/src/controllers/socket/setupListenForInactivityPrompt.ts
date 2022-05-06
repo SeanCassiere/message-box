@@ -15,7 +15,7 @@ export function setupListenForInactivityPrompt(namespaceValues: I_RedisIdentifie
     if (stringSockets) {
       const sockets = JSON.parse(stringSockets) as string[];
       for (const socketId of sockets) {
-        io.to(`${socketId}`).emit(EVENTS.SERVER.OPEN_INACTIVITY_PROMPT);
+        io.to(`${socketId}`).emit(EVENTS.SERVER.OPEN_INACTIVITY_PROMPT, { openState: true });
       }
 
       createActivityLog({
