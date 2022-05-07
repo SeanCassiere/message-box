@@ -17,7 +17,7 @@ export default class ChatMessage extends BaseEntity {
   @Column("text", { name: "content_type" })
   contentType: string;
 
-  @Column("text", { name: "content" })
+  @Column("text", { name: "content", default: 'text/text' })
   content: string;
 
   @Column("bool", { name: "is_deleted", default: false })

@@ -80,9 +80,31 @@ const ChatContentPane = (props: Props) => {
   const [loadingMessages, setLoadingMessages] = React.useState(true);
 
   const [roomMessages, setRoomMessages] = React.useState<IChatMessage[]>([]);
-  const scrollBottomRef = React.useRef<HTMLAnchorElement>(null);
 
-  function fetchChatMessages(roomId: string, cursor?: string) {
+  // used for infinite scrolling
+  const [lastMessageId, setLastMessageId] = React.useState(roomMessages[0]?.messageId || "");
+  const scrollLastMessageRef = React.useRef<HTMLLIElement>(null);
+  const scrollBottomRef = React.useRef<HTMLLIElement>(null);
+
+  const observerForContinuousBottomScrolling = React.useRef<IntersectionObserver>();
+  const [isBottomRefVisible, setIsBottomRefVisible] = React.useState(false);
+  const scrollForContinuousBottomScrollingObserverRef = React.useCallback((node: HTMLLIElement) => {
+    if (observerForContinuousBottomScrolling?.current) observerForContinuousBottomScrolling?.current?.disconnect();
+
+    let options: IntersectionObserverInit = {
+      rootMargin: "250px",
+    };
+
+    observerForContinuousBottomScrolling.current = new IntersectionObserver((entries) => {
+      if (entries.length > 0 && entries[0]) {
+        setIsBottomRefVisible(entries[0].isIntersecting);
+      }
+    }, options);
+
+    if (node) observerForContinuousBottomScrolling.current.observe(node);
+  }, []);
+
+  const fetchChatMessages = React.useCallback((roomId: string, firstTime: boolean = false, cursor?: string) => {
     const urlParams = new URLSearchParams();
     urlParams.append("size", `${TAKE_SIZE_MESSAGES}`);
     if (cursor) {
@@ -98,6 +120,14 @@ const ChatContentPane = (props: Props) => {
           } else {
             setHasMoreMessages(true);
           }
+
+          if (cursor) {
+            scrollLastMessageRef.current?.scrollIntoView();
+          }
+          if (formattedNewMessages.length > 0) {
+            setLastMessageId(formattedNewMessages[0]?.messageId);
+          }
+
           setRoomMessages((prev) => [...formattedNewMessages, ...prev]);
         }
       })
@@ -106,46 +136,55 @@ const ChatContentPane = (props: Props) => {
       })
       .finally(() => {
         setLoadingMessages(false);
-        if (!cursor) {
+        if (firstTime) {
           scrollBottomRef.current?.scrollIntoView();
         }
       });
-  }
+  }, []);
 
-  const observer = React.useRef<IntersectionObserver>();
-  const lastMessageCallback = React.useCallback(
+  const observerInfiniteScrolling = React.useRef<IntersectionObserver>();
+  const lastMessageCallbackRef = React.useCallback(
     (node: HTMLLIElement) => {
       if (loadingMessages || hasMoreMessages === false) return;
-      if (observer?.current) observer?.current?.disconnect();
+      if (observerInfiniteScrolling?.current) observerInfiniteScrolling?.current?.disconnect();
 
       let options: IntersectionObserverInit = {
         rootMargin: "250px",
       };
 
-      observer.current = new IntersectionObserver((entries) => {
+      observerInfiniteScrolling.current = new IntersectionObserver((entries) => {
         if (entries.length > 0 && entries[0] && entries[0].isIntersecting && hasMoreMessages) {
-          fetchChatMessages(selectedChatConversation.roomId, roomMessages[0]?.timestamp);
+          fetchChatMessages(selectedChatConversation.roomId, false, roomMessages[0]?.timestamp);
         }
       }, options);
 
-      if (node) observer.current.observe(node);
+      if (node) observerInfiniteScrolling.current.observe(node);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [hasMoreMessages, loadingMessages, roomMessages, selectedChatConversation.roomId]
   );
 
-  function pushNewChatToStack(newMessage: IChatMessage) {
+  const pushNewChatToStack = React.useCallback((newMessage: IChatMessage) => {
     setRoomMessages((prevMessages) => [...prevMessages, newMessage]);
-    scrollBottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }
+  }, []);
+
+  React.useEffect(() => {
+    if (isBottomRefVisible) {
+      scrollBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [isBottomRefVisible, roomMessages]);
 
   React.useEffect(() => {
     socket_joinChatRoom(selectedChatConversation.roomId, pushNewChatToStack);
-    fetchChatMessages(selectedChatConversation.roomId);
 
     return () => {
       socket_leaveChatRoom(selectedChatConversation.roomId);
     };
-  }, [selectedChatConversation.roomId, socket_joinChatRoom, socket_leaveChatRoom]);
+  }, [pushNewChatToStack, selectedChatConversation.roomId, socket_joinChatRoom, socket_leaveChatRoom]);
+
+  React.useEffect(() => {
+    fetchChatMessages(selectedChatConversation.roomId, true);
+  }, [fetchChatMessages, selectedChatConversation.roomId]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const handleSendMessage = () => {
@@ -206,61 +245,87 @@ const ChatContentPane = (props: Props) => {
     ) : (
       roomMessages.map((messageObj, index) => {
         return (
-          <ListItem
-            alignItems="center"
-            key={`message-${messageObj.messageId}`}
-            sx={{
-              justifyContent: "flex-end",
-              width: "100%",
-              py: {
-                xs: 1,
-                sm: 0,
-              },
-            }}
-            ref={index === 0 ? lastMessageCallback : undefined}
-          >
-            {messageObj.senderId !== props.currentUser.userId && (
-              <ListItemAvatar>
-                <Avatar alt={messageObj.senderName} />
-              </ListItemAvatar>
+          <React.Fragment key={`message-${messageObj.messageId}`}>
+            {index === 0 && hasMoreMessages === false && (
+              <ListItem>
+                <ListItemText
+                  primaryTypographyProps={{ fontSize: 13, color: grey[400], textAlign: "center" }}
+                  primary="No more messages"
+                />
+              </ListItem>
             )}
+            {index === roomMessages.length - 2 && (
+              <ListItem
+                ref={scrollForContinuousBottomScrollingObserverRef}
+                style={{ height: 0, padding: 0, margin: 0 }}
+              >
+                <span ref={scrollBottomRef} style={{ height: 0 }} />
+              </ListItem>
+            )}
+            <ListItem
+              alignItems="center"
+              sx={{
+                justifyContent: "flex-end",
+                width: "100%",
+                py: {
+                  xs: 1,
+                  sm: 0,
+                },
+              }}
+              ref={messageObj.messageId === lastMessageId ? scrollLastMessageRef : undefined}
+            >
+              {messageObj.senderId !== props.currentUser.userId && (
+                <ListItemAvatar>
+                  <Avatar alt={messageObj.senderName} />
+                </ListItemAvatar>
+              )}
 
-            <ListItemText
-              primary={
-                <Box sx={{ display: "inline-flex", flexDirection: "row", alignItems: "center" }}>
-                  {messageObj.senderId === props.currentUser.userId ? (
-                    <>
-                      <Typography fontSize={13} color={grey[600]}>
-                        {formatDateTimeShort(messageObj.timestamp)}
-                      </Typography>
-                      &nbsp;-&nbsp;
-                      <Typography>{messageObj.senderName}</Typography>
-                    </>
-                  ) : (
-                    <>
-                      <Typography>{messageObj.senderName}</Typography>&nbsp;-&nbsp;
-                      <Typography fontSize={13} color={grey[600]}>
-                        {formatDateTimeShort(messageObj.timestamp)}
-                      </Typography>
-                    </>
-                  )}
-                </Box>
-              }
-              secondary={messageObj.type === "text/text" ? messageObj.message : null}
-              primaryTypographyProps={{
-                sx: {
-                  textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
-                  pr: messageObj.senderId !== props.currentUser.userId ? 0 : 1,
-                },
-              }}
-              secondaryTypographyProps={{
-                sx: {
-                  textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
-                  pr: messageObj.senderId !== props.currentUser.userId ? 0 : 1,
-                },
-              }}
-            />
-          </ListItem>
+              <ListItemText
+                primary={
+                  <Box sx={{ display: "inline-flex", flexDirection: "row", alignItems: "center" }}>
+                    {messageObj.senderId === props.currentUser.userId ? (
+                      <>
+                        <Typography fontSize={13} color={grey[600]}>
+                          {formatDateTimeShort(messageObj.timestamp)}
+                        </Typography>
+                        &nbsp;-&nbsp;
+                        <Typography>{messageObj.senderName}</Typography>
+                      </>
+                    ) : (
+                      <>
+                        <Typography>{messageObj.senderName}</Typography>&nbsp;-&nbsp;
+                        <Typography fontSize={13} color={grey[600]}>
+                          {formatDateTimeShort(messageObj.timestamp)}
+                        </Typography>
+                      </>
+                    )}
+                  </Box>
+                }
+                secondary={messageObj.type === "text/text" ? messageObj.message : null}
+                primaryTypographyProps={{
+                  sx: {
+                    textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
+                    pr: messageObj.senderId !== props.currentUser.userId ? 0 : 1,
+                  },
+                }}
+                secondaryTypographyProps={{
+                  sx: {
+                    textAlign: messageObj.senderId !== props.currentUser.userId ? "left" : "right",
+                    pr: messageObj.senderId !== props.currentUser.userId ? 0 : 1,
+                    wordWrap: "break-word",
+                  },
+                }}
+              />
+            </ListItem>
+            {index === 0 && hasMoreMessages && (
+              <ListItem ref={lastMessageCallbackRef} sx={{ pb: 2 }}>
+                <ListItemText
+                  primaryTypographyProps={{ fontSize: 13, color: grey[400], textAlign: "center" }}
+                  primary="Load more"
+                />
+              </ListItem>
+            )}
+          </React.Fragment>
         );
       })
     );
@@ -400,7 +465,6 @@ const ChatContentPane = (props: Props) => {
             ) : (
               <>{listChatMessages}</>
             )}
-            <ListItem ref={scrollBottomRef as any}></ListItem>
           </List>
         </Stack>
       </Box>
