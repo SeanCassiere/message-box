@@ -31,9 +31,6 @@ export function socket({ io }: { io: Server }) {
 
     if (parts.length === 3 && parts[2].toLowerCase() === REDIS_CONSTANTS.CONNECTED_CHAT_USERS_SUBSCRIPTION_HASH_KEY) {
       io.to(`${channel}`).emit(EVENTS.SERVER.REFRESH_STORED_CHAT_ROOM_CACHE);
-      console.log("\n\n\n ", { channel }, "\n\n\n ");
-      console.log("\n\n\n ", { message }, "\n\n\n ");
-      console.log("\n\n\n ", { parts }, "\n\n\n ");
     }
   });
 
