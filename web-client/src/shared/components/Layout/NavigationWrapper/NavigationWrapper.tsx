@@ -43,6 +43,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import TodayIcon from "@mui/icons-material/Today";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import PeopleIcon from "@mui/icons-material/People";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 
 import { selectLookupListsState, selectUserState } from "../../../redux/store";
 import { stringAvatar } from "./navUtils";
@@ -62,6 +63,7 @@ const NavigationWrapper: React.FC = (props) => {
   const { userProfile, statusList, showAwakeDialog } = useSelector(selectUserState);
   const { onlineUsersList } = useSelector(selectLookupListsState);
 
+  const isDashboardAccessible = usePermission("dashboard:read");
   const isChatAccessible = usePermission("chat:read");
   const isTasksAccessible = usePermission("task:read");
   const isCalendarAccessible = usePermission("calendar:read");
@@ -70,6 +72,9 @@ const NavigationWrapper: React.FC = (props) => {
   const routesList = useMemo(() => {
     const listedRoutes = [];
 
+    if (isDashboardAccessible) {
+      listedRoutes.push({ route: "/dashboard", name: "Dashboard", Icon: DashboardIcon, key: "/dashboard" });
+    }
     if (isChatAccessible) {
       listedRoutes.push({ route: "/chat", name: "Chat", Icon: ChatIcon, key: "/chat" });
     }
@@ -87,7 +92,14 @@ const NavigationWrapper: React.FC = (props) => {
     }
 
     return listedRoutes;
-  }, [isCalendarAccessible, isChatAccessible, isReportsAccessible, isTasksAccessible, isTeamActivityAccessible]);
+  }, [
+    isCalendarAccessible,
+    isChatAccessible,
+    isDashboardAccessible,
+    isReportsAccessible,
+    isTasksAccessible,
+    isTeamActivityAccessible,
+  ]);
 
   const isUserProfileAccessible = usePermission("profile:read");
   const isChangePasswordAccessible = usePermission("profile:write");
@@ -207,7 +219,7 @@ const NavigationWrapper: React.FC = (props) => {
             <Box sx={{ flexGrow: 1 }}></Box>
             <Box sx={{ flexGrow: 0, ml: 1, mr: 1, minWidth: "30vw" }}>
               <TextField
-                id="standard-select-currency"
+                id="standard-select-user-status"
                 select
                 value={statusList.find((s) => s.status === currentStatusValue)?.status ? currentStatusValue : "Online"}
                 onChange={(evt) => {
@@ -229,7 +241,7 @@ const NavigationWrapper: React.FC = (props) => {
                     <Box
                       component="span"
                       sx={{ width: 7, height: 7, bgcolor: currentOnlineIndicatorColor, borderRadius: 50 }}
-                    ></Box>
+                    />
                   ),
                 }}
                 sx={{

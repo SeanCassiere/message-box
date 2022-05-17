@@ -28,6 +28,7 @@ import { MESSAGES } from "../../shared/util/messages";
 import { useDebounce } from "../../shared/hooks/useDebounceValue";
 import { checkAccountPasswordlessStatus } from "../../shared/api/commonMethods";
 import { validateEmailUtil } from "../../shared/util/checkFunctions";
+import { usePermission } from "../../shared/hooks/usePermission";
 
 const credentialsLoginSchema = yup.object().shape({
   email: yup.string().email("Please enter a valid email").required("Email is required"),
@@ -44,6 +45,11 @@ const LoginScreen = () => {
   const location = useLocation();
   const { enqueueSnackbar } = useSnackbar();
 
+  const canAccessDashboard = usePermission("dashboard:read");
+  const canAccessChat = usePermission("chat:read");
+  const canAccessTasks = usePermission("tasks:read");
+  const canAccessCalendar = usePermission("calendar:read");
+
   const { isLoggedIn, access_token } = useSelector(selectAuthState);
 
   useEffect(() => {
@@ -53,9 +59,29 @@ const LoginScreen = () => {
       if (location.state && tempLocation.from.pathname) {
         return navigate(tempLocation.from.pathname);
       }
-      return navigate("/chat");
+
+      if (canAccessDashboard) {
+        return navigate("/dashboard");
+      } else if (canAccessChat) {
+        return navigate("/chat");
+      } else if (canAccessTasks) {
+        return navigate("/tasks");
+      } else if (canAccessCalendar) {
+        return navigate("/calendar");
+      } else {
+        return navigate("/settings/account");
+      }
     }
-  }, [access_token, isLoggedIn, location, navigate]);
+  }, [
+    access_token,
+    canAccessCalendar,
+    canAccessChat,
+    canAccessDashboard,
+    canAccessTasks,
+    isLoggedIn,
+    location,
+    navigate,
+  ]);
 
   const [userId, setUserId] = useState<string | null>(null);
 
