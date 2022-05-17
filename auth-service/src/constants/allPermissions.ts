@@ -41,4 +41,8 @@ export const ALL_AVAILABLE_ROLE_PERMISSIONS: { id: number; key: string }[] = [
   { id: 30, key: "calendar:create" },
   { id: 31, key: "calendar:delete" },
   { id: 32, key: "calendar:admin" },
+  // dashboard
+  { id: 33, key: "dashboard:read" },
+  { id: 34, key: "dashboard:write" },
+  { id: 35, key: "dashboard:admin" },
 ];

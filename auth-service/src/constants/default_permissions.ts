@@ -19,6 +19,9 @@ export const DEFAULT_PERMISSIONS_MAP: {
     "chat:create",
     // calendar
     "calendar:read",
+    // dashboard
+    "dashboard:read",
+    "dashboard:write",
   ],
   admin: [
     //profile
@@ -62,6 +65,10 @@ export const DEFAULT_PERMISSIONS_MAP: {
     "calendar:create",
     "calendar:delete",
     "calendar:admin",
+    // dashboard
+    "dashboard:read",
+    "dashboard:write",
+    "dashboard:admin",
   ],
   hr: [
     //profile
@@ -97,6 +104,9 @@ export const DEFAULT_PERMISSIONS_MAP: {
     // calendar
     "calendar:create",
     "calendar:delete",
+    // dashboard
+    "dashboard:read",
+    "dashboard:write",
   ],
   manager: [
     //profile
@@ -132,6 +142,10 @@ export const DEFAULT_PERMISSIONS_MAP: {
     // calendar
     "calendar:create",
     "calendar:delete",
+    // dashboard
+    "dashboard:read",
+    "dashboard:write",
+    "dashboard:admin",
   ],
   basic_access_user: [
     //profile
@@ -155,5 +169,8 @@ export const DEFAULT_PERMISSIONS_MAP: {
     // chat
     "chat:create",
     "chat:delete",
+    // dashboard
+    "dashboard:read",
+    "dashboard:write",
   ],
 };
