@@ -15,16 +15,22 @@ import QRCodeIcon from "@mui/icons-material/QrCode";
 import PhoneIcon from "@mui/icons-material/PhoneIphone";
 import PasswordIcon from "@mui/icons-material/Password";
 
+const TEXT_COLOR = grey[700];
+
+const commonIconProps = {
+  style: {
+    marginRight: "5px",
+    fontSize: "1.2rem",
+  },
+};
+
+type StartIconModes = "add-icon" | "edit-icon" | "delete-icon" | "qrcode-icon" | "phone-icon" | "password-icon";
+
 interface Props {
   title: string;
   onClose?: () => void;
-  startIconMode?: "add-icon" | "edit-icon" | "delete-icon" | "qrcode-icon" | "phone-icon" | "password-icon";
+  startIconMode?: StartIconModes;
 }
-
-// const TEXT_COLOR = "whitesmoke";
-const TEXT_COLOR = grey[700];
-
-const COMMON_ICON_PROPS = { style: { marginRight: "5px" } };
 
 const DialogHeaderClose = (props: Props) => {
   return (
@@ -34,12 +40,12 @@ const DialogHeaderClose = (props: Props) => {
       }}
     >
       <Stack flexDirection="row" alignItems="center" gap={1}>
-        {props?.startIconMode === "add-icon" && <AddOutlinedIcon {...COMMON_ICON_PROPS} />}
-        {props?.startIconMode === "edit-icon" && <EditIcon {...COMMON_ICON_PROPS} />}
-        {props?.startIconMode === "delete-icon" && <DeleteIcon {...COMMON_ICON_PROPS} />}
-        {props?.startIconMode === "qrcode-icon" && <QRCodeIcon {...COMMON_ICON_PROPS} />}
-        {props?.startIconMode === "phone-icon" && <PhoneIcon {...COMMON_ICON_PROPS} />}
-        {props?.startIconMode === "password-icon" && <PasswordIcon {...COMMON_ICON_PROPS} />}
+        {props?.startIconMode === "add-icon" && <AddOutlinedIcon {...commonIconProps} />}
+        {props?.startIconMode === "edit-icon" && <EditIcon {...commonIconProps} />}
+        {props?.startIconMode === "delete-icon" && <DeleteIcon {...commonIconProps} />}
+        {props?.startIconMode === "qrcode-icon" && <QRCodeIcon {...commonIconProps} />}
+        {props?.startIconMode === "phone-icon" && <PhoneIcon {...commonIconProps} />}
+        {props?.startIconMode === "password-icon" && <PasswordIcon {...commonIconProps} />}
         <Box flexGrow={1}>
           <Typography fontSize={18} fontWeight={500}>
             {props?.title}

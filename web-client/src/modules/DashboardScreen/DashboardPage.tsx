@@ -1,6 +1,8 @@
 import React from "react";
 import { flushSync } from "react-dom";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { Responsive, WidthProvider, Layouts } from "react-grid-layout";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
@@ -9,7 +11,6 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import Fade from "@mui/material/Fade";
-import Masonry from "@mui/lab/Masonry";
 
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
@@ -17,100 +18,162 @@ import Button from "@mui/material/Button";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 
+import WidgetCardItem from "../../shared/components/Dashboard/WidgetCard";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
-import WidgetCardGridItem from "../../shared/components/Dashboard/WidgetCard";
 import ConfirmDeleteDialog from "./ConfirmDeleteDialog";
 
 import { usePermission } from "../../shared/hooks/usePermission";
-import { IWidgetOnDashboard } from "../../shared/interfaces/Dashboard.interfaces";
+import { IParsedWidgetOnDashboard, IWidgetFromApi } from "../../shared/interfaces/Dashboard.interfaces";
 
 import { dummyPromise } from "../../shared/util/testingUtils";
 
-const NORMAL_WIDGET_MIN_HEIGHT = 350;
-const TALL_WIDGET_MIN_HEIGHT = 600;
-const DEMO_WIDGETS: IWidgetOnDashboard[] = [
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
+const ROW_LENGTH = 12;
+const NORMAL_WIDGET_MIN_HEIGHT = 150;
+const DEMO_WIDGETS = [
   {
-    id: "22",
-    widgetPosition: 1,
+    id: "11",
     widgetType: "EmployeeCalendar",
-    widgetName: "My Calendar",
+    widgetName: "Widget ID 11",
     isWidgetTall: false,
     widgetScale: 4,
+    position: { x: 0, y: 0 },
     config: {},
   },
   {
-    id: "33",
-    widgetPosition: 2,
-    widgetType: "TeamTaskCompletion",
-    isWidgetTall: false,
-    widgetName: "Widget 3",
+    id: "12",
+    widgetType: "EmployeeTasks",
+    isWidgetTall: true,
+    widgetName: "Remaining Tasks for Today",
     widgetScale: 4,
-    config: {},
+    position: { x: 4, y: 0 },
+    config: {
+      for: "Today",
+      currentDate: new Date().toISOString(),
+    },
   },
   {
-    id: "44",
-    widgetPosition: 3,
+    id: "13",
     widgetType: "TeamTaskCompletion",
     isWidgetTall: false,
-    widgetName: "Widget 4",
+    widgetName: "Widget ID 13",
     widgetScale: 4,
-    config: {},
-  },
-  {
-    id: "55",
-    widgetPosition: 4,
-    widgetType: "TeamTaskCompletion",
-    isWidgetTall: false,
-    widgetName: "Widget 5",
-    widgetScale: 4,
+    position: { x: 0, y: 2 },
     config: {},
   },
 ];
 
 const DashboardPage = () => {
+  const theme = useTheme();
+
   const canWriteToDashboard = usePermission("dashboard:write");
+  const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [loading, setLoading] = React.useState(true);
-  const [widgets, setWidgets] = React.useState<IWidgetOnDashboard[]>([]);
+  const [layouts, setLayouts] = React.useState<Layouts | null>(null); // used for internal management of the layout
+  const [dashboardWidgets, setDashboardWidgets] = React.useState<IParsedWidgetOnDashboard[]>([]);
 
-  const sortedWidgets = React.useMemo(() => {
-    return widgets.sort((a, b) => a.widgetPosition - b.widgetPosition);
-  }, [widgets]);
-
-  const fetchWidgets = React.useCallback(async () => {
-    const items = await dummyPromise(500).then(() => {
+  const fetchWidgets = React.useCallback(async ({ showSkeleton = false }) => {
+    if (showSkeleton) setLoading(true);
+    const items = await dummyPromise(1500).then(() => {
       flushSync(() => {
         setLoading(false);
       });
-      return DEMO_WIDGETS;
+      const fetchedData: IWidgetFromApi[] = DEMO_WIDGETS as unknown as IWidgetFromApi[];
+      const parsedWidgets: IParsedWidgetOnDashboard[] = fetchedData.map((w) => ({
+        ...w,
+        i: w.id,
+        w: w.widgetScale,
+        h: w.isWidgetTall ? 4 : 2,
+        x: w.position.x,
+        y: w.position.y,
+      }));
+      return parsedWidgets;
     });
-    setWidgets(items);
+    setDashboardWidgets(items);
   }, []);
 
   React.useEffect(() => {
-    fetchWidgets();
+    fetchWidgets({});
   }, [fetchWidgets]);
+
+  const onLayoutChange = React.useCallback(
+    (currentLayout: ReactGridLayout.Layout[], allLayouts: Layouts) => {
+      const tempArray = dashboardWidgets;
+      setLayouts(allLayouts);
+      currentLayout?.forEach((position) => {
+        tempArray[Number(position.i)].x = position.x;
+        tempArray[Number(position.i)].y = position.y;
+        tempArray[Number(position.i)].w = position.w;
+        tempArray[Number(position.i)].h = position.h;
+      });
+      setDashboardWidgets(tempArray);
+    },
+    [dashboardWidgets]
+  );
 
   const [deleteWidgetId, setDeleteWidgetId] = React.useState<string | null>(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   const deleteWidgetById = React.useCallback(
     (id: string) => {
-      let widgetList = [...widgets];
-
-      const newWidgetList = [...widgetList].filter((w) => w.id !== id);
-      for (let i = 0; i < newWidgetList.length; i++) {
-        newWidgetList[i].widgetPosition = i + 1;
-      }
-      setWidgets(newWidgetList);
+      const tempArray = [...dashboardWidgets.filter((w) => w.id !== id)];
+      setDashboardWidgets(tempArray);
     },
-    [widgets]
+    [dashboardWidgets]
   );
 
   const openDeleteWidgetConfirmation = React.useCallback((id: string) => {
     setDeleteWidgetId(id);
     setShowDeleteConfirmation(true);
   }, []);
+
+  const demoAddNewWidget = React.useCallback(
+    (widthParam: number = 4) => {
+      const newWidth = widthParam;
+
+      let newX = 0;
+      let newY = 0;
+
+      const sortRowByY = [...dashboardWidgets].sort((a, b) => a.y - b.y);
+      const lastItem = sortRowByY[sortRowByY.length - 1];
+
+      if (lastItem) {
+        let currentY = 0;
+        let remainingWidth = ROW_LENGTH;
+
+        currentY = lastItem.y;
+
+        const itemsInLastRow = sortRowByY.filter((item) => item.y === currentY);
+        remainingWidth = ROW_LENGTH - itemsInLastRow.reduce((acc, item) => acc + item.w, 0);
+
+        if (remainingWidth >= newWidth) {
+          newX = lastItem.x + lastItem.w;
+        } else {
+          currentY++;
+          newX = 0;
+        }
+
+        newY = currentY % 2 === 0 ? currentY : currentY + 1;
+      }
+
+      const newItem: IParsedWidgetOnDashboard = {
+        ...DEMO_WIDGETS[0],
+        id: "widget" + (dashboardWidgets.length + 1),
+        widgetName: "// Widget ID " + (dashboardWidgets.length + 1),
+        i: "widget" + (dashboardWidgets.length + 1),
+        x: newX,
+        y: newY,
+        w: newWidth,
+        h: DEMO_WIDGETS[0].isWidgetTall ? 4 : 2,
+        position: { x: newX, y: newY },
+      };
+      const newArrayOfWidgets = [...dashboardWidgets, newItem];
+      setDashboardWidgets(newArrayOfWidgets);
+    },
+    [dashboardWidgets]
+  );
 
   return (
     <>
@@ -136,7 +199,7 @@ const DashboardPage = () => {
             </Typography>
           </Grid>
           <Grid item xs={2} md={0} sx={{ display: { xs: "block", sm: "block", md: "none" } }}>
-            <IconButton sx={{ mr: 1 }} aria-label="refresh" onClick={fetchWidgets}>
+            <IconButton sx={{ mr: 1 }} aria-label="refresh" onClick={() => fetchWidgets({ showSkeleton: true })}>
               <RefreshOutlinedIcon />
             </IconButton>
           </Grid>
@@ -150,14 +213,16 @@ const DashboardPage = () => {
               <IconButton
                 sx={{ mr: 1, display: { xs: "none", sm: "none", md: "block" } }}
                 aria-label="refresh"
-                onClick={fetchWidgets}
+                onClick={() => fetchWidgets({ showSkeleton: true })}
               >
                 <RefreshOutlinedIcon />
               </IconButton>
               <Button
                 aria-label="New Widget"
                 startIcon={<WidgetsIcon />}
-                onClick={() => ({})}
+                onClick={() => {
+                  demoAddNewWidget();
+                }}
                 disableElevation={false}
                 disabled={!canWriteToDashboard}
               >
@@ -166,113 +231,108 @@ const DashboardPage = () => {
             </Stack>
           </Grid>
         </Grid>
-        <Grid container gap={2} sx={{ width: "100%" }}>
-          {loading && (
-            <Grid container gap={2} sx={{ width: "100%" }}>
-              {[...Array(3)].map((_, idx) => (
-                <Fade in={loading} unmountOnExit key={`widget-skeleton-${idx}`}>
-                  <Grid item xs={12} md={6} sx={{ m: { sx: 0, md: -1 }, p: { sx: 0, md: 1 } }}>
-                    <Paper sx={{ p: { sx: 1, md: 2 } }}>
-                      <Skeleton
-                        variant="rectangular"
-                        animation="wave"
-                        width={"100%"}
-                        height={NORMAL_WIDGET_MIN_HEIGHT}
-                        sx={{ bgcolor: "grey.100" }}
-                      />
+        {loading && (
+          <Grid container gap={2} sx={{ width: "100%" }}>
+            {[...Array(5)].map((_, idx) => (
+              <Fade in={loading} unmountOnExit key={`widget-skeleton-${idx}`}>
+                <Grid item xs={12} md={4} sx={{ m: { sx: 0, md: -1 }, p: { sx: 0, md: 1 } }}>
+                  <Paper sx={{ p: { sx: 1, md: 2 } }}>
+                    <Skeleton
+                      variant="rectangular"
+                      animation="wave"
+                      width={"100%"}
+                      height={NORMAL_WIDGET_MIN_HEIGHT * 2}
+                      sx={{ bgcolor: "grey.100" }}
+                    />
+                  </Paper>
+                </Grid>
+              </Fade>
+            ))}
+          </Grid>
+        )}
+        {/*  */}
+        {!loading && (
+          <>
+            {dashboardWidgets.length <= 0 ? (
+              <Grid container gap={2} sx={{ width: "100%" }}>
+                <Fade in={true} unmountOnExit>
+                  <Grid item xs={12} md={12}>
+                    <Paper sx={{ flexGrow: 1, px: { sx: 1, md: 2 }, py: { sx: 1, md: 2 }, textAlign: "center" }}>
+                      <Grid container>
+                        <Grid item xs={12} md={12} lg={12}>
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Typography
+                              fontSize={18}
+                              fontWeight={400}
+                              sx={{
+                                flexGrow: 1,
+                                color: "grey.700",
+                              }}
+                            >
+                              No widgets to display.
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      </Grid>
                     </Paper>
                   </Grid>
                 </Fade>
-              ))}
-            </Grid>
-          )}
-          {/*  */}
-          {!loading && (
-            <>
-              {widgets.length <= 0 ? (
-                <Grid container gap={2} sx={{ width: "100%" }}>
-                  <Fade in={true} unmountOnExit>
-                    <Grid item xs={12} md={12}>
-                      <Paper sx={{ flexGrow: 1, px: { sx: 1, md: 2 }, py: { sx: 1, md: 2 }, textAlign: "center" }}>
-                        <Grid container>
-                          <Grid item xs={12} md={12} lg={12}>
-                            <Box sx={{ display: "flex", alignItems: "center" }}>
-                              <Typography
-                                fontSize={18}
-                                fontWeight={400}
-                                sx={{
-                                  flexGrow: 1,
-                                  color: "grey.700",
-                                }}
-                              >
-                                No widgets to display.
-                              </Typography>
-                            </Box>
-                          </Grid>
-                        </Grid>
+              </Grid>
+            ) : (
+              <Grid item xs={12} sm={12} md={12} sx={{ p: 0, m: 0 }}>
+                <ResponsiveGridLayout
+                  onLayoutChange={onLayoutChange}
+                  onBreakpointChange={() => {
+                    fetchWidgets({});
+                  }}
+                  isResizable={false}
+                  isDraggable={canWriteToDashboard}
+                  verticalCompact={true}
+                  compactType={isOnMobile ? "vertical" : "horizontal"}
+                  layouts={layouts ?? undefined}
+                  breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                  preventCollision={false}
+                  cols={{ lg: 12, md: 12, sm: 8, xs: 4, xxs: 4 }}
+                  autoSize={true}
+                  containerPadding={[0, 0]}
+                  rowHeight={NORMAL_WIDGET_MIN_HEIGHT}
+                  margin={{
+                    lg: [20, 20],
+                    md: [20, 20],
+                    sm: [20, 20],
+                    xs: [20, 20],
+                    xxs: [20, 20],
+                  }}
+                  style={{
+                    /*
+                      don't really know why this position: sticky is needed
+                      but without it the dragging motion and cards become really weird
+                    */
+                    position: "sticky",
+                  }}
+                  draggableCancel=".grid-not-draggable"
+                >
+                  {dashboardWidgets?.map((widget, idx) => {
+                    return (
+                      <Paper
+                        key={idx}
+                        data-grid={{
+                          x: widget?.x,
+                          y: widget?.y,
+                          w: widget?.w,
+                          h: widget?.h,
+                          i: widget.i,
+                        }}
+                      >
+                        <WidgetCardItem widget={widget} deleteWidgetHandler={openDeleteWidgetConfirmation} />
                       </Paper>
-                    </Grid>
-                  </Fade>
-                </Grid>
-              ) : (
-                <Grid item xs={12} md={12}>
-                  <DragDropContext
-                    onDragEnd={(result) => {
-                      if (!result.destination) return;
-
-                      let newWidgetList = [...widgets];
-                      if (newWidgetList[result.source.index]) {
-                        newWidgetList = newWidgetList.filter((w) => w.id !== result.draggableId);
-                        let newParsedWidget = widgets.find((w) => w.id === result.draggableId);
-                        if (newParsedWidget) {
-                          newParsedWidget.widgetPosition = result.destination.index + 1;
-                          newWidgetList.splice(result.destination.index, 0, newParsedWidget);
-                        }
-                      }
-
-                      newWidgetList = newWidgetList
-                        .map((w, idx) => ({ ...w, widgetPosition: idx + 1 }))
-                        .sort((a, b) => a.widgetPosition - b.widgetPosition);
-
-                      setWidgets(newWidgetList);
-                    }}
-                  >
-                    <Droppable droppableId="active-widgets">
-                      {(provided) => (
-                        <Grid
-                          ref={provided.innerRef}
-                          {...provided.droppableProps}
-                          container
-                          gap={2}
-                          sx={{ width: "100%" }}
-                        >
-                          {sortedWidgets.map((widget, idx) => (
-                            <Fade in={true} key={`widget-item-${widget.id}`} unmountOnExit>
-                              <Grid
-                                item
-                                xs={12}
-                                md={widget.widgetScale >= 12 ? 12 : widget.widgetScale}
-                                sx={{ m: { sx: 0, md: -1 }, p: { sx: 0, md: 1 } }}
-                              >
-                                <WidgetCardGridItem
-                                  index={idx}
-                                  widget={widget}
-                                  minHeight={widget.isWidgetTall ? TALL_WIDGET_MIN_HEIGHT : NORMAL_WIDGET_MIN_HEIGHT}
-                                  deleteWidgetHandler={openDeleteWidgetConfirmation}
-                                />
-                              </Grid>
-                            </Fade>
-                          ))}
-                          {provided.placeholder}
-                        </Grid>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
-                </Grid>
-              )}
-            </>
-          )}
-        </Grid>
+                    );
+                  })}
+                </ResponsiveGridLayout>
+              </Grid>
+            )}
+          </>
+        )}
       </PagePaperWrapper>
     </>
   );
