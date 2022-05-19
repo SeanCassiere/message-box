@@ -132,7 +132,7 @@ const EditCompanyDialog = (props: Props) => {
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <Box component="form" onSubmit={formik.handleSubmit}>
-        <DialogHeaderClose title="Edit Company" onClose={handleClose} />
+        <DialogHeaderClose title="Edit Company" onClose={handleClose} startIconMode="edit-icon" />
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={12} md={12}>

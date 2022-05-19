@@ -7,6 +7,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton";
+import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
+import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButtonFooter";
 
 interface IProps {
   open: boolean;
@@ -18,20 +20,13 @@ const ConfirmDeleteDialog = (props: IProps) => {
   return (
     <React.Fragment>
       <Dialog open={props.open}>
-        <DialogTitle>Are you sure?</DialogTitle>
+        <DialogHeaderClose title="Delete dashboard widget" onClose={props.onClose} startIconMode="delete-icon" />
         <DialogContent>
           <Box>
             <Typography>Please confirm that you want to delete this widget.</Typography>
           </Box>
         </DialogContent>
-        <DialogActions>
-          <LoadingButton color="secondary" sx={{ bgcolor: "inherit" }} onClick={props.onClose}>
-            Cancel
-          </LoadingButton>
-          <LoadingButton type="button" color="error" sx={{ bgcolor: "inherit" }} onClick={props.onConfirm}>
-            Delete
-          </LoadingButton>
-        </DialogActions>
+        <DialogBigButtonFooter submitButtonText="DELETE" color="error" onSubmit={props.onConfirm} />
       </Dialog>
     </React.Fragment>
   );

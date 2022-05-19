@@ -287,7 +287,11 @@ const EventFormDialog = (props: IProps) => {
   return (
     <Dialog open={showDialog} onClose={() => ({})} disableEscapeKeyDown fullScreen={isOnMobile} fullWidth>
       <Box component="form" onSubmit={formik.handleSubmit}>
-        <DialogHeaderClose title={`${eventId === "new" ? "New" : "Edit"} Calendar Event`} onClose={passThroughClose} />
+        <DialogHeaderClose
+          title={`${eventId === "new" ? "New" : "Edit"} Calendar Event`}
+          onClose={passThroughClose}
+          startIconMode={eventId === "new" ? "add-icon" : "edit-icon"}
+        />
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 0 }}>
             <Grid item xs={12}>

@@ -209,7 +209,11 @@ const EditUserDialog = (props: IProps) => {
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <Box component="form" onSubmit={formik.handleSubmit}>
-        <DialogHeaderClose title={`${userId ? "Edit" : "New"} User`} onClose={handleClose} />
+        <DialogHeaderClose
+          title={`${userId ? "Edit" : "New"} User`}
+          onClose={handleClose}
+          startIconMode={userId ? "edit-icon" : "add-icon"}
+        />
         <DialogContent>
           <Grid container spacing={2} sx={{ pt: 2 }}>
             <Grid item xs={12} md={12}>

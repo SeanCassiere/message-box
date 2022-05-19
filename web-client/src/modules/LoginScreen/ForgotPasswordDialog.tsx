@@ -132,7 +132,7 @@ const ForgotPasswordDialog = (props: Props) => {
   return (
     <>
       <Dialog open={open} onClose={handleDismiss} maxWidth="xs" disableEscapeKeyDown fullScreen={isOnMobile}>
-        <DialogHeaderClose title="Reset password" onClose={closeDialog} />
+        <DialogHeaderClose title="Reset password" onClose={closeDialog} startIconMode="password-icon" />
         <DialogContent>
           <DialogContentText sx={{ mt: 3, mb: 2 }}>How do you want to reset your password?</DialogContentText>
           <Accordion

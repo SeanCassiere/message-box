@@ -113,7 +113,7 @@ const PageLayout = () => {
             onClick={handleSend2faEmailStrategy}
             loading={isSending2faEmailStrategy}
           >
-            Reset 2FA
+            Reset 2FA via E-Mail
           </LoadingButton>
           <LoadingButton
             disableElevation={false}
@@ -123,7 +123,7 @@ const PageLayout = () => {
             onClick={handleSendEmailStrategy}
             loading={isSendingEmailStrategy}
           >
-            Via E-Mail
+            Reset password via E-Mail
           </LoadingButton>
         </Box>
       </Box>
