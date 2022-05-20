@@ -39,7 +39,8 @@ const DEMO_WIDGETS = [
     isWidgetTall: false,
     widgetScale: 4,
     position: { x: 0, y: 0 },
-    config: {},
+    config: [],
+    variableOptions: [],
   },
   {
     id: "12",
@@ -48,10 +49,8 @@ const DEMO_WIDGETS = [
     widgetName: "Remaining Tasks for Today",
     widgetScale: 4,
     position: { x: 4, y: 0 },
-    config: {
-      for: "Today",
-      currentDate: new Date().toISOString(),
-    },
+    config: [{ parameter: "for", value: "Today" }],
+    variableOptions: [{ parameter: "currentDate", mode: "today" }],
   },
   {
     id: "13",
@@ -60,7 +59,8 @@ const DEMO_WIDGETS = [
     widgetName: "Widget ID 13",
     widgetScale: 4,
     position: { x: 0, y: 2 },
-    config: {},
+    config: [],
+    variableOptions: [],
   },
 ];
 

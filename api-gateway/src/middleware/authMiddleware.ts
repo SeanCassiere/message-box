@@ -35,8 +35,13 @@ export async function validateToken(req: CustomRequest<{}>, res: Response, next:
       const tokenPayload = jwt.verify(token, publicKey, { algorithms: ["RS256"] }) as {
         message_box_clientId: string;
         message_box_userId: string;
+        roles: string[];
+        permissions: string[];
+        iat: number;
+        exp: number;
       };
       req.user = tokenPayload;
+      req.auth = tokenPayload;
 
       return next();
     } catch (error) {

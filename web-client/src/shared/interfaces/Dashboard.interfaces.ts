@@ -1,16 +1,29 @@
-export interface IWidgetFromApi {
-  id: string;
+type WidgetCoordinates = {
+  x: number;
+  y: number;
+};
+
+type VariableConfigDTO = {
+  parameter: string;
+  mode: string;
+};
+
+interface IWidgetSchema {
   widgetType: string;
   widgetName: string;
   widgetScale: number;
   isWidgetTall: boolean;
-  position: {
-    x: number;
-    y: number;
-  };
+  position: WidgetCoordinates;
   config: {
-    [key: string]: any;
-  };
+    parameter: string;
+    value: string;
+  }[];
+  variableOptions: VariableConfigDTO[];
+}
+
+export interface IWidgetFromApi extends IWidgetSchema {
+  id: string;
+  path: string;
 }
 
 export interface IParsedWidgetOnDashboard extends IWidgetFromApi {
@@ -20,3 +33,18 @@ export interface IParsedWidgetOnDashboard extends IWidgetFromApi {
   w: number;
   h: number;
 }
+
+export interface IWidgetCreatorOptionFromApi {
+  widgetType: string;
+  typeDisplayName: string;
+  scaleOptions: number[];
+  canWidgetBeTall: boolean;
+  mandatoryConfigOptions: {
+    parameter: string;
+    value: string;
+    clientFill: string;
+  }[];
+  mandatoryVariableOptions: VariableConfigDTO[];
+}
+
+export interface IWidgetCreatorDTO extends IWidgetSchema {}

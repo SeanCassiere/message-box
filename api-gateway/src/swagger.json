@@ -47,6 +47,10 @@
       "description": "endpoints relating to clients"
     },
     {
+      "name": "Dashboard",
+      "description": "endpoints relating to a user's dashboard"
+    },
+    {
       "name": "Report",
       "description": "endpoints relating to the running system reports"
     },
@@ -1425,6 +1429,186 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/Dashboard/Widgets": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get a list of a user's configured widgets for their dashboard",
+        "description": "Get a list of a user's configured widgets for their dashboard.",
+        "operationId": "GetAllWidgetsForUser",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "description": "User ID (UUID)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "clientType",
+            "in": "query",
+            "description": "Client used to interact with the MessageBox API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "web-client"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All configured dashboard widgets for the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WidgetSchema"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "post": {
+        "tags": ["Dashboard"],
+        "summary": "Create a new dashboard widget for a user",
+        "description": "Create a new dashboard widget for a user.",
+        "operationId": "CreateNewDashboardWidget",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Data required to create a new user team.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WidgetSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully create a new role for the client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WidgetSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "x-codegen-request-body-name": "body",
+        "parameters": []
+      }
+    },
+    "/Dashboard/Widgets/Available": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get a of all the configurable widgets for the user.",
+        "description": "Get a of all the configurable widgets for the user.",
+        "operationId": "GetWidgetCreatorOptions",
+        "parameters": [
+          {
+            "name": "clientType",
+            "in": "query",
+            "description": "Client used to interact with the MessageBox API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "web-client"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All widget configuration options for the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WidgetCreatorOptionSchema"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/Dashboard/Widgets/{id}": {
+      "delete": {
+        "tags": ["Dashboard"],
+        "summary": "Delete a user's dashboard widget by it's ID",
+        "description": "Delete a user's dashboard widget by it's ID",
+        "operationId": "DeleteDashboardWidgetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Widget ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -3209,6 +3393,135 @@
                 "visible": {
                   "type": "boolean",
                   "default": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "WidgetSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "default": "1",
+            "description": "id not needed to create a widget"
+          },
+          "widgetType": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string",
+            "default": "/Api/*",
+            "description": "path not needed to create a widget"
+          },
+          "widgetName": {
+            "type": "string"
+          },
+          "widgetScale": {
+            "type": "number",
+            "default": 4
+          },
+          "isWidgetTall": {
+            "type": "boolean",
+            "default": false
+          },
+          "position": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "default": 0
+              },
+              "y": {
+                "type": "number",
+                "default": 0
+              }
+            }
+          },
+          "config": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "parameter": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "variableOptions": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "parameter": {
+                    "type": "string"
+                  },
+                  "mode": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "WidgetCreatorOptionSchema": {
+        "type": "object",
+        "properties": {
+          "widgetType": {
+            "type": "string"
+          },
+          "typeDisplayName": {
+            "type": "string"
+          },
+          "scaleOptions": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "default": [4, 6, 12]
+          },
+          "canWidgetBeTall": {
+            "type": "boolean",
+            "default": false
+          },
+          "mandatoryConfigOptions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "parameter": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "clientFill": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "fill this field value based on the `clientFill` instructions"
+                }
+              }
+            }
+          },
+          "mandatoryVariableOptions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "parameter": {
+                  "type": "string"
+                },
+                "mode": {
+                  "type": "string"
                 }
               }
             }

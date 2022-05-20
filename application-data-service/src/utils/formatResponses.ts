@@ -1,11 +1,14 @@
 import axios from "axios";
+
 import CalendarEvent from "#root/db/entities/CalendarEvent";
 import ChatRoom from "#root/db/entities/ChatRoom";
 import Task from "#root/db/entities/Task";
+import DashboardWidget from "#root/db/entities/DashboardWidget";
+import ChatMessage from "#root/db/entities/ChatMessage";
+
 import { BaseUserFromAuthServer } from "#root/types/users";
 import { log } from "#root/utils/logger";
 import { AUTH_SERVICE_URI } from "./constants";
-import ChatMessage from "#root/db/entities/ChatMessage";
 import { getUserIdsFromChatRoomName } from "./minorUtils";
 
 export function formatTaskResponseWithUsers({ task, userIds }: { task: Task; userIds: string[] }) {
@@ -154,4 +157,22 @@ export async function formatChatMessagesResponse({ messages, clientId }: IFormat
   });
 
   return readyMessages;
+}
+
+export function formatFullDbWidget({ widget }: { widget: DashboardWidget }) {
+  const dto = {
+    id: `${widget.id}`,
+    widgetType: widget.type,
+    widgetName: widget.name,
+    widgetScale: widget.scale,
+    isWidgetTall: widget.isTall,
+    position: {
+      x: widget.x,
+      y: widget.y,
+    },
+    config: widget.config,
+    variableOptions: widget.variableConfigOptions,
+  };
+
+  return dto;
 }
