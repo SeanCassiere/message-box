@@ -94,9 +94,9 @@ const DashboardPage = () => {
       currentLayout?.forEach((position) => {
         tempArray[Number(position.i)].x = position.x;
         tempArray[Number(position.i)].y = position.y;
-        tempArray[Number(position.i)].w = position.w <= 4 ? 4 : position.w;
+        tempArray[Number(position.i)].w = position.w <= 3 ? 3 : position.w;
         tempArray[Number(position.i)].h = position.h;
-        tempArray[Number(position.i)].widgetScale = position.w <= 4 ? 4 : position.w;
+        tempArray[Number(position.i)].widgetScale = position.w <= 3 ? 3 : position.w;
         tempArray[Number(position.i)].widgetHeight = position.h;
       });
       setDashboardWidgets(tempArray);
