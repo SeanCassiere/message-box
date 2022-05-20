@@ -44,7 +44,7 @@ const validationSchema = yup.object().shape({
   widgetType: yup.string().required("WidgetType is required"),
   widgetName: yup.string().required("WidgetName is required"),
   widgetScale: yup.number().required("WidgetScale is required"),
-  isWidgetTall: yup.boolean().required("IsWidgetTall is required"),
+  widgetHeight: yup.number().required("WidgetHeight is required"),
   position: yup.object().shape({
     x: yup.number().min(0, "Minimum is 0").required("X is required"),
     y: yup.number().min(0, "Minimum is 0").required("Y is required"),
@@ -121,6 +121,7 @@ const AddWidgetDialog = (props: IProps) => {
     formik.setFieldValue("widgetName", creatorDTO.typeDisplayName);
     formik.setFieldValue("widgetType", creatorDTO.widgetType);
     formik.setFieldValue("widgetScale", `${creatorDTO.scaleOptions[0]}`);
+    formik.setFieldValue("widgetHeight", `${creatorDTO.heightOptions[0]}`);
     formik.setFieldValue(
       "config",
       creatorDTO.mandatoryConfigOptions.map((opt) => ({ parameter: opt.parameter, value: null }))
@@ -135,7 +136,7 @@ const AddWidgetDialog = (props: IProps) => {
       widgetType: "",
       widgetName: "",
       widgetScale: "4",
-      isWidgetTall: false,
+      widgetHeight: "2",
       position: {
         x: 0,
         y: 0,
@@ -144,10 +145,11 @@ const AddWidgetDialog = (props: IProps) => {
       variableOptions: [],
     },
     validationSchema,
-    onSubmit: async ({ widgetScale, ...values }, { resetForm }) => {
+    onSubmit: async ({ widgetScale, widgetHeight, ...values }, { resetForm }) => {
       const dto = {
         ...values,
         widgetScale: parseInt(widgetScale),
+        widgetHeight: parseInt(widgetHeight),
       };
 
       client
@@ -240,10 +242,20 @@ const AddWidgetDialog = (props: IProps) => {
                 </Button>
               </Grid>
               <Grid item xs={12} md={12}>
+                <Box sx={{ maxWidth: "300px", margin: "0 auto" }}>
+                  <img
+                    src={`media/widgets/${selectedCreatorOption.widgetType}.png`}
+                    alt={selectedCreatorOption.typeDisplayName}
+                    loading="lazy"
+                    style={{ maxHeight: "100%", objectFit: "cover", width: "100%" }}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={12}>
                 <TextField
                   margin="normal"
                   fullWidth
-                  label="Widget Title"
+                  label="Title"
                   id="widgetName"
                   name="widgetName"
                   autoComplete="off"
@@ -274,7 +286,7 @@ const AddWidgetDialog = (props: IProps) => {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        label="Widget Size"
+                        label="Width"
                         name="widgetScale"
                         InputLabelProps={{ disableAnimation: false, shrink: undefined }}
                         fullWidth
@@ -285,22 +297,26 @@ const AddWidgetDialog = (props: IProps) => {
               </Grid>
               <Grid item xs={12} md={12}>
                 <FormControl fullWidth>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={formik.values.isWidgetTall}
-                        id="isWidgetTall"
-                        name="isWidgetTall"
-                        onChange={(_, checked) => {
-                          formik.setFieldValue("isWidgetTall", checked);
-                        }}
-                        aria-label="Is this a tall widget?"
-                        disabled={formik.isSubmitting || selectedCreatorOption.canWidgetBeTall === false}
+                  <Autocomplete
+                    id={`widget-height-autocomplete`}
+                    options={selectedCreatorOption.heightOptions.map((o) => `${o}`)}
+                    value={formik.values.widgetHeight}
+                    getOptionLabel={(option) => `${option}`}
+                    onChange={(evt, value) => {
+                      if (!value) return;
+
+                      formik.setFieldValue("widgetHeight", value);
+                    }}
+                    sx={{ mr: 2, width: "100%" }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Height"
+                        name="widgetHeight"
+                        InputLabelProps={{ disableAnimation: false, shrink: undefined }}
+                        fullWidth
                       />
-                    }
-                    disabled={selectedCreatorOption?.canWidgetBeTall === true ? false : true}
-                    label={"Is this a tall widget?"}
-                    value={formik.values.isWidgetTall}
+                    )}
                   />
                 </FormControl>
               </Grid>
@@ -367,6 +383,8 @@ function getOptionsForClientFillInstruction(instruction: string) {
     case "system-users":
       const users = reduxState.lookup.usersList.map((u) => u.userId);
       return [...users];
+    case "task-completion-time-periods":
+      return ["Week", "Month"];
     default:
       return [];
   }

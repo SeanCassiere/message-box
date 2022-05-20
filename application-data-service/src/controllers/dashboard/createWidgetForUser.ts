@@ -16,7 +16,7 @@ const validationSchema = yup.object().shape({
     widgetType: yup.string().required("WidgetType is required"),
     widgetName: yup.string().required("WidgetName is required"),
     widgetScale: yup.number().required("WidgetScale is required"),
-    isWidgetTall: yup.boolean().required("IsWidgetTall is required"),
+    widgetHeight: yup.number().required("WidgetHeight is required"),
     position: yup.object().shape({
       x: yup.number().min(0, "Minimum is 0").required("X is required"),
       y: yup.number().min(0, "Minimum is 0").required("Y is required"),
@@ -58,7 +58,7 @@ export async function createWidgetForUser(req: Request, res: Response) {
       name: body.widgetName,
       type: body.widgetType,
       scale: body.widgetScale,
-      isTall: body.isWidgetTall,
+      height: body.widgetHeight,
       x: body.position.x,
       y: body.position.y,
       config: body.config,
@@ -75,6 +75,7 @@ export async function createWidgetForUser(req: Request, res: Response) {
     });
   } catch (error) {
     log.error(`FAILED saving a dashboard widget for userId: ${body?.ownerId}`);
+    console.log(error);
     return res.json({
       statusCode: 500,
       data: null,

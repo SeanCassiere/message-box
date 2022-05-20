@@ -33,6 +33,9 @@ export default class DashboardWidget extends BaseEntity {
   @Column()
   scale: number;
 
+  @Column()
+  height: number;
+
   @Column("bool", { name: "is_tall", default: false })
   isTall: boolean;
 

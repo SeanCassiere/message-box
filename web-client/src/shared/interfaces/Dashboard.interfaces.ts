@@ -12,7 +12,7 @@ interface IWidgetSchema {
   widgetType: string;
   widgetName: string;
   widgetScale: number;
-  isWidgetTall: boolean;
+  widgetHeight: number;
   position: WidgetCoordinates;
   config: {
     parameter: string;
@@ -38,7 +38,7 @@ export interface IWidgetCreatorOptionFromApi {
   widgetType: string;
   typeDisplayName: string;
   scaleOptions: number[];
-  canWidgetBeTall: boolean;
+  heightOptions: number[];
   mandatoryConfigOptions: {
     parameter: string;
     displayName: string;

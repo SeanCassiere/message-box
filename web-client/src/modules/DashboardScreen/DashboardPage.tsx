@@ -34,7 +34,7 @@ import { useSnackbar } from "notistack";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const ROW_LENGTH = 12;
-const NORMAL_WIDGET_MIN_HEIGHT = 300;
+const NORMAL_WIDGET_MIN_HEIGHT = 200;
 
 const DashboardPage = () => {
   const theme = useTheme();
@@ -64,7 +64,7 @@ const DashboardPage = () => {
           ...w,
           i: w.id,
           w: w.widgetScale,
-          h: w.isWidgetTall ? 2 : 1,
+          h: w.widgetHeight,
           x: w.position.x,
           y: w.position.y,
         }));
@@ -97,7 +97,7 @@ const DashboardPage = () => {
         tempArray[Number(position.i)].w = position.w <= 4 ? 4 : position.w;
         tempArray[Number(position.i)].h = position.h;
         tempArray[Number(position.i)].widgetScale = position.w <= 4 ? 4 : position.w;
-        tempArray[Number(position.i)].isWidgetTall = position.h === 2;
+        tempArray[Number(position.i)].widgetHeight = position.h;
       });
       setDashboardWidgets(tempArray);
 
@@ -107,7 +107,7 @@ const DashboardPage = () => {
           x: widget.x,
           y: widget.y,
           scale: widget.w,
-          tall: widget.h >= 2,
+          height: widget.h,
         }));
         client
           .patch("/Dashboard/Widgets", [...patchList])
@@ -340,8 +340,9 @@ const DashboardPage = () => {
                           y: widget?.y,
                           w: widget?.w,
                           h: widget?.h,
-                          minW: 4,
-                          maxH: 2,
+                          minW: 3,
+                          minH: 1,
+                          maxH: 3,
                           i: widget.i,
                         }}
                       >

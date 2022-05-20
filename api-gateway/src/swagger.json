@@ -1563,9 +1563,9 @@
                       "type": "number",
                       "default": 4
                     },
-                    "tall": {
-                      "type": "boolean",
-                      "default": false
+                    "height": {
+                      "type": "number",
+                      "default": 0
                     }
                   }
                 }
@@ -3485,9 +3485,9 @@
             "type": "number",
             "default": 4
           },
-          "isWidgetTall": {
-            "type": "boolean",
-            "default": false
+          "widgetHeight": {
+            "type": "number",
+            "default": 1
           },
           "position": {
             "type": "object",
@@ -3551,9 +3551,12 @@
             },
             "default": [4, 6, 12]
           },
-          "canWidgetBeTall": {
-            "type": "boolean",
-            "default": false
+          "heightOptions": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "default": [1, 2, 3]
           },
           "mandatoryConfigOptions": {
             "type": "array",

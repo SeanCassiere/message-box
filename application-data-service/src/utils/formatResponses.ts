@@ -165,7 +165,7 @@ export function formatFullDbWidget({ widget }: { widget: DashboardWidget }) {
     widgetType: widget.type,
     widgetName: widget.name,
     widgetScale: widget.scale,
-    isWidgetTall: widget.isTall,
+    widgetHeight: widget.height,
     position: {
       x: widget.x,
       y: widget.y,
