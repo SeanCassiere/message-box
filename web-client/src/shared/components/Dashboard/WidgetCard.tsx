@@ -2,6 +2,7 @@ import React from "react";
 
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 
 import IconButton from "@mui/material/IconButton";
@@ -9,6 +10,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import { usePermission } from "../../hooks/usePermission";
 import { IParsedWidgetOnDashboard } from "../../interfaces/Dashboard.interfaces";
+
+import MyTasksWidgetView from "./Widgets/MyTasksWidgetView";
 
 const NOT_DRAGGABLE_CLASS = "grid-not-draggable";
 
@@ -19,6 +22,7 @@ interface IProps {
 
 const WidgetCardItem = React.memo((props: IProps) => {
   const canWriteToDashboard = usePermission("dashboard:write");
+
   return (
     <Box
       sx={{
@@ -35,8 +39,8 @@ const WidgetCardItem = React.memo((props: IProps) => {
         height: "100%",
       }}
     >
-      <Grid container sx={{ width: "100%" }}>
-        <Grid item xs={12} md={12} lg={12}>
+      <Stack flexDirection="column" sx={{ width: "100%", height: "100%" }}>
+        <Box flexGrow={0} sx={{ mb: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Typography
               fontSize={18}
@@ -64,13 +68,34 @@ const WidgetCardItem = React.memo((props: IProps) => {
               <DeleteIcon color={canWriteToDashboard ? "inherit" : "disabled"} sx={{ fontSize: "1.2rem" }} />
             </IconButton>
           </Box>
-        </Grid>
-        <Grid item xs={12} md={12} className={`${NOT_DRAGGABLE_CLASS}`}>
-          <code style={{ fontSize: 14 }}>{JSON.stringify(props.widget, null, 2)}</code>
-        </Grid>
-      </Grid>
+        </Box>
+        <Box
+          className={`${NOT_DRAGGABLE_CLASS}`}
+          sx={{
+            flexGrow: 1,
+            overflow: "auto",
+            cursor: "text",
+          }}
+        >
+          <RenderWidget widget={props.widget} />
+        </Box>
+      </Stack>
     </Box>
   );
+});
+
+interface IRenderWidgetProps {
+  widget: IParsedWidgetOnDashboard;
+}
+const RenderWidget = React.memo((props: IRenderWidgetProps) => {
+  switch (props.widget.widgetType) {
+    case "MyTasks":
+      return <MyTasksWidgetView widget={props.widget} />;
+    case "EmployeeTasks":
+      return <MyTasksWidgetView widget={props.widget} />;
+    default:
+      return <Box sx={{ mt: 1 }}>Widget view not built</Box>;
+  }
 });
 
 export default WidgetCardItem;

@@ -4,6 +4,9 @@ import { Responsive, WidthProvider, Layouts } from "react-grid-layout";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -27,44 +30,11 @@ import { client } from "../../shared/api/client";
 import { usePermission } from "../../shared/hooks/usePermission";
 import { IParsedWidgetOnDashboard, IWidgetFromApi } from "../../shared/interfaces/Dashboard.interfaces";
 import { useSnackbar } from "notistack";
-import { dummyPromise } from "../../shared/util/testingUtils";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const ROW_LENGTH = 12;
-const NORMAL_WIDGET_MIN_HEIGHT = 150;
-const DEMO_WIDGETS = [
-  {
-    id: "11",
-    widgetType: "EmployeeCalendar",
-    widgetName: "Widget ID 11",
-    isWidgetTall: false,
-    widgetScale: 4,
-    position: { x: 0, y: 0 },
-    config: [],
-    variableOptions: [],
-  },
-  {
-    id: "12",
-    widgetType: "EmployeeTasks",
-    isWidgetTall: true,
-    widgetName: "Remaining Tasks for Today",
-    widgetScale: 4,
-    position: { x: 4, y: 0 },
-    config: [{ parameter: "for", value: "Today" }],
-    variableOptions: [{ parameter: "currentDate", mode: "today" }],
-  },
-  {
-    id: "13",
-    widgetType: "TeamTaskCompletion",
-    isWidgetTall: false,
-    widgetName: "Widget ID 13",
-    widgetScale: 4,
-    position: { x: 0, y: 2 },
-    config: [],
-    variableOptions: [],
-  },
-];
+const NORMAL_WIDGET_MIN_HEIGHT = 300;
 
 const DashboardPage = () => {
   const theme = useTheme();
@@ -74,7 +44,6 @@ const DashboardPage = () => {
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [loading, setLoading] = React.useState(true);
-  const [forcePatchCount, setForcePatchCount] = React.useState(1);
   const [layouts, setLayouts] = React.useState<Layouts | null>(null); // used for internal management of the layout
   const [dashboardWidgets, setDashboardWidgets] = React.useState<IParsedWidgetOnDashboard[]>([]);
 
@@ -95,7 +64,7 @@ const DashboardPage = () => {
           ...w,
           i: w.id,
           w: w.widgetScale,
-          h: w.isWidgetTall ? 4 : 2,
+          h: w.isWidgetTall ? 2 : 1,
           x: w.position.x,
           y: w.position.y,
         }));
@@ -119,17 +88,27 @@ const DashboardPage = () => {
 
   const onLayoutChange = React.useCallback(
     (currentLayout: ReactGridLayout.Layout[], allLayouts: Layouts) => {
+      const nowStateLayout = layouts;
       const tempArray = dashboardWidgets;
-      setLayouts(allLayouts);
+
       currentLayout?.forEach((position) => {
         tempArray[Number(position.i)].x = position.x;
         tempArray[Number(position.i)].y = position.y;
-        tempArray[Number(position.i)].w = position.w;
+        tempArray[Number(position.i)].w = position.w <= 4 ? 4 : position.w;
         tempArray[Number(position.i)].h = position.h;
+        tempArray[Number(position.i)].widgetScale = position.w <= 4 ? 4 : position.w;
+        tempArray[Number(position.i)].isWidgetTall = position.h === 2;
       });
       setDashboardWidgets(tempArray);
-      if (tempArray.length > 0) {
-        const patchList = tempArray.map((widget) => ({ id: widget.id, x: widget.x, y: widget.y }));
+
+      if (nowStateLayout !== null && tempArray.length > 0) {
+        const patchList = tempArray.map((widget) => ({
+          id: widget.id,
+          x: widget.x,
+          y: widget.y,
+          scale: widget.w,
+          tall: widget.h >= 2,
+        }));
         client
           .patch("/Dashboard/Widgets", [...patchList])
           .then(() => {})
@@ -139,8 +118,9 @@ const DashboardPage = () => {
             }
           });
       }
+      setLayouts(allLayouts);
     },
-    [dashboardWidgets, enqueueSnackbar]
+    [dashboardWidgets, enqueueSnackbar, layouts]
   );
 
   const [deleteWidgetId, setDeleteWidgetId] = React.useState<string | null>(null);
@@ -203,30 +183,6 @@ const DashboardPage = () => {
     [dashboardWidgets]
   );
 
-  const demoAddNewWidget = React.useCallback(
-    (widthParam: number = 4) => {
-      const newWidth = widthParam;
-
-      const { x: newX, y: newY } = getCoordinatesToPlaceWidget(widthParam);
-
-      const newItem: IParsedWidgetOnDashboard = {
-        ...DEMO_WIDGETS[0],
-        id: "widget" + (dashboardWidgets.length + 1),
-        widgetName: "// Widget ID " + (dashboardWidgets.length + 1),
-        i: "widget" + (dashboardWidgets.length + 1),
-        x: newX,
-        y: newY,
-        w: newWidth,
-        h: DEMO_WIDGETS[0].isWidgetTall ? 4 : 2,
-        position: { x: newX, y: newY },
-        path: "/",
-      };
-      const newArrayOfWidgets = [...dashboardWidgets, newItem];
-      setDashboardWidgets(newArrayOfWidgets);
-    },
-    [dashboardWidgets, getCoordinatesToPlaceWidget]
-  );
-
   const [showAddWidgetDialog, setShowAddWidgetDialog] = React.useState(false);
   const handleCloseAddWidgetDialog = React.useCallback(() => {
     setShowAddWidgetDialog(false);
@@ -286,11 +242,7 @@ const DashboardPage = () => {
                 aria-label="New Widget"
                 startIcon={<WidgetsIcon />}
                 onClick={() => {
-                  if (new Date().toISOString() === "something not happening") {
-                    demoAddNewWidget();
-                  } else {
-                    setShowAddWidgetDialog(true);
-                  }
+                  setShowAddWidgetDialog(true);
                 }}
                 disableElevation={false}
                 disabled={!canWriteToDashboard}
@@ -351,10 +303,7 @@ const DashboardPage = () => {
               <Grid item xs={12} sm={12} md={12} sx={{ p: 0, m: 0 }}>
                 <ResponsiveGridLayout
                   onLayoutChange={onLayoutChange}
-                  onBreakpointChange={() => {
-                    fetchWidgets({});
-                  }}
-                  isResizable={false}
+                  isResizable={canWriteToDashboard}
                   isDraggable={canWriteToDashboard}
                   verticalCompact={true}
                   compactType={isOnMobile ? "vertical" : "horizontal"}
@@ -380,6 +329,7 @@ const DashboardPage = () => {
                     position: "sticky",
                   }}
                   draggableCancel=".grid-not-draggable"
+                  resizeHandles={["se"]}
                 >
                   {dashboardWidgets?.map((widget, idx) => {
                     return (
@@ -390,6 +340,8 @@ const DashboardPage = () => {
                           y: widget?.y,
                           w: widget?.w,
                           h: widget?.h,
+                          minW: 4,
+                          maxH: 2,
                           i: widget.i,
                         }}
                       >

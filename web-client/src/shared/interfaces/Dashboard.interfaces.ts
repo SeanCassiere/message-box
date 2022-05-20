@@ -3,7 +3,7 @@ type WidgetCoordinates = {
   y: number;
 };
 
-type VariableConfigDTO = {
+export type VariableConfigDTO = {
   parameter: string;
   mode: string;
 };

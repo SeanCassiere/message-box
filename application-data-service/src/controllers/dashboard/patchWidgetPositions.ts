@@ -16,8 +16,10 @@ const validationSchema = yup.object().shape({
     widgets: yup.array().of(
       yup.object().shape({
         id: yup.string().required("Widget id is required"),
-        x: yup.number().required("Widget x position is required"),
-        y: yup.number().required("Widget y position is required"),
+        x: yup.number(),
+        y: yup.number(),
+        scale: yup.number(),
+        tall: yup.boolean(),
       })
     ),
   }),
@@ -47,8 +49,19 @@ export async function patchWidgetPositions(req: Request, res: Response) {
       const dbWidget = widgetsFromDb.find((dbWidget) => `${dbWidget.id}` === `${widget.id}`);
 
       if (dbWidget) {
-        dbWidget.x = widget.x;
-        dbWidget.y = widget.y;
+        if (typeof widget?.x !== undefined) {
+          dbWidget.x = widget.x;
+        }
+        if (typeof widget?.y !== undefined) {
+          dbWidget.y = widget.y;
+        }
+
+        if (typeof widget?.scale !== undefined) {
+          dbWidget.scale = widget.scale;
+        }
+
+        dbWidget.isTall = typeof widget.tall === undefined ? dbWidget.isTall : Boolean(widget.tall);
+
         promises.push(dbWidget.save());
       }
     }

@@ -91,6 +91,9 @@ const AddWidgetDialog = (props: IProps) => {
   React.useEffect(() => {
     setPageMode(0);
     setSelectedCreatorOption(null);
+
+    if (props.showDialog === false) return;
+
     const cancelToken = new AbortController();
     setLoadingCreatorOptions(true);
 
@@ -99,8 +102,6 @@ const AddWidgetDialog = (props: IProps) => {
       .then((res) => {
         if (res.status === 200) {
           setCreatorOptions(res.data);
-          // setCreatorOptions([...res.data, ...res.data, ...res.data, ...res.data]);
-          // setCreatorOptions([]);
         }
       })
       .catch((err) => {
@@ -113,7 +114,7 @@ const AddWidgetDialog = (props: IProps) => {
     return () => {
       cancelToken.abort();
     };
-  }, [enqueueSnackbar]);
+  }, [enqueueSnackbar, props.showDialog]);
 
   const handleSelectCreatorOption = (creatorDTO: IWidgetCreatorOptionFromApi) => {
     setSelectedCreatorOption(creatorDTO);
@@ -193,8 +194,7 @@ const AddWidgetDialog = (props: IProps) => {
                       {creatorOptions.map((creationDTO, idx) => (
                         <ImageListItem key={`creator-option-${idx}`} cols={1}>
                           <img
-                            src=""
-                            // src="https://picsum.photos/200"
+                            src={`media/widgets/${creationDTO.widgetType}.png`}
                             alt={creationDTO.typeDisplayName}
                             loading="lazy"
                             style={{ maxHeight: "100%", objectFit: "cover" }}
