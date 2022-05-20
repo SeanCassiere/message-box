@@ -30,6 +30,8 @@ import { createMessageForChatRoom } from "./controllers/chat/createMessageForCha
 
 import { getWidgetsForUser } from "./controllers/dashboard/getWidgetsForUser";
 import { deleteWidgetById } from "./controllers/dashboard/deleteWidgetById";
+import { createWidgetForUser } from "./controllers/dashboard/createWidgetForUser";
+import { patchWidgetPositions } from "./controllers/dashboard/patchWidgetPositions";
 
 const expressApp = express();
 
@@ -80,5 +82,7 @@ expressApp.post("/activity/createActivityLog", createActivityLog);
  */
 expressApp.post("/dashboard/getWidgetsForUser", getWidgetsForUser);
 expressApp.post("/dashboard/deleteWidgetById", deleteWidgetById);
+expressApp.post("/dashboard/createWidgetForUser", createWidgetForUser);
+expressApp.post("/dashboard/patchWidgetPositions", patchWidgetPositions);
 
 export default expressApp;

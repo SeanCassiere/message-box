@@ -9,7 +9,7 @@ const widgetOptions = [
     typeDisplayName: "My Tasks",
     scaleOptions: [4, 6],
     canWidgetBeTall: true,
-    mandatoryConfigOptions: [{ parameter: "for", value: null, clientFill: "task-for-time-periods" }],
+    mandatoryConfigOptions: [{ parameter: "for", clientFill: "task-for-time-periods", displayName: "For" }],
     mandatoryVariableOptions: [{ parameter: "currentDate", mode: "date-today" }],
   },
   {
@@ -21,8 +21,8 @@ const widgetOptions = [
     scaleOptions: [4, 6],
     canWidgetBeTall: true,
     mandatoryConfigOptions: [
-      { parameter: "for", value: null, clientFill: "task-for-time-periods" },
-      { parameter: "ownerId", value: null, clientFill: "system-users" },
+      { parameter: "for", clientFill: "task-for-time-periods", displayName: "For" },
+      { parameter: "ownerId", clientFill: "system-users", displayName: "Employee" },
     ],
     mandatoryVariableOptions: [{ parameter: "currentDate", mode: "date-today" }],
   },

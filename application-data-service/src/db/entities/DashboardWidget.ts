@@ -45,7 +45,7 @@ export default class DashboardWidget extends BaseEntity {
   @Column("jsonb", { array: false, nullable: false, default: () => "'[]'" })
   config: ConfigDTO[];
 
-  @Column("text", { array: false, nullable: false, name: "variable_config_options", default: () => "'[]'" })
+  @Column("jsonb", { array: false, nullable: false, name: "variable_config_options", default: () => "'[]'" })
   variableConfigOptions: VariableConfigDTO[];
 
   @CreateDateColumn({ name: "created_at" })

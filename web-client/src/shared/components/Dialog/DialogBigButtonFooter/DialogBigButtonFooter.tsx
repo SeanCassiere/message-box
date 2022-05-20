@@ -9,6 +9,7 @@ interface Props {
   isLoading?: boolean;
   color?: "inherit" | "primary" | "secondary" | "success" | "error" | "info" | "warning";
   hideButton?: boolean;
+  disabled?: boolean;
 }
 
 const DialogBigButtonFooter = (
@@ -26,6 +27,7 @@ const DialogBigButtonFooter = (
             variant="contained"
             sx={{ mb: 2, mx: 2 }}
             color={props.color}
+            disabled={props.disabled}
           >
             {props.submitButtonText}
           </LoadingButton>

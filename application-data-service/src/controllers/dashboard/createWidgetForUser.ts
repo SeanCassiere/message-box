@@ -4,11 +4,13 @@ import * as yup from "yup";
 import { validateYupSchema } from "#root/utils/validateYupSchema";
 import { log } from "#root/utils/logger";
 import DashboardWidget from "#root/db/entities/DashboardWidget";
+import { formatFullDbWidget } from "#root/utils/formatResponses";
 
 const validationSchema = yup.object().shape({
   variables: yup.object().shape({
     clientId: yup.string().required("ClientId is required"),
     userId: yup.string().required("UserId is required"),
+    forClient: yup.string().required("ForClient is required"),
   }),
   body: yup.object().shape({
     widgetType: yup.string().required("WidgetType is required"),
@@ -49,29 +51,30 @@ export async function createWidgetForUser(req: Request, res: Response) {
   const body = req.body.body;
 
   try {
-    const widget = await DashboardWidget.findOne({
-      where: { clientId: variables.clientId, userId: variables.userId, id: variables.widgetId },
-    });
-    if (!widget) {
-      return res.json({
-        statusCode: 400,
-        data: null,
-        errors: [{ propertyPath: "id", message: "Could not find widget" }],
-      });
-    }
+    const widget = await DashboardWidget.create({
+      clientId: variables.clientId,
+      userId: variables.userId,
+      forClient: variables.forClient,
+      name: body.widgetName,
+      type: body.widgetType,
+      scale: body.widgetScale,
+      isTall: body.isWidgetTall,
+      x: body.position.x,
+      y: body.position.y,
+      config: body.config,
+      variableConfigOptions: body.variableOptions,
+    }).save();
 
-    await widget.remove();
+    console.log(body.config);
+    console.log(body.variableOptions);
 
     return res.json({
       statusCode: 200,
-      data: {
-        success: true,
-        message: "Deleted widget successfully",
-      },
+      data: formatFullDbWidget({ widget }),
       errors: [],
     });
   } catch (error) {
-    log.error(`FAILED getting dashboard widgets for userId: ${body?.ownerId}`);
+    log.error(`FAILED saving a dashboard widget for userId: ${body?.ownerId}`);
     return res.json({
       statusCode: 500,
       data: null,

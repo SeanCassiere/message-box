@@ -41,7 +41,7 @@ export interface IWidgetCreatorOptionFromApi {
   canWidgetBeTall: boolean;
   mandatoryConfigOptions: {
     parameter: string;
-    value: string;
+    displayName: string;
     clientFill: string;
   }[];
   mandatoryVariableOptions: VariableConfigDTO[];

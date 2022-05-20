@@ -21,10 +21,12 @@ import WidgetsIcon from "@mui/icons-material/Widgets";
 import WidgetCardItem from "../../shared/components/Dashboard/WidgetCard";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import ConfirmDeleteDialog from "./ConfirmDeleteDialog";
+import AddWidgetDialog from "./AddWidgetDialog";
 
+import { client } from "../../shared/api/client";
 import { usePermission } from "../../shared/hooks/usePermission";
 import { IParsedWidgetOnDashboard, IWidgetFromApi } from "../../shared/interfaces/Dashboard.interfaces";
-
+import { useSnackbar } from "notistack";
 import { dummyPromise } from "../../shared/util/testingUtils";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -66,32 +68,49 @@ const DEMO_WIDGETS = [
 
 const DashboardPage = () => {
   const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
 
   const canWriteToDashboard = usePermission("dashboard:write");
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [loading, setLoading] = React.useState(true);
+  const [forcePatchCount, setForcePatchCount] = React.useState(1);
   const [layouts, setLayouts] = React.useState<Layouts | null>(null); // used for internal management of the layout
   const [dashboardWidgets, setDashboardWidgets] = React.useState<IParsedWidgetOnDashboard[]>([]);
 
   const fetchWidgets = React.useCallback(async ({ showSkeleton = false }) => {
-    if (showSkeleton) setLoading(true);
-    const items = await dummyPromise(1500).then(() => {
+    if (showSkeleton) {
       flushSync(() => {
+        setLoading(true);
+      });
+    }
+    const params = new URLSearchParams();
+    params.append("clientType", "web-client");
+
+    await client
+      .get("/Dashboard/Widgets", { params })
+      .then((res) => {
+        const data = res.data as IWidgetFromApi[];
+        const parsedWidgets: IParsedWidgetOnDashboard[] = data.map((w) => ({
+          ...w,
+          i: w.id,
+          w: w.widgetScale,
+          h: w.isWidgetTall ? 4 : 2,
+          x: w.position.x,
+          y: w.position.y,
+        }));
+        flushSync(() => {
+          setDashboardWidgets([]);
+        });
+
+        setDashboardWidgets(parsedWidgets);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
         setLoading(false);
       });
-      const fetchedData: IWidgetFromApi[] = DEMO_WIDGETS as unknown as IWidgetFromApi[];
-      const parsedWidgets: IParsedWidgetOnDashboard[] = fetchedData.map((w) => ({
-        ...w,
-        i: w.id,
-        w: w.widgetScale,
-        h: w.isWidgetTall ? 4 : 2,
-        x: w.position.x,
-        y: w.position.y,
-      }));
-      return parsedWidgets;
-    });
-    setDashboardWidgets(items);
   }, []);
 
   React.useEffect(() => {
@@ -109,8 +128,19 @@ const DashboardPage = () => {
         tempArray[Number(position.i)].h = position.h;
       });
       setDashboardWidgets(tempArray);
+      if (tempArray.length > 0) {
+        const patchList = tempArray.map((widget) => ({ id: widget.id, x: widget.x, y: widget.y }));
+        client
+          .patch("/Dashboard/Widgets", [...patchList])
+          .then(() => {})
+          .catch((err) => {
+            if (err.message !== "canceled") {
+              enqueueSnackbar("Could not save these changes. Please try again later.", { variant: "warning" });
+            }
+          });
+      }
     },
-    [dashboardWidgets]
+    [dashboardWidgets, enqueueSnackbar]
   );
 
   const [deleteWidgetId, setDeleteWidgetId] = React.useState<string | null>(null);
@@ -118,10 +148,19 @@ const DashboardPage = () => {
 
   const deleteWidgetById = React.useCallback(
     (id: string) => {
+      client
+        .delete(`/Dashboard/Widgets/${id}`)
+        .then(() => {})
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          fetchWidgets({ showSkeleton: false });
+        });
       const tempArray = [...dashboardWidgets.filter((w) => w.id !== id)];
       setDashboardWidgets(tempArray);
     },
-    [dashboardWidgets]
+    [dashboardWidgets, fetchWidgets]
   );
 
   const openDeleteWidgetConfirmation = React.useCallback((id: string) => {
@@ -129,10 +168,8 @@ const DashboardPage = () => {
     setShowDeleteConfirmation(true);
   }, []);
 
-  const demoAddNewWidget = React.useCallback(
-    (widthParam: number = 4) => {
-      const newWidth = widthParam;
-
+  const getCoordinatesToPlaceWidget = React.useCallback(
+    (width: number) => {
       let newX = 0;
       let newY = 0;
 
@@ -148,7 +185,7 @@ const DashboardPage = () => {
         const itemsInLastRow = sortRowByY.filter((item) => item.y === currentY);
         remainingWidth = ROW_LENGTH - itemsInLastRow.reduce((acc, item) => acc + item.w, 0);
 
-        if (remainingWidth >= newWidth) {
+        if (remainingWidth >= width) {
           newX = lastItem.x + lastItem.w;
         } else {
           currentY++;
@@ -157,6 +194,20 @@ const DashboardPage = () => {
 
         newY = currentY % 2 === 0 ? currentY : currentY + 1;
       }
+
+      return {
+        x: newX,
+        y: newY,
+      };
+    },
+    [dashboardWidgets]
+  );
+
+  const demoAddNewWidget = React.useCallback(
+    (widthParam: number = 4) => {
+      const newWidth = widthParam;
+
+      const { x: newX, y: newY } = getCoordinatesToPlaceWidget(widthParam);
 
       const newItem: IParsedWidgetOnDashboard = {
         ...DEMO_WIDGETS[0],
@@ -168,12 +219,18 @@ const DashboardPage = () => {
         w: newWidth,
         h: DEMO_WIDGETS[0].isWidgetTall ? 4 : 2,
         position: { x: newX, y: newY },
+        path: "/",
       };
       const newArrayOfWidgets = [...dashboardWidgets, newItem];
       setDashboardWidgets(newArrayOfWidgets);
     },
-    [dashboardWidgets]
+    [dashboardWidgets, getCoordinatesToPlaceWidget]
   );
+
+  const [showAddWidgetDialog, setShowAddWidgetDialog] = React.useState(false);
+  const handleCloseAddWidgetDialog = React.useCallback(() => {
+    setShowAddWidgetDialog(false);
+  }, []);
 
   return (
     <>
@@ -190,6 +247,14 @@ const DashboardPage = () => {
           setShowDeleteConfirmation(false);
           setDeleteWidgetId(null);
         }}
+      />
+      <AddWidgetDialog
+        showDialog={showAddWidgetDialog}
+        handleClose={handleCloseAddWidgetDialog}
+        handleRefreshList={() => {
+          fetchWidgets({ showSkeleton: true });
+        }}
+        getCoordinates={getCoordinatesToPlaceWidget}
       />
       <PagePaperWrapper>
         <Grid container sx={{ mb: 2 }}>
@@ -221,7 +286,11 @@ const DashboardPage = () => {
                 aria-label="New Widget"
                 startIcon={<WidgetsIcon />}
                 onClick={() => {
-                  demoAddNewWidget();
+                  if (new Date().toISOString() === "something not happening") {
+                    demoAddNewWidget();
+                  } else {
+                    setShowAddWidgetDialog(true);
+                  }
                 }}
                 disableElevation={false}
                 disabled={!canWriteToDashboard}

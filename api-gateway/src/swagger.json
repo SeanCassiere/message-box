@@ -1501,7 +1501,7 @@
           }
         ],
         "requestBody": {
-          "description": "Data required to create a new user team.",
+          "description": "Data required to create a new widget.",
           "content": {
             "application/json": {
               "schema": {
@@ -1518,6 +1518,61 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/WidgetSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "x-codegen-request-body-name": "body",
+        "parameters": []
+      },
+      "patch": {
+        "tags": ["Dashboard"],
+        "summary": "Patch the users dashboard widget positions",
+        "description": "Patch the users dashboard widgets positions.",
+        "operationId": "PatchDashboardWidgetPositions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Data required to patch the widgets.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "x": {
+                      "type": "number",
+                      "default": 0
+                    },
+                    "y": {
+                      "type": "number",
+                      "default": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successfully create a new role for the client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessagePair"
                 }
               }
             }
@@ -3500,13 +3555,11 @@
                 "parameter": {
                   "type": "string"
                 },
-                "value": {
-                  "type": "string",
-                  "nullable": true
+                "displayName": {
+                  "type": "string"
                 },
                 "clientFill": {
                   "type": "string",
-                  "nullable": true,
                   "description": "fill this field value based on the `clientFill` instructions"
                 }
               }
