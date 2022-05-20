@@ -1495,6 +1495,18 @@
         "summary": "Create a new dashboard widget for a user",
         "description": "Create a new dashboard widget for a user.",
         "operationId": "CreateNewDashboardWidget",
+        "parameters": [
+          {
+            "name": "clientType",
+            "in": "query",
+            "description": "Client used to interact with the MessageBox API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "web-client"
+            }
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1526,14 +1538,25 @@
             "$ref": "#/components/responses/BadRequest"
           }
         },
-        "x-codegen-request-body-name": "body",
-        "parameters": []
+        "x-codegen-request-body-name": "body"
       },
       "patch": {
         "tags": ["Dashboard"],
         "summary": "Patch the users dashboard widget positions",
         "description": "Patch the users dashboard widgets positions.",
         "operationId": "PatchDashboardWidgetPositions",
+        "parameters": [
+          {
+            "name": "clientType",
+            "in": "query",
+            "description": "Client used to interact with the MessageBox API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "web-client"
+            }
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1589,15 +1612,14 @@
             "$ref": "#/components/responses/BadRequest"
           }
         },
-        "x-codegen-request-body-name": "body",
-        "parameters": []
+        "x-codegen-request-body-name": "body"
       }
     },
     "/Dashboard/Widgets/Available": {
       "get": {
         "tags": ["Dashboard"],
-        "summary": "Get a of all the configurable widgets for the user.",
-        "description": "Get a of all the configurable widgets for the user.",
+        "summary": "Get a list of all the configurable widgets available to the user.",
+        "description": "Get a list of all the configurable widgets available to the user.",
         "operationId": "GetWidgetCreatorOptions",
         "parameters": [
           {
