@@ -23,7 +23,7 @@ const widgetOptions = [
     mandatoryConfigOptions: [
       { parameter: "timePeriod", clientFill: "task-completion-time-periods", displayName: "For this" },
     ],
-    mandatoryVariableOptions: [{ parameter: "currentDate", mode: "date-today" }],
+    mandatoryVariableOptions: [{ parameter: "clientDate", mode: "date-today" }],
   },
   {
     key: "widget-3",
@@ -48,10 +48,10 @@ const widgetOptions = [
     scaleOptions: [3, 4],
     heightOptions: [2, 3],
     mandatoryConfigOptions: [
-      { parameter: "userId", clientFill: "system-users", displayName: "Employee" },
+      { parameter: "ownerId", clientFill: "system-users", displayName: "Employee" },
       { parameter: "timePeriod", clientFill: "task-completion-time-periods", displayName: "For this" },
     ],
-    mandatoryVariableOptions: [{ parameter: "currentDate", mode: "date-today" }],
+    mandatoryVariableOptions: [{ parameter: "clientDate", mode: "date-today" }],
   },
 ];
 

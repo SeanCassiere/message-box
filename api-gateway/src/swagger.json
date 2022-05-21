@@ -1437,6 +1437,70 @@
         "x-codegen-request-body-name": "body"
       }
     },
+    "/Dashboard/Statistics/EmployeeTaskCompletion": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get the statistics on an employee's task completion.",
+        "description": "Get the statistics on an employee's task completion.",
+        "operationId": "GetEmployeeTaskCompletionStatistics",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "description": "User ID (UUID)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "clientDate",
+            "in": "query",
+            "description": "The current date",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "timePeriod",
+            "in": "query",
+            "description": "The total duration to be covered.\n\nFor example, based on the current date your can get the stats for this week or month.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "month"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task completion statistics\n\nThis data is meant to be shown in a pie chart.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StatisticPieChartSchema"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
     "/Dashboard/Widgets": {
       "get": {
         "tags": ["Dashboard"],
@@ -3481,6 +3545,19 @@
                 }
               }
             }
+          }
+        }
+      },
+      "StatisticPieChartSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "This is similar to a label"
+          },
+          "value": {
+            "type": "number",
+            "description": "The value used in a pie chart"
           }
         }
       },

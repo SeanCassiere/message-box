@@ -17,3 +17,26 @@ export function getUserIdsFromChatRoomName(roomName: string) {
     restOfRootName: idsInString[1],
   };
 }
+
+export function getStartDateOfMonth(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+export function getLastDateOfMonth(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+}
+
+export function getSundayOfCurrentWeek(date: Date) {
+  const first = date.getDate() - date.getDay() + 1;
+  const last = first - 1;
+  const sunday = new Date(date.setDate(last));
+  return sunday;
+}
+
+export function getSaturdayOfCurrentWeek(date: Date) {
+  const first = date.getDate() - date.getDay() + 1;
+  const last = first + 6;
+  const parsed = new Date(date.setDate(last));
+  const saturday = new Date(parsed.setHours(23, 59, 59, 999));
+  return saturday;
+}

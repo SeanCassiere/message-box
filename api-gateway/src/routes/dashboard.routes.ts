@@ -12,6 +12,44 @@ const client = axios.create({
   baseURL: APP_DATA_SERVICE_URI,
 });
 
+dashboardRouter.route("/Statistics/EmployeeTaskCompletion").get(async (req, res) => {
+  const request = req as CustomRequest<{}>;
+  const ownerId =
+    request.query.ownerId && typeof request.query.ownerId === "string"
+      ? request.query.ownerId
+      : request.auth!.message_box_userId;
+
+  const clientDate =
+    request.query.clientDate && typeof request.query.clientDate === "string"
+      ? request.query.clientDate
+      : new Date().toISOString().slice(0, 10);
+
+  const timePeriod =
+    request.query.timePeriod && typeof request.query.timePeriod === "string" ? request.query.timePeriod : "Month";
+
+  try {
+    const { data: response } = await client.post("/statistics/getEmployeeTaskCompletion", {
+      variables: {
+        clientId: request.auth!.message_box_clientId,
+        userId: request.auth!.message_box_userId,
+      },
+      body: {
+        ownerId: ownerId,
+        clientDate: clientDate,
+        timePeriod: timePeriod,
+      },
+    });
+
+    if (response.statusCode === 200) {
+      return res.json(response.data);
+    }
+
+    return res.status(response.statusCode).json({ data: { ...response.data }, errors: response.errors });
+  } catch (error) {
+    return res.status(500).json({ message: "application-data-service /dashboard/statistics network error" });
+  }
+});
+
 dashboardRouter.route("/Widgets/Available").get(async (req, res) => {
   const request = req as CustomRequest<{}>;
   const clientType =

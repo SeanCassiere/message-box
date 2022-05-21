@@ -33,6 +33,8 @@ import { deleteWidgetById } from "./controllers/dashboard/deleteWidgetById";
 import { createWidgetForUser } from "./controllers/dashboard/createWidgetForUser";
 import { patchWidgetPositions } from "./controllers/dashboard/patchWidgetPositions";
 
+import { getEmployeeTaskCompletion } from "./controllers/statistics/getEmployeeTaskCompletion";
+
 const expressApp = express();
 
 expressApp.use(cors({ origin: (_, cb) => cb(null, true), credentials: true }));
@@ -84,5 +86,9 @@ expressApp.post("/dashboard/getWidgetsForUser", getWidgetsForUser);
 expressApp.post("/dashboard/deleteWidgetById", deleteWidgetById);
 expressApp.post("/dashboard/createWidgetForUser", createWidgetForUser);
 expressApp.post("/dashboard/patchWidgetPositions", patchWidgetPositions);
+/**
+ * All dashboard statistics routes
+ */
+expressApp.post("/statistics/getEmployeeTaskCompletion", getEmployeeTaskCompletion);
 
 export default expressApp;
