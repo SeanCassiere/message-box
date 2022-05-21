@@ -71,7 +71,7 @@ interface IProps {
 
 const ROOT_NAME = "user-created-";
 
-const EditUserDialog = (props: IProps) => {
+const AddUserDialog = (props: IProps) => {
   const { handleClose, handleRefreshList, showDialog, teamId } = props;
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
@@ -327,4 +327,4 @@ const EditUserDialog = (props: IProps) => {
   );
 };
 
-export default EditUserDialog;
+export default AddUserDialog;

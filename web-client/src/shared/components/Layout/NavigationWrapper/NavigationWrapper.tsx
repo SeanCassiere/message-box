@@ -5,6 +5,7 @@ import { indigo } from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import DynamicDialogListener from "../../Dialogs/DynamicDialogListener";
 import ScrollTop from "./ScrollTop/ScrollTop";
 import DrawerHeaderSpacer from "./DrawerHeaderSpacer";
 import CustomAppBar from "./CustomAppBar";
@@ -52,6 +53,7 @@ import { usePermission } from "../../../hooks/usePermission";
 import { socket_publishUserStatusChange } from "../../../api/socket.service";
 import { setAwakeDialogState } from "../../../redux/slices/user/userSlice";
 import { DEFAULT_USER_STATUSES } from "../../../util/general";
+import { stateOpenChangePasswordDialog } from "../../../redux/slices/dynamicDialog/dynamicDialogSlice";
 
 const NavigationWrapper: React.FC = (props) => {
   const navigate = useNavigate();
@@ -188,6 +190,8 @@ const NavigationWrapper: React.FC = (props) => {
 
   return (
     <>
+      {/* dynamic dialog listener */}
+      <DynamicDialogListener />
       {/** user awake dialog */}
       <UserAwakeDialog
         open={showAwakeDialog}
@@ -357,11 +361,21 @@ const NavigationWrapper: React.FC = (props) => {
                 onClose={handleCloseUserMenu}
                 onClick={handleCloseUserMenu}
               >
-                {profileRouteList.map((setting) => (
-                  <MenuItem key={setting.route} component={RouterLink} to={setting.route}>
-                    <Typography textAlign="center">{setting.name}</Typography>
-                  </MenuItem>
-                ))}
+                {profileRouteList.map((setting) => {
+                  if (setting.route === "/settings/account/change-password") {
+                    return (
+                      <MenuItem key={setting.route} onClick={() => dispatch(stateOpenChangePasswordDialog({}))}>
+                        <Typography textAlign="center">{setting.name}</Typography>
+                      </MenuItem>
+                    );
+                  }
+
+                  return (
+                    <MenuItem key={setting.route} component={RouterLink} to={setting.route}>
+                      <Typography textAlign="center">{setting.name}</Typography>
+                    </MenuItem>
+                  );
+                })}
               </Menu>
             </Box>
           </Toolbar>

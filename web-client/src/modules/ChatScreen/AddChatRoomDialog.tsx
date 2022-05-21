@@ -52,7 +52,7 @@ interface IProps {
   showDialog: boolean;
 }
 
-const EditChatRoomDialog = (props: IProps) => {
+const AddChatRoomDialog = (props: IProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { usersList } = useSelector(selectLookupListsState);
   const theme = useTheme();
@@ -248,4 +248,4 @@ const EditChatRoomDialog = (props: IProps) => {
   );
 };
 
-export default EditChatRoomDialog;
+export default AddChatRoomDialog;

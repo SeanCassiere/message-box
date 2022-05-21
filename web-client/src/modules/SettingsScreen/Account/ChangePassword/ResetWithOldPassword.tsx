@@ -28,7 +28,11 @@ const validationSchema = yup.object().shape({
     .required("Confirm your new password"),
 });
 
-const ResetWithOldPassword = () => {
+interface IProps {
+  onSubmit?: () => void;
+}
+
+const ResetWithOldPassword = (props: IProps) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -70,6 +74,9 @@ const ResetWithOldPassword = () => {
         })
         .finally(() => {
           setSubmitting(false);
+          if (props?.onSubmit) {
+            props?.onSubmit();
+          }
         });
     },
   });

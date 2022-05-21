@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -12,6 +12,7 @@ import { IParsedWidgetOnDashboard } from "../../../interfaces/Dashboard.interfac
 import { ITask } from "../../../interfaces/Task.interfaces";
 import { client } from "../../../api/client";
 import { parseDynamicParameterForTasks } from "../helpers/task.helpers";
+import { stateOpenAddTaskDialog } from "../../../redux/slices/dynamicDialog/dynamicDialogSlice";
 
 const COMMON_ICON_STYLE = { color: "secondary.200", fontSize: "1.2rem", m: 0, p: 0, mb: -0.5 };
 
@@ -20,7 +21,7 @@ interface IProps {
 }
 
 const MyTasksWidgetView = (props: IProps) => {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [data, setData] = React.useState<ITask[] | null>(null);
   React.useEffect(() => {
@@ -65,7 +66,7 @@ const MyTasksWidgetView = (props: IProps) => {
             gap: 1,
           }}
           key={`${props.widget.widgetName}-${task.taskId}`}
-          onClick={() => navigate(`/tasks/view/${task.taskId}`)}
+          onClick={() => dispatch(stateOpenAddTaskDialog({ referenceId: task.taskId }))}
         >
           <Box sx={{ p: 0, m: 0 }}>
             {task.isCompleted ? (

@@ -31,7 +31,11 @@ const validationSchema = yup.object().shape({
   code: yup.string().required("2FA Code is required"),
 });
 
-const ResetWith2FA = () => {
+interface IProps {
+  onSubmit?: () => void;
+}
+
+const ResetWith2FA = (props: IProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const applicationProfile = useSelector(selectUserState);
 
@@ -75,6 +79,9 @@ const ResetWith2FA = () => {
         })
         .finally(() => {
           setSubmitting(false);
+          if (props?.onSubmit) {
+            props?.onSubmit();
+          }
         });
     },
   });

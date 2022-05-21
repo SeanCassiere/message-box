@@ -20,7 +20,7 @@ import TabPanel, { TabPanelProps } from "@mui/lab/TabPanel";
 import { selectUserState, selectLookupListsState } from "../../shared/redux/store";
 import { usePermission } from "../../shared/hooks/usePermission";
 
-import TaskModifyDialog from "./TaskModifyDialog/TaskModifyDialog";
+import AddTaskDialog from "../../shared/components/Dialogs/AddTaskDialog";
 import TaskTodayView from "./TodayView";
 import TaskCompletedView from "./CompletedView";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
@@ -142,7 +142,7 @@ const TasksScreen = () => {
 
   return (
     <>
-      <TaskModifyDialog
+      <AddTaskDialog
         taskId={openEditTaskId}
         showDialog={isEditTaskDialogOpen}
         handleCloseFunction={handleCloseEditor}

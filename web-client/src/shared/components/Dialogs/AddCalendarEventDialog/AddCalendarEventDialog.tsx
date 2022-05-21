@@ -20,15 +20,15 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 
-import TextField from "../../shared/components/Form/TextField/TextField";
-import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
-import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButtonFooter";
+import TextField from "../../Form/TextField/TextField";
+import DialogHeaderClose from "../../Dialog/DialogHeaderClose";
+import DialogBigButtonFooter from "../../Dialog/DialogBigButtonFooter";
 
-import { selectLookupListsState, selectUserState } from "../../shared/redux/store";
-import { ICalendarEventGuestUser } from "../../shared/interfaces/CalendarEvent.interfaces";
-import { client } from "../../shared/api/client";
-import { MESSAGES } from "../../shared/util/messages";
-import { formatErrorsToFormik } from "../../shared/util/errorsToFormik";
+import { selectLookupListsState, selectUserState } from "../../../redux/store";
+import { ICalendarEventGuestUser } from "../../../interfaces/CalendarEvent.interfaces";
+import { client } from "../../../api/client";
+import { MESSAGES } from "../../../util/messages";
+import { formatErrorsToFormik } from "../../../util/errorsToFormik";
 
 const validationSchema = yup.object({
   title: yup.string().required("Event name is required"),
@@ -71,13 +71,15 @@ interface IProps {
 }
 
 const EventFormDialog = (props: IProps) => {
-  const { enqueueSnackbar } = useSnackbar();
   const location = useLocation();
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [isDisabled, setIsDisabled] = useState(true);
+  const { enqueueSnackbar } = useSnackbar();
+
   const { formats, userProfile } = useSelector(selectUserState);
   const { usersList } = useSelector(selectLookupListsState);
+
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const { eventId, showDialog, handleClose } = props;
 

@@ -52,7 +52,7 @@ interface IProps {
   showDialog: boolean;
 }
 
-const EditUserDialog = (props: IProps) => {
+const AddRoleDialog = (props: IProps) => {
   const { handleClose, handleRefreshList, showDialog, roleId } = props;
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
@@ -262,4 +262,4 @@ const EditUserDialog = (props: IProps) => {
   );
 };
 
-export default EditUserDialog;
+export default AddRoleDialog;

@@ -57,7 +57,7 @@ interface IProps {
   showDialog: boolean;
 }
 
-const EditUserDialog = (props: IProps) => {
+const AddUserDialog = (props: IProps) => {
   const { handleClose, showDialog, userId, handleRefreshList } = props;
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
@@ -386,4 +386,4 @@ const EditUserDialog = (props: IProps) => {
   );
 };
 
-export default EditUserDialog;
+export default AddUserDialog;

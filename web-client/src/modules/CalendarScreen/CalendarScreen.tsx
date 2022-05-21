@@ -15,7 +15,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 import EventIcon from "@mui/icons-material/Event";
 
-import EventFormDialog from "./EventFormDialog";
+import AddCalendarEventDialog from "../../shared/components/Dialogs/AddCalendarEventDialog";
 import CalendarSchedular from "./SchedularWidget";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import DeleteEventConfirmationDialog from "./DeleteEventConfirmationDialog";
@@ -253,7 +253,7 @@ const CalendarScreen = () => {
 
   return (
     <>
-      <EventFormDialog
+      <AddCalendarEventDialog
         eventId={eventEditId}
         ownerId={userProfile?.userId ?? ""}
         showDialog={showEditOverlay}
