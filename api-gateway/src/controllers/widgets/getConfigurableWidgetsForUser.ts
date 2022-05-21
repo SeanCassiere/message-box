@@ -53,6 +53,17 @@ const widgetOptions = [
     ],
     mandatoryVariableOptions: [{ parameter: "clientDate", mode: "date-today" }],
   },
+  {
+    key: "widget-5",
+    requires: ["calendar:read"],
+    clientType: "web-client",
+    widgetType: "MyCalendar",
+    typeDisplayName: "My Calendar",
+    scaleOptions: [4, 6, 12],
+    heightOptions: [2, 3],
+    mandatoryConfigOptions: [{ parameter: "viewName", clientFill: "calendar-view-names", displayName: "View type" }],
+    mandatoryVariableOptions: [],
+  },
 ];
 
 export function getConfigurableWidgetsForUser(auth: JwtAuthDetails, clientType: string) {

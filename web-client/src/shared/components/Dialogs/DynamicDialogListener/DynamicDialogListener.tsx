@@ -25,7 +25,7 @@ const DynamicDialogListener = () => {
       />
       <AddCalendarEventDialog
         showDialog={state.referenceType === "ADD_CALENDAR_EVENT_DIALOG"}
-        eventId={state.referenceType === "ADD_TASK_DIALOG" ? state.referenceId : ""}
+        eventId={state.referenceType === "ADD_CALENDAR_EVENT_DIALOG" ? state.referenceId : ""}
         ownerId={state.referenceType === "ADD_CALENDAR_EVENT_DIALOG" ? state.config?.currentUserId : ""}
         handleClose={handleCloseDialogInRedux}
         handleRefreshList={() => ({})}

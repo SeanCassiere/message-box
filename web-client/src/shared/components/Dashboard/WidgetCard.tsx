@@ -12,6 +12,7 @@ import { IParsedWidgetOnDashboard } from "../../interfaces/Dashboard.interfaces"
 
 import MyTasksList from "./widgets/MyTasksList";
 import MyTasksCompletionChart from "./widgets/MyTasksCompletionChart";
+import MyCalendar from "./widgets/MyCalendar";
 
 const NOT_DRAGGABLE_CLASS = "grid-not-draggable";
 
@@ -87,6 +88,7 @@ const WidgetCardItem = React.memo((props: IProps) => {
 interface IRenderWidgetProps {
   widget: IParsedWidgetOnDashboard;
 }
+
 const RenderWidget = React.memo((props: IRenderWidgetProps) => {
   switch (props.widget.widgetType) {
     case "MyTasks":
@@ -97,6 +99,8 @@ const RenderWidget = React.memo((props: IRenderWidgetProps) => {
       return <MyTasksCompletionChart widget={props.widget} />;
     case "EmployeeTasksCompletion":
       return <MyTasksCompletionChart widget={props.widget} />;
+    case "MyCalendar":
+      return <MyCalendar widget={props.widget} />;
     default:
       return <Box sx={{ mt: 1 }}>Widget view not built</Box>;
   }

@@ -325,7 +325,7 @@ const AddWidgetDialog = (props: IProps) => {
                   <FormControl fullWidth>
                     <Autocomplete
                       id={`widget-config-${optDTO.parameter}`}
-                      options={getOptionsForClientFillInstruction(optDTO.clientFill)}
+                      options={getOptionValuesForClientFillInstruction(optDTO.clientFill)}
                       value={
                         (formik.values.config.find((param: any) => param.parameter === optDTO.parameter) as any)?.value
                       }
@@ -338,6 +338,19 @@ const AddWidgetDialog = (props: IProps) => {
                             return "user not found";
                           }
                         }
+
+                        if (optDTO.clientFill === "calendar-view-names") {
+                          if (option.toLowerCase() === "3-days") {
+                            return "Next 3 Days";
+                          } else if (option.toLowerCase() === "day") {
+                            return "Today";
+                          } else if (option.toLowerCase() === "week") {
+                            return "This Week";
+                          } else {
+                            return `${option}`;
+                          }
+                        }
+
                         return `${option}`;
                       }}
                       onChange={(evt, selectedValue) => {
@@ -375,9 +388,9 @@ const AddWidgetDialog = (props: IProps) => {
   );
 };
 
-function getOptionsForClientFillInstruction(instruction: string) {
+function getOptionValuesForClientFillInstruction(instruction: string) {
   const reduxState = store.getState();
-  switch (instruction) {
+  switch (instruction.toLowerCase()) {
     case "task-for-time-periods":
       return ["Today", "Tomorrow", "Overdue"];
     case "system-users":
@@ -385,6 +398,8 @@ function getOptionsForClientFillInstruction(instruction: string) {
       return [...users];
     case "task-completion-time-periods":
       return ["Week", "Month"];
+    case "calendar-view-names":
+      return ["Day", "3-days", "Week"];
     default:
       return [];
   }
