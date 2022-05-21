@@ -49,7 +49,7 @@ const DeleteEventConfirmationDialog = (props: IProps) => {
 
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth>
-      <DialogHeaderClose title="Are you sure?" onClose={handleClose} />
+      <DialogHeaderClose title="Delete calendar event" onClose={handleClose} startIconMode="delete-icon" />
       <DialogContent>
         <DialogContentText sx={{ mt: 3 }}>Are you sure you want to delete this event?</DialogContentText>
       </DialogContent>

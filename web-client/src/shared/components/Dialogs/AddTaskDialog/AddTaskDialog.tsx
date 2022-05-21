@@ -1,13 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-
-import { client } from "../../../shared/api/client";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -33,16 +30,17 @@ import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 
-import { selectUserState, selectLookupListsState } from "../../../shared/redux/store";
-import { IUserProfile } from "../../../shared/interfaces/User.interfaces";
-import { formatErrorsToFormik } from "../../../shared/util/errorsToFormik";
-
 import TaskContentEditor from "./TaskContentEditor";
-import { usePermission } from "../../../shared/hooks/usePermission";
-import { colorsMap, IColorMap } from "../../../shared/util/colorsMap";
-import { taskColorOpacity } from "../../../shared/util/constants";
-import { MESSAGES } from "../../../shared/util/messages";
-import { formatDateTimeShort } from "../../../shared/util/dateTime";
+
+import { client } from "../../../api/client";
+import { selectUserState, selectLookupListsState } from "../../../redux/store";
+import { IUserProfile } from "../../../interfaces/User.interfaces";
+import { formatErrorsToFormik } from "../../../util/errorsToFormik";
+import { usePermission } from "../../../hooks/usePermission";
+import { colorsMap, IColorMap } from "../../../util/colorsMap";
+import { taskColorOpacity } from "../../../util/constants";
+import { MESSAGES } from "../../../util/messages";
+import { formatDateTimeShort } from "../../../util/dateTime";
 
 interface Props {
   handleCloseFunction: () => void;
@@ -70,8 +68,7 @@ const MenuProps = {
   },
 };
 
-const TaskModifyDialog = (props: Props) => {
-  const navigate = useNavigate();
+const AddTaskDialog = (props: Props) => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -185,7 +182,6 @@ const TaskModifyDialog = (props: Props) => {
         .catch((e) => {
           console.log("could not find task" + taskId);
           enqueueSnackbar(`Error: Could not find task.`, { variant: "error" });
-          navigate("/tasks");
           handleCloseFunction();
         })
         .finally(() => {
@@ -198,7 +194,7 @@ const TaskModifyDialog = (props: Props) => {
       setInitialContent("");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleCloseFunction, navigate, taskId]);
+  }, [handleCloseFunction, taskId]);
 
   const handleSetColor = useCallback(
     (map: IColorMap) => {
@@ -425,4 +421,4 @@ const TaskModifyDialog = (props: Props) => {
   );
 };
 
-export default React.memo(TaskModifyDialog);
+export default React.memo(AddTaskDialog);

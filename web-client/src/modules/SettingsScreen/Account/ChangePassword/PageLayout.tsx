@@ -1,79 +1,20 @@
-import React, { useCallback, useState } from "react";
-import { useSnackbar } from "notistack";
-import { useSelector } from "react-redux";
+import React from "react";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import LoadingButton from "@mui/lab/LoadingButton";
 import Grid from "@mui/material/Grid";
-import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 
 import ResetWith2FA from "./ResetWith2FA";
 import ResetWithOldPassword from "./ResetWithOldPassword";
+import ButtonReset2FA from "./ButtonReset2FA";
+import ButtonResetPasswordEmail from "./ButtonResetPasswordEmail";
 import PageBlockItem from "../../../../shared/components/Layout/PageBlockItem";
-
-import { selectUserState } from "../../../../shared/redux/store";
-import { client } from "../../../../shared/api/client";
-import { MESSAGES } from "../../../../shared/util/messages";
 
 const PageLayout = () => {
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { enqueueSnackbar } = useSnackbar();
-  const applicationProfile = useSelector(selectUserState);
-
-  const [isSendingEmailStrategy, setIsSendingEmailStrategy] = useState(false);
-  const handleSendEmailStrategy = useCallback(() => {
-    setIsSendingEmailStrategy(true);
-    const currentHost = window.location.protocol + "//" + window.location.host;
-    const confirmationPath = "/forgot-password/";
-
-    const bodyPayload = { email: applicationProfile.userProfile?.email, host: currentHost, path: confirmationPath };
-
-    client
-      .post("/Users/ResetPassword/RequestEmail", bodyPayload)
-      .then((res) => {
-        if (res.status === 200) {
-          enqueueSnackbar("Success: Reset link has been sent to your email", { variant: "success" });
-        } else {
-          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
-        }
-      })
-      .catch((e) => {
-        enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
-      })
-      .finally(() => {
-        setIsSendingEmailStrategy(false);
-      });
-  }, [applicationProfile.userProfile?.email, enqueueSnackbar]);
-
-  const [isSending2faEmailStrategy, setIsSending2faEmailStrategy] = useState(false);
-  const handleSend2faEmailStrategy = useCallback(() => {
-    setIsSending2faEmailStrategy(true);
-    const currentHost = window.location.protocol + "//" + window.location.host;
-    const confirmationPath = "/reset-2fa/";
-
-    const bodyPayload = { userId: applicationProfile.userProfile?.userId, host: currentHost, path: confirmationPath };
-
-    client
-      .post("/Users/Reset2FA/RequestEmail", bodyPayload)
-      .then((res) => {
-        if (res.status === 200) {
-          enqueueSnackbar("Success: Reset link has been sent to your email", { variant: "success" });
-        } else {
-          enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
-        }
-      })
-      .catch((e) => {
-        enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
-      })
-      .finally(() => {
-        setIsSending2faEmailStrategy(false);
-      });
-  }, [applicationProfile.userProfile?.userId, enqueueSnackbar]);
 
   return (
     <Box>
@@ -96,35 +37,14 @@ const PageLayout = () => {
         </Box>
         <Box
           sx={{
-            // flexGrow: 1,
             width: isOnMobile ? "100%" : "auto",
             display: "inline-flex",
             gap: "1rem",
             flexDirection: isOnMobile ? "column" : "row",
-            // "& > *": { flexGrow: 1 },
           }}
         >
-          <LoadingButton
-            disableElevation={false}
-            variant="contained"
-            color="secondary"
-            startIcon={<QrCodeScannerIcon />}
-            size="large"
-            onClick={handleSend2faEmailStrategy}
-            loading={isSending2faEmailStrategy}
-          >
-            Reset 2FA
-          </LoadingButton>
-          <LoadingButton
-            disableElevation={false}
-            variant="contained"
-            startIcon={<MarkEmailReadIcon />}
-            size="large"
-            onClick={handleSendEmailStrategy}
-            loading={isSendingEmailStrategy}
-          >
-            Via E-Mail
-          </LoadingButton>
+          <ButtonReset2FA />
+          <ButtonResetPasswordEmail />
         </Box>
       </Box>
       <Grid container spacing={1}>
@@ -143,4 +63,4 @@ const PageLayout = () => {
   );
 };
 
-export default PageLayout;
+export default React.memo(PageLayout);

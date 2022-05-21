@@ -18,10 +18,10 @@ const DeleteConfirmationDialog = (props: IProps) => {
 
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth>
-      <DialogHeaderClose title="Are you sure?" onClose={handleClose} />
+      <DialogHeaderClose title="Delete company team" onClose={handleClose} startIconMode="delete-icon" />
       <DialogContent>
-        <DialogContentText sx={{ mt: 3 }}>
-          This is a permanent deletion, are you sure you want to proceed.
+        <DialogContentText sx={{ mt: 1 }}>
+          This is a permanent deletion, are you sure you want to proceed and delete this team within your company?
         </DialogContentText>
       </DialogContent>
       <DialogBigButtonFooter submitButtonText="YES, DELETE THIS TEAM" onSubmit={handleAccept} color="error" />

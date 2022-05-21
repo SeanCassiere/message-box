@@ -15,8 +15,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 import EventIcon from "@mui/icons-material/Event";
 
-import EventFormDialog from "./EventFormDialog";
-import CalendarSchedular from "./SchedularWidget";
+import AddCalendarEventDialog from "../../shared/components/Dialogs/AddCalendarEventDialog";
+import CalendarSchedularComponent from "../../shared/components/Calendar/CalendarSchedularComponent";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import DeleteEventConfirmationDialog from "./DeleteEventConfirmationDialog";
 import TextField from "../../shared/components/Form/TextField";
@@ -212,6 +212,13 @@ const CalendarScreen = () => {
     [usersList]
   );
 
+  const handleDoubleClickAppointment = React.useCallback(
+    (eventId: string) => {
+      navigate(`/calendar/${eventId}`);
+    },
+    [navigate]
+  );
+
   const handleEditPatchAppointment = useCallback(
     ({ id, startDate, endDate }: { id: string; startDate: string; endDate: string }) => {
       const withoutEventList = fetchedCalendarEvents.filter((e) => e.id !== id);
@@ -253,7 +260,7 @@ const CalendarScreen = () => {
 
   return (
     <>
-      <EventFormDialog
+      <AddCalendarEventDialog
         eventId={eventEditId}
         ownerId={userProfile?.userId ?? ""}
         showDialog={showEditOverlay}
@@ -319,11 +326,12 @@ const CalendarScreen = () => {
             </Stack>
           </Grid>
         </Grid>
-        <CalendarSchedular
+        <CalendarSchedularComponent
           calendarViewingDate={calendarDate}
           setCalendarViewName={handleChangeViewName}
           setCalendarViewingDate={handleSetCalendarDate}
           handlePatchAppointment={handleEditPatchAppointment}
+          handleDoubleClickAppointment={handleDoubleClickAppointment}
           viewName={calendarViewName}
           calendarEvents={eventsForSchedular}
           isCalendarLoading={eventsAreLoading}

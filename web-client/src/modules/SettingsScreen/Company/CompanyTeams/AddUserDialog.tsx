@@ -71,7 +71,7 @@ interface IProps {
 
 const ROOT_NAME = "user-created-";
 
-const EditUserDialog = (props: IProps) => {
+const AddUserDialog = (props: IProps) => {
   const { handleClose, handleRefreshList, showDialog, teamId } = props;
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
@@ -223,7 +223,11 @@ const EditUserDialog = (props: IProps) => {
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <form onSubmit={formik.handleSubmit}>
-        <DialogHeaderClose title={`${teamId ? "Edit" : "New"} Team`} onClose={handleClose} />
+        <DialogHeaderClose
+          title={`${teamId ? "Edit" : "New"} Team`}
+          onClose={handleClose}
+          startIconMode={teamId ? "edit-icon" : "add-icon"}
+        />
         <DialogContent>
           <Grid container spacing={1}>
             <Grid item xs={12}>
@@ -323,4 +327,4 @@ const EditUserDialog = (props: IProps) => {
   );
 };
 
-export default EditUserDialog;
+export default AddUserDialog;

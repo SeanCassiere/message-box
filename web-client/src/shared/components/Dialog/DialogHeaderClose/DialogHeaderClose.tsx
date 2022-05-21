@@ -1,24 +1,56 @@
 import React from "react";
 
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
+import { grey } from "@mui/material/colors";
 
 import CloseIcon from "@mui/icons-material/Close";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import QRCodeIcon from "@mui/icons-material/QrCode";
+import PhoneIcon from "@mui/icons-material/PhoneIphone";
+import PasswordIcon from "@mui/icons-material/Password";
+
+const TEXT_COLOR = grey[700];
+
+const commonIconProps = {
+  style: {
+    marginRight: "5px",
+    fontSize: "1.2rem",
+  },
+};
+
+type StartIconModes = "add-icon" | "edit-icon" | "delete-icon" | "qrcode-icon" | "phone-icon" | "password-icon";
 
 interface Props {
   title: string;
   onClose?: () => void;
+  startIconMode?: StartIconModes;
 }
-
-const TEXT_COLOR = "whitesmoke";
 
 const DialogHeaderClose = (props: Props) => {
   return (
-    <DialogTitle sx={{ bgcolor: "primary.main", color: TEXT_COLOR }}>
-      <Stack flexDirection="row">
-        <Box flexGrow={1}>{props?.title}</Box>
+    <DialogTitle
+      sx={{
+        color: TEXT_COLOR,
+      }}
+    >
+      <Stack flexDirection="row" alignItems="center" gap={1}>
+        {props?.startIconMode === "add-icon" && <AddOutlinedIcon {...commonIconProps} />}
+        {props?.startIconMode === "edit-icon" && <EditIcon {...commonIconProps} />}
+        {props?.startIconMode === "delete-icon" && <DeleteIcon {...commonIconProps} />}
+        {props?.startIconMode === "qrcode-icon" && <QRCodeIcon {...commonIconProps} />}
+        {props?.startIconMode === "phone-icon" && <PhoneIcon {...commonIconProps} />}
+        {props?.startIconMode === "password-icon" && <PasswordIcon {...commonIconProps} />}
+        <Box flexGrow={1}>
+          <Typography fontSize={18} fontWeight={500}>
+            {props?.title}
+          </Typography>
+        </Box>
         {props.onClose && (
           <>
             <IconButton aria-label="Close" onClick={props.onClose} size="small" onMouseDown={props.onClose}>

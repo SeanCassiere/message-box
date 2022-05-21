@@ -10,7 +10,7 @@ import Stack from "@mui/material/Stack";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import ChatContentPane from "./ChatContentPane";
 import SelectChat from "./SelectChat";
-import EditChatRoomDialog from "./EditChatRoomDialog";
+import AddChatRoomDialog from "./AddChatRoomDialog";
 
 import { selectUserState } from "../../shared/redux/store";
 import { client } from "../../shared/api/client";
@@ -86,7 +86,7 @@ const ChatScreen = () => {
 
   return (
     <>
-      <EditChatRoomDialog
+      <AddChatRoomDialog
         roomId={showEditId}
         currentUserId={userProfile?.userId || "NOT"}
         showDialog={showEditDialog}

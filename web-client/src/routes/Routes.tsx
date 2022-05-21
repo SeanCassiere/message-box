@@ -11,6 +11,7 @@ import LogoutScreen from "../modules/LogoutScreen";
 import LoginScreen from "../modules/LoginScreen";
 import SuspenseLoadingWrapper from "../shared/components/SuspenseLoadingWrapper";
 
+const DashboardScreen = React.lazy(() => import("../modules/DashboardScreen"));
 const ChatScreen = React.lazy(() => import("../modules/ChatScreen"));
 const TasksScreen = React.lazy(() => import("../modules/TasksScreen"));
 const ReportsScreen = React.lazy(() => import("../modules/ReportsScreen"));
@@ -33,6 +34,10 @@ const AppRoutes = () => {
               <Route path="view/:id" element={<TasksScreen />} />
               <Route path=":tab" element={<TasksScreen />} />
             </Route>
+          </Route>
+
+          <Route element={<RequirePermission requiredPermission="dashboard:read" />}>
+            <Route path="dashboard" element={<DashboardScreen />}></Route>
           </Route>
 
           <Route element={<RequirePermission requiredPermission="team-activity:read" />}>

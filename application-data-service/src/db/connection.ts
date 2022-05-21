@@ -7,6 +7,7 @@ import CalendarEventShareMapping from "./entities/CalendarEventShareMappings";
 import ChatMessage from "./entities/ChatMessage";
 import ChatRoom from "./entities/ChatRoom";
 import ChatRoomUserMapping from "./entities/ChatRoomUserMappings";
+import DashboardWidget from "./entities/DashboardWidget";
 import Task from "./entities/Task";
 import TaskShareMapping from "./entities/TaskShareMappings";
 
@@ -29,6 +30,7 @@ export async function initConnection(retries = 5) {
           ChatRoom,
           ChatRoomUserMapping,
           ChatMessage,
+          DashboardWidget,
         ],
         type: "postgres",
         url: process.env.APPLICATION_DATA_SERVICE_DB_URL,

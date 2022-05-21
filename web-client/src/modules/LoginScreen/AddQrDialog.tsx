@@ -28,9 +28,9 @@ const AddQrDialog = (props: IProps) => {
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown>
       <Box component="form" onSubmit={formik.handleSubmit}>
-        <DialogHeaderClose title="SET-UP TWO-FACTOR AUTHENTICATION" onClose={handleClose} />
+        <DialogHeaderClose title="SET-UP TWO-FACTOR AUTHENTICATION" onClose={handleClose} startIconMode="qrcode-icon" />
         <DialogContent>
-          <DialogContentText sx={{ mt: 3 }}>
+          <DialogContentText sx={{ mt: 1 }}>
             This account does not have two-factor authentication configured.
           </DialogContentText>
           <DialogContentText sx={{ mt: 3, textAlign: "center" }}>

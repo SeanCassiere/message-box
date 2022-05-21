@@ -16,21 +16,25 @@ calendarEventRouter
     const request = req as CustomRequest<{}>;
 
     let startDate;
-    if (typeof req.query.startDate === "string") {
-      startDate = req.query.startDate;
+    if (typeof req?.query?.startDate === "string") {
+      startDate = req?.query?.startDate;
+    } else if (typeof req?.query?.startDate === "object") {
+      startDate = Array.from(req?.query?.startDate as any)[0];
     } else {
-      startDate = Array.from(req.query.startDate as any)[0];
+      startDate = new Date().toISOString();
     }
 
     let endDate;
-    if (typeof req.query.endDate === "string") {
-      endDate = req.query.endDate;
+    if (typeof req?.query?.endDate === "string") {
+      endDate = req?.query?.endDate;
+    } else if (typeof req?.query?.endDate === "object") {
+      endDate = Array.from(req?.query?.endDate as any)[0];
     } else {
-      endDate = Array.from(req.query.endDate as any)[0];
+      endDate = new Date().toISOString();
     }
 
     let queryOwnerId: string | null = null;
-    if (req.query.ownerId) {
+    if (req?.query?.ownerId) {
       if (typeof req.query.ownerId === "string") {
         queryOwnerId = req.query.ownerId;
       } else {

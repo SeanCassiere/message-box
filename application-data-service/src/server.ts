@@ -8,15 +8,18 @@ import { getTaskById } from "./controllers/tasks/getTaskById";
 import { deleteTaskById } from "./controllers/tasks/deleteTaskById";
 import { updateTaskById } from "./controllers/tasks/updateTaskById";
 
+import { createActivityLog } from "./controllers/activity/createActivityLog";
+
 import { createCalendarEventForUser } from "./controllers/calendar/createCalendarEventForUser";
 import { getCalendarEventsForUser } from "./controllers/calendar/getCalendarEventsForUser";
 import { deleteCalendarEventById } from "./controllers/calendar/deleteCalendarEventById";
 import { getCalendarEventById } from "./controllers/calendar/getCalendarEventById";
 import { fullUpdateCalendarEventById } from "./controllers/calendar/fullUpdateCalendarEventById";
 import { patchCalendarEventDetailsById } from "./controllers/calendar/patchCalendarEventDetailsById";
+
 import { getReportsForClient } from "./controllers/reports/getReportsForClient";
-import { createActivityLog } from "./controllers/activity/createActivityLog";
 import { runReportForClient } from "./controllers/reports/runReportForClient";
+
 import { createChatRoomForUser } from "./controllers/chat/createChatRoomForUser";
 import { getSingleChatRoomForUser } from "./controllers/chat/getSingleChatRoomForUser";
 import { getAllChatRoomsForUser } from "./controllers/chat/getAllChatRoomsForUser";
@@ -24,6 +27,13 @@ import { deleteChatRoomForRoomId } from "./controllers/chat/deleteChatRoomForRoo
 import { updateChatRoomForRoomId } from "./controllers/chat/updateChatRoomForRoomId";
 import { getMessagesForRoomById } from "./controllers/chat/getMessagesForRoomById";
 import { createMessageForChatRoom } from "./controllers/chat/createMessageForChatRoom";
+
+import { getWidgetsForUser } from "./controllers/dashboard/getWidgetsForUser";
+import { deleteWidgetById } from "./controllers/dashboard/deleteWidgetById";
+import { createWidgetForUser } from "./controllers/dashboard/createWidgetForUser";
+import { patchWidgetPositions } from "./controllers/dashboard/patchWidgetPositions";
+
+import { getEmployeeTaskCompletion } from "./controllers/statistics/getEmployeeTaskCompletion";
 
 const expressApp = express();
 
@@ -68,5 +78,17 @@ expressApp.post("/chat/getMessagesForRoomById", getMessagesForRoomById);
 expressApp.post("/chat/createMessageForChatRoom", createMessageForChatRoom);
 
 expressApp.post("/activity/createActivityLog", createActivityLog);
+
+/**
+ * All dashboard related routes
+ */
+expressApp.post("/dashboard/getWidgetsForUser", getWidgetsForUser);
+expressApp.post("/dashboard/deleteWidgetById", deleteWidgetById);
+expressApp.post("/dashboard/createWidgetForUser", createWidgetForUser);
+expressApp.post("/dashboard/patchWidgetPositions", patchWidgetPositions);
+/**
+ * All dashboard statistics routes
+ */
+expressApp.post("/statistics/getEmployeeTaskCompletion", getEmployeeTaskCompletion);
 
 export default expressApp;

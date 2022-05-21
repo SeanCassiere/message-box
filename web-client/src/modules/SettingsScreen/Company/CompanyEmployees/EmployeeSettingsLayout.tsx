@@ -11,7 +11,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 
 import ViewTable from "./Table";
-import EditUserDialog from "./EditUserDialog";
+import AddUserDialog from "./AddUserDialog";
 
 import { selectLookupListsState } from "../../../../shared/redux/store";
 import { IRoleProfile, ITeamProfile } from "../../../../shared/interfaces/Client.interfaces";
@@ -130,7 +130,7 @@ const Layout = () => {
 
   return (
     <>
-      <EditUserDialog
+      <AddUserDialog
         handleClose={handleCloseEditor}
         handleRefreshList={refreshListItems}
         showDialog={openEditDrawer}

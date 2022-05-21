@@ -25,25 +25,20 @@ import {
 import Paper from "@mui/material/Paper";
 import { useSelector } from "react-redux";
 
-import DateNavigatorOpenButtonComponent from "../../shared/components/Calendar/DateNavigatorOpenButtonComponent";
-import ViewSwitcherComponent from "../../shared/components/Calendar/ViewSwitcherComponent";
-import ToolbarWithLoading from "../../shared/components/Calendar/ToolbarWithLoading";
-import AppointmentTooltipHeaderComponent from "../../shared/components/Calendar/AppointmentTooltipHeaderComponent";
-import AppointmentComponent from "../../shared/components/Calendar/AppointmentComponent";
-import AppointmentContentComponent from "../../shared/components/Calendar/AppointmentContentComponent";
-import {
-  MonthViewTimeTableCell,
-  WeekViewTimeTableCell,
-  AllDayViewCell,
-  DayViewTimeTableCell,
-} from "../../shared/components/Calendar/TimeTableCell";
+import DateNavigatorOpenButtonComponent from "./DateNavigatorOpenButtonComponent";
+import ViewSwitcherComponent from "./ViewSwitcherComponent";
+import ToolbarWithLoading from "./ToolbarWithLoading";
+import AppointmentTooltipHeaderComponent from "./AppointmentTooltipHeaderComponent";
+import AppointmentComponent from "./AppointmentComponent";
+import AppointmentContentComponent from "./AppointmentContentComponent";
+import { MonthViewTimeTableCell, WeekViewTimeTableCell, AllDayViewCell, DayViewTimeTableCell } from "./TimeTableCell";
 
-import { ICalendarEventBase } from "../../shared/interfaces/CalendarEvent.interfaces";
-import { resources } from "../../shared/components/Calendar/common";
-import { COMMON_ITEM_BORDER_STYLING } from "../../shared/util/constants";
-import { selectUserState } from "../../shared/redux/store";
+import { ICalendarEventBase } from "../../interfaces/CalendarEvent.interfaces";
+import { resources } from "./common";
+import { COMMON_ITEM_BORDER_STYLING } from "../../util/constants";
+import { selectUserState } from "../../redux/store";
 
-interface LOCAL_ChangesSet {
+interface ICalendarPatchChanges {
   added?: {
     [key: string]: any;
   };
@@ -54,32 +49,27 @@ interface LOCAL_ChangesSet {
 }
 
 interface ICustomCalendarSchedularProps {
-  maxHeight?: number;
-  isCalendarLoading: boolean;
-  calendarEvents: ICalendarEventBase[];
   viewName: string;
-  openDeleteOverlay?: (id: string | null) => void;
   calendarViewingDate: Date;
-  setCalendarViewingDate: (date: Date, viewName: string) => void;
-  setCalendarViewName: (viewName: string) => void;
+  calendarEvents: ICalendarEventBase[];
+  isCalendarLoading: boolean;
+  handleDoubleClickAppointment: (eventId: string) => void;
   handlePatchAppointment: ({ id, startDate, endDate }: { id: string; startDate: string; endDate: string }) => void;
+  setCalendarViewingDate: (date: Date, viewName: string) => void;
+
+  setCalendarViewName?: (viewName: string) => void;
+  openDeleteOverlay?: (id: string | null) => void;
+  maxHeight?: number;
+  turnOffViewSwitching?: boolean;
 }
 
-const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
-  const navigate = useNavigate();
+const CalendarSchedularComponent = (parentProps: ICustomCalendarSchedularProps) => {
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { userProfile } = useSelector(selectUserState);
 
-  const handleDoubleClickOnAppointment = useCallback(
-    (eventId: string) => {
-      navigate(`/calendar/${eventId}`);
-    },
-    [navigate]
-  );
-
   const handlePatchingAppointment = useCallback(
-    (changeSet: LOCAL_ChangesSet) => {
+    (changeSet: ICalendarPatchChanges) => {
       if (changeSet.changed) {
         const changedItems = Array.from(Object.entries(changeSet.changed));
 
@@ -136,14 +126,17 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
         <MonthView timeTableCellComponent={MonthViewTimeTableCell} />
         <Appointments
           appointmentComponent={(compProps) => (
-            <AppointmentComponent {...compProps} handleAppointmentDoubleClick={handleDoubleClickOnAppointment} />
+            <AppointmentComponent
+              {...compProps}
+              handleAppointmentDoubleClick={parentProps.handleDoubleClickAppointment}
+            />
           )}
           appointmentContentComponent={AppointmentContentComponent}
         />
         <Resources data={resources} />
         <Toolbar {...(parentProps.isCalendarLoading ? { rootComponent: ToolbarWithLoading } : null)} />
         {!isOnMobile && <DateNavigator openButtonComponent={DateNavigatorOpenButtonComponent} />}
-        <ViewSwitcher switcherComponent={ViewSwitcherComponent} />
+        {!parentProps.turnOffViewSwitching && <ViewSwitcher switcherComponent={ViewSwitcherComponent} />}
         <TodayButton />
         <AppointmentTooltip
           showOpenButton
@@ -153,7 +146,7 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
             <AppointmentTooltipHeaderComponent
               {...props}
               openDeleteOverlay={parentProps.openDeleteOverlay}
-              customOnOpenClose={handleDoubleClickOnAppointment}
+              customOnOpenClose={parentProps.handleDoubleClickAppointment}
             />
           )}
         />
@@ -171,4 +164,4 @@ const CalendarSchedular = (parentProps: ICustomCalendarSchedularProps) => {
   );
 };
 
-export default memo(CalendarSchedular);
+export default memo(CalendarSchedularComponent);

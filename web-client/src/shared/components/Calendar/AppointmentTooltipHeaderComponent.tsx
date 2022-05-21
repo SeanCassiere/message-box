@@ -44,13 +44,14 @@ const AppointmentTooltipHeaderComponent = (
       <Grid container spacing={1} justifyContent="end">
         <Grid item>{props.showOpenButton && <CommandButton id="open" onExecute={openClose} />}</Grid>
         <Grid item>
-          {hasAdminAccess ? (
+          {hasAdminAccess && props.openDeleteOverlay ? (
             <CommandButton id="delete" onExecute={openDelete} />
           ) : (
             <>
-              {hasDeleteAccess && props.appointmentData?.ownerId === userProfile?.userId && props.showDeleteButton && (
-                <CommandButton id="delete" onExecute={openDelete} />
-              )}
+              {hasDeleteAccess &&
+                props.appointmentData?.ownerId === userProfile?.userId &&
+                props.showDeleteButton &&
+                props.openDeleteOverlay && <CommandButton id="delete" onExecute={openDelete} />}
             </>
           )}
         </Grid>

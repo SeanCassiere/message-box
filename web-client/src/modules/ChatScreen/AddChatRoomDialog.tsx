@@ -52,7 +52,7 @@ interface IProps {
   showDialog: boolean;
 }
 
-const EditChatRoomDialog = (props: IProps) => {
+const AddChatRoomDialog = (props: IProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { usersList } = useSelector(selectLookupListsState);
   const theme = useTheme();
@@ -145,12 +145,16 @@ const EditChatRoomDialog = (props: IProps) => {
       fullScreen={isOnMobile}
     >
       <Box component="form" onSubmit={formik.handleSubmit}>
-        <DialogHeaderClose title={`${props.roomId === "NOT" ? "New" : "Edit"} chat`} onClose={passThroughClose} />
+        <DialogHeaderClose
+          title={`${props.roomId === "NOT" ? "New" : "Edit"} chat`}
+          onClose={passThroughClose}
+          startIconMode={props.roomId === "NOT" ? "add-icon" : "edit-icon"}
+        />
         <DialogContent>
-          <Grid container spacing={2} sx={{ mt: 0 }}>
+          <Grid container spacing={2} sx={{ mt: -2 }}>
             <Grid item xs={12}>
               <TextField
-                margin="normal"
+                margin="dense"
                 fullWidth
                 label={formik.values.roomType === "private" ? "Conversation name" : "Chat name"}
                 id="roomName"
@@ -244,4 +248,4 @@ const EditChatRoomDialog = (props: IProps) => {
   );
 };
 
-export default EditChatRoomDialog;
+export default AddChatRoomDialog;

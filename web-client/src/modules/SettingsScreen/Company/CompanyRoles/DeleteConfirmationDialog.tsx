@@ -18,10 +18,10 @@ const DeleteConfirmationDialog = (props: IProps) => {
 
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth>
-      <DialogHeaderClose title="Are you sure?" onClose={handleClose} />
+      <DialogHeaderClose title="Delete user access role" onClose={handleClose} startIconMode="delete-icon" />
       <DialogContent>
-        <DialogContentText sx={{ mt: 3 }}>
-          This is a permanent deletion, are you sure you want to proceed.
+        <DialogContentText sx={{ mt: 1 }}>
+          This is a permanent deletion, are you sure you want to proceed and delete this user access role?
         </DialogContentText>
       </DialogContent>
       <DialogBigButtonFooter submitButtonText="YES, DELETE THIS USER ROLE" onSubmit={handleAccept} color="error" />

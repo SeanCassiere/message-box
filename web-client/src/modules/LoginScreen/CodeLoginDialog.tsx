@@ -61,9 +61,9 @@ const CodeLoginDialog = (props: IProps) => {
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullScreen={isOnMobile}>
       <Box component="form" onSubmit={formik.handleSubmit}>
-        <DialogHeaderClose title="Two-Factor Authentication" onClose={handleClose} />
+        <DialogHeaderClose title="Two-Factor Authentication" onClose={handleClose} startIconMode="phone-icon" />
         <DialogContent>
-          <DialogContentText sx={{ mt: 3 }}>Enter your two-factor authentication code.</DialogContentText>
+          <DialogContentText>Enter your two-factor authentication code.</DialogContentText>
           <TextField
             margin="normal"
             fullWidth
