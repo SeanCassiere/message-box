@@ -6,6 +6,8 @@ export function addPathsForWidgets(widgets: any[]) {
       widget.path = "/Dashboard/Statistics/EmployeeTaskCompletion";
     } else if (widget.widgetType === "MyCalendar") {
       widget.path = "/CalendarEvent";
+    } else if (widget.widgetType === "TeamCurrentActivity") {
+      widget.path = "/Teams";
     } else {
       widget.path = "/";
     }

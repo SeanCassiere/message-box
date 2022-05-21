@@ -13,6 +13,7 @@ import { IParsedWidgetOnDashboard } from "../../interfaces/Dashboard.interfaces"
 import MyTasksList from "./widgets/MyTasksList";
 import MyTasksCompletionChart from "./widgets/MyTasksCompletionChart";
 import MyCalendar from "./widgets/MyCalendar";
+import TeamCurrentActivity from "./widgets/TeamCurrentActivity";
 
 const NOT_DRAGGABLE_CLASS = "grid-not-draggable";
 
@@ -101,8 +102,10 @@ const RenderWidget = React.memo((props: IRenderWidgetProps) => {
       return <MyTasksCompletionChart widget={props.widget} />;
     case "MyCalendar":
       return <MyCalendar widget={props.widget} />;
+    case "TeamCurrentActivity":
+      return <TeamCurrentActivity widget={props.widget} />;
     default:
-      return <Box sx={{ mt: 1 }}>Widget view not built</Box>;
+      return <Box sx={{ mt: 1 }}>Widget view not built for {props.widget.widgetType}</Box>;
   }
 });
 

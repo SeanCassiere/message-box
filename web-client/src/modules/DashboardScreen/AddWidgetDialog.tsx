@@ -73,7 +73,7 @@ interface IProps {
 const AddWidgetDialog = (props: IProps) => {
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { usersList } = useSelector(selectLookupListsState);
+  const { usersList, teamsList } = useSelector(selectLookupListsState);
 
   const { enqueueSnackbar } = useSnackbar();
   const [pageMode, setPageMode] = React.useState(0);
@@ -351,14 +351,33 @@ const AddWidgetDialog = (props: IProps) => {
                           }
                         }
 
+                        if (optDTO.clientFill === "user-participating-team-names") {
+                          const team = teamsList.find((t) => t.teamId === option);
+                          if (team) {
+                            return `${team.teamName}`;
+                          } else {
+                            return "team not found";
+                          }
+                        }
+
                         return `${option}`;
                       }}
                       onChange={(evt, selectedValue) => {
                         if (!selectedValue) {
                           return;
                         }
+                        //
+                        if (optDTO.clientFill === "user-participating-team-names") {
+                          const team = teamsList.find((t) => t.teamId === selectedValue);
+                          if (team) {
+                            formik.setFieldValue("widgetName", `${team.teamName} team's current activity`);
+                          }
+                        }
+                        //
                         let allMandatoryParams = [...formik.values.config] as any[];
+
                         const paramIdx = allMandatoryParams.findIndex((p) => p.parameter === optDTO.parameter);
+
                         if (paramIdx > -1) {
                           allMandatoryParams[paramIdx].value = selectedValue;
                         }
@@ -390,6 +409,7 @@ const AddWidgetDialog = (props: IProps) => {
 
 function getOptionValuesForClientFillInstruction(instruction: string) {
   const reduxState = store.getState();
+
   switch (instruction.toLowerCase()) {
     case "task-for-time-periods":
       return ["Today", "Tomorrow", "Overdue"];
@@ -400,6 +420,9 @@ function getOptionValuesForClientFillInstruction(instruction: string) {
       return ["Week", "Month"];
     case "calendar-view-names":
       return ["Day", "3-days", "Week"];
+    case "user-participating-team-names":
+      const teams = reduxState?.user?.userProfile?.teams;
+      return teams ?? [];
     default:
       return [];
   }
