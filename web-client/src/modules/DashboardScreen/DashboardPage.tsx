@@ -310,7 +310,7 @@ const DashboardPage = () => {
                   layouts={layouts ?? undefined}
                   breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                   preventCollision={false}
-                  cols={{ lg: 12, md: 12, sm: 8, xs: 4, xxs: 4 }}
+                  cols={{ lg: 12, md: 12, sm: 12, xs: 3, xxs: 3 }}
                   autoSize={true}
                   containerPadding={[0, 0]}
                   rowHeight={MIN_DASHBOARD_WIDGET_HEIGHT}
