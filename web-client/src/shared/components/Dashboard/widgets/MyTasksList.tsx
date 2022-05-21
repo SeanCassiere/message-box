@@ -11,7 +11,7 @@ import FlagCircleIcon from "@mui/icons-material/FlagCircle";
 import { IParsedWidgetOnDashboard } from "../../../interfaces/Dashboard.interfaces";
 import { ITask } from "../../../interfaces/Task.interfaces";
 import { client } from "../../../api/client";
-import { parseDynamicParameterForTasks } from "../helpers/task.helpers";
+import { parseDynamicParameters } from "../widget.helpers";
 import { stateOpenAddTaskDialog } from "../../../redux/slices/dynamicDialog/dynamicDialogSlice";
 
 const COMMON_ICON_STYLE = { color: "secondary.200", fontSize: "1.2rem", m: 0, p: 0, mb: -0.5 };
@@ -20,7 +20,7 @@ interface IProps {
   widget: IParsedWidgetOnDashboard;
 }
 
-const MyTasksWidgetView = (props: IProps) => {
+const MyTasksList = (props: IProps) => {
   const dispatch = useDispatch();
 
   const [data, setData] = React.useState<ITask[] | null>(null);
@@ -31,17 +31,24 @@ const MyTasksWidgetView = (props: IProps) => {
     }
 
     for (const dynamicParam of props.widget.variableOptions) {
-      const parsed = parseDynamicParameterForTasks(dynamicParam);
+      const parsed = parseDynamicParameters(dynamicParam);
       params.append(parsed.parameter, parsed.value);
     }
 
     const abortController = new AbortController();
 
-    client.get("/Tasks", { params, signal: abortController.signal }).then((res) => {
-      if (res.status === 200) {
-        setData(res.data);
-      }
-    });
+    client
+      .get("/Tasks", { params, signal: abortController.signal })
+      .then((res) => {
+        if (res.status === 200) {
+          setData(res.data);
+        }
+      })
+      .catch((err) => {
+        if (err?.message !== "canceled") {
+          console.log("Failed MyTasksListWidget", err);
+        }
+      });
 
     return () => {
       abortController.abort();
@@ -103,4 +110,4 @@ const MyTasksWidgetView = (props: IProps) => {
   );
 };
 
-export default MyTasksWidgetView;
+export default MyTasksList;

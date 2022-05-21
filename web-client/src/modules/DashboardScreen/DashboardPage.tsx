@@ -34,7 +34,7 @@ import { useSnackbar } from "notistack";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const ROW_LENGTH = 12;
-const NORMAL_WIDGET_MIN_HEIGHT = 200;
+export const MIN_DASHBOARD_WIDGET_HEIGHT = 200;
 
 const DashboardPage = () => {
   const theme = useTheme();
@@ -262,7 +262,7 @@ const DashboardPage = () => {
                       variant="rectangular"
                       animation="wave"
                       width={"100%"}
-                      height={NORMAL_WIDGET_MIN_HEIGHT * 2}
+                      height={MIN_DASHBOARD_WIDGET_HEIGHT * 2}
                       sx={{ bgcolor: "grey.100" }}
                     />
                   </Paper>
@@ -313,7 +313,7 @@ const DashboardPage = () => {
                   cols={{ lg: 12, md: 12, sm: 8, xs: 4, xxs: 4 }}
                   autoSize={true}
                   containerPadding={[0, 0]}
-                  rowHeight={NORMAL_WIDGET_MIN_HEIGHT}
+                  rowHeight={MIN_DASHBOARD_WIDGET_HEIGHT}
                   margin={{
                     lg: [20, 20],
                     md: [20, 20],

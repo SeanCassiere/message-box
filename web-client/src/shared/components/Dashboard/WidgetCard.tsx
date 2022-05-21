@@ -1,7 +1,6 @@
 import React from "react";
 
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 
@@ -11,7 +10,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { usePermission } from "../../hooks/usePermission";
 import { IParsedWidgetOnDashboard } from "../../interfaces/Dashboard.interfaces";
 
-import MyTasksWidgetView from "./Widgets/MyTasksWidgetView";
+import MyTasksList from "./widgets/MyTasksList";
+import MyTasksCompletionChart from "./widgets/MyTasksCompletionChart";
 
 const NOT_DRAGGABLE_CLASS = "grid-not-draggable";
 
@@ -90,9 +90,13 @@ interface IRenderWidgetProps {
 const RenderWidget = React.memo((props: IRenderWidgetProps) => {
   switch (props.widget.widgetType) {
     case "MyTasks":
-      return <MyTasksWidgetView widget={props.widget} />;
+      return <MyTasksList widget={props.widget} />;
     case "EmployeeTasks":
-      return <MyTasksWidgetView widget={props.widget} />;
+      return <MyTasksList widget={props.widget} />;
+    case "MyTasksCompletion":
+      return <MyTasksCompletionChart widget={props.widget} />;
+    case "EmployeeTasksCompletion":
+      return <MyTasksCompletionChart widget={props.widget} />;
     default:
       return <Box sx={{ mt: 1 }}>Widget view not built</Box>;
   }

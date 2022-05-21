@@ -1,6 +1,6 @@
-import { VariableConfigDTO } from "../../../interfaces/Dashboard.interfaces";
+import { VariableConfigDTO } from "../../interfaces/Dashboard.interfaces";
 
-export function parseDynamicParameterForTasks(dynamicParamDto: VariableConfigDTO) {
+export function parseDynamicParameters(dynamicParamDto: VariableConfigDTO) {
   let value = "";
 
   switch (dynamicParamDto.mode) {
