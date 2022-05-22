@@ -6,6 +6,12 @@ import classNames from "clsx";
 
 import { classes, isWeekEnd } from "./common";
 
+export type TypeFreeCellDoubleClickFunction = (
+  startDate: Date | undefined,
+  endDate: Date | undefined,
+  isAllDay: boolean
+) => void;
+
 /**
  * @description use for styling the time table cell in the month view
  */
@@ -21,30 +27,42 @@ const StyledMonthViewTimeTableCell = styled(MonthView.TimeTableCell)(({ theme: {
   },
 }));
 
-export const MonthViewTimeTableCell = memo(({ startDate, ...restProps }: MonthView.TimeTableCellProps) => {
-  const navigate = useNavigate();
+export const MonthViewTimeTableCell = memo(
+  ({
+    startDate,
+    overridingClickHandler,
+    ...restProps
+  }: MonthView.TimeTableCellProps & {
+    overridingClickHandler?: TypeFreeCellDoubleClickFunction;
+  }) => {
+    const navigate = useNavigate();
 
-  const customOnDoubleClick = () => {
-    navigate("/calendar/new", {
-      state: {
-        startDate: startDate,
-        endDate: restProps?.endDate,
-        isAllDay: true,
-      },
-    });
-  };
+    const customOnDoubleClick = () => {
+      if (overridingClickHandler) {
+        overridingClickHandler(startDate, restProps?.endDate, true);
+      } else {
+        navigate("/calendar/new", {
+          state: {
+            startDate: startDate,
+            endDate: restProps?.endDate,
+            isAllDay: true,
+          },
+        });
+      }
+    };
 
-  return (
-    <StyledMonthViewTimeTableCell
-      className={classNames({
-        [classes.weekEndCell]: isWeekEnd(startDate!),
-      })}
-      startDate={startDate}
-      {...restProps}
-      onDoubleClick={customOnDoubleClick}
-    />
-  );
-});
+    return (
+      <StyledMonthViewTimeTableCell
+        className={classNames({
+          [classes.weekEndCell]: isWeekEnd(startDate!),
+        })}
+        startDate={startDate}
+        {...restProps}
+        onDoubleClick={customOnDoubleClick}
+      />
+    );
+  }
+);
 
 /**
  * @description use for styling the time table cell in the week view
@@ -60,30 +78,43 @@ const StyledWeekViewTimeTableCell = styled(WeekView.TimeTableCell)(({ theme: { p
     },
   },
 }));
-export const WeekViewTimeTableCell = memo(({ startDate, onDoubleClick, ...restProps }: WeekView.TimeTableCellProps) => {
-  const navigate = useNavigate();
+export const WeekViewTimeTableCell = memo(
+  ({
+    startDate,
+    onDoubleClick,
+    overridingClickHandler,
+    ...restProps
+  }: WeekView.TimeTableCellProps & {
+    overridingClickHandler?: TypeFreeCellDoubleClickFunction;
+  }) => {
+    const navigate = useNavigate();
 
-  const customOnDoubleClick = () => {
-    navigate("/calendar/new", {
-      state: {
-        startDate: startDate,
-        endDate: restProps?.endDate,
-        isAllDay: false,
-      },
-    });
-  };
+    const customOnDoubleClick = () => {
+      if (overridingClickHandler) {
+        overridingClickHandler(startDate, restProps?.endDate, false);
+      } else {
+        navigate("/calendar/new", {
+          state: {
+            startDate: startDate,
+            endDate: restProps?.endDate,
+            isAllDay: false,
+          },
+        });
+      }
+    };
 
-  return (
-    <StyledWeekViewTimeTableCell
-      className={classNames({
-        [classes.weekEndCell]: isWeekEnd(startDate!),
-      })}
-      onDoubleClick={customOnDoubleClick}
-      startDate={startDate}
-      {...restProps}
-    />
-  );
-});
+    return (
+      <StyledWeekViewTimeTableCell
+        className={classNames({
+          [classes.weekEndCell]: isWeekEnd(startDate!),
+        })}
+        onDoubleClick={customOnDoubleClick}
+        startDate={startDate}
+        {...restProps}
+      />
+    );
+  }
+);
 
 /**
  * @description use for styling the cell in the all-day view
@@ -99,30 +130,42 @@ const StyledAllDayViewCell = styled(AllDayPanel.Cell)(({ theme: { palette } }) =
     },
   },
 }));
-export const AllDayViewCell = memo(({ startDate, ...restProps }: AllDayPanel.CellProps) => {
-  const navigate = useNavigate();
+export const AllDayViewCell = memo(
+  ({
+    startDate,
+    overridingClickHandler,
+    ...restProps
+  }: AllDayPanel.CellProps & {
+    overridingClickHandler?: TypeFreeCellDoubleClickFunction;
+  }) => {
+    const navigate = useNavigate();
 
-  const customOnDoubleClick = () => {
-    navigate("/calendar/new", {
-      state: {
-        startDate: startDate,
-        endDate: restProps?.endDate,
-        isAllDay: true,
-      },
-    });
-  };
+    const customOnDoubleClick = () => {
+      if (overridingClickHandler) {
+        overridingClickHandler(startDate, restProps?.endDate, true);
+      } else {
+        navigate("/calendar/new", {
+          state: {
+            startDate: startDate,
+            endDate: restProps?.endDate,
+            isAllDay: true,
+          },
+        });
+      }
+    };
 
-  return (
-    <StyledAllDayViewCell
-      className={classNames({
-        [classes.weekEndCell]: isWeekEnd(startDate!),
-      })}
-      startDate={startDate}
-      {...restProps}
-      onDoubleClick={customOnDoubleClick}
-    />
-  );
-});
+    return (
+      <StyledAllDayViewCell
+        className={classNames({
+          [classes.weekEndCell]: isWeekEnd(startDate!),
+        })}
+        startDate={startDate}
+        {...restProps}
+        onDoubleClick={customOnDoubleClick}
+      />
+    );
+  }
+);
 
 /**
  * @description use for styling the cell in the single-day view
@@ -138,27 +181,39 @@ const StyledDayViewTimeTableCell = styled(DayView.TimeTableCell)(({ theme: { pal
     },
   },
 }));
-export const DayViewTimeTableCell = memo(({ startDate, ...restProps }: DayView.TimeTableCellProps) => {
-  const navigate = useNavigate();
+export const DayViewTimeTableCell = memo(
+  ({
+    startDate,
+    overridingClickHandler,
+    ...restProps
+  }: DayView.TimeTableCellProps & {
+    overridingClickHandler?: TypeFreeCellDoubleClickFunction;
+  }) => {
+    const navigate = useNavigate();
 
-  const customOnDoubleClick = () => {
-    navigate("/calendar/new", {
-      state: {
-        startDate: startDate,
-        endDate: restProps?.endDate,
-        isAllDay: false,
-      },
-    });
-  };
+    const customOnDoubleClick = () => {
+      if (overridingClickHandler) {
+        overridingClickHandler(startDate, restProps?.endDate, false);
+      } else {
+        navigate("/calendar/new", {
+          state: {
+            startDate: startDate,
+            endDate: restProps?.endDate,
+            isAllDay: false,
+          },
+        });
+      }
+    };
 
-  return (
-    <StyledDayViewTimeTableCell
-      className={classNames({
-        [classes.weekEndCell]: isWeekEnd(startDate!),
-      })}
-      startDate={startDate}
-      {...restProps}
-      onDoubleClick={customOnDoubleClick}
-    />
-  );
-});
+    return (
+      <StyledDayViewTimeTableCell
+        className={classNames({
+          [classes.weekEndCell]: isWeekEnd(startDate!),
+        })}
+        startDate={startDate}
+        {...restProps}
+        onDoubleClick={customOnDoubleClick}
+      />
+    );
+  }
+);

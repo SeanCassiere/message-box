@@ -3,7 +3,6 @@ import React from "react";
 import { useFormik } from "formik";
 import { useTheme } from "@mui/material/styles";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as yup from "yup";
@@ -13,14 +12,8 @@ import Grid from "@mui/material/Grid";
 import DialogContent from "@mui/material/DialogContent";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Dialog from "@mui/material/Dialog";
-import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
-import DateTimePicker from "@mui/lab/DateTimePicker";
 import Autocomplete from "@mui/material/Autocomplete";
-import Chip from "@mui/material/Chip";
-import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 
 import ImageList from "@mui/material/ImageList";
@@ -29,7 +22,6 @@ import ImageListItemBar from "@mui/material/ImageListItemBar";
 import IconButton from "@mui/material/IconButton";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ListSubheader from "@mui/material/ListSubheader";
 
 import TextField from "../../shared/components/Form/TextField/TextField";
 import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
@@ -366,13 +358,48 @@ const AddWidgetDialog = (props: IProps) => {
                         if (!selectedValue) {
                           return;
                         }
-                        //
-                        if (optDTO.clientFill === "user-participating-team-names") {
+                        // setting the title field dynamically based on the selected value
+                        if (
+                          optDTO.clientFill === "user-participating-team-names" &&
+                          selectedCreatorOption.widgetType === "TeamCurrentActivity"
+                        ) {
                           const team = teamsList.find((t) => t.teamId === selectedValue);
                           if (team) {
                             formik.setFieldValue("widgetName", `${team.teamName} team's current activity`);
                           }
                         }
+
+                        if (optDTO.clientFill === "system-users") {
+                          if (selectedCreatorOption.widgetType === "EmployeeTasks") {
+                            const user = usersList.find((u) => u.userId === selectedValue);
+                            if (user) {
+                              formik.setFieldValue("widgetName", `${user.firstName}'s tasks`);
+                            }
+                          }
+                          if (selectedCreatorOption.widgetType === "EmployeeTasksCompletion") {
+                            const user = usersList.find((u) => u.userId === selectedValue);
+                            if (user) {
+                              formik.setFieldValue("widgetName", `${user.firstName}'s task completion`);
+                            }
+                          }
+                        }
+
+                        if (optDTO.clientFill === "calendar-view-names") {
+                          //
+                          if (selectedCreatorOption.widgetType === "MyCalendar") {
+                            if (selectedValue.toLowerCase() === "3-days") {
+                              formik.setFieldValue("widgetName", `My calendar for the next 3 days`);
+                            } else if (selectedValue.toLowerCase() === "day") {
+                              formik.setFieldValue("widgetName", `My calendar for today`);
+                            } else if (selectedValue.toLowerCase() === "week") {
+                              formik.setFieldValue("widgetName", `My calendar for this week`);
+                            } else {
+                              formik.setFieldValue("widgetName", `My calendar for this ${selectedValue}`);
+                            }
+                          }
+                          //
+                        }
+
                         //
                         let allMandatoryParams = [...formik.values.config] as any[];
 
@@ -389,7 +416,7 @@ const AddWidgetDialog = (props: IProps) => {
                           {...params}
                           label={optDTO.displayName}
                           name={optDTO.parameter}
-                          InputLabelProps={{ disableAnimation: false, shrink: undefined }}
+                          InputLabelProps={{ disableAnimation: false, shrink: undefined, required: false }}
                           fullWidth
                           required
                         />

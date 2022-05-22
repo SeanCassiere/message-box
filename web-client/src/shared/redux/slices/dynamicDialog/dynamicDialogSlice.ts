@@ -31,10 +31,24 @@ const dynamicDialogSlice = createSlice({
       state.referenceType = ADD_TASK_DIALOG;
       state.referenceId = action.payload.referenceId;
     },
-    stateOpenAddCalendarEventDialog: (state, action: PayloadAction<{ referenceId: string; currentUserId: string }>) => {
+    stateOpenAddCalendarEventDialog: (
+      state,
+      action: PayloadAction<{
+        referenceId: string;
+        currentUserId?: string;
+        startDate?: string;
+        endDate?: string;
+        isAllDay?: boolean;
+      }>
+    ) => {
       state.referenceType = ADD_CALENDAR_EVENT_DIALOG;
       state.referenceId = action.payload.referenceId;
-      state.config = { currentUserId: action.payload.currentUserId };
+      state.config = {
+        currentUserId: action.payload.currentUserId,
+        startDate: action.payload.startDate,
+        endDate: action.payload.endDate,
+        isAllDay: action.payload.isAllDay,
+      };
     },
     stateOpenChangePasswordDialog: (state, action: PayloadAction<{}>) => {
       state.referenceType = CHANGE_PASSWORD_DIALOG;

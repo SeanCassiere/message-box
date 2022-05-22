@@ -14,6 +14,7 @@ import { selectUserState } from "../../../redux/store";
 import { getDateRangeFromViewName } from "../../Calendar/common";
 import { remapCalendarEventsForApplication } from "../../../util/responseRemap";
 import { MESSAGES } from "../../../util/messages";
+import { TypeFreeCellDoubleClickFunction } from "../../Calendar/TimeTableCell";
 
 interface IProps {
   widget: IParsedWidgetOnDashboard;
@@ -122,6 +123,37 @@ const MyCalendar = (props: IProps) => {
     [enqueueSnackbar, events, fetchEvents, viewName, viewingDate]
   );
 
+  const handleDoubleClickFreeCell = React.useCallback<TypeFreeCellDoubleClickFunction>(
+    (startDate, endDate, isAllDay) => {
+      let starting;
+      let ending;
+      let allDay;
+      if (startDate !== undefined) {
+        starting = startDate?.toISOString();
+      }
+
+      if (endDate !== undefined) {
+        ending = endDate?.toISOString();
+      }
+
+      if (isAllDay !== undefined) {
+        allDay = isAllDay;
+      }
+      console.log({ starting, ending, allDay });
+
+      dispatch(
+        stateOpenAddCalendarEventDialog({
+          referenceId: "new",
+          currentUserId: userProfile?.userId,
+          startDate: starting,
+          endDate: ending,
+          isAllDay: allDay,
+        })
+      );
+    },
+    [dispatch, userProfile?.userId]
+  );
+
   return (
     <Box sx={{ mt: -1, ml: -1, height: "100%", width: "100%" }}>
       <CalendarSchedularComponent
@@ -131,6 +163,7 @@ const MyCalendar = (props: IProps) => {
         calendarEvents={events}
         isCalendarLoading={loadingEvents}
         handleDoubleClickAppointment={doubleClickAppointment}
+        handleDoubleClickFreeCell={handleDoubleClickFreeCell}
         handlePatchAppointment={patchAppointment}
         turnOffViewSwitching
       />

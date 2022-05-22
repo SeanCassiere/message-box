@@ -68,6 +68,8 @@ interface IProps {
   handleClose: () => void;
   handleRefreshList: () => void;
   showDialog: boolean;
+  startDate?: string;
+  endDate?: string;
 }
 
 const EventFormDialog = (props: IProps) => {
@@ -143,17 +145,19 @@ const EventFormDialog = (props: IProps) => {
     if (eventId.toLowerCase() === "new") {
       formik.resetForm();
 
+      const propsStartDate = props.startDate ? new Date(props.startDate) : new Date();
+      const propsEndDate = props.endDate ? new Date(props.endDate) : new Date();
+
       // getting from the navigation state
       const locationState = location as unknown as {
         state: { startDate?: string; endDate?: string; isAllDay?: boolean };
       };
 
-      const startDate = locationState?.state?.startDate ? new Date(locationState.state.startDate) : new Date();
+      const startDate = locationState?.state?.startDate ? new Date(locationState.state.startDate) : propsStartDate;
       formik.setFieldValue("originalStartDate", startDate);
       formik.setFieldValue("startDate", startDate);
 
-      // const endDate = new Date();
-      const endDate = locationState?.state?.endDate ? new Date(locationState.state.endDate) : new Date();
+      const endDate = locationState?.state?.endDate ? new Date(locationState.state.endDate) : propsEndDate;
       if (!locationState?.state?.endDate) {
         endDate.setHours(endDate.getHours() + DEFAULT_EVENT_GAP_HOURS);
       }

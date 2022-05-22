@@ -1,8 +1,7 @@
 // ref: https://devexpress.github.io/devextreme-reactive/react/scheduler/demos/featured/remote-data/
 // ref: https://devexpress.github.io/devextreme-reactive/react/scheduler/docs/guides/appointments/
-import React, { useCallback, memo } from "react";
+import React from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useNavigate } from "react-router-dom";
 import { ViewState, EditingState, IntegratedEditing } from "@devexpress/dx-react-scheduler";
 import { useTheme } from "@mui/material/styles";
 import {
@@ -31,7 +30,13 @@ import ToolbarWithLoading from "./ToolbarWithLoading";
 import AppointmentTooltipHeaderComponent from "./AppointmentTooltipHeaderComponent";
 import AppointmentComponent from "./AppointmentComponent";
 import AppointmentContentComponent from "./AppointmentContentComponent";
-import { MonthViewTimeTableCell, WeekViewTimeTableCell, AllDayViewCell, DayViewTimeTableCell } from "./TimeTableCell";
+import {
+  MonthViewTimeTableCell,
+  WeekViewTimeTableCell,
+  AllDayViewCell,
+  DayViewTimeTableCell,
+  TypeFreeCellDoubleClickFunction,
+} from "./TimeTableCell";
 
 import { ICalendarEventBase } from "../../interfaces/CalendarEvent.interfaces";
 import { resources } from "./common";
@@ -57,6 +62,7 @@ interface ICustomCalendarSchedularProps {
   handlePatchAppointment: ({ id, startDate, endDate }: { id: string; startDate: string; endDate: string }) => void;
   setCalendarViewingDate: (date: Date, viewName: string) => void;
 
+  handleDoubleClickFreeCell?: TypeFreeCellDoubleClickFunction;
   setCalendarViewName?: (viewName: string) => void;
   openDeleteOverlay?: (id: string | null) => void;
   maxHeight?: number;
@@ -68,7 +74,7 @@ const CalendarSchedularComponent = (parentProps: ICustomCalendarSchedularProps) 
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { userProfile } = useSelector(selectUserState);
 
-  const handlePatchingAppointment = useCallback(
+  const handlePatchingAppointment = React.useCallback(
     (changeSet: ICalendarPatchChanges) => {
       if (changeSet.changed) {
         const changedItems = Array.from(Object.entries(changeSet.changed));
@@ -87,7 +93,7 @@ const CalendarSchedularComponent = (parentProps: ICustomCalendarSchedularProps) 
     [parentProps]
   );
 
-  const canDrag = useCallback(
+  const canDrag = React.useCallback(
     (id: String) => {
       return userProfile?.userId === id;
     },
@@ -99,9 +105,9 @@ const CalendarSchedularComponent = (parentProps: ICustomCalendarSchedularProps) 
       elevation={0}
       sx={{
         height: parentProps.maxHeight || undefined,
-        border: COMMON_ITEM_BORDER_STYLING,
-        borderRadius: 1,
-        boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        // border: COMMON_ITEM_BORDER_STYLING,
+        // borderRadius: 1,
+        // boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
       }}
     >
       <Scheduler data={parentProps.calendarEvents} height="auto">
@@ -113,17 +119,39 @@ const CalendarSchedularComponent = (parentProps: ICustomCalendarSchedularProps) 
         />
         <EditingState onCommitChanges={handlePatchingAppointment} />
         <IntegratedEditing />
-        <DayView timeTableCellComponent={DayViewTimeTableCell} name="Day" displayName="One Day" cellDuration={60} />
         <DayView
-          timeTableCellComponent={DayViewTimeTableCell}
+          timeTableCellComponent={(props) => (
+            <DayViewTimeTableCell {...props} overridingClickHandler={parentProps.handleDoubleClickFreeCell} />
+          )}
+          name="Day"
+          displayName="One Day"
+          cellDuration={60}
+        />
+        <DayView
+          timeTableCellComponent={(props) => (
+            <DayViewTimeTableCell {...props} overridingClickHandler={parentProps.handleDoubleClickFreeCell} />
+          )}
           name="3-days"
           displayName="3 Days"
           intervalCount={3}
           cellDuration={60}
         />
-        <WeekView timeTableCellComponent={WeekViewTimeTableCell} cellDuration={60} />
-        <AllDayPanel cellComponent={AllDayViewCell} />
-        <MonthView timeTableCellComponent={MonthViewTimeTableCell} />
+        <WeekView
+          timeTableCellComponent={(props) => (
+            <WeekViewTimeTableCell {...props} overridingClickHandler={parentProps.handleDoubleClickFreeCell} />
+          )}
+          cellDuration={60}
+        />
+        <AllDayPanel
+          cellComponent={(props) => (
+            <AllDayViewCell {...props} overridingClickHandler={parentProps.handleDoubleClickFreeCell} />
+          )}
+        />
+        <MonthView
+          timeTableCellComponent={(props) => (
+            <MonthViewTimeTableCell {...props} overridingClickHandler={parentProps.handleDoubleClickFreeCell} />
+          )}
+        />
         <Appointments
           appointmentComponent={(compProps) => (
             <AppointmentComponent
@@ -164,4 +192,4 @@ const CalendarSchedularComponent = (parentProps: ICustomCalendarSchedularProps) 
   );
 };
 
-export default memo(CalendarSchedularComponent);
+export default React.memo(CalendarSchedularComponent);

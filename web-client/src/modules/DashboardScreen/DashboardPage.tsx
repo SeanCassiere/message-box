@@ -68,9 +68,9 @@ const DashboardPage = () => {
           x: w.position.x,
           y: w.position.y,
         }));
-        flushSync(() => {
-          setDashboardWidgets([]);
-        });
+        // flushSync(() => {
+        //   setDashboardWidgets([]);
+        // });
 
         setDashboardWidgets(parsedWidgets);
       })
