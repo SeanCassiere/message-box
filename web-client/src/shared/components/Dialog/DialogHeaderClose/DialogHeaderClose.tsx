@@ -37,6 +37,7 @@ const DialogHeaderClose = (props: Props) => {
     <DialogTitle
       sx={{
         color: TEXT_COLOR,
+        borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
       }}
     >
       <Stack flexDirection="row" alignItems="center" gap={1}>

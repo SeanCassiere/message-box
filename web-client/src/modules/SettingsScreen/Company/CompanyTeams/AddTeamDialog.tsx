@@ -71,7 +71,7 @@ interface IProps {
 
 const ROOT_NAME = "user-created-";
 
-const AddUserDialog = (props: IProps) => {
+const AddTeamDialog = (props: IProps) => {
   const { handleClose, handleRefreshList, showDialog, teamId } = props;
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
@@ -229,7 +229,7 @@ const AddUserDialog = (props: IProps) => {
           startIconMode={teamId ? "edit-icon" : "add-icon"}
         />
         <DialogContent>
-          <Grid container spacing={1}>
+          <Grid container spacing={1} sx={{ mt: 0 }}>
             <Grid item xs={12}>
               <TextField
                 margin="normal"
@@ -245,6 +245,7 @@ const AddUserDialog = (props: IProps) => {
                 helperText={formik.touched.teamName && formik.errors.teamName}
                 autoFocus
                 disabled={isFieldInactive}
+                required
               />
             </Grid>
             <Grid item xs={12}>
@@ -252,6 +253,7 @@ const AddUserDialog = (props: IProps) => {
                 sx={{ minWidth: "100%", mt: 3 }}
                 fullWidth
                 error={formik.touched.members && Boolean(formik.errors.members)}
+                required
               >
                 <InputLabel id="members" sx={{ ml: -1.5 }} disableAnimation shrink>
                   Members
@@ -284,6 +286,7 @@ const AddUserDialog = (props: IProps) => {
                 sx={{ minWidth: "100%", mt: 3 }}
                 fullWidth
                 error={formik.touched.teamLeaders && Boolean(formik.errors.teamLeaders)}
+                required
               >
                 <InputLabel id="teamLeaders" sx={{ ml: -1.5 }} disableAnimation shrink>
                   Team Leader(s)
@@ -327,4 +330,4 @@ const AddUserDialog = (props: IProps) => {
   );
 };
 
-export default AddUserDialog;
+export default AddTeamDialog;

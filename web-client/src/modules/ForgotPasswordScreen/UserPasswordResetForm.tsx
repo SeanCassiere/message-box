@@ -76,6 +76,7 @@ const UserRegistrationForm = (props: IProps) => {
                 onChange={formik.handleChange}
                 error={formik.touched.password && Boolean(formik.errors.password)}
                 helperText={formik.touched.password && formik.errors.password}
+                required
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -102,6 +103,7 @@ const UserRegistrationForm = (props: IProps) => {
                 onChange={formik.handleChange}
                 error={formik.touched.passwordConfirmation && Boolean(formik.errors.passwordConfirmation)}
                 helperText={formik.touched.passwordConfirmation && formik.errors.passwordConfirmation}
+                required
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">

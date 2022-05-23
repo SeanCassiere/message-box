@@ -99,6 +99,7 @@ const ResetWith2FA = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
+            required
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -124,6 +125,7 @@ const ResetWith2FA = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.passwordConfirmation && Boolean(formik.errors.passwordConfirmation)}
             helperText={formik.touched.passwordConfirmation && formik.errors.passwordConfirmation}
+            required
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -148,6 +150,7 @@ const ResetWith2FA = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.code && Boolean(formik.errors.code)}
             helperText={formik.touched.code && formik.errors.code}
+            required
           />
         </Grid>
         <Grid item xs={12} md={12}>

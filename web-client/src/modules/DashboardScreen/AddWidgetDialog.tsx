@@ -225,7 +225,8 @@ const AddWidgetDialog = (props: IProps) => {
             <Grid container gap={2}>
               <Grid item xs={12} md={12}>
                 <Button
-                  color="secondary"
+                  color="primary"
+                  variant="text"
                   onClick={setToSelectionScreen}
                   startIcon={<ChevronLeftIcon />}
                   disableElevation={false}
@@ -257,6 +258,7 @@ const AddWidgetDialog = (props: IProps) => {
                   error={formik.touched.widgetName && Boolean(formik.errors.widgetName)}
                   helperText={formik.touched.widgetName && formik.errors.widgetName}
                   disabled={formik.isSubmitting}
+                  required
                 />
               </Grid>
               <Grid item xs={12} md={12}>
@@ -282,6 +284,7 @@ const AddWidgetDialog = (props: IProps) => {
                         name="widgetScale"
                         InputLabelProps={{ disableAnimation: false, shrink: undefined }}
                         fullWidth
+                        required
                       />
                     )}
                   />
@@ -307,6 +310,7 @@ const AddWidgetDialog = (props: IProps) => {
                         name="widgetHeight"
                         InputLabelProps={{ disableAnimation: false, shrink: undefined }}
                         fullWidth
+                        required
                       />
                     )}
                   />
@@ -314,7 +318,7 @@ const AddWidgetDialog = (props: IProps) => {
               </Grid>
               {selectedCreatorOption.mandatoryConfigOptions.map((optDTO) => (
                 <Grid key={`widget-mandatory-option-${optDTO.parameter}`} item xs={12} md={12}>
-                  <FormControl fullWidth>
+                  <FormControl fullWidth required>
                     <Autocomplete
                       id={`widget-config-${optDTO.parameter}`}
                       options={getOptionValuesForClientFillInstruction(optDTO.clientFill)}
@@ -416,7 +420,7 @@ const AddWidgetDialog = (props: IProps) => {
                           {...params}
                           label={optDTO.displayName}
                           name={optDTO.parameter}
-                          InputLabelProps={{ disableAnimation: false, shrink: undefined, required: false }}
+                          InputLabelProps={{ disableAnimation: false, shrink: undefined }}
                           fullWidth
                           required
                         />

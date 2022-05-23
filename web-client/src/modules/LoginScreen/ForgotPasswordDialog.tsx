@@ -181,6 +181,7 @@ const ForgotPasswordDialog = (props: Props) => {
                   error={formik2fa.touched.email && Boolean(formik2fa.errors.email)}
                   helperText={formik2fa.touched.email && formik2fa.errors.email}
                   autoFocus
+                  required
                 />
                 <TextField
                   margin="dense"
@@ -195,6 +196,7 @@ const ForgotPasswordDialog = (props: Props) => {
                   onChange={formik2fa.handleChange}
                   error={formik2fa.touched.password && Boolean(formik2fa.errors.password)}
                   helperText={formik2fa.touched.password && formik2fa.errors.password}
+                  required
                 />
                 <TextField
                   margin="dense"
@@ -208,6 +210,7 @@ const ForgotPasswordDialog = (props: Props) => {
                   onChange={formik2fa.handleChange}
                   error={formik2fa.touched.code && Boolean(formik2fa.errors.code)}
                   helperText={formik2fa.touched.code && formik2fa.errors.code}
+                  required
                 />
                 <LoadingButton
                   variant="contained"
@@ -252,6 +255,7 @@ const ForgotPasswordDialog = (props: Props) => {
                   error={formikEmailReset.touched.emailReset && Boolean(formikEmailReset.errors.emailReset)}
                   helperText={formikEmailReset.touched.emailReset && formikEmailReset.errors.emailReset}
                   autoFocus
+                  required
                 />
                 <LoadingButton
                   variant="contained"
