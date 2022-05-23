@@ -306,7 +306,8 @@ const DashboardPage = () => {
                   isResizable={canWriteToDashboard}
                   isDraggable={canWriteToDashboard}
                   verticalCompact={true}
-                  compactType={isOnMobile ? "vertical" : "horizontal"}
+                  // compactType={isOnMobile ? "vertical" : "horizontal"}
+                  compactType="vertical"
                   layouts={layouts ?? undefined}
                   breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                   preventCollision={false}
