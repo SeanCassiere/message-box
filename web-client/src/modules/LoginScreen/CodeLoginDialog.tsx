@@ -63,7 +63,7 @@ const CodeLoginDialog = (props: IProps) => {
       <Box component="form" onSubmit={formik.handleSubmit}>
         <DialogHeaderClose title="Two-Factor Authentication" onClose={handleClose} startIconMode="phone-icon" />
         <DialogContent>
-          <DialogContentText>Enter your two-factor authentication code.</DialogContentText>
+          <DialogContentText sx={{ mt: 2 }}>Enter your two-factor authentication code.</DialogContentText>
           <TextField
             margin="normal"
             fullWidth
@@ -78,6 +78,7 @@ const CodeLoginDialog = (props: IProps) => {
             helperText={formik.touched.code && formik.errors.code}
             disabled={formik.isSubmitting || isLoadingRequest}
             autoFocus
+            required
           />
           <Link
             variant="body2"

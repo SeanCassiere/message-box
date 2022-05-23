@@ -9,7 +9,6 @@ import { useTheme } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -41,6 +40,7 @@ import { colorsMap, IColorMap } from "../../../util/colorsMap";
 import { taskColorOpacity } from "../../../util/constants";
 import { MESSAGES } from "../../../util/messages";
 import { formatDateTimeShort } from "../../../util/dateTime";
+import DialogHeaderClose from "../../Dialog/DialogHeaderClose";
 
 interface Props {
   handleCloseFunction: () => void;
@@ -214,8 +214,12 @@ const AddTaskDialog = (props: Props) => {
       fullScreen={isOnMobile}
       fullWidth
     >
-      <DialogTitle>{taskId ? <>Edit</> : <>New</>}&nbsp;Task</DialogTitle>
-      <Box component="form" onSubmit={formik.handleSubmit}>
+      <DialogHeaderClose
+        title={taskId ? "Edit Task" : "New Task"}
+        onClose={pressClose}
+        startIconMode={taskId ? "edit-icon" : "add-icon"}
+      />
+      <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
         <Grid container spacing={0}>
           <Grid item xs={12}>
             <Box
@@ -251,6 +255,7 @@ const AddTaskDialog = (props: Props) => {
                   helperText={formik.touched.title && formik.errors.title}
                   autoFocus
                   disabled={isLoading}
+                  required
                 />
               </Grid>
               <Grid item xs={12} md={12} sx={{ px: 3 }}>
@@ -303,7 +308,7 @@ const AddTaskDialog = (props: Props) => {
                       showTodayButton
                       value={Date.parse(formik.values.dueDate)}
                       onChange={handleSetDateChange}
-                      renderInput={(params) => <TextField {...params} variant="standard" name="dueDate" />}
+                      renderInput={(params) => <TextField {...params} variant="standard" name="dueDate" required />}
                       disabled={isLoading}
                       inputFormat={formats.shortDateTimeFormat}
                     />

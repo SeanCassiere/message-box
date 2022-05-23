@@ -94,6 +94,7 @@ const ResetWithOldPassword = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
+            required
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -119,6 +120,7 @@ const ResetWithOldPassword = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
             helperText={formik.touched.newPassword && formik.errors.newPassword}
+            required
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -144,6 +146,7 @@ const ResetWithOldPassword = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.newPasswordConfirmation && Boolean(formik.errors.newPasswordConfirmation)}
             helperText={formik.touched.newPasswordConfirmation && formik.errors.newPasswordConfirmation}
+            required
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

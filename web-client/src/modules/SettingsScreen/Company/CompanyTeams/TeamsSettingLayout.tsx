@@ -11,7 +11,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 
 import ViewTable from "./Table";
-import AddUserDialog from "./AddUserDialog";
+import AddTeamDialog from "./AddTeamDialog";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 
 import { selectLookupListsState } from "../../../../shared/redux/store";
@@ -107,7 +107,7 @@ const Layout = () => {
         handleClose={handleCloseDelete}
         handleAccept={handleDeleteItem}
       />
-      <AddUserDialog
+      <AddTeamDialog
         handleClose={handleCloseEditor}
         handleRefreshList={refreshListItems}
         showDialog={openEditDrawer}

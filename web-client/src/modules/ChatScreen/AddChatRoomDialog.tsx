@@ -151,7 +151,7 @@ const AddChatRoomDialog = (props: IProps) => {
           startIconMode={props.roomId === "NOT" ? "add-icon" : "edit-icon"}
         />
         <DialogContent>
-          <Grid container spacing={2} sx={{ mt: -2 }}>
+          <Grid container spacing={2} sx={{ mt: 0 }}>
             <Grid item xs={12}>
               <TextField
                 margin="dense"
@@ -166,6 +166,7 @@ const AddChatRoomDialog = (props: IProps) => {
                 error={formik.touched.roomName && Boolean(formik.errors.roomName)}
                 helperText={formik.touched.roomName && formik.errors.roomName}
                 disabled={formik.isSubmitting}
+                required
               />
             </Grid>
             {formik.values?.roomType !== "private" && (
@@ -208,6 +209,7 @@ const AddChatRoomDialog = (props: IProps) => {
                         }
                         InputProps={{ ...params.InputProps, endAdornment: <></> }}
                         fullWidth
+                        required
                       />
                     )}
                     renderTags={(value, getTagProps) =>

@@ -231,6 +231,7 @@ const AddUserDialog = (props: IProps) => {
                 helperText={formik.touched.firstName && formik.errors.firstName}
                 autoFocus
                 disabled={isLoadingData}
+                required
               />
             </Grid>
             <Grid item xs={12} md={12}>
@@ -247,6 +248,7 @@ const AddUserDialog = (props: IProps) => {
                 error={formik.touched.lastName && Boolean(formik.errors.lastName)}
                 helperText={formik.touched.lastName && formik.errors.lastName}
                 disabled={isLoadingData}
+                required
               />
             </Grid>
             <Grid item xs={12} md={12}>
@@ -263,6 +265,7 @@ const AddUserDialog = (props: IProps) => {
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
                 disabled={isLoadingData}
+                required
               />
             </Grid>
             {!userId && (
@@ -280,13 +283,14 @@ const AddUserDialog = (props: IProps) => {
                   error={formik.touched.password && Boolean(formik.errors.password)}
                   helperText={formik.touched.password && formik.errors.password}
                   disabled={isLoadingData}
+                  required
                 />
               </Grid>
             )}
             {userId && (
               <>
                 <Grid item xs={12} md={12}>
-                  <FormControl sx={{ minWidth: "100%", mt: 3 }}>
+                  <FormControl sx={{ minWidth: "100%", mt: 3 }} required>
                     <InputLabel id="roles" sx={{ ml: -1.5 }} disableAnimation shrink>
                       Roles
                     </InputLabel>
@@ -318,7 +322,7 @@ const AddUserDialog = (props: IProps) => {
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} md={12}>
-                  <FormControl sx={{ minWidth: "100%", mt: 3 }}>
+                  <FormControl sx={{ minWidth: "100%", mt: 3 }} required>
                     <InputLabel id="teams" sx={{ ml: -1.5 }} disableAnimation shrink>
                       Teams
                     </InputLabel>

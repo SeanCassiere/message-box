@@ -53,6 +53,8 @@ const AddQrDialog = (props: IProps) => {
             error={formik.touched.code && Boolean(formik.errors.code)}
             helperText={formik.touched.code && formik.errors.code}
             autoFocus
+            required
+            InputLabelProps={{ shrink: undefined }}
           />
         </DialogContent>
         <DialogBigButtonFooter submitButtonText="COMPLETE 2FA SETUP" isLoading={formik.isSubmitting} />

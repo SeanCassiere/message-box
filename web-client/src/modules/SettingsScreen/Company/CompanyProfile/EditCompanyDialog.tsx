@@ -134,7 +134,7 @@ const EditCompanyDialog = (props: Props) => {
       <Box component="form" onSubmit={formik.handleSubmit}>
         <DialogHeaderClose title="Edit Company" onClose={handleClose} startIconMode="edit-icon" />
         <DialogContent>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{ mt: 0 }}>
             <Grid item xs={12} md={12}>
               <TextField
                 margin="normal"
@@ -150,10 +150,11 @@ const EditCompanyDialog = (props: Props) => {
                 helperText={formik.touched.clientName && formik.errors.clientName}
                 autoFocus
                 disabled={formik.isSubmitting}
+                required
               />
             </Grid>
             <Grid item xs={12} md={12}>
-              <FormControl sx={{ minWidth: "100%", mt: 2 }}>
+              <FormControl sx={{ minWidth: "100%", mt: 2 }} required>
                 <InputLabel id="teams" sx={{ ml: -2 }} disableAnimation shrink>
                   Company account owner
                 </InputLabel>

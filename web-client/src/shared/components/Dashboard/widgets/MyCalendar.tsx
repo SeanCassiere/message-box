@@ -87,7 +87,14 @@ const MyCalendar = (props: IProps) => {
 
   const doubleClickAppointment = React.useCallback(
     (eventId: string) => {
-      dispatch(stateOpenAddCalendarEventDialog({ referenceId: eventId, currentUserId: userProfile?.userId ?? "" }));
+      dispatch(
+        stateOpenAddCalendarEventDialog({
+          referenceId: eventId,
+          config: {
+            currentUserId: userProfile?.userId ?? "",
+          },
+        })
+      );
     },
     [dispatch, userProfile?.userId]
   );
@@ -139,15 +146,16 @@ const MyCalendar = (props: IProps) => {
       if (isAllDay !== undefined) {
         allDay = isAllDay;
       }
-      console.log({ starting, ending, allDay });
 
       dispatch(
         stateOpenAddCalendarEventDialog({
           referenceId: "new",
-          currentUserId: userProfile?.userId,
-          startDate: starting,
-          endDate: ending,
-          isAllDay: allDay,
+          config: {
+            currentUserId: userProfile?.userId,
+            startDate: starting,
+            endDate: ending,
+            isAllDay: allDay,
+          },
         })
       );
     },

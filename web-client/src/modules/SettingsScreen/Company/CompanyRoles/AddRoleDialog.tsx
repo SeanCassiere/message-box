@@ -183,7 +183,7 @@ const AddRoleDialog = (props: IProps) => {
           startIconMode={roleId ? "edit-icon" : "add-icon"}
         />
         <DialogContent>
-          <Grid container spacing={1}>
+          <Grid container spacing={1} sx={{ mt: 0 }}>
             <Grid item xs={12}>
               <TextField
                 margin="normal"
@@ -197,12 +197,19 @@ const AddRoleDialog = (props: IProps) => {
                 onChange={formik.handleChange}
                 error={formik.touched.viewName && Boolean(formik.errors.viewName)}
                 helperText={formik.touched.viewName && formik.errors.viewName}
-                autoFocus
                 disabled={isFieldInactive}
+                autoFocus
+                required
               />
             </Grid>
             <Grid item xs={12}>
-              <FormControl variant="standard" sx={{ mt: 2 }} fullWidth disabled={roleId ? true : isFieldInactive}>
+              <FormControl
+                variant="standard"
+                sx={{ mt: 2 }}
+                fullWidth
+                disabled={roleId ? true : isFieldInactive}
+                required
+              >
                 <InputLabel id="viewName-label" disableAnimation shrink>
                   Based on
                 </InputLabel>
@@ -226,8 +233,8 @@ const AddRoleDialog = (props: IProps) => {
               </FormControl>
             </Grid>
             <Grid item xs={12}>
-              <FormControl sx={{ mt: 3 }} fullWidth>
-                <InputLabel id="roles" sx={{ ml: -1.5 }} disableAnimation shrink>
+              <FormControl sx={{ mt: 3 }} fullWidth required>
+                <InputLabel id="roles" sx={{ ml: -2 }} disableAnimation shrink>
                   Permissions
                 </InputLabel>
                 <Select

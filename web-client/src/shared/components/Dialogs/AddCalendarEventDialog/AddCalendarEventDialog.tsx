@@ -72,7 +72,7 @@ interface IProps {
   endDate?: string;
 }
 
-const EventFormDialog = (props: IProps) => {
+const AddCalendarEventDialog = (props: IProps) => {
   const location = useLocation();
   const theme = useTheme();
   const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -169,6 +169,8 @@ const EventFormDialog = (props: IProps) => {
         formik.setFieldValue("isAllDay", true);
       }
 
+      formik.setFieldValue("ownerId", props.ownerId);
+
       formik.initialErrors = {};
       setIsDisabled(false);
       return;
@@ -200,7 +202,7 @@ const EventFormDialog = (props: IProps) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventId, showDialog, location, enqueueSnackbar, passThroughClose]);
+  }, [eventId, showDialog, location, enqueueSnackbar, passThroughClose, props.ownerId, props.startDate, props.endDate]);
 
   const handleToggleIsAllDay = (_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     formik.setFieldValue("isAllDay", checked);
@@ -314,6 +316,7 @@ const EventFormDialog = (props: IProps) => {
                 error={formik.touched.title && Boolean(formik.errors.title)}
                 helperText={formik.touched.title && formik.errors.title}
                 disabled={isDisabled || formik.isSubmitting}
+                required
               />
             </Grid>
             {formik.values.isAllDay ? (
@@ -340,6 +343,7 @@ const EventFormDialog = (props: IProps) => {
                         helperText={
                           formik.touched.startDate && Boolean(formik.errors.startDate) && formik.errors.startDate
                         }
+                        required
                       />
                     )}
                   />
@@ -369,6 +373,7 @@ const EventFormDialog = (props: IProps) => {
                         helperText={
                           formik.touched.startDate && Boolean(formik.errors.startDate) && formik.errors.startDate
                         }
+                        required
                       />
                     )}
                   />
@@ -393,6 +398,7 @@ const EventFormDialog = (props: IProps) => {
                         disabled={isDisabled || formik.isSubmitting}
                         error={formik.touched.endDate && Boolean(formik.errors.endDate)}
                         helperText={formik.touched.endDate && Boolean(formik.errors.endDate) && formik.errors.endDate}
+                        required
                       />
                     )}
                   />
@@ -484,4 +490,4 @@ const EventFormDialog = (props: IProps) => {
   );
 };
 
-export default memo(EventFormDialog);
+export default memo(AddCalendarEventDialog);
