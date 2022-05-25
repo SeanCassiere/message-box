@@ -1,6 +1,6 @@
 import React from "react";
 
-import { PieChart, Pie, Cell, ResponsiveContainer, PieLabelRenderProps, Sector } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from "recharts";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -12,48 +12,18 @@ import { MIN_DASHBOARD_WIDGET_HEIGHT } from "../../../../modules/DashboardScreen
 import { PieChartStatistics } from "../../../interfaces/Statistics.interfaces";
 import { parseDynamicParameters } from "../widget.helpers";
 
-// const RADIAN = Math.PI / 180;
-// const renderCustomizedLabel = (props: PieLabelRenderProps) => {
-//   const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
-//   console.log(props);
-
-//   if (!Number(percent)) {
-//     return <React.Fragment></React.Fragment>;
-//   }
-
-//   const radius = (innerRadius as number) + ((outerRadius as number) - (innerRadius as number)) * 0.5;
-
-//   const x = (cx as number) + (radius as number) * Math.cos(-midAngle * RADIAN);
-//   const y = (cy as number) + (radius as number) * Math.sin(-midAngle * RADIAN);
-
-//   return (
-//     <Typography
-//       component="text"
-//       x={x}
-//       y={y}
-//       fill={"white"}
-//       fontSize={15}
-//       textAnchor="middle"
-//       dominantBaseline="central"
-//       fontWeight={500}
-//     >
-//       {props?.name} {Number(Number(percent) * 100).toFixed(1)}%
-//     </Typography>
-//   );
-// };
-
 const renderActiveShape = (props: any) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent } = props;
 
   return (
-    <g>
+    <Box component="g">
       <Typography
         component="text"
         x={cx}
         y={cy - 20}
         dy={8}
         textAnchor="middle"
-        fontSize={30}
+        fontSize={36}
         fontWeight={900}
         fill="#5F5F5F"
       >
@@ -90,7 +60,7 @@ const renderActiveShape = (props: any) => {
         fill={fill}
         fillOpacity="0.5"
       />
-    </g>
+    </Box>
   );
 };
 
@@ -122,6 +92,10 @@ const MyTasksCompletionChart = (props: IProps) => {
       .then((res) => {
         if (res.status === 200) {
           setData(res.data);
+
+          if (res?.data?.length > 0) {
+            setActiveIndex(0);
+          }
         }
       })
       .catch((err) => {
@@ -158,7 +132,11 @@ const MyTasksCompletionChart = (props: IProps) => {
               setActiveIndex(idx);
             }}
             onMouseLeave={() => {
-              setActiveIndex(undefined);
+              if (data && data?.length > 0) {
+                setActiveIndex(0);
+              } else {
+                setActiveIndex(undefined);
+              }
             }}
           >
             {data.map((_, index) => (

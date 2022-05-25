@@ -47,40 +47,49 @@ const DashboardPage = () => {
   const [layouts, setLayouts] = React.useState<Layouts | null>(null); // used for internal management of the layout
   const [dashboardWidgets, setDashboardWidgets] = React.useState<IParsedWidgetOnDashboard[]>([]);
 
-  const fetchWidgets = React.useCallback(async ({ showSkeleton = false }) => {
-    if (showSkeleton) {
-      flushSync(() => {
-        setLoading(true);
-      });
-    }
-    const params = new URLSearchParams();
-    params.append("clientType", "web-client");
+  const fetchWidgets = React.useCallback(
+    async ({ showSkeleton = false }) => {
+      if (showSkeleton) {
+        flushSync(() => {
+          setLoading(true);
+        });
+      }
 
-    await client
-      .get("/Dashboard/Widgets", { params })
-      .then((res) => {
-        const data = res.data as IWidgetFromApi[];
-        const parsedWidgets: IParsedWidgetOnDashboard[] = data.map((w) => ({
-          ...w,
-          i: w.id,
-          w: w.widgetScale,
-          h: w.widgetHeight,
-          x: w.position.x,
-          y: w.position.y,
-        }));
-        // flushSync(() => {
-        //   setDashboardWidgets([]);
-        // });
-
-        setDashboardWidgets(parsedWidgets);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
+      // skip updating widgets on server if we are on mobile
+      if (isOnMobile) {
         setLoading(false);
-      });
-  }, []);
+      } else {
+        const params = new URLSearchParams();
+        params.append("clientType", "web-client");
+
+        await client
+          .get("/Dashboard/Widgets", { params })
+          .then((res) => {
+            const data = res.data as IWidgetFromApi[];
+            const parsedWidgets: IParsedWidgetOnDashboard[] = data.map((w) => ({
+              ...w,
+              i: w.id,
+              w: w.widgetScale,
+              h: w.widgetHeight,
+              x: w.position.x,
+              y: w.position.y,
+            }));
+            // flushSync(() => {
+            //   setDashboardWidgets([]);
+            // });
+
+            setDashboardWidgets(parsedWidgets);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
+    },
+    [isOnMobile]
+  );
 
   React.useEffect(() => {
     fetchWidgets({});
