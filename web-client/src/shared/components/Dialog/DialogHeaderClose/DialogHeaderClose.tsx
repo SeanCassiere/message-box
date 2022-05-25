@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "@mui/material/styles";
 
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -7,8 +8,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import { grey } from "@mui/material/colors";
 
-import CloseIcon from "@mui/icons-material/Close";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import QRCodeIcon from "@mui/icons-material/QrCode";
@@ -20,7 +21,10 @@ const TEXT_COLOR = grey[700];
 const commonIconProps = {
   style: {
     marginRight: "5px",
-    fontSize: "1.2rem",
+    fontSize: "2,5rem",
+  },
+  sx: {
+    color: "primary.500",
   },
 };
 
@@ -33,6 +37,8 @@ interface Props {
 }
 
 const DialogHeaderClose = (props: Props) => {
+  const theme = useTheme();
+
   return (
     <DialogTitle
       sx={{
@@ -48,7 +54,7 @@ const DialogHeaderClose = (props: Props) => {
         {props?.startIconMode === "phone-icon" && <PhoneIcon {...commonIconProps} />}
         {props?.startIconMode === "password-icon" && <PasswordIcon {...commonIconProps} />}
         <Box flexGrow={1}>
-          <Typography fontSize={18} fontWeight={500}>
+          <Typography fontSize={18} fontWeight={500} color={theme.palette.mode === "light" ? undefined : "primary.500"}>
             {props?.title}
           </Typography>
         </Box>
@@ -64,4 +70,4 @@ const DialogHeaderClose = (props: Props) => {
   );
 };
 
-export default DialogHeaderClose;
+export default React.memo(DialogHeaderClose);

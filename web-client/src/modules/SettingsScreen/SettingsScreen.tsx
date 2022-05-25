@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Theme, useTheme } from "@mui/material";
 
 import Tab, { TabProps } from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -16,6 +17,7 @@ export const inactiveTabBgColor = "#F9F9F9";
 const primaryOptions = ["account", "company"];
 
 export const SettingsScreen = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
 
   const { tab } = useParams<{ tab: string }>();
@@ -51,8 +53,8 @@ export const SettingsScreen = () => {
                 },
               }}
             >
-              <Tab label="Account" value="account" sx={formCommonTabStyle(primaryTabValue, "account")} />
-              <Tab label="Company" value="company" sx={formCommonTabStyle(primaryTabValue, "company")} />
+              <Tab label="Account" value="account" sx={formCommonTabStyle(primaryTabValue, "account", theme)} />
+              <Tab label="Company" value="company" sx={formCommonTabStyle(primaryTabValue, "company", theme)} />
             </TabList>
           </Box>
           <TabPanel value="account" sx={commonTabPanelStyle}>
@@ -67,9 +69,16 @@ export const SettingsScreen = () => {
   );
 };
 
-const formCommonTabStyle = (value: string, identifier: string): TabProps["sx"] => {
+const formCommonTabStyle = (value: string, identifier: string, theme: Theme): TabProps["sx"] => {
   return {
-    backgroundColor: value === identifier ? "primary.50" : inactiveTabBgColor,
+    backgroundColor:
+      theme.palette.mode === "light"
+        ? () => {
+            return value === identifier ? "primary.50" : inactiveTabBgColor;
+          }
+        : () => {
+            return value === identifier ? "secondary.900" : "#292929";
+          },
     px: 4,
   };
 };

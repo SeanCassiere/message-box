@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
@@ -18,7 +18,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import MessageIcon from "@mui/icons-material/Message";
 import ClearIcon from "@mui/icons-material/Clear";
 
-import TextField from "../../shared/components/Form/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField";
 
 import { COMMON_ITEM_BORDER_COLOR, COMMON_ITEM_BORDER_STYLING, PRIMARY_BTN_COLOR } from "../../shared/util/constants";
 import { IChatRoom } from "../../shared/interfaces/Chat.interfaces";
@@ -51,6 +51,8 @@ interface Props {
 }
 
 const SelectChat = (props: Props) => {
+  const theme = useTheme();
+
   const { setSelectedChatConversation } = props;
 
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -76,7 +78,7 @@ const SelectChat = (props: Props) => {
   return (
     <Stack
       sx={{
-        border: COMMON_ITEM_BORDER_STYLING,
+        border: theme.palette.mode === "light" ? COMMON_ITEM_BORDER_STYLING : undefined,
         px: 1.5,
         py: 2,
         overflowY: "auto",
@@ -91,7 +93,7 @@ const SelectChat = (props: Props) => {
     >
       <Box>
         <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 1, md: 1 }}>
-          <TextField
+          <FormTextField
             size="small"
             value={searchQuery}
             onChange={(evt) => setSearchQuery(evt.target.value)}
@@ -157,6 +159,8 @@ const ChatOption = React.memo(
     selectedChatConversation: IChatRoom | null;
     handleSelectChat: (chat: IChatRoom) => void;
   }) => {
+    const theme = useTheme();
+
     const { onlineUsersList } = useSelector(selectLookupListsState);
     const selectChatOption = React.useCallback(() => {
       props.handleSelectChat(props.chatOption);
@@ -178,70 +182,81 @@ const ChatOption = React.memo(
       return currentColor;
     }, [avatarUserId, onlineUsersList]);
     return (
-      <>
-        <Box
-          key={`chat-option-${props.chatOption.roomId}`}
-          sx={{
-            borderWidth: 3,
-            borderRadius: 2,
-            borderStyle: "solid",
-            borderColor:
-              props.selectedChatConversation?.roomId === props.chatOption.roomId
-                ? PRIMARY_BTN_COLOR
-                : COMMON_ITEM_BORDER_COLOR,
-            my: "4px",
-            py: 1,
-            px: 2,
-            bgcolor: props.selectedChatConversation?.roomId === props.chatOption.roomId ? "#f0fdfa" : "#fff",
-          }}
-        >
-          <Stack direction="row" alignItems="center" spacing={2} sx={{ minHeight: "3rem" }}>
-            <Box onClick={selectChatOption} sx={{ cursor: "pointer" }}>
-              {avatarUserId ? (
-                <StyledBadge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                  variant="dot"
-                  sx={{
-                    "& .MuiBadge-badge": {
-                      backgroundColor: currentAvatarIndicatorColor,
-                      color: currentAvatarIndicatorColor,
-                    },
-                  }}
-                >
-                  <Avatar alt={props.chatOption.roomName}>
-                    <PersonIcon />
-                  </Avatar>
-                </StyledBadge>
-              ) : (
+      <Box
+        key={`chat-option-${props.chatOption.roomId}`}
+        sx={{
+          borderWidth: 3,
+          borderRadius: 2,
+          borderStyle: "solid",
+          borderColor:
+            theme.palette.mode === "light"
+              ? () => {
+                  return props.selectedChatConversation?.roomId === props.chatOption.roomId
+                    ? PRIMARY_BTN_COLOR
+                    : COMMON_ITEM_BORDER_COLOR;
+                }
+              : () => {
+                  return props.selectedChatConversation?.roomId === props.chatOption.roomId ? "#494949" : "#292929";
+                },
+          my: "4px",
+          py: 1,
+          px: 2,
+          bgcolor:
+            theme.palette.mode === "light"
+              ? () => {
+                  return props.selectedChatConversation?.roomId === props.chatOption.roomId ? "#f0fdfa" : "#fff";
+                }
+              : () => {
+                  return props.selectedChatConversation?.roomId === props.chatOption.roomId ? "something" : "something";
+                },
+        }}
+      >
+        <Stack direction="row" alignItems="center" spacing={2} sx={{ minHeight: "3rem" }}>
+          <Box onClick={selectChatOption} sx={{ cursor: "pointer" }}>
+            {avatarUserId ? (
+              <StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                variant="dot"
+                sx={{
+                  "& .MuiBadge-badge": {
+                    backgroundColor: currentAvatarIndicatorColor,
+                    color: currentAvatarIndicatorColor,
+                  },
+                }}
+              >
                 <Avatar alt={props.chatOption.roomName}>
-                  <PeopleIcon />
+                  <PersonIcon />
                 </Avatar>
-              )}
-            </Box>
-            <Box flexGrow={1} onClick={selectChatOption} sx={{ cursor: "pointer" }}>
-              {props.chatOption.roomName}
-            </Box>
-            <Box>
-              {props.selectedChatConversation?.roomId !== props.chatOption.roomId && (
-                <IconButton aria-label="View" onClick={selectChatOption} onMouseDown={selectChatOption}>
-                  {<KeyboardArrowRightIcon />}
-                </IconButton>
-              )}
-              {props.selectedChatConversation?.roomId === props.chatOption.roomId && (
-                <IconButton
-                  aria-label="Close"
-                  onClick={() => {
-                    props.setSelectedChatConversation(null);
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              )}
-            </Box>
-          </Stack>
-        </Box>
-      </>
+              </StyledBadge>
+            ) : (
+              <Avatar alt={props.chatOption.roomName}>
+                <PeopleIcon />
+              </Avatar>
+            )}
+          </Box>
+          <Box flexGrow={1} onClick={selectChatOption} sx={{ cursor: "pointer" }}>
+            {props.chatOption.roomName}
+          </Box>
+          <Box>
+            {props.selectedChatConversation?.roomId !== props.chatOption.roomId && (
+              <IconButton aria-label="View" onClick={selectChatOption} onMouseDown={selectChatOption}>
+                {<KeyboardArrowRightIcon />}
+              </IconButton>
+            )}
+            {props.selectedChatConversation?.roomId === props.chatOption.roomId && (
+              <IconButton
+                aria-label="Close"
+                onClick={() => {
+                  props.setSelectedChatConversation(null);
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            )}
+          </Box>
+        </Stack>
+      </Box>
     );
   }
 );

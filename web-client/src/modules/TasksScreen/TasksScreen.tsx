@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { Theme, useTheme } from "@mui/material";
 
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -24,7 +25,7 @@ import AddTaskDialog from "../../shared/components/Dialogs/AddTaskDialog";
 import TaskTodayView from "./TodayView";
 import TaskCompletedView from "./CompletedView";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
-import TextField from "../../shared/components/Form/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField";
 
 export const inactiveTabBgColor = "#FCFCFC";
 const primaryOptions = ["today", "completed"];
@@ -32,6 +33,7 @@ const primaryOptions = ["today", "completed"];
 const TasksScreen = () => {
   const navigate = useNavigate();
   const { tab, id } = useParams<{ tab: string; id: string }>();
+  const theme = useTheme();
 
   const { userProfile } = useSelector(selectUserState);
   const { usersList } = useSelector(selectLookupListsState);
@@ -184,12 +186,7 @@ const TasksScreen = () => {
                     sx={{ mr: 2, width: "100%" }}
                     size="small"
                     renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        // size="small"
-                        InputProps={{ ...params.InputProps, endAdornment: <></> }}
-                        fullWidth
-                      />
+                      <FormTextField {...params} InputProps={{ ...params.InputProps, endAdornment: <></> }} fullWidth />
                     )}
                   />
                 </Grid>
@@ -219,8 +216,8 @@ const TasksScreen = () => {
                 },
               }}
             >
-              <Tab label="Today" value="today" sx={formCommonTabStyle(primaryTabValue, "today")} />
-              <Tab label="Completed" value="completed" sx={formCommonTabStyle(primaryTabValue, "completed")} />
+              <Tab label="Today" value="today" sx={formCommonTabStyle(primaryTabValue, "today", theme)} />
+              <Tab label="Completed" value="completed" sx={formCommonTabStyle(primaryTabValue, "completed", theme)} />
             </TabList>
           </Box>
           <TabPanel value="today" sx={commonTabPanelStyle}>
@@ -243,9 +240,16 @@ const TasksScreen = () => {
   );
 };
 
-const formCommonTabStyle = (value: string, identifier: string): TabProps["sx"] => {
+const formCommonTabStyle = (value: string, identifier: string, theme: Theme): TabProps["sx"] => {
   return {
-    backgroundColor: value === identifier ? "primary.50" : inactiveTabBgColor,
+    backgroundColor:
+      theme.palette.mode === "light"
+        ? () => {
+            return value === identifier ? "primary.50" : inactiveTabBgColor;
+          }
+        : () => {
+            return value === identifier ? "secondary.900" : "#292929";
+          },
     px: 4,
   };
 };

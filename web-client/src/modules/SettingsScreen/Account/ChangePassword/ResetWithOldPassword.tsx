@@ -13,7 +13,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-import TextField from "../../../../shared/components/Form/TextField";
+import FormTextField from "../../../../shared/components/Form/FormTextField";
 
 import { client } from "../../../../shared/api/client";
 import { MESSAGES } from "../../../../shared/util/messages";
@@ -85,7 +85,7 @@ const ResetWithOldPassword = (props: IProps) => {
     <Box sx={{ mt: 2, pt: 2, pb: 0 }}>
       <Grid container spacing={2} component="form" onSubmit={formik.handleSubmit}>
         <Grid item xs={12} md={12}>
-          <TextField
+          <FormTextField
             label="Old password"
             id="oldPassword-reset-password"
             type={showOldPassword ? "text" : "password"}
@@ -94,7 +94,7 @@ const ResetWithOldPassword = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
-            required
+            asteriskRequired
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -111,7 +111,7 @@ const ResetWithOldPassword = (props: IProps) => {
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <TextField
+          <FormTextField
             label="New password"
             id="oldPassword-reset-newPassword"
             type={showNewPassword ? "text" : "password"}
@@ -120,7 +120,7 @@ const ResetWithOldPassword = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
             helperText={formik.touched.newPassword && formik.errors.newPassword}
-            required
+            asteriskRequired
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -137,7 +137,7 @@ const ResetWithOldPassword = (props: IProps) => {
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <TextField
+          <FormTextField
             label="Confirm new password"
             id="oldPassword-reset-newPasswordConfirmation"
             type={showConfirmPassword ? "text" : "password"}
@@ -146,7 +146,7 @@ const ResetWithOldPassword = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.newPasswordConfirmation && Boolean(formik.errors.newPasswordConfirmation)}
             helperText={formik.touched.newPasswordConfirmation && formik.errors.newPasswordConfirmation}
-            required
+            asteriskRequired
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

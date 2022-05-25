@@ -13,7 +13,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-import TextField from "../../../../shared/components/Form/TextField";
+import FormTextField from "../../../../shared/components/Form/FormTextField";
 
 import { useSelector } from "react-redux";
 import { selectUserState } from "../../../../shared/redux/store";
@@ -90,7 +90,7 @@ const ResetWith2FA = (props: IProps) => {
     <Box sx={{ mt: 2, pt: 2, pb: 0 }}>
       <Grid container spacing={2} component="form" onSubmit={formik.handleSubmit}>
         <Grid item xs={12} md={6}>
-          <TextField
+          <FormTextField
             label="New password"
             id="2fa-reset-password"
             type={showPassword ? "text" : "password"}
@@ -99,7 +99,7 @@ const ResetWith2FA = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
-            required
+            asteriskRequired
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -116,7 +116,7 @@ const ResetWith2FA = (props: IProps) => {
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <TextField
+          <FormTextField
             label="Confirm new password"
             id="2fa-reset-passwordConfirmation"
             type={showConfirmPassword ? "text" : "password"}
@@ -125,7 +125,7 @@ const ResetWith2FA = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.passwordConfirmation && Boolean(formik.errors.passwordConfirmation)}
             helperText={formik.touched.passwordConfirmation && formik.errors.passwordConfirmation}
-            required
+            asteriskRequired
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -142,7 +142,7 @@ const ResetWith2FA = (props: IProps) => {
           />
         </Grid>
         <Grid item xs={12} md={12}>
-          <TextField
+          <FormTextField
             label="Two factor code"
             id="2fa-reset-code"
             name="code"
@@ -150,7 +150,7 @@ const ResetWith2FA = (props: IProps) => {
             onChange={formik.handleChange}
             error={formik.touched.code && Boolean(formik.errors.code)}
             helperText={formik.touched.code && formik.errors.code}
-            required
+            asteriskRequired
           />
         </Grid>
         <Grid item xs={12} md={12}>

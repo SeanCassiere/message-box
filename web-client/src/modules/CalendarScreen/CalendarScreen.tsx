@@ -19,7 +19,7 @@ import AddCalendarEventDialog from "../../shared/components/Dialogs/AddCalendarE
 import CalendarSchedularComponent from "../../shared/components/Calendar/CalendarSchedularComponent";
 import PagePaperWrapper from "../../shared/components/Layout/PagePaperWrapper";
 import DeleteEventConfirmationDialog from "./DeleteEventConfirmationDialog";
-import TextField from "../../shared/components/Form/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField";
 
 import { ICalendarEventComponentDevExpress } from "../../shared/interfaces/CalendarEvent.interfaces";
 import { selectLookupListsState, selectUserState } from "../../shared/redux/store";
@@ -306,12 +306,7 @@ const CalendarScreen = () => {
                   sx={{ width: 250 }}
                   size="small"
                   renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      // size="small"
-                      InputProps={{ ...params.InputProps, endAdornment: <></> }}
-                      fullWidth
-                    />
+                    <FormTextField {...params} InputProps={{ ...params.InputProps, endAdornment: <></> }} fullWidth />
                   )}
                 />
               )}

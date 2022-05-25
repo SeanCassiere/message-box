@@ -48,10 +48,10 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 
 import { selectLookupListsState, selectUserState } from "../../../redux/store";
 import { stringAvatar } from "./navUtils";
-import { secondaryNavigationColor } from "../../../util/constants";
+import { secondaryNavigationColor, secondaryNavigationColorDark } from "../../../util/constants";
 import { usePermission } from "../../../hooks/usePermission";
 import { socket_publishUserStatusChange } from "../../../api/socket.service";
-import { setAwakeDialogState } from "../../../redux/slices/user/userSlice";
+import { setAwakeDialogState, setToggleTheme } from "../../../redux/slices/user/userSlice";
 import { DEFAULT_USER_STATUSES } from "../../../util/general";
 import { stateOpenChangePasswordDialog } from "../../../redux/slices/dynamicDialog/dynamicDialogSlice";
 
@@ -62,7 +62,7 @@ const NavigationWrapper: React.FC = (props) => {
   const matchLargerThanPhone = useMediaQuery(theme.breakpoints.up("sm"));
 
   const { children } = props;
-  const { userProfile, statusList, showAwakeDialog } = useSelector(selectUserState);
+  const { userProfile, statusList, showAwakeDialog, theme: themeMode } = useSelector(selectUserState);
   const { onlineUsersList } = useSelector(selectLookupListsState);
 
   const isDashboardAccessible = usePermission("dashboard:read");
@@ -114,10 +114,14 @@ const NavigationWrapper: React.FC = (props) => {
     if (isChangePasswordAccessible) {
       listedRoutes.push({ route: "/settings/account/change-password", name: "Change Password" });
     }
+    listedRoutes.push({
+      route: "/toggle-theme",
+      name: themeMode === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode",
+    });
     listedRoutes.push({ route: "/logout", name: "Logout" });
 
     return listedRoutes;
-  }, [isChangePasswordAccessible, isUserProfileAccessible]);
+  }, [isChangePasswordAccessible, isUserProfileAccessible, themeMode]);
 
   const [currentLink, setCurrentLink] = React.useState<string>("");
   const [open, setOpen] = React.useState(false);
@@ -251,7 +255,8 @@ const NavigationWrapper: React.FC = (props) => {
                 sx={{
                   px: 2,
                   py: 0.5,
-                  backgroundColor: secondaryNavigationColor,
+                  backgroundColor:
+                    theme.palette.mode === "light" ? secondaryNavigationColor : secondaryNavigationColorDark,
                   borderRadius: "5px",
                   // "& .MuiSelect-nativeInput": { border: "none" },
                   "& .MuiSelect-select": { color: "primary.600", fontWeight: 500, fontSize: 15, border: "none" },
@@ -281,8 +286,10 @@ const NavigationWrapper: React.FC = (props) => {
                 sx={{
                   borderRadius: "2px",
                   mr: 1,
-                  bgcolor: secondaryNavigationColor,
-                  ":hover": { bgcolor: secondaryNavigationColor },
+                  bgcolor: theme.palette.mode === "light" ? secondaryNavigationColor : secondaryNavigationColorDark,
+                  ":hover": {
+                    bgcolor: theme.palette.mode === "light" ? secondaryNavigationColor : secondaryNavigationColorDark,
+                  },
                 }}
                 onClick={handleNotificationButtonClick}
               >
@@ -312,8 +319,10 @@ const NavigationWrapper: React.FC = (props) => {
                 sx={{
                   borderRadius: "2px",
                   mr: 1,
-                  bgcolor: secondaryNavigationColor,
-                  ":hover": { bgcolor: secondaryNavigationColor },
+                  bgcolor: theme.palette.mode === "light" ? secondaryNavigationColor : secondaryNavigationColorDark,
+                  ":hover": {
+                    bgcolor: theme.palette.mode === "light" ? secondaryNavigationColor : secondaryNavigationColorDark,
+                  },
                 }}
                 onClick={() => handleNavigatePress("/settings/account")}
               >
@@ -340,7 +349,7 @@ const NavigationWrapper: React.FC = (props) => {
                     height: 36,
                     ml: matchLargerThanPhone ? -2 : 0,
                     color: indigo[500],
-                    bgcolor: secondaryNavigationColor,
+                    bgcolor: theme.palette.mode === "light" ? secondaryNavigationColor : secondaryNavigationColorDark,
                   }}
                 />
               </IconButton>
@@ -365,6 +374,14 @@ const NavigationWrapper: React.FC = (props) => {
                   if (setting.route === "/settings/account/change-password") {
                     return (
                       <MenuItem key={setting.route} onClick={() => dispatch(stateOpenChangePasswordDialog({}))}>
+                        <Typography textAlign="center">{setting.name}</Typography>
+                      </MenuItem>
+                    );
+                  }
+
+                  if (setting.route === "/toggle-theme") {
+                    return (
+                      <MenuItem key={setting.route} onClick={() => dispatch(setToggleTheme())}>
                         <Typography textAlign="center">{setting.name}</Typography>
                       </MenuItem>
                     );
@@ -464,7 +481,7 @@ const NavigationWrapper: React.FC = (props) => {
           sx={{
             flexGrow: 1,
             px: 2,
-            bgcolor: "#F9F9F9",
+            bgcolor: theme.palette.mode === "light" ? "#F9F9F9" : undefined,
             width: "100%", // needed for responsive on mobile, don't really know why sometimes
             height: "100vh", // needed for responsive on mobile, don't really know why sometimes
             overflowY: "auto", // needed for responsive on mobile, don't really know why sometimes

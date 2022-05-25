@@ -14,7 +14,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 
-import TextField from "../../shared/components/Form/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField";
 
 import { client } from "../../shared/api/client";
 import { MESSAGES } from "../../shared/util/messages";
@@ -59,7 +59,7 @@ const UserCredentialsForm = (props: IProps) => {
   return (
     <>
       <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1, width: "100%" }}>
-        <TextField
+        <FormTextField
           margin="normal"
           fullWidth
           label="Email Address"
@@ -74,7 +74,7 @@ const UserCredentialsForm = (props: IProps) => {
         />
         <Collapse in={props.showFullForm}>
           <>
-            <TextField
+            <FormTextField
               margin="normal"
               fullWidth
               label="Password"

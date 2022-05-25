@@ -21,7 +21,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 import PageBlockItem from "../../shared/components/Layout/PageBlockItem";
 import FilterField from "./FilterField";
-import TextField from "../../shared/components/Form/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField";
 
 import { IReportSchema } from "../../shared/interfaces/Reports.interfaces";
 import { removeEmptyQueryParamsToSend } from "../../shared/util/general";
@@ -161,7 +161,7 @@ const ReportResultData = (props: IProps) => {
                 <Autocomplete
                   size="small"
                   limitTags={2}
-                  renderInput={(params) => <TextField {...params} label="Search filters" />}
+                  renderInput={(params) => <FormTextField {...params} label="Search filters" />}
                   multiple
                   options={currentFilters.filter((r) => r.hidden === false)}
                   getOptionLabel={(option) => option.label}
@@ -204,8 +204,6 @@ const ReportResultData = (props: IProps) => {
             <Button fullWidth type="submit" sx={{ height: "100%" }}>
               Search
             </Button>
-            {/* <Box>
-            </Box> */}
           </Grid>
           <Grid item xs={12} md={2}>
             <Button type="reset" color="secondary" fullWidth onClick={setInitialFilters} sx={{ height: "100%" }}>

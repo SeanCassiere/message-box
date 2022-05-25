@@ -4,7 +4,7 @@ import FormControl from "@mui/material/FormControl";
 import Autocomplete from "@mui/material/Autocomplete";
 import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 
-import TextField from "../../shared/components/Form/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField";
 
 import { IReportSearchFieldSchema } from "../../shared/interfaces/Reports.interfaces";
 import { useSelector } from "react-redux";
@@ -42,7 +42,7 @@ const FilterField = React.memo(
             }}
             // showDaysOutsideCurrentMonth
             renderInput={(params) => (
-              <TextField
+              <FormTextField
                 variant="outlined"
                 fullWidth
                 label={field.label}
@@ -77,7 +77,7 @@ const FilterField = React.memo(
             sx={{ mr: 2, width: "100%" }}
             size="small"
             renderInput={(params) => (
-              <TextField
+              <FormTextField
                 {...params}
                 label={field.label}
                 InputLabelProps={{ disableAnimation: false, shrink: undefined }}
@@ -93,7 +93,7 @@ const FilterField = React.memo(
     if (field.fieldType === "form-text") {
       return (
         <FormControl fullWidth>
-          <TextField
+          <FormTextField
             autoComplete="off"
             label={field.label}
             value={filterData[field.fieldName] ?? undefined}

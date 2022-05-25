@@ -5,6 +5,22 @@ import { DEFAULT_USER_STATUSES } from "../../../util/general";
 
 import { getProfilesThunk } from "./thunks";
 
+const themeKey = "MessageBox-Theme";
+
+function setTheme(key: "light" | "dark") {
+  localStorage.setItem(themeKey, key);
+}
+
+function getTheme() {
+  const storage = localStorage.getItem(themeKey);
+  if (storage?.toLowerCase() === "dark") {
+    return "dark";
+  } else {
+    setTheme("light");
+    return "light";
+  }
+}
+
 interface UserSliceState {
   isLoadingProfileData: boolean;
   userProfile: IUserProfile | null;
@@ -19,6 +35,7 @@ interface UserSliceState {
     timeFormat: string;
     defaultDateRefreshInterval: number;
   };
+  theme: "light" | "dark";
   statusList: ICurrentUserStatusInterface[];
   showAwakeDialog: boolean;
 }
@@ -37,6 +54,7 @@ const initialState: UserSliceState = {
     timeFormat: "h:mm a",
     defaultDateRefreshInterval: 30000,
   },
+  theme: getTheme(),
   statusList: DEFAULT_USER_STATUSES,
   showAwakeDialog: false,
 };
@@ -62,6 +80,10 @@ const userSlice = createSlice({
     setAwakeDialogState(state, action: PayloadAction<boolean>) {
       state.showAwakeDialog = action.payload;
     },
+    setToggleTheme(state) {
+      setTheme(state.theme === "light" ? "dark" : "light");
+      state.theme = state.theme === "light" ? "dark" : "light";
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getProfilesThunk.pending, (state) => {
@@ -82,5 +104,6 @@ export const {
   setUserProfileData,
   setPermissionsAndRoles,
   setAwakeDialogState,
+  setToggleTheme,
 } = userSlice.actions;
 export default userSlice;

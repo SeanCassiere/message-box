@@ -17,7 +17,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-import TextField from "../../shared/components/Form/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField";
 
 interface IProps {
   formik: FormikContextType<{
@@ -66,7 +66,7 @@ const UserRegistrationForm = (props: IProps) => {
               </Divider>
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <FormTextField
                 name="password"
                 label="Password"
                 type={showPassword ? "text" : "password"}
@@ -76,7 +76,7 @@ const UserRegistrationForm = (props: IProps) => {
                 onChange={formik.handleChange}
                 error={formik.touched.password && Boolean(formik.errors.password)}
                 helperText={formik.touched.password && formik.errors.password}
-                required
+                asteriskRequired
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -93,7 +93,7 @@ const UserRegistrationForm = (props: IProps) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <FormTextField
                 name="passwordConfirmation"
                 label="Confirm Password"
                 type={showPassword ? "text" : "password"}
@@ -103,7 +103,7 @@ const UserRegistrationForm = (props: IProps) => {
                 onChange={formik.handleChange}
                 error={formik.touched.passwordConfirmation && Boolean(formik.errors.passwordConfirmation)}
                 helperText={formik.touched.passwordConfirmation && formik.errors.passwordConfirmation}
-                required
+                asteriskRequired
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">

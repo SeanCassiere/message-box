@@ -272,7 +272,6 @@ const DashboardPage = () => {
                       animation="wave"
                       width={"100%"}
                       height={MIN_DASHBOARD_WIDGET_HEIGHT * 2}
-                      sx={{ bgcolor: "grey.100" }}
                     />
                   </Paper>
                 </Grid>

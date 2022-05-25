@@ -14,7 +14,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 
-import TextField from "../../shared/components/Form/TextField/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField/FormTextField";
 import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
 import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButtonFooter";
 
@@ -153,7 +153,7 @@ const AddChatRoomDialog = (props: IProps) => {
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 0 }}>
             <Grid item xs={12}>
-              <TextField
+              <FormTextField
                 margin="dense"
                 fullWidth
                 label={formik.values.roomType === "private" ? "Conversation name" : "Chat name"}
@@ -166,7 +166,7 @@ const AddChatRoomDialog = (props: IProps) => {
                 error={formik.touched.roomName && Boolean(formik.errors.roomName)}
                 helperText={formik.touched.roomName && formik.errors.roomName}
                 disabled={formik.isSubmitting}
-                required
+                asteriskRequired
               />
             </Grid>
             {formik.values?.roomType !== "private" && (
@@ -197,7 +197,7 @@ const AddChatRoomDialog = (props: IProps) => {
                       formik.setFieldValue("participants", ids);
                     }}
                     renderInput={(params) => (
-                      <TextField
+                      <FormTextField
                         {...params}
                         label="Participants"
                         name="participants"
@@ -209,7 +209,7 @@ const AddChatRoomDialog = (props: IProps) => {
                         }
                         InputProps={{ ...params.InputProps, endAdornment: <></> }}
                         fullWidth
-                        required
+                        asteriskRequired
                       />
                     )}
                     renderTags={(value, getTagProps) =>

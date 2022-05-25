@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "@mui/material/styles";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -12,16 +13,17 @@ const PageBlockItem: React.FC<{ title?: string | React.ReactNode; badgeText?: st
   badgeText,
   height,
 }) => {
+  const theme = useTheme();
   return (
     <Box
       sx={{
         mt: 2,
-        bgcolor: "#fff",
+        bgcolor: theme.palette.mode === "light" ? "#fff" : undefined,
         pt: 2,
         pb: 3,
         px: 2,
         borderRadius: 2,
-        borderColor: COMMON_ITEM_BORDER_COLOR,
+        borderColor: theme.palette.mode === "light" ? COMMON_ITEM_BORDER_COLOR : "#292929",
         borderWidth: 3,
         borderStyle: "solid",
         height: height ?? "auto",

@@ -35,7 +35,7 @@ const BasicRolesDetails = (props: Props) => {
 };
 
 const BoxStyled = styled(Box)(({ theme }) => ({
-  backgroundColor: "#f0f9ff",
+  backgroundColor: theme.palette.mode === "light" ? "#f0f9ff" : theme.palette.getContrastText("#f0f9ff"),
   padding: "1rem 1rem",
   borderRadius: 6,
   borderColor: "#0ea5e9",

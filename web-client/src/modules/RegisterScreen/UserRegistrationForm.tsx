@@ -17,7 +17,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-import TextField from "../../shared/components/Form/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField";
 
 interface IProps {
   formik: FormikContextType<{
@@ -69,7 +69,7 @@ const UserRegistrationForm = (props: IProps) => {
               </Divider>
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <FormTextField
                 required
                 id="clientName"
                 label="Company Name"
@@ -88,7 +88,7 @@ const UserRegistrationForm = (props: IProps) => {
               </Divider>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <FormTextField
                 autoComplete="given-name"
                 required
                 name="firstName"
@@ -101,7 +101,7 @@ const UserRegistrationForm = (props: IProps) => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <FormTextField
                 required
                 label="Last Name"
                 id="lastName"
@@ -114,7 +114,7 @@ const UserRegistrationForm = (props: IProps) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <FormTextField
                 required
                 label="Email Address"
                 id="email"
@@ -127,7 +127,7 @@ const UserRegistrationForm = (props: IProps) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <FormTextField
                 required
                 name="password"
                 label="Password"
@@ -154,7 +154,7 @@ const UserRegistrationForm = (props: IProps) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <FormTextField
                 required
                 name="passwordConfirmation"
                 label="Confirm Password"

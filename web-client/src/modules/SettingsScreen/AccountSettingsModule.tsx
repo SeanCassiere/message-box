@@ -47,7 +47,10 @@ function a11yProps(index: number) {
 }
 
 const AccountSettingsModule = () => {
+  const theme = useTheme();
+  const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
+
   const { module } = useParams<{ module: string }>();
 
   useEffect(() => {
@@ -62,9 +65,6 @@ const AccountSettingsModule = () => {
   }, [module, navigate]);
 
   const [value, setValue] = React.useState(0);
-
-  const theme = useTheme();
-  const isOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleChangeTabs = (event: React.SyntheticEvent, newValue: number) => {
     const findTab = TABS_TO_PRINT.find((tab) => tab.value === Number(newValue));
@@ -108,7 +108,16 @@ const AccountSettingsModule = () => {
               key={`tab-label-${t.label}-${t.value}`}
               label={t.label}
               {...a11yProps(t.value)}
-              sx={{ bgcolor: value === t.value ? "primary.50" : inactiveTabBgColor }}
+              sx={{
+                bgcolor:
+                  theme.palette.mode === "light"
+                    ? () => {
+                        return value === t.value ? "primary.50" : inactiveTabBgColor;
+                      }
+                    : () => {
+                        return value === t.value ? "secondary.900" : "#292929";
+                      },
+              }}
             />
           ))}
         </Tabs>

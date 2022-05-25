@@ -1,6 +1,6 @@
 import React from "react";
 import { grey } from "@mui/material/colors";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
 
@@ -64,6 +64,7 @@ interface Props {
 const TAKE_SIZE_MESSAGES = 35;
 
 const ChatContentPane = (props: Props) => {
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const { selectedChatConversation } = props;
 
@@ -362,13 +363,13 @@ const ChatContentPane = (props: Props) => {
       }}
       sx={{
         minHeight: "calc(100% - 2%)",
-        border: COMMON_ITEM_BORDER_STYLING,
+        border: theme.palette.mode === "light" ? COMMON_ITEM_BORDER_STYLING : undefined,
         borderRadius: 1,
       }}
     >
       <Box
         sx={{
-          borderBottom: COMMON_ITEM_BORDER_STYLING,
+          borderBottom: theme.palette.mode === "light" ? COMMON_ITEM_BORDER_STYLING : "#494949",
           py: {
             md: 2,
           },
@@ -446,7 +447,7 @@ const ChatContentPane = (props: Props) => {
       <Box
         flexGrow={1}
         sx={{
-          borderBottom: COMMON_ITEM_BORDER_STYLING,
+          borderBottom: theme.palette.mode === "light" ? COMMON_ITEM_BORDER_STYLING : "#494949",
         }}
       >
         <Stack sx={{ minHeight: { md: "68vh" }, maxHeight: { xs: "35vh", md: "69vh" }, py: 1, overflow: "auto" }}>
@@ -492,7 +493,7 @@ const ChatContentPane = (props: Props) => {
               placeholder="Type your message here"
               fullWidth
               size="small"
-              InputProps={{ sx: { bgcolor: "#eef2ff" } }}
+              InputProps={{ sx: { bgcolor: theme.palette.mode === "light" ? "#eef2ff" : undefined } }}
               value={typingMessageText}
               onChange={(e) => setTypingMessageText(e.target.value)}
               onKeyDown={(e) => {

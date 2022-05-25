@@ -20,7 +20,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 
-import TextField from "../../Form/TextField/TextField";
+import FormTextField from "../../Form/FormTextField/FormTextField";
 import DialogHeaderClose from "../../Dialog/DialogHeaderClose";
 import DialogBigButtonFooter from "../../Dialog/DialogBigButtonFooter";
 
@@ -303,7 +303,7 @@ const AddCalendarEventDialog = (props: IProps) => {
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 0 }}>
             <Grid item xs={12}>
-              <TextField
+              <FormTextField
                 margin="normal"
                 fullWidth
                 label="Event name"
@@ -316,7 +316,7 @@ const AddCalendarEventDialog = (props: IProps) => {
                 error={formik.touched.title && Boolean(formik.errors.title)}
                 helperText={formik.touched.title && formik.errors.title}
                 disabled={isDisabled || formik.isSubmitting}
-                required
+                asteriskRequired
               />
             </Grid>
             {formik.values.isAllDay ? (
@@ -332,7 +332,7 @@ const AddCalendarEventDialog = (props: IProps) => {
                     showDaysOutsideCurrentMonth
                     loading={isDisabled || formik.isSubmitting}
                     renderInput={(params) => (
-                      <TextField
+                      <FormTextField
                         variant="outlined"
                         fullWidth
                         {...params}
@@ -343,7 +343,7 @@ const AddCalendarEventDialog = (props: IProps) => {
                         helperText={
                           formik.touched.startDate && Boolean(formik.errors.startDate) && formik.errors.startDate
                         }
-                        required
+                        asteriskRequired
                       />
                     )}
                   />
@@ -362,7 +362,7 @@ const AddCalendarEventDialog = (props: IProps) => {
                     showDaysOutsideCurrentMonth
                     loading={isDisabled || formik.isSubmitting}
                     renderInput={(params) => (
-                      <TextField
+                      <FormTextField
                         variant="outlined"
                         fullWidth
                         {...params}
@@ -373,7 +373,7 @@ const AddCalendarEventDialog = (props: IProps) => {
                         helperText={
                           formik.touched.startDate && Boolean(formik.errors.startDate) && formik.errors.startDate
                         }
-                        required
+                        asteriskRequired
                       />
                     )}
                   />
@@ -389,7 +389,7 @@ const AddCalendarEventDialog = (props: IProps) => {
                     showDaysOutsideCurrentMonth
                     loading={isDisabled || formik.isSubmitting}
                     renderInput={(params) => (
-                      <TextField
+                      <FormTextField
                         variant="outlined"
                         fullWidth
                         {...params}
@@ -398,7 +398,7 @@ const AddCalendarEventDialog = (props: IProps) => {
                         disabled={isDisabled || formik.isSubmitting}
                         error={formik.touched.endDate && Boolean(formik.errors.endDate)}
                         helperText={formik.touched.endDate && Boolean(formik.errors.endDate) && formik.errors.endDate}
-                        required
+                        asteriskRequired
                       />
                     )}
                   />
@@ -428,7 +428,7 @@ const AddCalendarEventDialog = (props: IProps) => {
               {/* blank space */}
             </Grid>
             <Grid item xs={12} sx={{ mt: -1 }}>
-              <TextField
+              <FormTextField
                 type="text"
                 margin="normal"
                 fullWidth
@@ -458,7 +458,7 @@ const AddCalendarEventDialog = (props: IProps) => {
                 disabled={isDisabled || formik.isSubmitting}
                 onChange={handleSelectGuests}
                 renderInput={(params) => (
-                  <TextField
+                  <FormTextField
                     {...params}
                     label="Guests"
                     disabled={isDisabled || formik.isSubmitting}

@@ -1,5 +1,6 @@
 export const drawerWidth = 210;
 export const secondaryNavigationColor = "#E9ECFF";
+export const secondaryNavigationColorDark = "#D2D5E8";
 export const taskColorOpacity = 0.5;
 
 export const PRIMARY_BTN_COLOR = "#4db6ac";

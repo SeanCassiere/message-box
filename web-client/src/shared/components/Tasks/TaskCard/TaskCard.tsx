@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-
+import { useTheme } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -25,9 +25,11 @@ interface Props {
 }
 
 const TaskCard = (props: Props) => {
-  const { task, mode, triggerRefresh } = props;
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
+
+  const { task, mode, triggerRefresh } = props;
 
   const [data, setData] = useState<ITask>(task);
 
@@ -105,6 +107,7 @@ const TaskCard = (props: Props) => {
               pl: 1,
               border: `1.3px solid ${getBorderColor(task.bgColor)}`,
               borderRadius: 1,
+              color: theme.palette.getContrastText(task.bgColor),
             }}
             color="text.primary"
             onClick={() => handleTaskClick(task.taskId)}

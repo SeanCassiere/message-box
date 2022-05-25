@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useSnackbar } from "notistack";
-
+import { useTheme } from "@mui/material/styles";
 import { client } from "../../../api/client";
 
 import Box from "@mui/material/Box";
@@ -34,6 +34,7 @@ const TaskGroupColumn = (props: Props) => {
   const { title, showCompletedItemsCheckbox, mode, ownerId, triggerRefresh, countUp } = props;
 
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
 
   const [allTasks, setAllTasks] = useState<ITask[]>([]);
   const [showCompleted, setShowCompleted] = useState(false);
@@ -94,9 +95,7 @@ const TaskGroupColumn = (props: Props) => {
           height: "66.5vh",
           overflowY: "scroll",
           marginTop: "1em",
-          // bgcolor: grey[100],
-          // border: `1px solid ${grey[300]}`,
-          border: COMMON_ITEM_BORDER_STYLING,
+          border: theme.palette.mode === "light" ? COMMON_ITEM_BORDER_STYLING : undefined,
           padding: `${showCompletedItemsCheckbox ? "0em" : "1.5em"} 1em 1em 1em`,
           borderRadius: 1,
           boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",

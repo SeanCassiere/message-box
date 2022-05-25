@@ -23,7 +23,7 @@ import IconButton from "@mui/material/IconButton";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
-import TextField from "../../shared/components/Form/TextField/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField/FormTextField";
 import DialogHeaderClose from "../../shared/components/Dialog/DialogHeaderClose";
 import DialogBigButtonFooter from "../../shared/components/Dialog/DialogBigButtonFooter";
 
@@ -33,10 +33,10 @@ import { MESSAGES } from "../../shared/util/messages";
 import store, { selectLookupListsState } from "../../shared/redux/store";
 
 const validationSchema = yup.object().shape({
-  widgetType: yup.string().required("WidgetType is required"),
-  widgetName: yup.string().required("WidgetName is required"),
-  widgetScale: yup.number().required("WidgetScale is required"),
-  widgetHeight: yup.number().required("WidgetHeight is required"),
+  widgetType: yup.string().required("Type is required"),
+  widgetName: yup.string().required("Title is required"),
+  widgetScale: yup.number().required("Width is required"),
+  widgetHeight: yup.number().required("Height is required"),
   position: yup.object().shape({
     x: yup.number().min(0, "Minimum is 0").required("X is required"),
     y: yup.number().min(0, "Minimum is 0").required("Y is required"),
@@ -245,7 +245,7 @@ const AddWidgetDialog = (props: IProps) => {
                 </Box>
               </Grid>
               <Grid item xs={12} md={12}>
-                <TextField
+                <FormTextField
                   margin="normal"
                   fullWidth
                   label="Title"
@@ -258,7 +258,7 @@ const AddWidgetDialog = (props: IProps) => {
                   error={formik.touched.widgetName && Boolean(formik.errors.widgetName)}
                   helperText={formik.touched.widgetName && formik.errors.widgetName}
                   disabled={formik.isSubmitting}
-                  required
+                  asteriskRequired
                 />
               </Grid>
               <Grid item xs={12} md={12}>
@@ -278,13 +278,13 @@ const AddWidgetDialog = (props: IProps) => {
                     }}
                     sx={{ mr: 2, width: "100%" }}
                     renderInput={(params) => (
-                      <TextField
+                      <FormTextField
                         {...params}
                         label="Width"
                         name="widgetScale"
                         InputLabelProps={{ disableAnimation: false, shrink: undefined }}
                         fullWidth
-                        required
+                        asteriskRequired
                       />
                     )}
                   />
@@ -304,13 +304,13 @@ const AddWidgetDialog = (props: IProps) => {
                     }}
                     sx={{ mr: 2, width: "100%" }}
                     renderInput={(params) => (
-                      <TextField
+                      <FormTextField
                         {...params}
                         label="Height"
                         name="widgetHeight"
                         InputLabelProps={{ disableAnimation: false, shrink: undefined }}
                         fullWidth
-                        required
+                        asteriskRequired
                       />
                     )}
                   />
@@ -416,7 +416,7 @@ const AddWidgetDialog = (props: IProps) => {
                       }}
                       sx={{ mr: 2, width: "100%" }}
                       renderInput={(params) => (
-                        <TextField
+                        <FormTextField
                           {...params}
                           label={optDTO.displayName}
                           name={optDTO.parameter}

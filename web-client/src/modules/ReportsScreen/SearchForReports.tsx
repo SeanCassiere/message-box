@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
 
-import TextField from "../../shared/components/Form/TextField";
+import FormTextField from "../../shared/components/Form/FormTextField";
 
 import { COMMON_ITEM_BORDER_COLOR } from "../../shared/util/constants";
 import { ExtendedReportSchema } from "./ReportsScreen";
@@ -57,7 +57,7 @@ const SearchForReports = (props: Props) => {
               disableClearable
               fullWidth
               onSelect={handleSearchSelectItem}
-              renderInput={(params) => <TextField {...params} label="Search reports" size="small" />}
+              renderInput={(params) => <FormTextField {...params} label="Search reports" size="small" />}
             />
           )}
         </Box>
@@ -72,9 +72,25 @@ const SearchForReports = (props: Props) => {
                   cursor: "pointer",
                   px: 2,
                   py: 1,
-                  bgcolor: selectedReport?.reportId === report.reportId ? "primary.50" : "#fff",
                   borderStyle: "solid",
-                  borderColor: selectedReport?.reportId === report.reportId ? "primary.500" : COMMON_ITEM_BORDER_COLOR,
+                  bgcolor:
+                    theme.palette.mode === "light"
+                      ? () => {
+                          return selectedReport?.reportId === report.reportId ? "primary.50" : COMMON_ITEM_BORDER_COLOR;
+                        }
+                      : () => {
+                          return selectedReport?.reportId === report.reportId ? "primary.400" : "#292929";
+                        },
+                  borderColor:
+                    theme.palette.mode === "light"
+                      ? () => {
+                          return selectedReport?.reportId === report.reportId
+                            ? "primary.500"
+                            : COMMON_ITEM_BORDER_COLOR;
+                        }
+                      : () => {
+                          return selectedReport?.reportId === report.reportId ? "primary.500" : "#292929";
+                        },
                   borderWidth: 2,
                   borderRadius: 0.5,
                 }}

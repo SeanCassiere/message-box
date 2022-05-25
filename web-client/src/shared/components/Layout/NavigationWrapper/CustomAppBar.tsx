@@ -11,6 +11,9 @@ interface CustomAppBarProps extends MuiAppBarProps {
 const CustomAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<CustomAppBarProps>(({ theme, open }) => ({
+  backgroundColor: theme.palette.mode === "light" ? "white" : "#121212",
+  backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))",
+
   zIndex: theme.zIndex.drawer,
   paddingLeft: `calc(${theme.spacing(1)} - 10px)`,
   [theme.breakpoints.up("sm")]: {

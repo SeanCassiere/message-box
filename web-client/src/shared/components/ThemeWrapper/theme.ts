@@ -1,15 +1,13 @@
-import { createTheme } from "@mui/material/styles";
-
+import { ThemeOptions } from "@mui/material";
 import { teal, blueGrey } from "@mui/material/colors";
 
-export const theme = createTheme({
+export const theme: ThemeOptions = {
   palette: {
-    mode: "light",
     primary: {
-      main: teal[300],
+      main: teal[400],
       contrastText: "#fff",
       dark: teal[700],
-      light: teal[100],
+      light: teal[200],
       50: teal[50],
       100: teal[100],
       200: teal[200],
@@ -39,15 +37,12 @@ export const theme = createTheme({
     MuiTextField: {
       defaultProps: {
         variant: "outlined",
-        InputLabelProps: {
-          shrink: true,
-        },
+        InputLabelProps: {},
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "white",
           color: teal[300],
           borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
         },
@@ -64,4 +59,4 @@ export const theme = createTheme({
       },
     },
   },
-});
+};

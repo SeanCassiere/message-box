@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { useTheme } from "@mui/material/styles";
 
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -41,6 +42,8 @@ function sortTeamNames(a: ITeamMember, b: ITeamMember) {
 }
 
 const ActivityBlock = (props: IProps) => {
+  const theme = useTheme();
+
   const { overviewTeamData, initiallyShowFull } = props;
   const { onlineUsersList } = useSelector(selectLookupListsState);
   const [showMore, setShowMore] = React.useState(initiallyShowFull ?? false);
@@ -85,7 +88,12 @@ const ActivityBlock = (props: IProps) => {
       sx={{
         py: 2,
         px: 2,
-        border: props.showBorder ? COMMON_ITEM_BORDER_STYLING : null,
+        border:
+          theme.palette.mode === "light"
+            ? () => {
+                return props.showBorder ? COMMON_ITEM_BORDER_STYLING : undefined;
+              }
+            : "#292929",
         borderRadius: 1,
         boxShadow: props.liftShadow ? "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)" : null,
         "&::-webkit-scrollbar": {

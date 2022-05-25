@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useTheme } from "@mui/material/styles";
 import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from "recharts";
 
 import Box from "@mui/material/Box";
@@ -71,6 +71,7 @@ interface IProps {
 const PIE_CHART_COLORS = ["#2DD4BF", "#FB7185", indigo[300], deepOrange[300]];
 
 const MyTasksCompletionChart = (props: IProps) => {
+  const theme = useTheme();
   const [data, setData] = React.useState<PieChartStatistics>([]);
   const [activeIndex, setActiveIndex] = React.useState<number | undefined>(0);
 
@@ -123,8 +124,7 @@ const MyTasksCompletionChart = (props: IProps) => {
             cx="50%"
             cy="50%"
             labelLine={false}
-            // label={renderCustomizedLabel}
-            fill="#8884d8"
+            fill={theme.palette.mode === "light" ? "#8884d8" : "#292929"}
             nameKey="name"
             dataKey="value"
             innerRadius="45%"

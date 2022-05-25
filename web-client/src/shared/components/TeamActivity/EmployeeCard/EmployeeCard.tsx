@@ -19,20 +19,6 @@ import { selectLookupListsState, selectUserState } from "../../../redux/store";
 import { stringAvatar } from "../../Layout/NavigationWrapper/navUtils";
 import { socket_activateInactivityPromptForUser } from "../../../api/socket.service";
 
-const employeeCardStyling: CSSObject = {
-  mx: 1,
-  px: 1,
-  py: 1,
-  borderColor: "primary.200",
-  borderWidth: 2,
-  borderStyle: "solid",
-  minHeight: "200px",
-  backgroundColor: "white",
-  "&:hover": {
-    boxShadow: "0 3px 3px rgba(0,0,0,0.16)",
-  },
-};
-
 interface IProps {
   member: ITeamMember;
 }
@@ -56,6 +42,20 @@ const EmployeeCard = (props: IProps) => {
   }, [currentStatus, statusList]);
 
   const [messageSent, setSentMessage] = React.useState(false);
+
+  const employeeCardStyling: CSSObject = {
+    mx: 1,
+    px: 1,
+    py: 1,
+    borderColor: theme.palette.mode === "light" ? "primary.200" : "#292929",
+    borderWidth: 2,
+    borderStyle: "solid",
+    minHeight: "200px",
+    backgroundColor: theme.palette.mode === "light" ? "white" : undefined,
+    "&:hover": {
+      boxShadow: "0 3px 3px rgba(0,0,0,0.16)",
+    },
+  };
 
   return (
     <Paper sx={employeeCardStyling} elevation={0}>
@@ -88,10 +88,10 @@ const EmployeeCard = (props: IProps) => {
                 {...stringAvatar(`${props.member?.firstName?.toUpperCase()} ${props.member?.lastName?.toUpperCase()}`)}
                 alt={`${props.member?.firstName} ${props.member?.lastName}`}
                 sx={{
-                  bgcolor: "#E9ECFF",
+                  bgcolor: theme.palette.mode === "light" ? "#E9ECFF" : undefined,
                   fontSize: `0.9em`,
                   fontWeight: 500,
-                  color: indigo[500],
+                  color: theme.palette.mode === "light" ? indigo[500] : indigo[100],
                 }}
               />
             </Badge>
