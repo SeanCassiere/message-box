@@ -58,5 +58,30 @@ export const theme: ThemeOptions = {
         },
       },
     },
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
+          boxShadow: "none",
+          borderTop: 0,
+          marginBottom: "1rem",
+          [`&::before`]: {
+            backgroundColor: "transparent",
+          },
+        },
+      },
+    },
+    MuiAccordionDetails: {
+      styleOverrides: {
+        root: {},
+      },
+    },
+    MuiAccordionSummary: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#F9F8F8",
+          borderRadius: 10,
+        },
+      },
+    },
   },
 };

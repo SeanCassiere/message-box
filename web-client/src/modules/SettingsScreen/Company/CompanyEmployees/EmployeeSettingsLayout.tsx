@@ -1,17 +1,20 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
+import { GridColDef } from "@mui/x-data-grid";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 
+import EditIcon from "@mui/icons-material/Edit";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 
-import ViewTable from "./Table";
 import AddUserDialog from "./AddUserDialog";
+import NormalDataGrid from "../../../../shared/components/DataGrid/NormalDataGrid";
 
 import { selectLookupListsState } from "../../../../shared/redux/store";
 import { IRoleProfile, ITeamProfile } from "../../../../shared/interfaces/Client.interfaces";
@@ -20,12 +23,16 @@ import { client } from "../../../../shared/api/client";
 import { setLookupRoles, setLookupTeams, setLookupUsers } from "../../../../shared/redux/slices/lookup/lookupSlice";
 import { usePermission } from "../../../../shared/hooks/usePermission";
 import { MESSAGES } from "../../../../shared/util/messages";
+import { formatDateFromNow } from "../../../../shared/util/dateTime";
 
 const Layout = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
   const isAddButtonAccessible = usePermission("user:admin");
+  const isEditAccessible = usePermission("user:admin");
+
+  const [loading, setLoading] = useState(true);
 
   const { usersList, rolesList, teamsList } = useSelector(selectLookupListsState);
 
@@ -43,6 +50,9 @@ const Layout = () => {
       .catch((e) => {
         console.log(e);
         enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+      })
+      .finally(() => {
+        setLoading(false);
       });
 
     client
@@ -128,6 +138,108 @@ const Layout = () => {
     setOpenEditId(null);
   }, []);
 
+  const columns: GridColDef[] = React.useMemo(() => {
+    const cols: GridColDef[] = [];
+
+    cols.push({
+      field: "firstName",
+      headerName: "Full Name",
+      description: "Employee's full name",
+      sortable: true,
+      width: 300,
+      renderCell: (row) => (
+        <span>
+          {row.row?.firstName} {row.row?.lastName}
+        </span>
+      ),
+    });
+    cols.push({
+      field: "roles",
+      headerName: "Role(s)",
+      description: "User access roles for the employee",
+      sortable: false,
+      filterable: false,
+      width: 400,
+      align: "left",
+      headerAlign: "left",
+      renderCell: (row) => (
+        <span>
+          {row.row?.roleDetails?.map((userRole: IRoleProfile) => (
+            <Chip
+              variant={userRole.isUserDeletable ? "outlined" : "filled"}
+              label={userRole.viewName}
+              sx={{ mr: 0.5 }}
+              key={`${row.row?.userId}+${userRole.roleId}`}
+            />
+          ))}
+        </span>
+      ),
+    });
+    cols.push({
+      field: "teams",
+      headerName: "Team(s)",
+      description: "Teams the employee participates in",
+      sortable: false,
+      filterable: false,
+      width: 400,
+      align: "left",
+      headerAlign: "left",
+      renderCell: (row) => (
+        <span>
+          {row.row?.teamDetails?.map((team: ITeamProfile) => (
+            <Chip
+              variant={team.isUserDeletable ? "outlined" : "filled"}
+              label={team.teamName}
+              sx={{ mr: 0.5 }}
+              key={`${row?.row?.userId}+${team.teamId}`}
+            />
+          ))}
+        </span>
+      ),
+    });
+    cols.push({
+      field: "isActive",
+      headerName: "Status",
+      description: "Is the employee profile active?",
+      align: "left",
+      headerAlign: "left",
+      renderCell: (row) => (
+        <span>{row.value ? <Chip label="Active" color="secondary" /> : <Chip label="Inactive" />}</span>
+      ),
+    });
+    cols.push({
+      field: "updatedAt",
+      headerName: "Last updated",
+      description: "Last updated date-time",
+      sortable: true,
+      type: "date",
+      align: "left",
+      headerAlign: "left",
+      width: 200,
+      valueFormatter: (row) => formatDateFromNow(row.value),
+    });
+    cols.push({
+      field: "userId",
+      headerName: "Actions",
+      description: "Actions",
+      sortable: false,
+      headerAlign: "right",
+      type: "actions",
+      align: "right",
+      hideable: false,
+      renderCell: (row) => (
+        <span>
+          {isEditAccessible && (
+            <IconButton color="primary" aria-label="edit" onClick={() => handleOpenEditor(row.value)}>
+              <EditIcon />
+            </IconButton>
+          )}
+        </span>
+      ),
+    });
+    return cols;
+  }, [handleOpenEditor, isEditAccessible]);
+
   return (
     <>
       <AddUserDialog
@@ -154,9 +266,12 @@ const Layout = () => {
             )}
           </Box>
         </Box>
-        <Box>
-          <ViewTable dataList={fullDataUserList} editItemHandler={handleOpenEditor} />
-        </Box>
+        <NormalDataGrid
+          columns={columns}
+          rows={fullDataUserList.map((d) => ({ ...d, id: d.userId }))}
+          height={700}
+          loading={loading}
+        />
       </Box>
     </>
   );

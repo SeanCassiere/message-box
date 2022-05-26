@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTheme } from "@mui/material/styles";
 import "./RichEditor.css";
 import "draft-js/dist/Draft.css";
 
@@ -14,6 +15,7 @@ interface Props {
 }
 
 const TaskContentEditor = (props: Props) => {
+  const theme = useTheme();
   const { initialContent, onChange, disabled } = props;
 
   const [editorCurrentState, setEditorCurrentState] = useState<EditorState>(EditorState.createEmpty());
@@ -92,10 +94,20 @@ const TaskContentEditor = (props: Props) => {
         position: "relative",
         overflowX: "hidden",
         border: "1px solid #ddd",
-        padding: "1rem 1rem",
       }}
     >
-      <Box sx={{ position: "sticky", top: 0, borderBottom: "1px solid #ddd", bgcolor: "#fff", zIndex: 2 }}>
+      <Box
+        sx={{
+          position: "sticky",
+          top: 0,
+          bgcolor: theme.palette.mode === "light" ? "#efefef" : "#494949",
+          px: 3,
+          pt: 2,
+          pb: 1,
+          width: "100%",
+          zIndex: 2,
+        }}
+      >
         <BlockStyleControls
           editorState={editorCurrentState}
           onToggleBlock={_toggleBlockType}
@@ -103,7 +115,7 @@ const TaskContentEditor = (props: Props) => {
         />
         {/* <InlineStyleControls editorState={editorCurrentState} onToggle={_toggleInlineStyle} /> */}
       </Box>
-      <div className={className} onClick={focus}>
+      <Box component="div" className={className} onClick={focus} sx={{ p: "1rem" }}>
         <Editor
           blockStyleFn={getBlockStyle as any}
           customStyleMap={styleMap}
@@ -115,7 +127,7 @@ const TaskContentEditor = (props: Props) => {
           spellCheck={true}
           readOnly={disabled}
         />
-      </div>
+      </Box>
     </div>
   );
 };
@@ -147,9 +159,14 @@ const StyleButton = (props: any) => {
     className += " RichEditor-activeButton";
   }
   return (
-    <span className={className} onMouseDown={onToggle}>
+    <Box
+      component="span"
+      className={className}
+      onMouseDown={onToggle}
+      sx={{ color: props.active ? "primary.300" : "secondary.300", fontWeight: props.active ? 900 : 400 }}
+    >
       {props.label}
-    </span>
+    </Box>
   );
 };
 
@@ -170,7 +187,7 @@ const BlockStyleControls = (props: { editorState: EditorState; onToggleBlock: an
   const currentStyle = props.editorState.getCurrentInlineStyle();
 
   return (
-    <div className="RichEditor-controls">
+    <Box component="div" className="RichEditor-controls">
       {BLOCK_TYPES.map((type) => (
         <StyleButton
           key={type.label}
@@ -189,8 +206,8 @@ const BlockStyleControls = (props: { editorState: EditorState; onToggleBlock: an
           style={type.style}
         />
       ))}
-    </div>
+    </Box>
   );
 };
 
-export default TaskContentEditor;
+export default React.memo(TaskContentEditor);

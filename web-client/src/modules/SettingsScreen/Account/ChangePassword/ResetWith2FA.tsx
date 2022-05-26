@@ -154,7 +154,14 @@ const ResetWith2FA = (props: IProps) => {
           />
         </Grid>
         <Grid item xs={12} md={12}>
-          <LoadingButton type="submit" size="large" variant="contained" fullWidth loading={formik.isSubmitting}>
+          <LoadingButton
+            type="submit"
+            size="large"
+            variant="contained"
+            fullWidth
+            loading={formik.isSubmitting}
+            disableElevation={false}
+          >
             CHANGE PASSWORD
           </LoadingButton>
         </Grid>

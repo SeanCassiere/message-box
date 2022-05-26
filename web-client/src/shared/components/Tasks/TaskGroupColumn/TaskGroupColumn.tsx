@@ -85,7 +85,7 @@ const TaskGroupColumn = (props: Props) => {
   }, [searchForTasks, countUp]);
 
   return (
-    <>
+    <React.Fragment>
       <Typography variant="h5" component="h3">
         {title}
       </Typography>
@@ -95,6 +95,7 @@ const TaskGroupColumn = (props: Props) => {
           height: "66.5vh",
           overflowY: "scroll",
           marginTop: "1em",
+          bgcolor: theme.palette.mode === "light" ? theme.palette.background.paper : grey[900],
           border: theme.palette.mode === "light" ? COMMON_ITEM_BORDER_STYLING : undefined,
           padding: `${showCompletedItemsCheckbox ? "0em" : "1.5em"} 1em 1em 1em`,
           borderRadius: 1,
@@ -119,7 +120,6 @@ const TaskGroupColumn = (props: Props) => {
               pt: 1,
               position: "sticky",
               top: 0,
-              // bgcolor: grey[100],
               zIndex: 2,
             }}
           >
@@ -150,7 +150,7 @@ const TaskGroupColumn = (props: Props) => {
             <TaskCard key={`${mode}-${task.taskId}`} task={task} mode={mode} triggerRefresh={triggerRefresh} />
           ))}
       </Paper>
-    </>
+    </React.Fragment>
   );
 };
 

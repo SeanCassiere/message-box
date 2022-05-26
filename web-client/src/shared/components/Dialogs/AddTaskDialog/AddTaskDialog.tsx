@@ -10,37 +10,36 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import LoadingButton from "@mui/lab/LoadingButton";
+import Autocomplete from "@mui/material/Autocomplete";
+import Switch from "@mui/material/Switch";
+import DateTimePicker from "@mui/lab/DateTimePicker";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import LoadingButton from "@mui/lab/LoadingButton";
-import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import ListItemText from "@mui/material/ListItemText";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import Checkbox from "@mui/material/Checkbox";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormHelperText from "@mui/material/FormHelperText";
-import MobileDateTimePicker from "@mui/lab/MobileDateTimePicker";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip";
+import Avatar from "@mui/material/Avatar";
 
 import TaskContentEditor from "./TaskContentEditor";
+import FormTextField from "../../Form/FormTextField/FormTextField";
+import DialogHeaderClose from "../../Dialog/DialogHeaderClose";
 
 import { client } from "../../../api/client";
 import { selectUserState, selectLookupListsState } from "../../../redux/store";
-import { IUserProfile } from "../../../interfaces/User.interfaces";
 import { formatErrorsToFormik } from "../../../util/errorsToFormik";
 import { usePermission } from "../../../hooks/usePermission";
 import { colorsMap, IColorMap } from "../../../util/colorsMap";
 import { taskColorOpacity } from "../../../util/constants";
 import { MESSAGES } from "../../../util/messages";
 import { formatDateTimeShort } from "../../../util/dateTime";
-import DialogHeaderClose from "../../Dialog/DialogHeaderClose";
 
 interface Props {
   handleCloseFunction: () => void;
@@ -49,7 +48,7 @@ interface Props {
 }
 
 const validationSchema = yup.object().shape({
-  ownerId: yup.string().required("Task must have an owner"),
+  ownerId: yup.string().typeError("Must be a string").required("Task must have an owner"),
   title: yup.string().required("Title is required"),
   content: yup.string(),
   bgColor: yup.string(),
@@ -57,16 +56,6 @@ const validationSchema = yup.object().shape({
   isCompleted: yup.boolean().required("IsCompleted is required"),
   sharedWith: yup.array().of(yup.string()),
 });
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-    },
-  },
-};
 
 const AddTaskDialog = (props: Props) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -83,7 +72,7 @@ const AddTaskDialog = (props: Props) => {
 
   const formik = useFormik({
     initialValues: {
-      ownerId: userProfile?.userId,
+      ownerId: userProfile?.userId ?? "",
       title: "",
       content: "",
       bgColor: colorsMap[0].bgColor,
@@ -123,33 +112,9 @@ const AddTaskDialog = (props: Props) => {
     return;
   }, [formik, handleCloseFunction]);
 
-  const renderUserNames = useCallback(
-    (selectedUsers: string[]) => {
-      const selectedUserObjects: IUserProfile[] = [];
-
-      for (const r of selectedUsers) {
-        const team = usersList.find((x) => x.userId === r);
-        if (team) {
-          selectedUserObjects.push(team);
-        }
-      }
-
-      const selectedUserNames = selectedUserObjects.map((x) => x.firstName + " " + x.lastName);
-      const items = selectedUserNames.join(", ");
-
-      return items;
-    },
-    [usersList]
-  );
-
   const handleSetDateChange = (newValue: Date | null) => {
     if (!newValue) return;
     formik.setFieldValue("dueDate", new Date(newValue).toISOString());
-  };
-
-  const handleSetTaskOwner = (evt: SelectChangeEvent<string>) => {
-    formik.setFieldValue("ownerId", evt.target.value);
-    formik.setFieldValue("sharedWith", []);
   };
 
   const handleContentChange = (newContent: string) => {
@@ -204,6 +169,15 @@ const AddTaskDialog = (props: Props) => {
     [formik]
   );
 
+  const userSelectOptions = React.useMemo(() => {
+    return usersList.map((user) => {
+      return {
+        id: user.userId,
+        label: `${user.firstName} ${user.lastName}`,
+      };
+    });
+  }, [usersList]);
+
   return (
     <Dialog
       open={showDialog}
@@ -241,28 +215,25 @@ const AddTaskDialog = (props: Props) => {
           <Grid item xs={12} md={8} sx={{ mt: 3 }}>
             <Grid container>
               <Grid item xs={12} md={12} sx={{ px: 3 }}>
-                <TextField
+                <FormTextField
                   margin="normal"
                   fullWidth
                   label="Title"
                   id="title"
                   name="title"
                   autoComplete="off"
-                  variant="standard"
                   value={formik.values.title}
                   onChange={formik.handleChange}
                   error={formik.touched.title && Boolean(formik.errors.title)}
                   helperText={formik.touched.title && formik.errors.title}
                   autoFocus
                   disabled={isLoading}
-                  required
+                  asteriskRequired
                 />
               </Grid>
               <Grid item xs={12} md={12} sx={{ px: 3 }}>
-                <Box sx={{ mb: 1, mt: 4 }}>
-                  <InputLabel id="content-label" disableAnimation shrink>
-                    Content
-                  </InputLabel>
+                <Box sx={{ mb: 1, mt: 2 }}>
+                  <Typography>Content</Typography>
                 </Box>
                 <TaskContentEditor
                   initialContent={initialContent}
@@ -274,78 +245,144 @@ const AddTaskDialog = (props: Props) => {
           </Grid>
           <Grid item xs={12} md={4}>
             <DialogContent sx={{ mt: "5px" }}>
-              <Grid container spacing={5}>
+              <Grid container spacing={3}>
                 {showOwnerAssignee && (
                   <Grid item xs={12} md={12}>
-                    <FormControl variant="standard" sx={{ mt: 2, minWidth: 120 }} fullWidth>
-                      <InputLabel id="taskOwner-label" disabled={isLoading} disableAnimation shrink>
-                        Task owner
-                      </InputLabel>
-                      <Select
-                        labelId="taskOwner-label"
-                        id="ownerId"
-                        name="ownerId"
+                    <Box sx={{ mt: 2 }}>
+                      <Autocomplete
+                        id="select-task-owner"
                         value={formik.values.ownerId}
-                        onChange={handleSetTaskOwner}
-                        error={formik.touched.ownerId && Boolean(formik.errors.ownerId)}
-                      >
-                        {usersList
-                          .filter((user) => user.isActive)
-                          .map((user) => (
-                            <MenuItem key={`select-root-user-${user.userId}`} value={user.userId}>
-                              {user.firstName + " " + user.lastName}
-                            </MenuItem>
-                          ))}
-                      </Select>
-                      <FormHelperText>{formik.touched.ownerId && formik.errors.ownerId}</FormHelperText>
-                    </FormControl>
+                        options={userSelectOptions.map((u) => u.id)}
+                        onChange={(_, value) => {
+                          if (!value) return;
+                          formik.setFieldValue("ownerId", value);
+                        }}
+                        onSelect={() => {
+                          formik.setFieldValue("sharedWith", []);
+                        }}
+                        openOnFocus
+                        disabled={isLoading || formik.isSubmitting}
+                        getOptionLabel={(option) => {
+                          if (option && option.trim() !== "") {
+                            const user = userSelectOptions.find((u) => u.id === option);
+                            if (user) {
+                              return user.label;
+                            } else {
+                              return "No user";
+                            }
+                          }
+                          return "";
+                        }}
+                        renderInput={(params) => (
+                          <FormTextField
+                            {...params}
+                            label="Task Owner"
+                            name="ownerId"
+                            InputProps={{ ...params.InputProps, endAdornment: <></> }}
+                            fullWidth
+                            disabled={isLoading || formik.isSubmitting}
+                            error={formik.touched.ownerId && Boolean(formik.errors.ownerId)}
+                            helperText={formik.touched.ownerId && formik.errors.ownerId}
+                            asteriskRequired
+                          />
+                        )}
+                      />
+                    </Box>
                   </Grid>
                 )}
                 <Grid item xs={12} md={12}>
-                  <FormControl variant="standard" sx={{ mt: showOwnerAssignee ? 0 : 2 }} fullWidth>
-                    <MobileDateTimePicker
+                  <Box sx={{ mt: showOwnerAssignee === false ? 2 : undefined }}>
+                    <DateTimePicker
                       label="Due date"
-                      showTodayButton
                       value={Date.parse(formik.values.dueDate)}
-                      onChange={handleSetDateChange}
-                      renderInput={(params) => <TextField {...params} variant="standard" name="dueDate" required />}
-                      disabled={isLoading}
                       inputFormat={formats.shortDateTimeFormat}
+                      onChange={handleSetDateChange}
+                      showDaysOutsideCurrentMonth
+                      onAccept={handleSetDateChange}
+                      loading={isLoading || formik.isSubmitting}
+                      renderInput={(params) => (
+                        <FormTextField
+                          variant="outlined"
+                          fullWidth
+                          {...params}
+                          name="endDate"
+                          onBlur={formik.handleBlur}
+                          disabled={isLoading || formik.isSubmitting}
+                          error={formik.touched.dueDate && Boolean(formik.errors.dueDate)}
+                          helperText={formik.touched.dueDate && Boolean(formik.errors.dueDate) && formik.errors.dueDate}
+                          asteriskRequired
+                        />
+                      )}
                     />
-                    <FormHelperText>{formik.touched.dueDate && formik.errors.dueDate}</FormHelperText>
-                  </FormControl>
+                  </Box>
                 </Grid>
                 <Grid item xs={12} md={12}>
-                  <FormControl sx={{ minWidth: "100%" }}>
-                    <InputLabel id="teams" sx={{ ml: -1.5 }} disableAnimation shrink>
-                      Share with
-                    </InputLabel>
-                    <Select
-                      fullWidth
-                      labelId="Task Owner"
-                      id="ownerId"
-                      name="sharedWith"
-                      value={formik.values.sharedWith}
-                      onChange={formik.handleChange}
-                      renderValue={renderUserNames}
-                      MenuProps={MenuProps}
-                      multiple
-                      disabled={isLoading}
-                      variant="standard"
-                    >
-                      {usersList
-                        .filter((list) => list.userId !== formik.values.ownerId)
-                        .map((user) => (
-                          <MenuItem key={`select-${user.userId}`} value={user.userId}>
-                            <Checkbox checked={formik.values.sharedWith.includes(user.userId)} />
-                            <ListItemText primary={`${user.firstName} ${user.lastName}`} />
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
+                  <Autocomplete
+                    id="select-shared-with-owners"
+                    value={formik.values.sharedWith}
+                    multiple
+                    options={userSelectOptions.map((u) => u.id).filter((uID) => uID !== formik.values.ownerId)}
+                    onChange={(_, value) => {
+                      formik.setFieldValue("sharedWith", value);
+                    }}
+                    openOnFocus
+                    disabled={isLoading || formik.isSubmitting}
+                    getOptionLabel={(option) => {
+                      if (option && option.trim() !== "") {
+                        const user = userSelectOptions.find((u) => u.id === option);
+                        if (user) {
+                          return user.label;
+                        } else {
+                          return "No user";
+                        }
+                      }
+                      return "";
+                    }}
+                    renderInput={(params) => (
+                      <FormTextField
+                        {...params}
+                        label="Shared with"
+                        InputProps={{ ...params.InputProps, endAdornment: <></> }}
+                        fullWidth
+                        disabled={isLoading || formik.isSubmitting}
+                        error={formik.touched.sharedWith && Boolean(formik.errors.sharedWith)}
+                        helperText={formik.touched.sharedWith && formik.errors.sharedWith}
+                      />
+                    )}
+                    renderTags={(value, getTagProps) =>
+                      value.map((option, index: number) => {
+                        const userRenderOption = usersList.find(
+                          (user) => user.userId === (option as unknown as string)
+                        );
+                        return (
+                          <Chip
+                            {...getTagProps({ index })}
+                            label={`${userRenderOption?.firstName} ${userRenderOption?.lastName}`}
+                            color="secondary"
+                            avatar={
+                              <Avatar>
+                                {String(`${userRenderOption?.firstName} ${userRenderOption?.lastName}`)
+                                  .substring(0, 1)
+                                  .toUpperCase()}
+                              </Avatar>
+                            }
+                          />
+                        );
+                      })
+                    }
+                    renderOption={(props, option) => {
+                      const user = usersList.find((u) => u.userId === option);
+                      return (
+                        <li {...props}>
+                          <Checkbox checked={formik.values.sharedWith.includes(option)} />
+                          {user?.firstName} {user?.lastName}
+                        </li>
+                      );
+                    }}
+                  />
                 </Grid>
                 <Grid item xs={12} md={12}>
-                  <FormControl sx={{ minWidth: "100%" }}>
+                  <FormControl sx={{ minWidth: "100%", mt: 1 }}>
                     <InputLabel disableAnimation shrink sx={{ ml: -1.5 }}>
                       Color
                     </InputLabel>

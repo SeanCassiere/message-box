@@ -338,7 +338,7 @@ const DashboardPage = () => {
                     position: "sticky",
                   }}
                   draggableCancel=".grid-not-draggable"
-                  resizeHandles={["se"]}
+                  resizeHandles={["se", "sw", "nw", "ne"]}
                 >
                   {dashboardWidgets?.map((widget, idx) => {
                     return (

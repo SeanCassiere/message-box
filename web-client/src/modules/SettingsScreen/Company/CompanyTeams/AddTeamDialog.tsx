@@ -1,23 +1,18 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import React, { useState, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import * as yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
 
 import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
-import FormControl from "@mui/material/FormControl";
-import ListItemText from "@mui/material/ListItemText";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
 import Checkbox from "@mui/material/Checkbox";
-import FormHelperText from "@mui/material/FormHelperText";
 
+import FormTextField from "../../../../shared/components/Form/FormTextField";
 import DialogHeaderClose from "../../../../shared/components/Dialog/DialogHeaderClose";
 import DialogBigButtonFooter from "../../../../shared/components/Dialog/DialogBigButtonFooter";
 
@@ -27,17 +22,6 @@ import { IRoleProfile, ITeamMember } from "../../../../shared/interfaces/Client.
 import { MESSAGES } from "../../../../shared/util/messages";
 import { selectLookupListsState } from "../../../../shared/redux/store";
 import { getClientUsersLookupListThunk } from "../../../../shared/redux/slices/lookup/thunks";
-import { IUserProfile } from "../../../../shared/interfaces/User.interfaces";
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-    },
-  },
-};
 
 const validationSchema = yup.object().shape({
   rootName: yup.string().required("A team root name is required"),
@@ -163,27 +147,8 @@ const AddTeamDialog = (props: IProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamId, dispatch, enqueueSnackbar]);
 
-  const renderUserNames = useCallback(
-    (selectedUsers: string[]) => {
-      const selectedUserObjects: IUserProfile[] = [];
-
-      for (const r of selectedUsers) {
-        const team = usersList.find((x) => x.userId === r);
-        if (team) {
-          selectedUserObjects.push(team);
-        }
-      }
-
-      const selectedUserNames = selectedUserObjects.map((x) => x.firstName + " " + x.lastName);
-      const items = selectedUserNames.join(", ");
-
-      return items;
-    },
-    [usersList]
-  );
-
-  const handleSelectTeamMember = (evt: SelectChangeEvent<string[]>) => {
-    const arrayedList = Array.from(evt.target.value);
+  const handleSelectTeamMember = (values: string[]) => {
+    const arrayedList = Array.from(values);
     const syncedList = arrayedList.map((x) => {
       const user = formik.values.members.find((u) => u.userId === x);
 
@@ -202,15 +167,16 @@ const AddTeamDialog = (props: IProps) => {
     );
   };
 
-  const handleSelectTeamLeader = (evt: SelectChangeEvent<string[]>) => {
+  const handleSelectTeamLeader = (values: string[]) => {
     let formikMemberArray = formik.values.members.map((item) => ({ ...item, isLeader: false }));
 
-    const arrayedList = Array.from(evt.target.value);
-    arrayedList.forEach((userId) => {
-      const list = formikMemberArray.filter((u) => u.userId !== userId);
-      const findUser = usersList.find((u) => u.userId === userId);
-
-      formikMemberArray = [...list, { userId, isLeader: true, ...findUser }];
+    const arrayedList = Array.from(values);
+    arrayedList.forEach((x) => {
+      const userIdx = formikMemberArray.findIndex((u) => u.userId === x);
+      if (userIdx > -1) {
+        formikMemberArray[userIdx].userId = x;
+        formikMemberArray[userIdx].isLeader = true;
+      }
     });
 
     formik.setFieldValue("members", formikMemberArray);
@@ -229,98 +195,112 @@ const AddTeamDialog = (props: IProps) => {
           startIconMode={teamId ? "edit-icon" : "add-icon"}
         />
         <DialogContent>
-          <Grid container spacing={1} sx={{ mt: 0 }}>
+          <Grid container spacing={2} sx={{ mt: 0 }}>
             <Grid item xs={12}>
-              <TextField
+              <FormTextField
                 margin="normal"
                 fullWidth
                 label="Team Name"
                 id="teamName"
                 name="teamName"
                 autoComplete="off"
-                variant="standard"
                 value={formik.values.teamName}
                 onChange={formik.handleChange}
                 error={formik.touched.teamName && Boolean(formik.errors.teamName)}
                 helperText={formik.touched.teamName && formik.errors.teamName}
                 autoFocus
                 disabled={isFieldInactive}
-                required
+                asteriskRequired
               />
             </Grid>
             <Grid item xs={12}>
-              <FormControl
-                sx={{ minWidth: "100%", mt: 3 }}
+              <Autocomplete
+                id="members"
+                options={usersList.map((u) => u.userId)}
+                value={formik.values.members.map((u) => u.userId)}
+                getOptionLabel={(option) => {
+                  if (!option) return "";
+
+                  const user = usersList.find((u) => u.userId === option);
+                  if (user) {
+                    return user.firstName + " " + user.lastName;
+                  } else {
+                    return "";
+                  }
+                }}
                 fullWidth
-                error={formik.touched.members && Boolean(formik.errors.members)}
-                required
-              >
-                <InputLabel id="members" sx={{ ml: -1.5 }} disableAnimation shrink>
-                  Members
-                </InputLabel>
-                <Select
-                  fullWidth
-                  labelId="Members"
-                  id="members"
-                  name="members"
-                  value={formik.values.members.map((m) => m.userId)}
-                  onChange={handleSelectTeamMember}
-                  renderValue={renderUserNames}
-                  MenuProps={MenuProps}
-                  multiple
-                  disabled={formik.isSubmitting || isLoadingData}
-                  variant="standard"
-                >
-                  {usersList.map((user) => (
-                    <MenuItem key={`select-member-${user.userId}`} value={user.userId}>
-                      <Checkbox checked={formik.values.members.map((m) => m.userId).includes(user.userId)} />
-                      <ListItemText primary={`${user.firstName} ${user.lastName}`} />
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText sx={{ ml: 0 }}>{formik.touched.members && formik.errors.members}</FormHelperText>
-              </FormControl>
+                multiple
+                disabled={formik.isSubmitting}
+                onChange={(_, values) => handleSelectTeamMember(values)}
+                renderOption={(props, option) => {
+                  const user = usersList.find((u) => u.userId === option);
+                  return (
+                    <li {...props}>
+                      <Checkbox checked={formik.values.members.map((u) => u.userId).includes(option)} />
+                      {user?.firstName} {user?.lastName}
+                    </li>
+                  );
+                }}
+                renderInput={(params) => (
+                  <FormTextField
+                    {...params}
+                    label="Members"
+                    disabled={formik.isSubmitting}
+                    InputProps={{ ...params.InputProps }}
+                    fullWidth
+                    error={formik.touched.members && Boolean(formik.errors.members)}
+                    helperText={formik.touched.members && formik.errors.members}
+                    asteriskRequired
+                  />
+                )}
+              />
             </Grid>
-            <Grid item xs={12}>
-              <FormControl
-                sx={{ minWidth: "100%", mt: 3 }}
+            <Grid item xs={12} sx={{ mt: 1 }}>
+              <Autocomplete
+                id="team-leaders"
+                options={formik.values.members.map((u) => u.userId)}
+                value={formik.values.members.filter((u) => u.isLeader).map((u) => u.userId)}
+                getOptionLabel={(option) => {
+                  if (!option) return "";
+
+                  const user = usersList.find((u) => u.userId === option);
+                  if (user) {
+                    return user.firstName + " " + user.lastName;
+                  } else {
+                    return "";
+                  }
+                }}
                 fullWidth
-                error={formik.touched.teamLeaders && Boolean(formik.errors.teamLeaders)}
-                required
-              >
-                <InputLabel id="teamLeaders" sx={{ ml: -1.5 }} disableAnimation shrink>
-                  Team Leader(s)
-                </InputLabel>
-                <Select
-                  fullWidth
-                  labelId="Members"
-                  name="teamLeaders"
-                  value={formik.values.members.filter((m) => m.isLeader).map((m) => m.userId)}
-                  onChange={handleSelectTeamLeader}
-                  renderValue={renderUserNames}
-                  MenuProps={MenuProps}
-                  multiple
-                  disabled={formik.isSubmitting || isLoadingData}
-                  variant="standard"
-                >
-                  {formik.values.members.map((user) => {
-                    const findUser = usersList.find((x) => x.userId === user.userId);
-                    return (
-                      <MenuItem key={`select-leader-${user.userId}`} value={user.userId}>
-                        <Checkbox
-                          checked={
-                            formik.values.members.find((u) => u.userId === user.userId && u.isLeader) ? true : false
-                          }
-                        />
-                        <ListItemText primary={`${findUser?.firstName} ${findUser?.lastName}`} />
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-                <FormHelperText sx={{ ml: 0 }}>
-                  {formik.touched.teamLeaders && formik.errors.teamLeaders}
-                </FormHelperText>
-              </FormControl>
+                multiple
+                disabled={formik.isSubmitting}
+                onChange={(_, values) => handleSelectTeamLeader(values)}
+                renderOption={(props, option) => {
+                  const user = usersList.find((u) => u.userId === option);
+                  return (
+                    <li {...props}>
+                      <Checkbox
+                        checked={formik.values.members
+                          .filter((u) => u.isLeader)
+                          .map((u) => u.userId)
+                          .includes(option)}
+                      />
+                      {user?.firstName} {user?.lastName}
+                    </li>
+                  );
+                }}
+                renderInput={(params) => (
+                  <FormTextField
+                    {...params}
+                    label="Team Leader(s)"
+                    disabled={formik.isSubmitting}
+                    InputProps={{ ...params.InputProps }}
+                    fullWidth
+                    error={formik.touched.teamLeaders && Boolean(formik.errors.teamLeaders)}
+                    helperText={formik.touched.teamLeaders && formik.errors.teamLeaders}
+                    asteriskRequired
+                  />
+                )}
+              />
             </Grid>
           </Grid>
         </DialogContent>
@@ -330,4 +310,4 @@ const AddTeamDialog = (props: IProps) => {
   );
 };
 
-export default AddTeamDialog;
+export default React.memo(AddTeamDialog);

@@ -58,13 +58,13 @@ s .RichEditor-root {
 
 .RichEditor-controls {
   font-family: "Helvetica", sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   margin-bottom: 5px;
   user-select: none;
 }
 
 .RichEditor-styleButton {
-  color: #999;
+  /* color: #999; */
   cursor: pointer;
   margin-right: 16px;
   padding: 2px 0;

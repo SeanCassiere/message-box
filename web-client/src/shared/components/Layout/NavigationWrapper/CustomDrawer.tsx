@@ -3,8 +3,10 @@ import { styled, Theme, CSSObject } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 
 import { drawerWidth } from "../../../util/constants";
+import { grey } from "@mui/material/colors";
 
 const openedMixin = (theme: Theme): CSSObject => ({
+  backgroundColor: theme.palette.mode === "light" ? theme.palette.background.paper : grey[900],
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
@@ -18,6 +20,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
+  backgroundColor: theme.palette.mode === "light" ? theme.palette.background.paper : grey[900],
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -45,4 +48,4 @@ const CustomDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "
   }),
 }));
 
-export default CustomDrawer;
+export default React.memo(CustomDrawer);

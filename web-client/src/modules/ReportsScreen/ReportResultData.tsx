@@ -3,15 +3,7 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import {
-  GridColDef,
-  DataGrid,
-  GridToolbarContainer,
-  GridToolbarExport,
-  GridToolbarColumnsButton,
-  GridToolbarFilterButton,
-} from "@mui/x-data-grid";
-import LinearProgress from "@mui/material/LinearProgress";
+import { GridColDef } from "@mui/x-data-grid";
 
 import FormControl from "@mui/material/FormControl";
 import Checkbox from "@mui/material/Checkbox";
@@ -22,6 +14,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import PageBlockItem from "../../shared/components/Layout/PageBlockItem";
 import FilterField from "./FilterField";
 import FormTextField from "../../shared/components/Form/FormTextField";
+import ReportDataGrid from "../../shared/components/DataGrid/ReportDataGrid";
 
 import { IReportSchema } from "../../shared/interfaces/Reports.interfaces";
 import { removeEmptyQueryParamsToSend } from "../../shared/util/general";
@@ -30,6 +23,7 @@ import { formatDateTimeShort, formatDateShort } from "../../shared/util/dateTime
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
 interface IProps {
   selectedReport: IReportSchema;
 }
@@ -213,53 +207,16 @@ const ReportResultData = (props: IProps) => {
         </Grid>
       </PageBlockItem>
       {loading === false && (
-        <PageBlockItem height={650}>
-          <Box
-            sx={{
-              height: "100%",
-            }}
-          >
-            <DataGrid
-              sx={{
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "primary.300",
-                  borderRadius: 0,
-                  fontWeight: 900,
-                  fontSize: "1em",
-                  color: "white",
-                },
-                "& .MuiDataGrid-columnSeparator": {
-                  color: "primary.600",
-                },
-              }}
-              columns={columns}
-              rows={reportData}
-              loading={loading}
-              components={{ Toolbar: CustomToolBar, LoadingOverlay: LinearProgress }}
-              disableSelectionOnClick
-              initialState={{
-                columns: {
-                  columnVisibilityModel: visibleColumns,
-                },
-              }}
-            />
-          </Box>
-        </PageBlockItem>
+        <ReportDataGrid
+          columns={columns}
+          rows={reportData}
+          loading={loading}
+          height={700}
+          initialVisibleColumns={visibleColumns}
+        />
       )}
     </>
   );
 };
-
-function CustomToolBar() {
-  return (
-    <GridToolbarContainer
-      style={{ display: "flex", gap: 3, paddingTop: "0.5rem", paddingBottom: "0.5rem", paddingLeft: "0.5rem" }}
-    >
-      <GridToolbarColumnsButton variant="text" />
-      <GridToolbarFilterButton {...({ variant: "text" } as any)} />
-      <GridToolbarExport variant="text" printOptions={{ disableToolbarButton: true }} />
-    </GridToolbarContainer>
-  );
-}
 
 export default React.memo(ReportResultData);

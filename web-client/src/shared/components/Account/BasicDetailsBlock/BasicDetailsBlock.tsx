@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "@mui/material/styles";
 
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 const BasicDetailsBlock = (props: Props) => {
+  const theme = useTheme();
   const { userDetails } = props;
   return (
     <Grid container spacing={2}>
@@ -30,7 +32,11 @@ const BasicDetailsBlock = (props: Props) => {
         <Box display="flex" alignItems="center" sx={{ height: "100%", pt: { sm: 2, md: 0 } }}>
           <Stack spacing={2}>
             <Box>
-              <Typography fontSize={24} fontWeight={500}>
+              <Typography
+                fontSize={24}
+                fontWeight={500}
+                color={theme.palette.mode === "light" ? "primary.600" : "primary.100"}
+              >
                 {userDetails?.firstName}&nbsp;{userDetails?.lastName}
               </Typography>
             </Box>
@@ -44,4 +50,4 @@ const BasicDetailsBlock = (props: Props) => {
   );
 };
 
-export default BasicDetailsBlock;
+export default React.memo(BasicDetailsBlock);

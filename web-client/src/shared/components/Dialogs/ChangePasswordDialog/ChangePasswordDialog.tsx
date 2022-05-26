@@ -44,7 +44,7 @@ const ChangePasswordDialog = (props: IProps) => {
     <Dialog open={props.showDialog} onClose={passClose} fullScreen={isOnMobile}>
       <DialogHeaderClose title="Change Password" onClose={passClose} startIconMode="password-icon" />
       <DialogContent>
-        <Box sx={{ mt: 1 }}>
+        <Box sx={{ mt: 1, pt: 2 }}>
           <Accordion elevation={0} expanded={expanded === "panel1"} onChange={() => handleChangeOpen("panel1")}>
             <AccordionSummary
               expandIcon={
@@ -99,7 +99,9 @@ const ChangePasswordDialog = (props: IProps) => {
               <Typography sx={{ py: 0.3 }}>Send me a password reset link</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <ButtonResetPasswordEmail onComplete={passClose} fullWidth />
+              <Box sx={{ mt: 1 }}>
+                <ButtonResetPasswordEmail onComplete={passClose} fullWidth />
+              </Box>
             </AccordionDetails>
           </Accordion>
           <Accordion elevation={0} expanded={expanded === "panel4"} onChange={() => handleChangeOpen("panel4")}>
@@ -110,10 +112,12 @@ const ChangePasswordDialog = (props: IProps) => {
               aria-controls="panel4a-content"
               id="panel4a-header"
             >
-              <Typography sx={{ py: 0.3 }}>Reset 2FA via E-Mail</Typography>
+              <Typography sx={{ py: 0.3 }}>Reset 2FA via e-mail</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <ButtonReset2FA onComplete={passClose} fullWidth color="primary" />
+              <Box sx={{ mt: 1 }}>
+                <ButtonReset2FA onComplete={passClose} fullWidth color="primary" />
+              </Box>
             </AccordionDetails>
           </Accordion>
         </Box>

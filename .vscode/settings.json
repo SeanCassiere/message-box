@@ -17,6 +17,7 @@
     "hdel",
     "hexists",
     "hget",
+    "hideable",
     "hset",
     "jwks",
     "lpignore",

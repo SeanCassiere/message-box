@@ -1,6 +1,7 @@
 import React from "react";
 import { useTheme } from "@mui/material/styles";
 
+import { grey } from "@mui/material/colors";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
@@ -18,7 +19,7 @@ const PageBlockItem: React.FC<{ title?: string | React.ReactNode; badgeText?: st
     <Box
       sx={{
         mt: 2,
-        bgcolor: theme.palette.mode === "light" ? "#fff" : undefined,
+        bgcolor: theme.palette.mode === "light" ? theme.palette.background.paper : grey[900],
         pt: 2,
         pb: 3,
         px: 2,
@@ -31,7 +32,11 @@ const PageBlockItem: React.FC<{ title?: string | React.ReactNode; badgeText?: st
     >
       {title && (
         <>
-          <Typography fontSize={17} fontWeight={400} sx={{ textTransform: "uppercase" }}>
+          <Typography
+            fontSize={17}
+            fontWeight={400}
+            sx={{ textTransform: "uppercase", color: theme.palette.mode === "light" ? "primary.500" : "primary.200" }}
+          >
             {title}
             {badgeText && <Chip label={badgeText} variant="filled" color="error" component="span" sx={{ ml: 1 }} />}
           </Typography>

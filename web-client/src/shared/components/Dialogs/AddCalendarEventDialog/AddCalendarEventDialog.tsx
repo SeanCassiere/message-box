@@ -31,11 +31,12 @@ import { MESSAGES } from "../../../util/messages";
 import { formatErrorsToFormik } from "../../../util/errorsToFormik";
 
 const validationSchema = yup.object({
-  title: yup.string().required("Event name is required"),
+  title: yup.string().required("Name is required"),
   description: yup.string(),
-  startDate: yup.date().required("Start date is required"),
+  startDate: yup.date().typeError("Must be a valid date").required("Start date is required"),
   endDate: yup
     .date()
+    .typeError("Must be a valid date")
     .test({
       name: "End date",
       message: "End date cannot be before the start date",

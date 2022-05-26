@@ -1,6 +1,7 @@
 import React from "react";
-
 import { styled } from "@mui/material/styles";
+import { grey } from "@mui/material/colors";
+
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -35,7 +36,7 @@ const BasicRolesDetails = (props: Props) => {
 };
 
 const BoxStyled = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "light" ? "#f0f9ff" : theme.palette.getContrastText("#f0f9ff"),
+  backgroundColor: theme.palette.mode === "light" ? theme.palette.background.paper : grey[900],
   padding: "1rem 1rem",
   borderRadius: 6,
   borderColor: "#0ea5e9",
@@ -44,4 +45,4 @@ const BoxStyled = styled(Box)(({ theme }) => ({
   marginBottom: "0.5rem",
 }));
 
-export default BasicRolesDetails;
+export default React.memo(BasicRolesDetails);

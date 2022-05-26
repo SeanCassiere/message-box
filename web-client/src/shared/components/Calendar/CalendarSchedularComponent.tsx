@@ -23,6 +23,7 @@ import {
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Paper from "@mui/material/Paper";
 import { useSelector } from "react-redux";
+import { grey } from "@mui/material/colors";
 
 import DateNavigatorOpenButtonComponent from "./DateNavigatorOpenButtonComponent";
 import ViewSwitcherComponent from "./ViewSwitcherComponent";
@@ -40,7 +41,6 @@ import {
 
 import { ICalendarEventBase } from "../../interfaces/CalendarEvent.interfaces";
 import { resources } from "./common";
-import { COMMON_ITEM_BORDER_STYLING } from "../../util/constants";
 import { selectUserState } from "../../redux/store";
 
 interface ICalendarPatchChanges {
@@ -105,6 +105,7 @@ const CalendarSchedularComponent = (parentProps: ICustomCalendarSchedularProps) 
       elevation={0}
       sx={{
         height: parentProps.maxHeight || undefined,
+        bgcolor: theme.palette.mode === "light" ? theme.palette.background.paper : grey[900],
         // border: COMMON_ITEM_BORDER_STYLING,
         // borderRadius: 1,
         // boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",

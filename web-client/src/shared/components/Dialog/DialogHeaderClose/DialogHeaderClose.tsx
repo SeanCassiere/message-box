@@ -43,7 +43,7 @@ const DialogHeaderClose = (props: Props) => {
     <DialogTitle
       sx={{
         color: TEXT_COLOR,
-        borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+        borderBottom: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.12)" : "1px solid rgba(94,94,94,1)",
       }}
     >
       <Stack flexDirection="row" alignItems="center" gap={1}>
@@ -54,7 +54,7 @@ const DialogHeaderClose = (props: Props) => {
         {props?.startIconMode === "phone-icon" && <PhoneIcon {...commonIconProps} />}
         {props?.startIconMode === "password-icon" && <PasswordIcon {...commonIconProps} />}
         <Box flexGrow={1}>
-          <Typography fontSize={18} fontWeight={500} color={theme.palette.mode === "light" ? undefined : "primary.500"}>
+          <Typography fontSize={18} fontWeight={500} color={theme.palette.mode === "light" ? undefined : "primary.400"}>
             {props?.title}
           </Typography>
         </Box>

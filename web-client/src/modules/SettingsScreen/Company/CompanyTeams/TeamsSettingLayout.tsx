@@ -1,16 +1,20 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
+import { GridColDef } from "@mui/x-data-grid";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
+import Chip from "@mui/material/Chip";
 
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 
-import ViewTable from "./Table";
+import NormalDataGrid from "../../../../shared/components/DataGrid/NormalDataGrid";
 import AddTeamDialog from "./AddTeamDialog";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 
@@ -20,16 +24,22 @@ import { setLookupTeams } from "../../../../shared/redux/slices/lookup/lookupSli
 import { usePermission } from "../../../../shared/hooks/usePermission";
 import { MESSAGES } from "../../../../shared/util/messages";
 import { getClientTeamsLookupListThunk } from "../../../../shared/redux/slices/lookup/thunks";
+import { formatDateFromNow } from "../../../../shared/util/dateTime";
 
 const Layout = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
   const isAddButtonAccessible = usePermission("team:admin");
+  const isEditButtonAccessible = usePermission("team:admin");
+  const isDeleteButtonAccessible = usePermission("team:admin");
+
+  const [loading, setLoading] = useState(true);
 
   const { teamsList } = useSelector(selectLookupListsState);
 
   const refreshListItems = useCallback(() => {
+    setLoading(true);
     client
       .get("/Clients/Teams")
       .then((res) => {
@@ -43,6 +53,9 @@ const Layout = () => {
       .catch((e) => {
         console.log(e);
         enqueueSnackbar(MESSAGES.NETWORK_UNAVAILABLE, { variant: "error" });
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [dispatch, enqueueSnackbar]);
 
@@ -100,6 +113,60 @@ const Layout = () => {
     dispatch(getClientTeamsLookupListThunk());
   }, [dispatch]);
 
+  const columns: GridColDef[] = React.useMemo(() => {
+    const cols: GridColDef[] = [];
+
+    cols.push({ field: "teamName", headerName: "Team Name", description: "Team Name", sortable: true, width: 400 });
+    cols.push({
+      field: "isUserDeletable",
+      headerName: "Created by",
+      description: "Created by",
+      sortable: true,
+      type: "boolean",
+      align: "left",
+      headerAlign: "left",
+      width: 200,
+      renderCell: (row) =>
+        row.value ? <Chip label="User created" variant="outlined" /> : <Chip label="System generated" />,
+    });
+    cols.push({
+      field: "updatedAt",
+      headerName: "Last updated",
+      description: "Last updated date-time",
+      sortable: true,
+      type: "date",
+      align: "left",
+      headerAlign: "left",
+      width: 200,
+      valueFormatter: (row) => formatDateFromNow(row.value),
+    });
+    cols.push({
+      field: "teamId",
+      headerName: "Actions",
+      description: "Actions",
+      sortable: false,
+      type: "actions",
+      align: "right",
+      headerAlign: "right",
+      hideable: false,
+      renderCell: (row) => (
+        <span>
+          {row?.row?.isUserDeletable && isDeleteButtonAccessible && (
+            <IconButton color="error" aria-label="remove" onClick={() => handleOpenDelete(row.value)}>
+              <DeleteIcon />
+            </IconButton>
+          )}
+          {row?.row?.isUserDeletable && isEditButtonAccessible && (
+            <IconButton color="primary" aria-label="edit" onClick={() => handleOpenEditor(row.value)}>
+              <EditIcon />
+            </IconButton>
+          )}
+        </span>
+      ),
+    });
+    return cols;
+  }, [handleOpenDelete, handleOpenEditor, isDeleteButtonAccessible, isEditButtonAccessible]);
+
   return (
     <>
       <DeleteConfirmationDialog
@@ -131,9 +198,12 @@ const Layout = () => {
             )}
           </Box>
         </Box>
-        <Box>
-          <ViewTable dataList={teamsList} editItemHandler={handleOpenEditor} deleteItemHandler={handleOpenDelete} />
-        </Box>
+        <NormalDataGrid
+          columns={columns}
+          rows={teamsList.map((d) => ({ ...d, id: d.teamId }))}
+          height={700}
+          loading={loading}
+        />
       </Box>
     </>
   );

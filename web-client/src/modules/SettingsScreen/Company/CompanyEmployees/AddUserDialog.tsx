@@ -1,32 +1,30 @@
-import React, { useCallback, useEffect, useState } from "react";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import * as yup from "yup";
 
-import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
 import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import ListItemText from "@mui/material/ListItemText";
-import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
 
+import FormTextField from "../../../../shared/components/Form/FormTextField";
 import DialogHeaderClose from "../../../../shared/components/Dialog/DialogHeaderClose";
 import DialogBigButtonFooter from "../../../../shared/components/Dialog/DialogBigButtonFooter";
 
 import { client } from "../../../../shared/api/client";
-import { useSelector } from "react-redux";
 import { selectUserState, selectLookupListsState } from "../../../../shared/redux/store";
-import { IRoleProfile, ITeamProfile } from "../../../../shared/interfaces/Client.interfaces";
 import { formatErrorsToFormik } from "../../../../shared/util/errorsToFormik";
 import { MESSAGES } from "../../../../shared/util/messages";
 
@@ -35,20 +33,10 @@ const validationSchema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
   lastName: yup.string().required("Last name is required"),
   password: yup.string().required("Password is required"),
-  roles: yup.array().of(yup.string().required("Role is required")),
-  teams: yup.array().of(yup.string().required("Team is required")),
+  roles: yup.array().of(yup.string().required("Role is required")).min(1, "At least one role is required"),
+  teams: yup.array().of(yup.string().required("Team is required")).min(1, "At least one team is required"),
   isActive: yup.boolean().required("Status is required"),
 });
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-    },
-  },
-};
 
 interface IProps {
   userId: string | null;
@@ -153,59 +141,6 @@ const AddUserDialog = (props: IProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
-  const renderRoleNames = useCallback(
-    (selectedRoles: string[]) => {
-      const selectedRoleObjects: IRoleProfile[] = [];
-
-      for (const r of selectedRoles) {
-        const role = rolesList.find((x) => x.roleId === r);
-        if (role) {
-          selectedRoleObjects.push(role);
-        }
-      }
-
-      const selectedRoleNames = selectedRoleObjects.map((x) => x.viewName);
-      const items = selectedRoleNames.join(", ");
-
-      return items;
-    },
-    [rolesList]
-  );
-
-  const renderTeamNames = useCallback(
-    (selectedRoles: string[]) => {
-      const selectedTeamObjects: ITeamProfile[] = [];
-
-      for (const r of selectedRoles) {
-        const team = teamsList.find((x) => x.teamId === r);
-        if (team) {
-          selectedTeamObjects.push(team);
-        }
-      }
-
-      const selectedTeamNames = selectedTeamObjects.map((x) => x.teamName);
-      const items = selectedTeamNames.join(", ");
-
-      return items;
-    },
-    [teamsList]
-  );
-
-  const isRoleSelectDisabled = useCallback(
-    (role: IRoleProfile) => {
-      if (role.rootName === "employee" && role.isUserDeletable === false) {
-        return true;
-      }
-
-      if (role.rootName === "admin" && userId === userProfile?.userId) {
-        return true;
-      }
-
-      return false;
-    },
-    [userId, userProfile?.userId]
-  );
-
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <Box component="form" onSubmit={formik.handleSubmit}>
@@ -215,142 +150,193 @@ const AddUserDialog = (props: IProps) => {
           startIconMode={userId ? "edit-icon" : "add-icon"}
         />
         <DialogContent>
-          <Grid container spacing={2} sx={{ pt: 2 }}>
+          <Grid container spacing={1} sx={{ pt: 2 }}>
             <Grid item xs={12} md={12}>
-              <TextField
-                margin="normal"
+              <FormTextField
+                margin="dense"
                 fullWidth
                 label="First Name"
                 id="firstName"
                 name="firstName"
                 autoComplete="off"
-                variant="standard"
                 value={formik.values.firstName}
                 onChange={formik.handleChange}
                 error={formik.touched.firstName && Boolean(formik.errors.firstName)}
                 helperText={formik.touched.firstName && formik.errors.firstName}
                 autoFocus
                 disabled={isLoadingData}
-                required
+                asteriskRequired
               />
             </Grid>
             <Grid item xs={12} md={12}>
-              <TextField
-                margin="normal"
+              <FormTextField
+                margin="dense"
                 fullWidth
                 label="Last Name"
                 id="lastName"
                 name="lastName"
                 autoComplete="off"
-                variant="standard"
                 value={formik.values.lastName}
                 onChange={formik.handleChange}
                 error={formik.touched.lastName && Boolean(formik.errors.lastName)}
                 helperText={formik.touched.lastName && formik.errors.lastName}
                 disabled={isLoadingData}
-                required
+                asteriskRequired
               />
             </Grid>
             <Grid item xs={12} md={12}>
-              <TextField
-                margin="normal"
+              <FormTextField
+                margin="dense"
                 fullWidth
                 label="Email"
                 id="email"
                 name="email"
                 autoComplete="off"
-                variant="standard"
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
                 disabled={isLoadingData}
-                required
+                asteriskRequired
               />
             </Grid>
             {!userId && (
               <Grid item xs={12} md={12}>
-                <TextField
-                  margin="normal"
+                <FormTextField
+                  margin="dense"
                   fullWidth
                   label="Password"
                   id="password"
                   name="password"
                   autoComplete="off"
-                  variant="standard"
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   error={formik.touched.password && Boolean(formik.errors.password)}
                   helperText={formik.touched.password && formik.errors.password}
                   disabled={isLoadingData}
-                  required
+                  asteriskRequired
                 />
               </Grid>
             )}
             {userId && (
               <>
                 <Grid item xs={12} md={12}>
-                  <FormControl sx={{ minWidth: "100%", mt: 3 }} required>
-                    <InputLabel id="roles" sx={{ ml: -1.5 }} disableAnimation shrink>
-                      Roles
-                    </InputLabel>
-                    <Select
-                      labelId="roles"
-                      id="roles"
-                      name="roles"
+                  <Box sx={{ mt: 1 }}>
+                    <Autocomplete
+                      id="user-roles"
                       value={formik.values.roles}
-                      onChange={formik.handleChange}
-                      renderValue={renderRoleNames}
-                      MenuProps={MenuProps}
+                      options={rolesList.map((r) => r.roleId)}
                       multiple
-                      variant="standard"
-                      disabled={isLoadingData}
-                    >
-                      {rolesList.map((role) => (
-                        <MenuItem
-                          key={`select-${role.roleId}`}
-                          value={role.roleId}
-                          disabled={isRoleSelectDisabled(role)}
-                          // disabled={role.rootName === "employee" && role.isUserDeletable === false}
-                          defaultChecked={role.rootName === "employee" && role.isUserDeletable === false}
-                        >
-                          <Checkbox checked={formik.values.roles.indexOf(role.roleId) > -1} />
-                          <ListItemText primary={role.viewName} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                      onChange={(_, values) => formik.setFieldValue("roles", values)}
+                      getOptionLabel={(option) => {
+                        if (!option) return "";
+                        const roleFind = rolesList.find((r) => r.roleId === option);
+                        return roleFind ? roleFind.viewName : "";
+                      }}
+                      disableCloseOnSelect
+                      renderInput={(params) => (
+                        <FormTextField
+                          {...params}
+                          label="Roles"
+                          name="roles"
+                          disabled={isLoadingData}
+                          fullWidth
+                          InputProps={{ ...params.InputProps }}
+                          error={formik.touched.roles && Boolean(formik.errors.roles)}
+                          helperText={formik.touched.roles && formik.errors.roles}
+                          asteriskRequired
+                        />
+                      )}
+                      disableClearable
+                      getOptionDisabled={(option) => {
+                        const roleFind = rolesList.find((r) => r.roleId === option);
+                        return roleFind?.rootName === "employee" && roleFind?.isUserDeletable === false ? true : false;
+                      }}
+                      renderOption={(props, option) => {
+                        const roleFind = rolesList.find((r) => r.roleId === option);
+                        return (
+                          <li {...props}>
+                            <Checkbox checked={formik.values.roles.includes(option)} />
+                            {roleFind?.viewName}
+                          </li>
+                        );
+                      }}
+                      renderTags={(value, getTagProps) =>
+                        value.map((option, index: number) => {
+                          const roleFind = rolesList.find((role) => role.roleId === option);
+                          return (
+                            <Chip
+                              {...getTagProps({ index })}
+                              label={`${roleFind?.viewName}`}
+                              color="secondary"
+                              disabled={
+                                roleFind?.rootName === "employee" && roleFind.isUserDeletable === false ? true : false
+                              }
+                            />
+                          );
+                        })
+                      }
+                    />
+                  </Box>
                 </Grid>
                 <Grid item xs={12} md={12}>
-                  <FormControl sx={{ minWidth: "100%", mt: 3 }} required>
-                    <InputLabel id="teams" sx={{ ml: -1.5 }} disableAnimation shrink>
-                      Teams
-                    </InputLabel>
-                    <Select
-                      labelId="teams"
-                      id="teams"
-                      name="teams"
+                  <Box sx={{ mt: 2 }}>
+                    <Autocomplete
+                      id="user-teams"
                       value={formik.values.teams}
-                      onChange={formik.handleChange}
-                      renderValue={renderTeamNames}
-                      MenuProps={MenuProps}
+                      options={teamsList.map((r) => r.teamId)}
                       multiple
-                      variant="standard"
-                      disabled={isLoadingData}
-                    >
-                      {teamsList.map((team) => (
-                        <MenuItem
-                          key={`select-${team.teamId}`}
-                          value={team.teamId}
-                          disabled={team.rootName === "company" && team.isUserDeletable === false}
-                          defaultChecked={team.rootName === "company" && team.isUserDeletable === false}
-                        >
-                          <Checkbox checked={formik.values.teams.indexOf(team.teamId) > -1} />
-                          <ListItemText primary={team.teamName} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                      onChange={(_, values) => formik.setFieldValue("teams", values)}
+                      getOptionLabel={(option) => {
+                        if (!option) return "";
+                        const teamFind = teamsList.find((r) => r.teamId === option);
+                        return teamFind ? teamFind.teamName : "";
+                      }}
+                      disableCloseOnSelect
+                      renderInput={(params) => (
+                        <FormTextField
+                          {...params}
+                          label="Teams"
+                          name="teams"
+                          disabled={isLoadingData}
+                          fullWidth
+                          InputProps={{ ...params.InputProps }}
+                          error={formik.touched.teams && Boolean(formik.errors.teams)}
+                          helperText={formik.touched.teams && formik.errors.teams}
+                          asteriskRequired
+                        />
+                      )}
+                      disableClearable
+                      getOptionDisabled={(option) => {
+                        const teamFind = teamsList.find((r) => r.teamId === option);
+                        return teamFind?.rootName === "company" && teamFind?.isUserDeletable === false ? true : false;
+                      }}
+                      renderOption={(props, option) => {
+                        const teamFind = teamsList.find((r) => r.teamId === option);
+                        return (
+                          <li {...props}>
+                            <Checkbox checked={formik.values.teams.includes(option)} />
+                            {teamFind?.teamName}
+                          </li>
+                        );
+                      }}
+                      renderTags={(value, getTagProps) =>
+                        value.map((option, index: number) => {
+                          const teamFind = teamsList.find((role) => role.teamId === option);
+                          return (
+                            <Chip
+                              {...getTagProps({ index })}
+                              label={`${teamFind?.teamName}`}
+                              color="secondary"
+                              disabled={
+                                teamFind?.rootName === "company" && teamFind.isUserDeletable === false ? true : false
+                              }
+                            />
+                          );
+                        })
+                      }
+                    />
+                  </Box>
                 </Grid>
                 {userId !== userProfile?.userId && (
                   <>
@@ -390,4 +376,4 @@ const AddUserDialog = (props: IProps) => {
   );
 };
 
-export default AddUserDialog;
+export default React.memo(AddUserDialog);

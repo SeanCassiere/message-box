@@ -15,15 +15,21 @@ const FormTextField = ({
   const propsToOverlay: TextFieldProps = {
     autoComplete: "off",
     variant: "outlined",
-    InputLabelProps: { required: asteriskRequired, ...InputLabelProps },
+    InputLabelProps: { required: restOfProps.required ? true : asteriskRequired, ...InputLabelProps },
     InputProps: {
       ...InputProps,
       sx: {
-        bgcolor: theme.palette.mode === "light" ? "rgba(0,0,0, 0.03)" : undefined,
+        bgcolor: theme.palette.mode === "light" ? "rgba(0,0,0, 0.01)" : undefined,
         transition: "background-color ease-in 0.15s",
         "&:not(.Mui-error):focus, &:not(.Mui-error):focus-within": {
-          bgcolor: theme.palette.mode === "light" ? "primary.50" : undefined,
+          // bgcolor: theme.palette.mode === "light" ? "primary.50" : undefined,
+          bgcolor: theme.palette.mode === "light" ? "rgba(224,242,241,0.5)" : "rgba(0,77,64,0.1)",
         },
+        ...(asteriskRequired && {
+          "& .MuiOutlinedInput-notchedOutline": {
+            padding: "0 14px",
+          },
+        }),
       },
     },
     fullWidth: true,

@@ -11,14 +11,9 @@ import DialogContent from "@mui/material/DialogContent";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
-import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import ListItemText from "@mui/material/ListItemText";
-import FormHelperText from "@mui/material/FormHelperText";
-import Select from "@mui/material/Select";
+import Autocomplete from "@mui/material/Autocomplete";
 
+import FormTextField from "../../../../shared/components/Form/FormTextField/FormTextField";
 import DialogHeaderClose from "../../../../shared/components/Dialog/DialogHeaderClose";
 import DialogBigButtonFooter from "../../../../shared/components/Dialog/DialogBigButtonFooter";
 
@@ -27,16 +22,6 @@ import { IUserProfile } from "../../../../shared/interfaces/User.interfaces";
 import { client } from "../../../../shared/api/client";
 import { MESSAGES } from "../../../../shared/util/messages";
 import { formatErrorsToFormik } from "../../../../shared/util/errorsToFormik";
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-    },
-  },
-};
 
 const validationSchema = yup.object().shape({
   clientName: yup.string().required("Company name is required"),
@@ -113,22 +98,6 @@ const EditCompanyDialog = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleRefreshList, showDialog]);
 
-  const renderUserNames = useCallback(
-    (selectedUsers: string[]) => {
-      const selectedUserObjects: IUserProfile[] = [];
-      for (const r of selectedUsers) {
-        const team = usersList.find((x) => x.userId === r);
-        if (team) {
-          selectedUserObjects.push(team);
-        }
-      }
-      const selectedUserNames = selectedUserObjects.map((x) => `${x.firstName} ${x.lastName}`);
-      const items = selectedUserNames.join(", ");
-      return items;
-    },
-    [usersList]
-  );
-
   return (
     <Dialog open={showDialog} onClose={() => ({})} maxWidth="sm" disableEscapeKeyDown fullWidth fullScreen={isOnMobile}>
       <Box component="form" onSubmit={formik.handleSubmit}>
@@ -136,52 +105,47 @@ const EditCompanyDialog = (props: Props) => {
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 0 }}>
             <Grid item xs={12} md={12}>
-              <TextField
+              <FormTextField
                 margin="normal"
                 fullWidth
                 label="Company name"
                 id="clientName"
                 name="clientName"
                 autoComplete="off"
-                variant="standard"
                 value={formik.values.clientName}
                 onChange={formik.handleChange}
                 error={formik.touched.clientName && Boolean(formik.errors.clientName)}
                 helperText={formik.touched.clientName && formik.errors.clientName}
                 autoFocus
                 disabled={formik.isSubmitting}
-                required
+                asteriskRequired
               />
             </Grid>
             <Grid item xs={12} md={12}>
-              <FormControl sx={{ minWidth: "100%", mt: 2 }} required>
-                <InputLabel id="teams" sx={{ ml: -2 }} disableAnimation shrink>
-                  Company account owner
-                </InputLabel>
-                <Select
-                  labelId="teams"
+              <Box>
+                <Autocomplete
                   id="adminUserId"
-                  name="adminUserId"
-                  value={[formik.values.adminUserId]}
-                  onChange={formik.handleChange}
-                  renderValue={renderUserNames}
-                  MenuProps={MenuProps}
-                  variant="standard"
-                  error={formik.touched.adminUserId && Boolean(formik.errors.adminUserId)}
+                  value={formik.values.adminUserId}
+                  options={usersList.map((u) => u.userId)}
+                  getOptionLabel={(option) => {
+                    const u = usersList.find((x) => x.userId === option);
+                    return u ? `${u.firstName} ${u.lastName}` : "";
+                  }}
+                  onChange={(_, v) => formik.setFieldValue("adminUserId", v)}
                   disabled={formik.isSubmitting}
-                >
-                  {usersList.map((user) => (
-                    <MenuItem
-                      key={`select-${user.userId}`}
-                      value={user.userId}
-                      defaultChecked={user.userId === formik.values.adminUserId}
-                    >
-                      <ListItemText primary={`${user.firstName} ${user.lastName}`} />
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText>{formik.touched.adminUserId && formik.errors.adminUserId}</FormHelperText>
-              </FormControl>
+                  renderInput={(params) => (
+                    <FormTextField
+                      name="adminUserId"
+                      {...params}
+                      label="Company account owner"
+                      error={formik.touched.adminUserId && Boolean(formik.errors.adminUserId)}
+                      helperText={formik.touched.adminUserId && formik.errors.adminUserId}
+                      asteriskRequired
+                      disabled={formik.isSubmitting}
+                    />
+                  )}
+                />
+              </Box>
             </Grid>
           </Grid>
         </DialogContent>
@@ -191,4 +155,4 @@ const EditCompanyDialog = (props: Props) => {
   );
 };
 
-export default EditCompanyDialog;
+export default React.memo(EditCompanyDialog);
