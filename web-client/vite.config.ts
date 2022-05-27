@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
           }
         : false,
   },
-  plugins: mode === "development" ? [react(), eslintPlugin()] : [react()],
+  plugins: mode === "development" ? [react(), eslintPlugin()] : [],
   build: {
     sourcemap: true,
   },
