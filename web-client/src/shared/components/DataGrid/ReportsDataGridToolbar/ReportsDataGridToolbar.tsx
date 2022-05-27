@@ -1,3 +1,4 @@
+import React from "react";
 import {
   GridToolbarContainer,
   GridToolbarExport,
@@ -17,4 +18,4 @@ const ReportsDataGridToolbar = () => {
   );
 };
 
-export default ReportsDataGridToolbar;
+export default React.memo(ReportsDataGridToolbar);
