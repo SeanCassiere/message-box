@@ -6,6 +6,8 @@ dotenv.config();
 
 export const AUTH_SERVICE_URI = process.env.AUTH_SERVICE_URI || "http://auth-service:4000";
 export const APP_DATA_SERVICE_URI = process.env.APP_DATA_SERVICE_URI || "http://application-data-service:4000";
+console.log("AUTH_SERVICE_URI", AUTH_SERVICE_URI);
+console.log("APP_DATA_SERVICE_URI", APP_DATA_SERVICE_URI);
 
 export const API_PREFIX = "/Api";
 

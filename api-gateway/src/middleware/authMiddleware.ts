@@ -6,6 +6,7 @@ import jwkToPem, { JWK } from "jwk-to-pem";
 import { Socket } from "socket.io";
 import { ExtendedError } from "socket.io/dist/namespace";
 import { log } from "#root/utils/logger";
+import { AUTH_SERVICE_URI } from "#root/constants";
 
 /**
  * @deprecated
@@ -22,7 +23,7 @@ export async function validateToken(req: CustomRequest<{}>, res: Response, next:
 
     try {
       const client = jwkClient({
-        jwksUri: `http://auth-service:4000/.well-known/jwks.json`,
+        jwksUri: `${AUTH_SERVICE_URI}/.well-known/jwks.json`,
         cache: true,
         rateLimit: true,
       });
@@ -62,7 +63,7 @@ export const socketTokenAuth = async (socket: Socket, next: (err?: ExtendedError
     try {
       token = socket.handshake.auth.token;
       const initJwksClient = jwkClient({
-        jwksUri: `http://auth-service:4000/.well-known/jwks.json`,
+        jwksUri: `${AUTH_SERVICE_URI}/.well-known/jwks.json`,
         cache: true,
         rateLimit: true,
       });

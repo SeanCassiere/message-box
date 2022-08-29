@@ -63,7 +63,7 @@ function startServer(port: number) {
 
   app.get("/.well-known/jwks.json", async (_, res) => {
     try {
-      const request = await axios.get(`http://auth-service:4000/.well-known/jwks.json`);
+      const request = await axios.get(`${AUTH_SERVICE_URI}/.well-known/jwks.json`);
 
       res.json(request.data);
     } catch (error) {
