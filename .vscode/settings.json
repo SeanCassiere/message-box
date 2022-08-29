@@ -36,12 +36,14 @@
     "Remy",
     "respawn",
     "SENDGRID",
+    "tanstack",
     "timestamptz",
     "topbar",
     "totp",
     "typeorm",
     "vite",
-    "vitejs"
+    "vitejs",
+    "zustand"
   ],
-  "conventionalCommits.scopes": ["api-gateway", "web-client", "auth-service", "app-data-service"]
+  "conventionalCommits.scopes": ["api-gateway", "web-client", "auth-service", "app-data-service", "repo"]
 }

@@ -3,7 +3,9 @@ import { AccessTokenPair } from "../interfaces/AccessToken.interfaces";
 import { setAccessToken } from "../redux/slices/auth/authSlice";
 import store from "../redux/store";
 
-const baseURL = import.meta.env.VITE_APP_API_URL ?? "http://localhost:4000/Api";
+const baseURL = import.meta.env.VITE_APP_API_URL
+  ? import.meta.env.VITE_APP_API_URL + "/api"
+  : "http://localhost:4000/Api";
 
 export const client = axios.create({
   baseURL,
