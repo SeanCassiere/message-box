@@ -1,7 +1,8 @@
 {
-  "name": "message-box-web-client",
+  "name": "message-box",
   "version": "1.0.0",
   "description": "",
+  "private": true,
   "scripts": {
     "prepare": "husky prepare",
     "test": "echo \"This project does not have testing set up.\n\"",
