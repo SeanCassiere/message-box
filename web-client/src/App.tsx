@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import { SnackbarProvider } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "moment-timezone";
 
 import DateAdapter from "@mui/lab/AdapterMoment";
@@ -18,6 +19,8 @@ import { getProfilesThunk } from "./shared/redux/slices/user/thunks";
 import { getRefreshedAccessTokenThunk } from "./shared/redux/slices/auth/thunks";
 import { getAllLookupListsThunk } from "./shared/redux/slices/lookup/thunks";
 import { useSocket } from "./shared/hooks/useSocket";
+
+const queryClient = new QueryClient();
 
 const App = () => {
   const dispatch = useDispatch();
@@ -91,20 +94,27 @@ const App = () => {
     <ThemeWrapper>
       <CssBaseline />
       <LocalizationProvider dateAdapter={DateAdapter}>
-        <SnackbarProvider
-          maxSnack={4}
-          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-          ref={notistackRef}
-          action={(key) => (
-            <IconButton aria-label="Close" onClick={onClickDismiss(key)} size="small" onMouseDown={onClickDismiss(key)}>
-              <CloseIcon sx={{ color: "#fff", fontSize: "1.3rem" }} />
-            </IconButton>
-          )}
-          disableWindowBlurListener
-          preventDuplicate
-        >
-          <AppRoutes />
-        </SnackbarProvider>
+        <QueryClientProvider client={queryClient}>
+          <SnackbarProvider
+            maxSnack={4}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            ref={notistackRef}
+            action={(key) => (
+              <IconButton
+                aria-label="Close"
+                onClick={onClickDismiss(key)}
+                size="small"
+                onMouseDown={onClickDismiss(key)}
+              >
+                <CloseIcon sx={{ color: "#fff", fontSize: "1.3rem" }} />
+              </IconButton>
+            )}
+            disableWindowBlurListener
+            preventDuplicate
+          >
+            <AppRoutes />
+          </SnackbarProvider>
+        </QueryClientProvider>
       </LocalizationProvider>
     </ThemeWrapper>
   );
